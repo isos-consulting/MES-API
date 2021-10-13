@@ -8,16 +8,16 @@ hooks:
 #     - location: install_dependencies.sh
 #       timeout: 300
 #       runas: root
-  BeforeBlockTraffic:
-    - location: before-block-traffic.sh
-      timeout: 300
-      runas: root
   ApplicationStop:
     - location: application-stop.sh
       timeout: 300
       runas: root
-  Install:
-    - location: install.sh
+  BeforeInstall:
+    - location: before-install.sh
+      timeout: 300
+      runas: root
+  AfterInstall:
+    - location: after-install.sh
       timeout: 300
       runas: root
   ApplicationStart:
