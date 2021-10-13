@@ -86,7 +86,7 @@
     "prereset-data": "tsc",
     "reset-data": "yarn migration-undo-all && yarn migration-all",
     "prestart1": "yarn api-docs-all && yarn migration-all && yarn refresh-all-cache",
-    "prestart": "node dist/caches/refresh-all-cache.js",
+    "prestart": "yarn tsc && node dist/caches/refresh-all-cache.js",
     "start": "tsc-watch --onSuccess \"node dist/bin/www.js\"",
     "pretest": "tsc && yarn reset-data && yarn refresh-all-cache",
     "test": "./node_modules/.bin/jest tests --detectOpenHandles --forceExit --coverage"
