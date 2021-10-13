@@ -2,7 +2,7 @@ version: 0.0
 os: linux
 files:
   - source: www.js
-    destination: dist/bin/
+    destination: /dist/bin/
 hooks:
   BeforeInstall:
     - location: install_dependencies.sh
