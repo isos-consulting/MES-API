@@ -75,7 +75,7 @@ class StdEmpRepo {
           break;
         
         case 'incumbent':
-          whereOptions = { leave_date: { [Op.eq]: null } }
+          whereOptions = { leave_date: { [Op.eq]: null as any } }
           break;
         
         case 'retiree':
