@@ -1,0 +1,53 @@
+get:
+  description: |
+    하나의 파일관리 데이터를 조회합니다.
+  summary: 파일관리 데이터 단일 조회
+  tags:
+    - 파일관리(FileMgmt)
+  parameters:
+    - name: uuid
+      in: path
+      description: 파일관리의 UUID 를 입력합니다.
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+  responses:
+    200:
+      description: Read OK
+      content:
+        application/json:
+          schema: 
+            allOf:
+              - $ref: ../../schemas/common/default-response.schema.yaml
+              - type: object
+                properties:
+                  datas:
+                    description: Enable
+                    type: object
+                    properties:
+                      value:
+                        description: Enable
+                        type: object
+                        properties:
+                          count: 
+                            description: 영향받은 데이터의 개수
+                            type: number
+                            format: int32
+                            minimum: 0
+                      raws:
+                        description: 파일관리 데이터 목록
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: ../../schemas/adm/file-mgmt.schema.yaml#/file_mgmt_uuid
+                            - $ref: ../../schemas/adm/file-mgmt.schema.yaml#/file_mgmt_cd
+                            - $ref: ../../schemas/adm/file-mgmt.schema.yaml#/reference_uuid
+                            - $ref: ../../schemas/adm/file-mgmt.schema.yaml#/file_nm
+                            - $ref: ../../schemas/adm/file-mgmt.schema.yaml#/file_extension
+                            - $ref: ../../schemas/adm/file-mgmt.schema.yaml#/ip
+                            - $ref: ../../schemas/adm/file-mgmt.schema.yaml#/remark
+                            - $ref: ../../schemas/common/timestamp.schema.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

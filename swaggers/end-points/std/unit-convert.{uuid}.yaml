@@ -1,0 +1,74 @@
+get:
+  description: |
+    하나의 단위변환 데이터를 조회합니다.
+  summary: 단위변환 데이터 단일 조회
+  tags:
+    - 단위변환(UnitConvert)
+  parameters:
+    - name: uuid
+      in: path
+      description: 단위변환의 UUID 를 입력합니다.
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+  responses:
+    200:
+      description: Read OK
+      content:
+        application/json:
+          schema: 
+            allOf:
+              - $ref: ../../schemas/common/default-response.schema.yaml
+              - type: object
+                properties:
+                  datas:
+                    description: Enable
+                    type: object
+                    properties:
+                      value:
+                        description: Enable
+                        type: object
+                        properties:
+                          count: 
+                            description: 영향받은 데이터의 개수
+                            type: number
+                            format: int32
+                            minimum: 0
+                      raws:
+                        description: 단위변환 데이터 목록
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: ../../schemas/std/unit-convert.schema.yaml#/unit_convert_uuid
+                            - $ref: ../../schemas/std/unit-convert.schema.yaml#/from_unit_uuid
+                            - $ref: ../../schemas/std/unit-convert.schema.yaml#/from_unit_cd
+                            - $ref: ../../schemas/std/unit-convert.schema.yaml#/from_unit_nm
+                            - $ref: ../../schemas/std/unit-convert.schema.yaml#/to_unit_uuid
+                            - $ref: ../../schemas/std/unit-convert.schema.yaml#/to_unit_cd
+                            - $ref: ../../schemas/std/unit-convert.schema.yaml#/to_unit_nm
+                            - $ref: ../../schemas/std/unit-convert.schema.yaml#/from_value
+                            - $ref: ../../schemas/std/unit-convert.schema.yaml#/to_value
+                            - $ref: ../../schemas/std/unit-convert.schema.yaml#/convert_value
+                            - $ref: ../../schemas/std/vendor-price.schema.yaml#/prod_uuid
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_no
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/item_type_uuid
+                            - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_cd
+                            - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_type_uuid
+                            - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_cd
+                            - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/model_uuid
+                            - $ref: ../../schemas/std/model.schema.yaml#/model_cd
+                            - $ref: ../../schemas/std/model.schema.yaml#/model_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/rev
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_std
+                            - $ref: ../../schemas/std/prod.schema.yaml#/unit_uuid
+                            - $ref: ../../schemas/std/unit.schema.yaml#/unit_cd
+                            - $ref: ../../schemas/std/unit.schema.yaml#/unit_nm
+                            - $ref: ../../schemas/std/unit-convert.schema.yaml#/remark
+                            - $ref: ../../schemas/common/timestamp.schema.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

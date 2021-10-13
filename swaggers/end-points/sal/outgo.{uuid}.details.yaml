@@ -1,0 +1,112 @@
+get:
+  description: |
+    하나의 제품출하 전표 기준 발주상세 목록을 조회합니다. 
+  summary: 단일 제품출하 전표 기준 하위 상세 데이터 조회
+  tags:
+    - 제품출하(Outgo)
+  parameters:
+    - name: uuid
+      in: path
+      required: true
+      description: 제품출하의 UUID 를 입력합니다.
+      schema:
+        type: string
+        format: uuid
+
+    - name: factory_uuid
+      in: query
+      description: |
+        공장의 UUID를 입력하여 공장에 따라 제품출하 데이터를 조회합니다. <br/>
+        [전체 조회시 입력하지 않습니다.]
+      schema:
+        type: string
+        format: uuid
+
+    - name: partner_uuid
+      in: query
+      description: |
+        거래처의 UUID를 입력하여 거래처에 따라 제품출하 데이터를 조회합니다. <br/>
+        [전체 조회시 입력하지 않습니다.]
+      schema:
+        type: string
+        format: uuid
+
+  responses:
+    200:
+      description: Read OK
+      content:
+        application/json:
+          schema: 
+            allOf:
+              - $ref: ../../schemas/common/default-response.schema.yaml
+              - type: object
+                properties:
+                  datas:
+                    description: Enable
+                    type: object
+                    properties:
+                      value:
+                        description: Enable
+                        type: object
+                        properties:
+                          count: 
+                            description: 영향받은 데이터의 개수
+                            type: number
+                            format: int32
+                            minimum: 0
+                      raws:
+                        description: 제품출하 상세 데이터 목록
+                        type: array
+                        items:
+                          type: object
+                          allOf:        
+                            - $ref: ../../schemas/sal/outgo-detail.schema.yaml#/outgo_detail_uuid
+                            - $ref: ../../schemas/sal/outgo-detail.schema.yaml#/outgo_uuid
+                            - $ref: ../../schemas/sal/outgo-detail.schema.yaml#/seq
+                            - $ref: ../../schemas/sal/outgo.schema.yaml#/stmt_no
+                            - $ref: ../../schemas/sal/outgo-detail.schema.yaml#/stmt_no_sub
+                            - $ref: ../../schemas/sal/outgo-detail.schema.yaml#/factory_uuid
+                            - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
+                            - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
+                            - $ref: ../../schemas/sal/outgo-detail.schema.yaml#/order_detail_uuid
+                            - $ref: ../../schemas/sal/outgo-detail.schema.yaml#/outgo_order_detail_uuid
+                            - $ref: ../../schemas/sal/outgo-detail.schema.yaml#/prod_uuid
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_no
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/item_type_uuid
+                            - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_cd
+                            - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_type_uuid
+                            - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_cd
+                            - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/model_uuid
+                            - $ref: ../../schemas/std/model.schema.yaml#/model_cd
+                            - $ref: ../../schemas/std/model.schema.yaml#/model_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/rev
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_std
+                            - $ref: ../../schemas/std/prod.schema.yaml#/unit_uuid
+                            - $ref: ../../schemas/std/unit.schema.yaml#/unit_cd
+                            - $ref: ../../schemas/std/unit.schema.yaml#/unit_nm
+                            - $ref: ../../schemas/sal/outgo-detail.schema.yaml#/lot_no
+                            - $ref: ../../schemas/sal/outgo-detail.schema.yaml#/qty
+                            - $ref: ../../schemas/sal/outgo-detail.schema.yaml#/order_qty
+                            - $ref: ../../schemas/sal/outgo-detail.schema.yaml#/outgo_order_qty
+                            - $ref: ../../schemas/sal/outgo-detail.schema.yaml#/price
+                            - $ref: ../../schemas/sal/outgo-detail.schema.yaml#/money_unit_uuid
+                            - $ref: ../../schemas/std/money-unit.schema.yaml#/money_unit_cd
+                            - $ref: ../../schemas/std/money-unit.schema.yaml#/money_unit_nm
+                            - $ref: ../../schemas/sal/outgo-detail.schema.yaml#/exchange
+                            - $ref: ../../schemas/sal/outgo-detail.schema.yaml#/total_price
+                            - $ref: ../../schemas/sal/outgo-detail.schema.yaml#/unit_qty
+                            - $ref: ../../schemas/sal/outgo-detail.schema.yaml#/carry_fg
+                            - $ref: ../../schemas/sal/outgo-detail.schema.yaml#/from_store_uuid
+                            - $ref: ../../schemas/std/store.schema.yaml#/from_store_cd
+                            - $ref: ../../schemas/std/store.schema.yaml#/from_store_nm
+                            - $ref: ../../schemas/sal/outgo-detail.schema.yaml#/from_location_uuid
+                            - $ref: ../../schemas/std/location.schema.yaml#/from_location_cd
+                            - $ref: ../../schemas/std/location.schema.yaml#/from_location_nm
+                            - $ref: ../../schemas/sal/outgo-detail.schema.yaml#/remark
+                            - $ref: ../../schemas/sal/outgo-detail.schema.yaml#/barcode
+                            - $ref: ../../schemas/common/timestamp.schema.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

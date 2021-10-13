@@ -1,0 +1,21 @@
+export default interface IStdSupplier {
+  supplier_id?: number,
+  partner_id?: number,
+  supplier_cd?: string,
+  supplier_nm?: string,
+  manager?: string | null,
+  email?: string | null,
+  tel?: string | null,
+  fax?: string | null,
+  post?: string | null,
+  addr?: string | null,
+  addr_detail?: string | null,
+  use_fg?: boolean,
+  remark?: string | null,
+  created_at?: Date,
+  created_uid?: number,
+  updated_at?: Date,
+  updated_uid?: number,
+  uuid?: string,
+  tenant_uuid?: string
+}

@@ -1,0 +1,86 @@
+get:
+  description: |
+    하나의 부적합품판정 분해이력 단일 데이터를 조회합니다. 
+  summary: 부적합품판정 분해이력 단일 데이터 조회
+  tags:
+    - 부적합품판정 분해이력(ReworkDisassemble)
+  parameters:    
+    - name: uuid
+      in: path
+      required: true
+      description: 부적합품판정 분해의 UUID 를 입력합니다.
+      schema:
+        type: string
+        format: uuid
+
+  responses:
+    200:
+      description: Read OK
+      content:
+        application/json:
+          schema: 
+            allOf:
+              - $ref: ../../schemas/common/default-response.schema.yaml
+              - type: object
+                properties:
+                  datas:
+                    description: Enable
+                    type: object
+                    properties:
+                      value:
+                        description: Enable
+                        type: object
+                        properties:
+                          count: 
+                            description: 영향받은 데이터의 개수
+                            type: number
+                            format: int32
+                            minimum: 0
+                      raws:
+                        description: 검사기준서 단일 데이터 목록
+                        type: array
+                        items:
+                          type: object
+                          allOf:        
+                            - $ref: ../../schemas/qms/rework-disassemble.schema.yaml#/rework_disassemble_uuid
+                            - $ref: ../../schemas/qms/rework-disassemble.schema.yaml#/factory_uuid
+                            - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
+                            - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
+                            - $ref: ../../schemas/qms/rework.schema.yaml#/rework_uuid
+                            - $ref: ../../schemas/qms/rework-disassemble.schema.yaml#/prod_uuid
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_no
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/item_type_uuid
+                            - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_cd
+                            - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_type_uuid
+                            - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_cd
+                            - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/model_uuid
+                            - $ref: ../../schemas/std/model.schema.yaml#/model_cd
+                            - $ref: ../../schemas/std/model.schema.yaml#/model_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/rev
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_std
+                            - $ref: ../../schemas/std/prod.schema.yaml#/unit_uuid
+                            - $ref: ../../schemas/std/unit.schema.yaml#/unit_cd
+                            - $ref: ../../schemas/std/unit.schema.yaml#/unit_nm
+                            - $ref: ../../schemas/qms/rework-disassemble.schema.yaml#/lot_no
+                            - $ref: ../../schemas/qms/rework-disassemble.schema.yaml#/income_qty
+                            - $ref: ../../schemas/qms/rework-disassemble.schema.yaml#/return_qty
+                            - $ref: ../../schemas/qms/rework-disassemble.schema.yaml#/disposal_qty
+                            - $ref: ../../schemas/qms/rework-disassemble.schema.yaml#/income_store_uuid
+                            - $ref: ../../schemas/std/store.schema.yaml#/income_store_cd
+                            - $ref: ../../schemas/std/store.schema.yaml#/income_store_nm
+                            - $ref: ../../schemas/qms/rework-disassemble.schema.yaml#/income_location_uuid
+                            - $ref: ../../schemas/std/location.schema.yaml#/income_location_cd
+                            - $ref: ../../schemas/std/location.schema.yaml#/income_location_nm
+                            - $ref: ../../schemas/qms/rework-disassemble.schema.yaml#/return_store_uuid
+                            - $ref: ../../schemas/std/store.schema.yaml#/return_store_cd
+                            - $ref: ../../schemas/std/store.schema.yaml#/return_store_nm
+                            - $ref: ../../schemas/qms/rework-disassemble.schema.yaml#/return_location_uuid
+                            - $ref: ../../schemas/std/location.schema.yaml#/return_location_cd
+                            - $ref: ../../schemas/std/location.schema.yaml#/return_location_nm
+                            - $ref: ../../schemas/qms/rework-disassemble.schema.yaml#/remark
+                            - $ref: ../../schemas/common/timestamp.schema.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

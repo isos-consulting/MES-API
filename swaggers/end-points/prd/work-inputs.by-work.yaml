@@ -1,0 +1,20 @@
+delete:
+  description: |
+    실적 데이터 기준으로 자재투입 데이터를 전체 삭제합니다. <br/>
+    ❗ 실적이 이미 완료상태일 경우 삭제가 불가능합니다.
+  summary: 실적기준 자재투입 데이터 전체삭제
+  tags:
+    - 실적-자재투입(WorkInput)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - work_uuid
+          allOf:
+            - $ref: ../../schemas/prd/work-input.schema.yaml#/work_uuid
+  responses:
+    200:
+      $ref: ../../responses/common/succeed-delete.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

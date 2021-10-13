@@ -1,0 +1,59 @@
+# STD_INSP_ITEM_TYPE_TB
+
+# Columns
+insp_item_type_id: 
+  type: object
+  properties: 
+    insp_item_type_id:
+      description: 검사항목 유형ID
+      type: number
+      format: int4
+
+factory_id: 
+  type: object
+  properties: 
+    factory_id:
+      description: 공장ID
+      type: number
+      format: int4
+      
+insp_item_type_cd: 
+  type: object
+  properties: 
+    insp_item_type_cd:
+      description: 검사항목 유형코드
+      type: string
+      format: varchar(20)
+
+insp_item_type_nm: 
+  type: object
+  properties: 
+    insp_item_type_nm:
+      description: 검사항목 유형명
+      type: string
+      format: varchar(50)
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 검사항목 유형UUID
+      type: string
+      format: uuid
+
+# Uuids
+insp_item_type_uuid:
+  type: object
+  properties: 
+    insp_item_type_uuid:
+      description: 검사항목 유형UUID
+      type: string
+      format: uuid
+
+factory_uuid:
+  type: object
+  properties: 
+    factory_uuid:
+      description: 공장UUID
+      type: string
+      format: uuid

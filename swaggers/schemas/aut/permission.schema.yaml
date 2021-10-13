@@ -1,0 +1,67 @@
+# AUT_PERMISSION_TB
+
+# Columns
+permission_id: 
+  type: object
+  properties: 
+    permission_id:
+      description: 권한ID
+      type: number
+      format: int4
+      
+permission_nm: 
+  type: object
+  properties: 
+    permission_nm:
+      description: 권한명
+      type: number
+      format: int4
+      
+create_fg: 
+  type: object
+  properties: 
+    create_fg:
+      description: 데이터 생성 권한
+      type: boolean
+      format: boolean
+      
+read_fg: 
+  type: object
+  properties: 
+    read_fg:
+      description: 데이터 조회 권한
+      type: boolean
+      format: boolean
+      
+update_fg: 
+  type: object
+  properties: 
+    update_fg:
+      description: 데이터 수정 권한
+      type: boolean
+      format: boolean
+      
+delete_fg: 
+  type: object
+  properties: 
+    delete_fg:
+      description: 데이터 삭제 권한
+      type: boolean
+      format: boolean
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 권한UUID
+      type: string
+      format: uuid
+
+# Uuids
+permission_uuid:
+  type: object
+  properties: 
+    permission_uuid:
+      description: 권한UUID
+      type: string
+      format: uuid

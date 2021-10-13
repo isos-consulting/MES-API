@@ -1,0 +1,43 @@
+# STD_GRADE_TB
+
+# Columns
+grade_id: 
+  type: object
+  properties: 
+    grade_id:
+      description: 직급ID
+      type: number
+      format: int4
+
+grade_cd: 
+  type: object
+  properties: 
+    grade_cd:
+      description: 직급코드
+      type: string
+      format: varchar(20)
+
+grade_nm: 
+  type: object
+  properties: 
+    grade_nm:
+      description: 직급명
+      type: string
+      format: varchar(50)
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 직급UUID
+      type: string
+      format: uuid
+
+# Uuids
+grade_uuid:
+  type: object
+  properties: 
+    grade_uuid:
+      description: 직급UUID
+      type: string
+      format: uuid

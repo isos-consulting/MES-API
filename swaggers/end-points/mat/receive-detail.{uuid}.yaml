@@ -1,0 +1,96 @@
+get:
+  description: |
+    하나의 자재입하 상세 데이터를 조회합니다. 
+  summary: 자재입하 상세 데이터 단일 조회
+  tags:
+    - 자재입하상세(ReceiveDetail)
+  parameters:    
+    - name: uuid
+      in: path
+      required: true
+      description: 자재입하상세의 UUID 를 입력합니다.
+      schema:
+        type: string
+        format: uuid
+
+  responses:
+    200:
+      description: Read OK
+      content:
+        application/json:
+          schema: 
+            allOf:
+              - $ref: ../../schemas/common/default-response.schema.yaml
+              - type: object
+                properties:
+                  datas:
+                    description: Enable
+                    type: object
+                    properties:
+                      value:
+                        description: Enable
+                        type: object
+                        properties:
+                          count: 
+                            description: 영향받은 데이터의 개수
+                            type: number
+                            format: int32
+                            minimum: 0
+                      raws:
+                        description: 자재입하 상세 데이터 목록
+                        type: array
+                        items:
+                          type: object
+                          allOf:        
+                            - $ref: ../../schemas/mat/receive-detail.schema.yaml#/receive_detail_uuid
+                            - $ref: ../../schemas/mat/receive-detail.schema.yaml#/receive_uuid
+                            - $ref: ../../schemas/mat/receive-detail.schema.yaml#/seq
+                            - $ref: ../../schemas/mat/receive.schema.yaml#/stmt_no
+                            - $ref: ../../schemas/mat/receive-detail.schema.yaml#/stmt_no_sub
+                            - $ref: ../../schemas/mat/receive-detail.schema.yaml#/factory_uuid
+                            - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
+                            - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
+                            - $ref: ../../schemas/mat/receive-detail.schema.yaml#/order_detail_uuid
+                            - $ref: ../../schemas/mat/receive-detail.schema.yaml#/prod_uuid
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_no
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/item_type_uuid
+                            - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_cd
+                            - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_type_uuid
+                            - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_cd
+                            - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/model_uuid
+                            - $ref: ../../schemas/std/model.schema.yaml#/model_cd
+                            - $ref: ../../schemas/std/model.schema.yaml#/model_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/rev
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_std
+                            - $ref: ../../schemas/std/prod.schema.yaml#/unit_uuid
+                            - $ref: ../../schemas/std/unit.schema.yaml#/unit_cd
+                            - $ref: ../../schemas/std/unit.schema.yaml#/unit_nm
+                            - $ref: ../../schemas/mat/receive-detail.schema.yaml#/lot_no
+                            - $ref: ../../schemas/mat/receive-detail.schema.yaml#/manufactured_lot_no
+                            - $ref: ../../schemas/mat/receive-detail.schema.yaml#/order_qty
+                            - $ref: ../../schemas/mat/receive-detail.schema.yaml#/qty
+                            - $ref: ../../schemas/mat/receive-detail.schema.yaml#/price
+                            - $ref: ../../schemas/mat/receive-detail.schema.yaml#/money_unit_uuid
+                            - $ref: ../../schemas/std/money-unit.schema.yaml#/money_unit_cd
+                            - $ref: ../../schemas/std/money-unit.schema.yaml#/money_unit_nm
+                            - $ref: ../../schemas/mat/receive-detail.schema.yaml#/exchange
+                            - $ref: ../../schemas/mat/receive-detail.schema.yaml#/total_price
+                            - $ref: ../../schemas/mat/receive-detail.schema.yaml#/unit_qty
+                            - $ref: ../../schemas/mat/receive-detail.schema.yaml#/insp_fg
+                            - $ref: ../../schemas/mat/receive-detail.schema.yaml#/insp_result
+                            - $ref: ../../schemas/mat/receive-detail.schema.yaml#/carry_fg
+                            - $ref: ../../schemas/mat/receive-detail.schema.yaml#/to_store_uuid
+                            - $ref: ../../schemas/std/store.schema.yaml#/to_store_cd
+                            - $ref: ../../schemas/std/store.schema.yaml#/to_store_nm
+                            - $ref: ../../schemas/mat/receive-detail.schema.yaml#/to_location_uuid
+                            - $ref: ../../schemas/std/location.schema.yaml#/to_location_cd
+                            - $ref: ../../schemas/std/location.schema.yaml#/to_location_nm
+                            - $ref: ../../schemas/mat/receive-detail.schema.yaml#/remark
+                            - $ref: ../../schemas/mat/receive-detail.schema.yaml#/barcode
+                            - $ref: ../../schemas/mat/receive-detail.schema.yaml#/income_uuid
+                            - $ref: ../../schemas/common/timestamp.schema.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

@@ -1,0 +1,83 @@
+get:
+  description: |
+    입하기준 lot 추적현황을 조회합니다.
+  summary: 입하기준 lot 추적현황 데이터 조회
+  tags:
+    - 자재입하(Receive)
+  parameters:
+    - name: factory_uuid
+      in: query
+      required: true
+      description: 공장의 UUID를 입력하여 공장에 따라 입하기준 lot 추적현황 데이터를 조회합니다.
+      schema:
+        type: string
+        format: uuid
+
+    - name: prod_uuid
+      in: query
+      required: true
+      description: 입하되는 품번의 UUID를 입력하여 입하품번에 따라 입하기준 lot 추적현황 데이터를 조회합니다.
+      schema:
+        type: string
+        format: uuid
+
+    - name: lot_no
+      in: query
+      required: true
+      description: 입하되는 lot_no를 입력하여 입하lot_no에 따라 입하기준 lot 추적현황 데이터를 조회합니다.
+      schema:
+        type: string
+        format: string
+
+  responses:
+    200:
+      description: Read OK
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: ../../schemas/common/default-response.schema.yaml
+              - type: object
+                properties:
+                  datas:
+                    description: Enable
+                    type: object
+                    properties:
+                      value:
+                        description: Enable
+                        type: object
+                        properties:
+                          count:
+                            description: 영향받은 데이터의 개수
+                            type: number
+                            format: int32
+                            minimum: 0
+                      raws:
+                        description: 입하기준 lot 추적현황 데이터 조회
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: ../../schemas/std/proc.schema.yaml#/proc_cd
+                            - $ref: ../../schemas/std/proc.schema.yaml#/proc_nm
+                            - $ref: ../../schemas/std/equip.schema.yaml#/equip_cd
+                            - $ref: ../../schemas/std/equip.schema.yaml#/equip_nm
+                            - $ref: ../../schemas/prd/work-input.schema.yaml#/input_prod_no
+                            - $ref: ../../schemas/prd/work-input.schema.yaml#/input_prod_nm
+                            - $ref: ../../schemas/prd/work-input.schema.yaml#/input_item_type_cd
+                            - $ref: ../../schemas/prd/work-input.schema.yaml#/input_item_type_nm
+                            - $ref: ../../schemas/prd/work-input.schema.yaml#/input_lot_no
+                            - $ref: ../../schemas/prd/work.schema.yaml#/work_date
+                            - $ref: ../../schemas/prd/work.schema.yaml#/work_prod_no
+                            - $ref: ../../schemas/prd/work.schema.yaml#/work_prod_nm
+                            - $ref: ../../schemas/prd/work.schema.yaml#/work_item_type_cd
+                            - $ref: ../../schemas/prd/work.schema.yaml#/work_item_type_nm
+                            - $ref: ../../schemas/prd/work.schema.yaml#/work_lot_no
+                            - $ref: ../../schemas/std/partner.schema.yaml#/partner_cd
+                            - $ref: ../../schemas/std/partner.schema.yaml#/partner_nm
+                            - $ref: ../../schemas/sal/outgo.schema.yaml#/outgo_date
+                            - $ref: ../../schemas/sal/outgo.schema.yaml#/outgo_qty
+                            - $ref: ../../schemas/mat/receive.schema.yaml#/sortby
+                            - $ref: ../../schemas/mat/receive.schema.yaml#/level
+
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

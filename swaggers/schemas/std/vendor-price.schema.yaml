@@ -1,0 +1,204 @@
+# STD_VENDOR_PRICE_TB
+
+# Columns
+vendor_price_id: 
+  type: object
+  properties: 
+    vendor_price_id:
+      description: 협력사 단가ID
+      type: number
+      format: int4
+      
+partner_id: 
+  type: object
+  properties: 
+    partner_id:
+      description: 거래처ID
+      type: number
+      format: int4
+
+prod_id: 
+  type: object
+  properties: 
+    prod_id:
+      description: 품목ID
+      type: number
+      format: int4
+
+unit_id: 
+  type: object
+  properties: 
+    unit_id:
+      description: 단위ID
+      type: number
+      format: int4
+
+price: 
+  type: object
+  properties: 
+    price:
+      description: 단가
+      type: number
+      format: numeric(19, 6)
+
+money_unit_id: 
+  type: object
+  properties: 
+    money_unit_id:
+      description: 화폐단위ID
+      type: number
+      format: int4
+
+price_type_id: 
+  type: object
+  properties: 
+    price_type_id:
+      description: 단가유형ID
+      type: number
+      format: int4
+
+start_date: 
+  type: object
+  properties: 
+    start_date:
+      description: 단가 적용일자
+      type: string
+      format: date
+
+end_date: 
+  type: object
+  properties: 
+    end_date:
+      description: 단가 적용종료일자
+      type: string
+      format: date
+      
+retroactive_price: 
+  type: object
+  properties: 
+    retroactive_price:
+      description: 소급단가
+      type: number
+      format: numeric(19, 6)
+
+division: 
+  type: object
+  properties: 
+    division:
+      description: 배분율
+      type: number
+      format: int4
+
+remark: 
+  type: object
+  properties: 
+    remark:
+      description: 비고
+      type: string
+      format: nvarchar(250)
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 협력사 단가UUID
+      type: string
+      format: uuid
+
+# Uuids
+vendor_price_uuid:
+  type: object
+  properties: 
+    vendor_price_uuid:
+      description: 협력사 단가UUID
+      type: string
+      format: uuid
+
+partner_uuid:
+  type: object
+  properties: 
+    partner_uuid:
+      description: 거래처UUID
+      type: string
+      format: uuid
+
+prod_uuid:
+  type: object
+  properties: 
+    prod_uuid:
+      description: 품목UUID
+      type: string
+      format: uuid
+
+unit_uuid:
+  type: object
+  properties: 
+    unit_uuid:
+      description: 단위UUID
+      type: string
+      format: uuid
+
+money_unit_uuid:
+  type: object
+  properties: 
+    money_unit_uuid:
+      description: 화폐단위UUID
+      type: string
+      format: uuid
+
+price_type_uuid:
+  type: object
+  properties: 
+    price_type_uuid:
+      description: 단가유형UUID
+      type: string
+      format: uuid
+
+to_store_uuid:
+  type: object
+  properties: 
+    to_store_uuid:
+      description: 입고 창고UUID
+      type: string
+      format: uuid
+
+to_location_uuid:
+  type: object
+  properties: 
+    to_location_uuid:
+      description: 입고 위치UUID
+      type: string
+      format: uuid
+
+# Others
+to_store_cd: 
+  type: object
+  properties: 
+    to_store_cd:
+      description: 입고 창고코드
+      type: string
+      format: varchar(20)
+
+to_store_nm: 
+  type: object
+  properties: 
+    to_store_nm:
+      description: 입고 창고명
+      type: string
+      format: varchar(50)
+
+to_location_cd: 
+  type: object
+  properties: 
+    to_location_cd:
+      description: 입고 위치코드
+      type: string
+      format: varchar(20)
+
+to_location_nm: 
+  type: object
+  properties: 
+    to_location_nm:
+      description: 입고 위치명
+      type: string
+      format: varchar(50)

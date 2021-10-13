@@ -1,0 +1,19 @@
+allOf:
+  - $ref: 'default-response.schema.yaml'
+  - type: object
+    properties:
+      datas:
+        type: object
+        properties:
+          raws:
+            description: Disable
+            type: array
+          value:
+            description: Enable
+            type: object
+            properties:
+              count: 
+                description: 영향받은 데이터 없음
+                type: number
+                format: int32
+                default: 0

@@ -1,0 +1,1 @@
+export default interface ApiResult<T> { raws: T[], count: number };

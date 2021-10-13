@@ -1,0 +1,148 @@
+# SAL_OUTGO_ORDER_DETAIL_TB
+
+# Columns
+outgo_order_detail_id: 
+  type: object
+  properties: 
+    outgo_order_detail_id:
+      description: 출하지시상세ID
+      type: number
+      format: int4
+      
+outgo_order_id: 
+  type: object
+  properties: 
+    outgo_order_id:
+      description: 출하지시ID
+      type: number
+      format: int4
+      
+seq: 
+  type: object
+  properties: 
+    seq:
+      description: 지시 순번
+      type: number
+      format: int4
+
+factory_id: 
+  type: object
+  properties: 
+    factory_id:
+      description: 공장ID
+      type: number
+      format: int4
+
+prod_id: 
+  type: object
+  properties: 
+    prod_id:
+      description: 품목ID
+      type: number
+      format: int4
+
+qty: 
+  type: object
+  properties: 
+    qty:
+      description: 수량
+      type: number
+      format: numeric(19, 6)
+
+order_detail_id: 
+  type: object
+  properties: 
+    order_detail_id:
+      description: 제품수주상세ID
+      type: number
+      format: int4
+
+complete_fg: 
+  type: object
+  properties: 
+    complete_fg:
+      description: 출하완료 유무
+      type: boolean
+      format: boolean
+
+remark: 
+  type: object
+  properties: 
+    remark:
+      description: 비고
+      type: string
+      format: varchar(250)
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 출하지시상세UUID
+      type: string
+      format: uuid
+
+# Uuids
+outgo_order_detail_uuid:
+  type: object
+  properties: 
+    outgo_order_detail_uuid:
+      description: 출하지시상세UUID
+      type: string
+      format: uuid
+
+outgo_order_uuid:
+  type: object
+  properties: 
+    outgo_order_uuid:
+      description: 출하지시UUID
+      type: string
+      format: uuid
+
+factory_uuid:
+  type: object
+  properties: 
+    factory_uuid:
+      description: 공장UUID
+      type: string
+      format: uuid
+
+prod_uuid:
+  type: object
+  properties: 
+    prod_uuid:
+      description: 품목UUID
+      type: string
+      format: uuid
+
+order_detail_uuid:
+  type: object
+  properties: 
+    order_detail_uuid:
+      description: 제품수주상세UUID
+      type: string
+      format: uuid
+
+# Others
+complete_state:
+  type: object
+  properties: 
+    complete_state:
+      description: 수주 완료여부(완료 / 미완료)
+      type: string
+      format: string
+
+balance:
+  type: object
+  properties: 
+    balance:
+      description: 미납 수량
+      type: number
+      format: numeric(19, 6)
+
+order_qty:
+  type: object
+  properties: 
+    order_qty:
+      description: 수주 수량
+      type: number
+      format: numeric(19, 6)

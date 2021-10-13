@@ -1,0 +1,107 @@
+# STD_INSP_ITEM_TB
+
+# Columns
+insp_item_id: 
+  type: object
+  properties: 
+    insp_item_id:
+      description: 검사항목ID
+      type: number
+      format: int4
+
+factory_id: 
+  type: object
+  properties: 
+    factory_id:
+      description: 공장ID
+      type: number
+      format: int4
+
+insp_item_type_id: 
+  type: object
+  properties: 
+    insp_item_type_id:
+      description: 검사항목 유형ID
+      type: number
+      format: int4
+      
+insp_item_cd: 
+  type: object
+  properties: 
+    insp_item_cd:
+      description: 검사항목코드
+      type: string
+      format: varchar(20)
+
+insp_item_nm: 
+  type: object
+  properties: 
+    insp_item_nm:
+      description: 검사항목명
+      type: string
+      format: varchar(50)
+
+insp_tool_id: 
+  type: object
+  properties: 
+    insp_tool_id:
+      description: 검사구ID
+      type: number
+      format: int4
+
+insp_method_id: 
+  type: object
+  properties: 
+    insp_method_id:
+      description: 검사 방법ID
+      type: number
+      format: int4
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 검사항목UUID
+      type: string
+      format: uuid
+
+# Uuids
+insp_item_uuid:
+  type: object
+  properties: 
+    insp_item_uuid:
+      description: 검사항목UUID
+      type: string
+      format: uuid
+
+factory_uuid:
+  type: object
+  properties: 
+    factory_uuid:
+      description: 공장UUID
+      type: string
+      format: uuid
+
+insp_item_type_uuid:
+  type: object
+  properties: 
+    insp_item_type_uuid:
+      description: 검사항목 유형UUID
+      type: string
+      format: uuid
+
+insp_tool_uuid:
+  type: object
+  properties: 
+    insp_tool_uuid:
+      description: 검사구UUID
+      type: string
+      format: uuid
+
+insp_method_uuid:
+  type: object
+  properties: 
+    insp_method_uuid:
+      description: 검사 방법UUID
+      type: string
+      format: uuid

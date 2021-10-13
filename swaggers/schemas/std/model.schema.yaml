@@ -1,0 +1,43 @@
+# STD_MODEL_TB
+
+# Columns
+model_id: 
+  type: object
+  properties: 
+    model_id:
+      description: 모델ID
+      type: number
+      format: int4
+
+model_cd: 
+  type: object
+  properties: 
+    model_cd:
+      description: 모델코드
+      type: string
+      format: varchar(20)
+
+model_nm: 
+  type: object
+  properties: 
+    model_nm:
+      description: 모델명
+      type: string
+      format: varchar(50)
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 모델UUID
+      type: string
+      format: uuid
+
+# Uuids
+model_uuid:
+  type: object
+  properties: 
+    model_uuid:
+      description: 모델UUID
+      type: string
+      format: uuid

@@ -1,0 +1,155 @@
+get:
+  description: |
+    하나의 수입검사 성적서 데이터와 하위 상세 목록을 조회합니다. 
+  summary: 수입검사 성적서 및 하위 상세 데이터 조회
+  tags:
+    - 수입검사 성적서(ReceiveInsp)
+  parameters:
+    - name: uuid
+      in: path
+      required: true
+      description: 수입검사 성적서의 UUID 를 입력합니다.
+      schema:
+        type: string
+        format: uuid
+
+  responses:
+    200:
+      description: Read OK
+      content:
+        application/json:
+          schema: 
+            allOf:
+              - $ref: ../../schemas/common/default-response.schema.yaml
+              - type: object
+                properties:
+                  datas:
+                    description: Enable
+                    type: object
+                    properties:
+                      value:
+                        description: Enable
+                        type: object
+                        properties:
+                          count: 
+                            description: 영향받은 데이터의 개수
+                            type: number
+                            format: int32
+                            minimum: 0
+                      raws:
+                        description: 수입검사 성적서 및 하위 상세 데이터 목록
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            header:
+                              description: Header Data
+                              type: object
+                              allOf:
+                                - $ref: ../../schemas/qms/insp-result.schema.yaml#/insp_result_uuid
+                                - $ref: ../../schemas/qms/insp-result.schema.yaml#/factory_uuid
+                                - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
+                                - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
+                                - $ref: ../../schemas/qms/insp-result.schema.yaml#/insp_type_cd
+                                - $ref: ../../schemas/adm/insp-type.schema.yaml#/insp_type_nm
+                                - $ref: ../../schemas/qms/insp-result.schema.yaml#/insp_detail_type_cd
+                                - $ref: ../../schemas/adm/insp-detail-type.schema.yaml#/insp_detail_type_nm
+                                - $ref: ../../schemas/qms/insp-result.schema.yaml#/insp_handling_type_cd
+                                - $ref: ../../schemas/adm/insp-handling-type.schema.yaml#/insp_handling_type_nm
+                                - $ref: ../../schemas/qms/insp-result.schema.yaml#/receive_detail_uuid
+                                - $ref: ../../schemas/mat/receive-detail.schema.yaml#/stmt_no_sub
+                                - $ref: ../../schemas/mat/receive.schema.yaml#/receive_date
+                                - $ref: ../../schemas/mat/receive.schema.yaml#/partner_uuid
+                                - $ref: ../../schemas/std/partner.schema.yaml#/partner_nm
+                                - $ref: ../../schemas/qms/insp-result.schema.yaml#/insp_uuid
+                                - $ref: ../../schemas/qms/insp.schema.yaml#/insp_no
+                                - $ref: ../../schemas/qms/insp-result.schema.yaml#/prod_uuid
+                                - $ref: ../../schemas/std/prod.schema.yaml#/prod_no
+                                - $ref: ../../schemas/std/prod.schema.yaml#/prod_nm
+                                - $ref: ../../schemas/std/prod.schema.yaml#/item_type_uuid
+                                - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_cd
+                                - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_nm
+                                - $ref: ../../schemas/std/prod.schema.yaml#/prod_type_uuid
+                                - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_cd
+                                - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_nm
+                                - $ref: ../../schemas/std/prod.schema.yaml#/model_uuid
+                                - $ref: ../../schemas/std/model.schema.yaml#/model_cd
+                                - $ref: ../../schemas/std/model.schema.yaml#/model_nm
+                                - $ref: ../../schemas/std/prod.schema.yaml#/rev
+                                - $ref: ../../schemas/std/prod.schema.yaml#/prod_std
+                                - $ref: ../../schemas/std/prod.schema.yaml#/unit_uuid
+                                - $ref: ../../schemas/std/unit.schema.yaml#/unit_cd
+                                - $ref: ../../schemas/std/unit.schema.yaml#/unit_nm
+                                - $ref: ../../schemas/qms/insp-result.schema.yaml#/lot_no
+                                - $ref: ../../schemas/qms/insp-result.schema.yaml#/emp_uuid
+                                - $ref: ../../schemas/std/emp.schema.yaml#/emp_cd
+                                - $ref: ../../schemas/std/emp.schema.yaml#/emp_nm
+                                - $ref: ../../schemas/qms/insp-result.schema.yaml#/reg_date
+                                - $ref: ../../schemas/qms/insp-result.schema.yaml#/insp_result_fg
+                                - $ref: ../../schemas/qms/insp-result.schema.yaml#/insp_result_state
+                                - $ref: ../../schemas/qms/insp-result.schema.yaml#/insp_qty
+                                - $ref: ../../schemas/qms/insp-result.schema.yaml#/pass_qty
+                                - $ref: ../../schemas/qms/insp-result.schema.yaml#/reject_qty
+                                - $ref: ../../schemas/qms/insp-result.schema.yaml#/reject_uuid
+                                - $ref: ../../schemas/std/reject.schema.yaml#/reject_cd
+                                - $ref: ../../schemas/std/reject.schema.yaml#/reject_nm
+                                - $ref: ../../schemas/std/reject.schema.yaml#/reject_type_uuid
+                                - $ref: ../../schemas/std/reject-type.schema.yaml#/reject_type_cd
+                                - $ref: ../../schemas/std/reject-type.schema.yaml#/reject_type_nm
+                                - $ref: ../../schemas/qms/insp-result.schema.yaml#/max_sample_cnt
+                                - $ref: ../../schemas/qms/insp-result.schema.yaml#/to_store_uuid
+                                - $ref: ../../schemas/std/store.schema.yaml#/to_store_cd
+                                - $ref: ../../schemas/std/store.schema.yaml#/to_store_nm
+                                - $ref: ../../schemas/qms/insp-result.schema.yaml#/to_location_uuid
+                                - $ref: ../../schemas/std/location.schema.yaml#/to_location_cd
+                                - $ref: ../../schemas/std/location.schema.yaml#/to_location_nm
+                                - $ref: ../../schemas/qms/insp-result.schema.yaml#/reject_store_uuid
+                                - $ref: ../../schemas/std/store.schema.yaml#/reject_store_cd
+                                - $ref: ../../schemas/std/store.schema.yaml#/reject_store_nm
+                                - $ref: ../../schemas/qms/insp-result.schema.yaml#/reject_location_uuid
+                                - $ref: ../../schemas/std/location.schema.yaml#/reject_location_cd
+                                - $ref: ../../schemas/std/location.schema.yaml#/reject_location_nm
+                                - $ref: ../../schemas/qms/insp-result.schema.yaml#/remark
+                                - $ref: ../../schemas/common/timestamp.schema.yaml
+                            details:
+                              description: Details Data
+                              type: array
+                              items:
+                                type: object
+                                allOf:        
+                                  - $ref: ../../schemas/qms/insp-result-detail-info.schema.yaml#/insp_result_detail_info_uuid
+                                  - $ref: ../../schemas/qms/insp-result-detail-info.schema.yaml#/factory_uuid
+                                  - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
+                                  - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
+                                  - $ref: ../../schemas/qms/insp-result-detail-info.schema.yaml#/insp_result_uuid
+                                  - $ref: ../../schemas/qms/insp-result-detail-info.schema.yaml#/insp_detail_uuid
+                                  - $ref: ../../schemas/std/insp-item.schema.yaml#/insp_item_type_uuid
+                                  - $ref: ../../schemas/std/insp-item-type.schema.yaml#/insp_item_type_cd
+                                  - $ref: ../../schemas/std/insp-item-type.schema.yaml#/insp_item_type_nm
+                                  - $ref: ../../schemas/qms/insp-detail.schema.yaml#/insp_item_uuid
+                                  - $ref: ../../schemas/std/insp-item.schema.yaml#/insp_item_cd
+                                  - $ref: ../../schemas/std/insp-item.schema.yaml#/insp_item_nm
+                                  - $ref: ../../schemas/qms/insp-detail.schema.yaml#/insp_item_desc
+                                  - $ref: ../../schemas/qms/insp-detail.schema.yaml#/spec_std
+                                  - $ref: ../../schemas/qms/insp-detail.schema.yaml#/spec_min
+                                  - $ref: ../../schemas/qms/insp-detail.schema.yaml#/spec_max
+                                  - $ref: ../../schemas/qms/insp-detail.schema.yaml#/insp_method_uuid
+                                  - $ref: ../../schemas/std/insp-method.schema.yaml#/insp_method_cd
+                                  - $ref: ../../schemas/std/insp-method.schema.yaml#/insp_method_nm
+                                  - $ref: ../../schemas/qms/insp-detail.schema.yaml#/insp_tool_uuid
+                                  - $ref: ../../schemas/std/insp-tool.schema.yaml#/insp_tool_cd
+                                  - $ref: ../../schemas/std/insp-tool.schema.yaml#/insp_tool_nm
+                                  - $ref: ../../schemas/qms/insp-detail.schema.yaml#/sample_cnt
+                                  - $ref: ../../schemas/qms/insp-detail.schema.yaml#/insp_cycle
+                                  - $ref: ../../schemas/qms/insp-detail.schema.yaml#/sortby
+                                  - $ref: ../../schemas/qms/insp-result-detail-info.schema.yaml#/insp_result_fg
+                                  - $ref: ../../schemas/qms/insp-result-detail-info.schema.yaml#/insp_result_state
+                                  - $ref: ../../schemas/qms/insp-result-detail-info.schema.yaml#/remark
+                                  - $ref: ../../schemas/qms/insp-result-detail-value.schema.yaml#/xn_insp_result_detail_value_uuid
+                                  - $ref: ../../schemas/qms/insp-result-detail-value.schema.yaml#/xn_sample_no
+                                  - $ref: ../../schemas/qms/insp-result-detail-value.schema.yaml#/xn_insp_value
+                                  - $ref: ../../schemas/qms/insp-result-detail-value.schema.yaml#/xn_insp_result_fg
+                                  - $ref: ../../schemas/qms/insp-result-detail-value.schema.yaml#/xn_insp_result_state
+                                  - $ref: ../../schemas/common/timestamp.schema.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

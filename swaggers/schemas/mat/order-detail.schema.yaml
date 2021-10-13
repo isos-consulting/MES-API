@@ -1,0 +1,252 @@
+# MAT_ORDER_DETAIL_TB
+
+# Columns
+order_detail_id: 
+  type: object
+  properties: 
+    order_detail_id:
+      description: 자재발주상세ID
+      type: number
+      format: int4
+      
+order_id: 
+  type: object
+  properties: 
+    order_id:
+      description: 자재발주ID
+      type: number
+      format: int4
+      
+seq: 
+  type: object
+  properties: 
+    seq:
+      description: 발주 순번
+      type: number
+      format: int4
+
+factory_id: 
+  type: object
+  properties: 
+    factory_id:
+      description: 공장ID
+      type: number
+      format: int4
+
+prod_id: 
+  type: object
+  properties: 
+    prod_id:
+      description: 품목ID
+      type: number
+      format: int4
+
+unit_id: 
+  type: object
+  properties: 
+    unit_id:
+      description: 단위ID
+      type: number
+      format: int4
+
+qty: 
+  type: object
+  properties: 
+    qty:
+      description: 수량
+      type: number
+      format: numeric(19, 6)
+
+price: 
+  type: object
+  properties: 
+    price:
+      description: 금액
+      type: number
+      format: numeric(19, 6)
+
+money_unit_id: 
+  type: object
+  properties: 
+    money_unit_id:
+      description: 화폐 단위ID
+      type: number
+      format: int4
+      
+exchange: 
+  type: object
+  properties: 
+    exchange:
+      description: 환율
+      type: string
+      format: numeric(19, 6)
+
+total_price: 
+  type: object
+  properties: 
+    total_price:
+      description: 합계 금액
+      type: number
+      format: numeric(19, 6)
+
+unit_qty: 
+  type: object
+  properties: 
+    unit_qty:
+      description: 단위 수량
+      type: number
+      format: numeric(19, 6)
+
+due_date: 
+  type: object
+  properties: 
+    due_date:
+      description: 납기 일시
+      type: string
+      format: date-time
+
+complete_fg: 
+  type: object
+  properties: 
+    complete_fg:
+      description: 발주완료 유무
+      type: boolean
+      format: boolean
+
+remark: 
+  type: object
+  properties: 
+    remark:
+      description: 비고
+      type: string
+      format: varchar(250)
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 자재발주상세UUID
+      type: string
+      format: uuid
+
+# Uuids
+order_detail_uuid:
+  type: object
+  properties: 
+    order_detail_uuid:
+      description: 자재발주상세UUID
+      type: string
+      format: uuid
+
+order_uuid:
+  type: object
+  properties: 
+    order_uuid:
+      description: 자재발주UUID
+      type: string
+      format: uuid
+
+factory_uuid:
+  type: object
+  properties: 
+    factory_uuid:
+      description: 공장UUID
+      type: string
+      format: uuid
+
+prod_uuid:
+  type: object
+  properties: 
+    prod_uuid:
+      description: 품목UUID
+      type: string
+      format: uuid
+
+unit_uuid:
+  type: object
+  properties: 
+    unit_uuid:
+      description: 단위UUID
+      type: string
+      format: uuid
+
+money_unit_uuid:
+  type: object
+  properties: 
+    money_unit_uuid:
+      description: 화폐 단위UUID
+      type: string
+      format: uuid
+
+to_store_uuid:
+  type: object
+  properties: 
+    to_store_uuid:
+      description: 입고 창고UUID
+      type: string
+      format: uuid
+
+to_location_uuid:
+  type: object
+  properties: 
+    to_location_uuid:
+      description: 입고 위치UUID
+      type: string
+      format: uuid
+
+# Others
+stmt_no_sub: 
+  type: object
+  properties: 
+    stmt_no_sub:
+      description: 상세전표번호
+      type: string
+      format: varchar
+
+to_store_cd: 
+  type: object
+  properties: 
+    to_store_cd:
+      description: 입고 창고코드
+      type: string
+      format: varchar(20)
+
+to_store_nm: 
+  type: object
+  properties: 
+    to_store_nm:
+      description: 입고 창고명
+      type: string
+      format: varchar(50)
+
+to_location_cd: 
+  type: object
+  properties: 
+    to_location_cd:
+      description: 입고 위치코드
+      type: string
+      format: varchar(20)
+
+to_location_nm: 
+  type: object
+  properties: 
+    to_location_nm:
+      description: 입고 위치명
+      type: string
+      format: varchar(50)
+
+complete_state:
+  type: object
+  properties: 
+    complete_state:
+      description: 발주 완료여부(완료 / 미완료)
+      type: string
+      format: string
+
+balance:
+  type: object
+  properties: 
+    balance:
+      description: 미납 수량
+      type: number
+      format: numeric(19, 6)

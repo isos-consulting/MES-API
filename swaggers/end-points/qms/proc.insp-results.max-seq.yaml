@@ -1,0 +1,55 @@
+get:
+  description: |
+    생산실적기준 공정검사 성적서의 최대 차수를 조회합니다.
+  summary: 공정검사 성적서 최대 차수 조회
+  tags:
+    - 공정검사 성적서(ProcInsp)
+  parameters:
+    - name: work_uuid
+      in: query
+      required: true
+      description: |
+        생산실적의 UUID를 입력하여 생산실적에 따라 공정검사 성적서의 최대 차수를 조회합니다.
+      schema:
+        type: string
+        format: uuid
+
+    - name: insp_detail_type
+      in: query
+      required: true
+      description: |
+        성적서의 최대 차수 조회시 세부검사유형을 입력합니다. <br/> 
+        [selfProc]: 자주검사 조회 <br/>
+        [patrolProc]: 순회검사 조회
+      schema:
+        type: string
+        format: string
+
+  responses:
+    200:
+      description: Read OK
+      content:
+        application/json:
+          schema: 
+            allOf:
+              - $ref: ../../schemas/common/default-response.schema.yaml
+              - type: object
+                properties:
+                  datas:
+                    description: Enable
+                    type: object
+                    properties:
+                      value:
+                        description: Enable
+                        type: object
+                        properties:
+                          seq: 
+                            description: 실적 기준 공정검사 성적서의 최대 차수
+                            type: number
+                            format: int32
+                            minimum: 0
+                      raws:
+                        description: Disable
+                        type: array
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

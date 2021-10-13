@@ -1,0 +1,93 @@
+get:
+  description: |
+    생산실적 및 세부검사유형에 따라 공정검사 성적서상세 데이터를 조회합니다.
+  summary: 실적대비 공정검사 성적서상세 데이터 조회
+  tags:
+    - 공정검사 성적서(ProcInsp)
+  parameters:
+    - name: work_uuid
+      in: query
+      required: true
+      description: 생산실적의 UUID 를 입력합니다.
+      schema:
+        type: string
+        format: uuid
+
+    - name: insp_detail_type
+      in: query
+      required: true
+      description: |
+        공정검사 성적서 조회시 공정검사 유형을 입력합니다. <br/> 
+        [all]: 전체 조회 <br/>
+        [selfProc]: 자주검사 성적서 조회 <br/>
+        [patrolProc]: 순회검사 성적서 조회 <br/>
+      schema:
+        type: string
+        format: string
+
+  responses:
+    200:
+      description: Read OK
+      content:
+        application/json:
+          schema: 
+            allOf:
+              - $ref: ../../schemas/common/default-response.schema.yaml
+              - type: object
+                properties:
+                  datas:
+                    description: Enable
+                    type: object
+                    properties:
+                      value:
+                        description: Enable
+                        type: object
+                        properties:
+                          count: 
+                            description: 영향받은 데이터의 개수
+                            type: number
+                            format: int32
+                            minimum: 0
+                        allOf:
+                          - $ref: ../../schemas/qms/insp-result.schema.yaml#/max_sample_cnt
+                      raws:
+                        description: 공정검사 성적서 상세 데이터 목록
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: ../../schemas/qms/insp-result-detail-info.schema.yaml#/insp_result_detail_info_uuid
+                            - $ref: ../../schemas/qms/insp-result-detail-info.schema.yaml#/factory_uuid
+                            - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
+                            - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
+                            - $ref: ../../schemas/qms/insp-result-detail-info.schema.yaml#/insp_result_uuid
+                            - $ref: ../../schemas/qms/insp-result-detail-info.schema.yaml#/insp_detail_uuid
+                            - $ref: ../../schemas/std/insp-item.schema.yaml#/insp_item_type_uuid
+                            - $ref: ../../schemas/std/insp-item-type.schema.yaml#/insp_item_type_cd
+                            - $ref: ../../schemas/std/insp-item-type.schema.yaml#/insp_item_type_nm
+                            - $ref: ../../schemas/qms/insp-detail.schema.yaml#/insp_item_uuid
+                            - $ref: ../../schemas/std/insp-item.schema.yaml#/insp_item_cd
+                            - $ref: ../../schemas/std/insp-item.schema.yaml#/insp_item_nm
+                            - $ref: ../../schemas/qms/insp-detail.schema.yaml#/insp_item_desc
+                            - $ref: ../../schemas/qms/insp-detail.schema.yaml#/spec_std
+                            - $ref: ../../schemas/qms/insp-detail.schema.yaml#/spec_min
+                            - $ref: ../../schemas/qms/insp-detail.schema.yaml#/spec_max
+                            - $ref: ../../schemas/qms/insp-detail.schema.yaml#/insp_method_uuid
+                            - $ref: ../../schemas/std/insp-method.schema.yaml#/insp_method_cd
+                            - $ref: ../../schemas/std/insp-method.schema.yaml#/insp_method_nm
+                            - $ref: ../../schemas/qms/insp-detail.schema.yaml#/insp_tool_uuid
+                            - $ref: ../../schemas/std/insp-tool.schema.yaml#/insp_tool_cd
+                            - $ref: ../../schemas/std/insp-tool.schema.yaml#/insp_tool_nm
+                            - $ref: ../../schemas/qms/insp-detail.schema.yaml#/sample_cnt
+                            - $ref: ../../schemas/qms/insp-detail.schema.yaml#/insp_cycle
+                            - $ref: ../../schemas/qms/insp-detail.schema.yaml#/sortby
+                            - $ref: ../../schemas/qms/insp-result-detail-info.schema.yaml#/insp_result_fg
+                            - $ref: ../../schemas/qms/insp-result-detail-info.schema.yaml#/insp_result_state
+                            - $ref: ../../schemas/qms/insp-result-detail-info.schema.yaml#/remark
+                            - $ref: ../../schemas/qms/insp-result-detail-value.schema.yaml#/xn_insp_result_detail_value_uuid
+                            - $ref: ../../schemas/qms/insp-result-detail-value.schema.yaml#/xn_sample_no
+                            - $ref: ../../schemas/qms/insp-result-detail-value.schema.yaml#/xn_insp_value
+                            - $ref: ../../schemas/qms/insp-result-detail-value.schema.yaml#/xn_insp_result_fg
+                            - $ref: ../../schemas/qms/insp-result-detail-value.schema.yaml#/xn_insp_result_state
+                            - $ref: ../../schemas/common/timestamp.schema.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

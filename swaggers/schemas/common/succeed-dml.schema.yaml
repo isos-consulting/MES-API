@@ -1,0 +1,19 @@
+allOf:
+  - $ref: 'default-response.schema.yaml'
+  - type: object
+    properties:
+      datas:
+        type: object
+        properties:
+          value:
+            description: Enable (영향받은 데이터의 개수)
+            type: object
+            properties:
+              count: 
+                description: 영향받은 데이터의 개수
+                type: number
+                format: int32
+                minimum: 0
+          raws:
+            description: Enable (영향받은 데이터 목록)
+            type: array

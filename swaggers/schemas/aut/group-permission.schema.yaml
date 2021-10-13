@@ -1,0 +1,75 @@
+# AUT_GROUP_PERMISSION_TB
+
+# Columns
+group_permission_id: 
+  type: object
+  properties: 
+    group_permission_id:
+      description: 그룹별 메뉴권한ID
+      type: number
+      format: int4
+      
+group_id: 
+  type: object
+  properties: 
+    group_id:
+      description: 그룹ID
+      type: number
+      format: int4
+
+menu_id: 
+  type: object
+  properties: 
+    menu_id:
+      description: 메뉴ID
+      type: number
+      format: int4
+
+permission_id: 
+  type: object
+  properties: 
+    permission_id:
+      description: 권한ID
+      type: number
+      format: int4
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 그룹별 메뉴권한UUID
+      type: string
+      format: uuid
+
+# Uuids
+group_permission_uuid:
+  type: object
+  properties: 
+    group_permission_uuid:
+      description: 그룹별 메뉴권한UUID
+      type: string
+      format: uuid
+      
+group_uuid:
+  type: object
+  properties: 
+    group_uuid:
+      description: 그룹UUID
+      type: string
+      format: uuid
+
+menu_uuid:
+  type: object
+  properties: 
+    menu_uuid:
+      description: 메뉴UUID
+      type: string
+      format: uuid
+
+permission_uuid:
+  type: object
+  properties: 
+    permission_uuid:
+      description: 권한UUID
+      type: string
+      format: uuid

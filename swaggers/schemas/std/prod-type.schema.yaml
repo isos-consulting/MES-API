@@ -1,0 +1,43 @@
+# STD_PROD_TYPE_TB
+
+# Columns
+prod_type_id: 
+  type: object
+  properties: 
+    prod_type_id:
+      description: 제품 유형ID
+      type: number
+      format: int4
+      
+prod_type_cd: 
+  type: object
+  properties: 
+    prod_type_cd:
+      description: 제품 유형코드
+      type: string
+      format: varchar(20)
+
+prod_type_nm: 
+  type: object
+  properties: 
+    prod_type_nm:
+      description: 제품 유형명
+      type: string
+      format: varchar(50)
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 제품 유형UUID
+      type: string
+      format: uuid
+
+# Uuids
+prod_type_uuid:
+  type: object
+  properties: 
+    prod_type_uuid:
+      description: 제품 유형UUID
+      type: string
+      format: uuid

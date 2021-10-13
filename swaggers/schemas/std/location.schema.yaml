@@ -1,0 +1,172 @@
+# STD_LOCATION_TB
+
+# Columns
+location_id: 
+  type: object
+  properties: 
+    location_id:
+      description: 위치ID
+      type: number
+      format: int4
+
+factory_id: 
+  type: object
+  properties: 
+    factory_id:
+      description: 공장ID
+      type: number
+      format: int4
+
+store_id: 
+  type: object
+  properties: 
+    store_id:
+      description: 창고ID
+      type: number
+      format: int4
+      
+location_cd: 
+  type: object
+  properties: 
+    location_cd:
+      description: 위치코드
+      type: string
+      format: varchar(20)
+
+location_nm: 
+  type: object
+  properties: 
+    location_nm:
+      description: 위치명
+      type: string
+      format: varchar(50)
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 위치UUID
+      type: string
+      format: uuid
+
+# Uuids
+location_uuid:
+  type: object
+  properties: 
+    location_uuid:
+      description: 위치UUID
+      type: string
+      format: uuid
+
+from_location_uuid:
+  type: object
+  properties: 
+    from_location_uuid:
+      description: 출고 위치UUID
+      type: string
+      format: uuid
+      
+to_location_uuid:
+  type: object
+  properties: 
+    to_location_uuid:
+      description: 입고 위치UUID
+      type: string
+      format: uuid
+
+factory_uuid:
+  type: object
+  properties: 
+    factory_uuid:
+      description: 공장UUID
+      type: string
+      format: uuid
+
+store_uuid:
+  type: object
+  properties: 
+    store_uuid:
+      description: 창고UUID
+      type: string
+      format: uuid
+
+# Others
+from_location_cd: 
+  type: object
+  properties: 
+    from_location_cd:
+      description: 출고 위치코드
+      type: string
+      format: varchar(20)
+
+from_location_nm: 
+  type: object
+  properties: 
+    from_location_nm:
+      description: 출고 위치명
+      type: string
+      format: varchar(50)
+
+to_location_cd: 
+  type: object
+  properties: 
+    to_location_cd:
+      description: 입고 위치코드
+      type: string
+      format: varchar(20)
+
+to_location_nm: 
+  type: object
+  properties: 
+    to_location_nm:
+      description: 입고 위치명
+      type: string
+      format: varchar(50)
+
+income_location_cd: 
+  type: object
+  properties: 
+    income_location_cd:
+      description: 분해시 입고 위치코드
+      type: string
+      format: varchar(20)
+
+income_location_nm: 
+  type: object
+  properties: 
+    income_location_nm:
+      description: 분해시 입고 위치명
+      type: string
+      format: varchar(50)
+
+return_location_cd: 
+  type: object
+  properties: 
+    return_location_cd:
+      description: 반출 위치코드
+      type: string
+      format: varchar(20)
+
+return_location_nm: 
+  type: object
+  properties: 
+    return_location_nm:
+      description: 반출 위치명
+      type: string
+      format: varchar(50)
+
+reject_location_cd: 
+  type: object
+  properties: 
+    reject_location_cd:
+      description: 부적합 입고 위치코드
+      type: string
+      format: varchar(20)
+
+reject_location_nm: 
+  type: object
+  properties: 
+    reject_location_nm:
+      description: 부적합 입고 위치명
+      type: string
+      format: varchar(50)

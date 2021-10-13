@@ -1,0 +1,139 @@
+# STD_CUSTOMER_PRICE_TB
+
+# Columns
+customer_price_id: 
+  type: object
+  properties: 
+    customer_price_id:
+      description: 고객사 단가ID
+      type: number
+      format: int4
+      
+partner_id: 
+  type: object
+  properties: 
+    partner_id:
+      description: 거래처ID
+      type: number
+      format: int4
+
+prod_id: 
+  type: object
+  properties: 
+    prod_id:
+      description: 품목ID
+      type: number
+      format: int4
+
+price: 
+  type: object
+  properties: 
+    price:
+      description: 단가
+      type: number
+      format: numeric(19, 6)
+
+money_unit_id: 
+  type: object
+  properties: 
+    money_unit_id:
+      description: 화폐단위ID
+      type: number
+      format: int4
+
+price_type_id: 
+  type: object
+  properties: 
+    price_type_id:
+      description: 단가유형ID
+      type: number
+      format: int4
+
+start_date: 
+  type: object
+  properties: 
+    start_date:
+      description: 단가 적용일자
+      type: string
+      format: date
+
+end_date: 
+  type: object
+  properties: 
+    end_date:
+      description: 단가 적용종료일자
+      type: string
+      format: date
+      
+retroactive_price: 
+  type: object
+  properties: 
+    retroactive_price:
+      description: 소급단가
+      type: number
+      format: numeric(19, 6)
+
+division: 
+  type: object
+  properties: 
+    division:
+      description: 배분율
+      type: number
+      format: int4
+
+remark: 
+  type: object
+  properties: 
+    remark:
+      description: 비고
+      type: string
+      format: nvarchar(250)
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 거래처 단가UUID
+      type: string
+      format: uuid
+
+# Uuids
+customer_price_uuid:
+  type: object
+  properties: 
+    customer_price_uuid:
+      description: 고객사 단가UUID
+      type: string
+      format: uuid
+      
+partner_uuid:
+  type: object
+  properties: 
+    partner_uuid:
+      description: 거래처UUID
+      type: string
+      format: uuid
+
+prod_uuid:
+  type: object
+  properties: 
+    prod_uuid:
+      description: 품목UUID
+      type: string
+      format: uuid
+
+money_unit_uuid:
+  type: object
+  properties: 
+    money_unit_uuid:
+      description: 화폐단위UUID
+      type: string
+      format: uuid
+
+price_type_uuid:
+  type: object
+  properties: 
+    price_type_uuid:
+      description: 단가유형UUID
+      type: string
+      format: uuid

@@ -1,0 +1,131 @@
+get:
+  description: |
+    기준 유형에 따라 수불유형별 수불부를 조회합니다.
+  summary: 유형별수불부 조회
+  tags:
+    - 재고관리(Store)
+  parameters:
+    - name: grouped_type
+      in: query
+      required: true
+      description: |
+        재고 조회시 분류 유형을 입력합니다. <br/> 
+        [all]: 공장, 품목, 부적합, LotNo, 창고, 위치 <br/>
+        [factory]: 공장, 품목, 부적합 <br/>
+        [store]: 공장, 품목, 부적합, 창고 <br/>
+        [lotNo]: 공장, 품목, 부적합, LotNo, 창고 <br/>
+        [location]: 공장, 품목, 부적합, 창고, 위치 <br/>
+      schema:
+        type: string
+        format: string
+
+    - name: start_date
+      in: query
+      required: true
+      description: |
+        수불부를 조회 할 기준 시작일자를 입력합니다.
+      schema:
+        type: string
+        format: date
+
+    - name: end_date
+      in: query
+      required: true
+      description: |
+        수불부를 조회 할 기준 종료일자를 입력합니다.
+      schema:
+        type: string
+        format: date
+
+    - name: reject_fg
+      in: query
+      required: true
+      description: |
+        수불부 조회시 True를 입력하면 0 부적합내용을 구분하여 조회합니다. <br/> 
+        [전체 조회시 입력하지 않습니다.]
+      schema:
+        type: boolean
+        format: boolean
+
+    - name: factory_uuid
+      in: query
+      required: true
+      description: | 
+        공장의 UUID를 입력하여 공장에 따라 수불부 데이터를 조회합니다.
+      schema:
+        type: string
+        format: uuid
+
+    - name: store_uuid
+      in: query
+      description: | 
+        창고의 UUID를 입력하여 창고에 따라 수불부 데이터를 조회합니다. <br/> 
+        [전체 조회시 입력하지 않습니다.]
+      schema:
+        type: string
+        format: uuid
+
+  responses:
+    200:
+      description: Read OK
+      content:
+        application/json:
+          schema: 
+            allOf:
+              - $ref: ../../schemas/common/default-response.schema.yaml
+              - type: object
+                properties:
+                  datas:
+                    description: Enable
+                    type: object
+                    properties:
+                      value:
+                        description: Enable
+                        type: object
+                        properties:
+                          count: 
+                            description: 영향받은 데이터의 개수
+                            type: number
+                            format: int32
+                            minimum: 0
+                      raws:
+                        description: 총괄수불부 데이터 목록
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: ../../schemas/inv/store.schema.yaml#/factory_uuid
+                            - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
+                            - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
+                            - $ref: ../../schemas/inv/store.schema.yaml#/prod_uuid
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_no
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/item_type_uuid
+                            - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_cd
+                            - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_type_uuid
+                            - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_cd
+                            - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/model_uuid
+                            - $ref: ../../schemas/std/model.schema.yaml#/model_cd
+                            - $ref: ../../schemas/std/model.schema.yaml#/model_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/rev
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_std
+                            - $ref: ../../schemas/std/prod.schema.yaml#/unit_uuid
+                            - $ref: ../../schemas/std/unit.schema.yaml#/unit_cd
+                            - $ref: ../../schemas/std/unit.schema.yaml#/unit_nm
+                            - $ref: ../../schemas/inv/store.schema.yaml#/reject_uuid
+                            - $ref: ../../schemas/std/reject.schema.yaml#/reject_cd
+                            - $ref: ../../schemas/std/reject.schema.yaml#/reject_nm
+                            - $ref: ../../schemas/inv/store.schema.yaml#/lot_no
+                            - $ref: ../../schemas/inv/store.schema.yaml#/qty
+                            - $ref: ../../schemas/inv/store.schema.yaml#/store_uuid
+                            - $ref: ../../schemas/std/store.schema.yaml#/store_cd
+                            - $ref: ../../schemas/std/store.schema.yaml#/store_nm
+                            - $ref: ../../schemas/inv/store.schema.yaml#/location_uuid
+                            - $ref: ../../schemas/std/location.schema.yaml#/location_cd
+                            - $ref: ../../schemas/std/location.schema.yaml#/location_nm
+                            - $ref: ../../schemas/inv/store.schema.yaml#/tran_type_cd_in_qty
+                            - $ref: ../../schemas/inv/store.schema.yaml#/tran_type_cd_out_qty
+                            
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

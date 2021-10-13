@@ -1,0 +1,280 @@
+get:
+  description: |
+    외주출고 데이터 목록을 조회합니다. 
+  summary: 외주출고 데이터 조회
+  tags:
+    - 외주출고(Release)
+  parameters:
+    - name: factory_uuid
+      in: query
+      description: 공장의 UUID를 입력하여 공장에 따라 외주출고 데이터를 조회합니다. [전체 조회시 입력하지 않습니다.]
+      schema:
+        type: string
+        format: uuid
+        
+    - name: start_date
+      in: query
+      required: true
+      description: 출하전표를 조회할 기준 시작일자를 입력합니다.
+      schema:
+        type: string
+        format: date
+        
+    - name: end_date
+      in: query
+      required: true
+      description: 출하전표를 조회할 기준 종료일자를 입력합니다.
+      schema:
+        type: string
+        format: date
+
+  responses:
+    200:
+      description: Read OK
+      content:
+        application/json:
+          schema: 
+            allOf:
+              - $ref: ../../schemas/common/default-response.schema.yaml
+              - type: object
+                properties:
+                  datas:
+                    description: Enable
+                    type: object
+                    properties:
+                      value:
+                        description: Enable
+                        type: object
+                        properties:
+                          count: 
+                            description: 영향받은 데이터의 개수
+                            type: number
+                            format: int32
+                            minimum: 0
+                      raws:
+                        description: 외주출고 데이터 목록
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: ../../schemas/out/release.schema.yaml#/release_uuid
+                            - $ref: ../../schemas/out/release.schema.yaml#/factory_uuid
+                            - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
+                            - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
+                            - $ref: ../../schemas/out/release.schema.yaml#/partner_uuid
+                            - $ref: ../../schemas/std/partner.schema.yaml#/partner_cd
+                            - $ref: ../../schemas/std/partner.schema.yaml#/partner_nm
+                            - $ref: ../../schemas/out/release.schema.yaml#/delivery_uuid
+                            - $ref: ../../schemas/std/delivery.schema.yaml#/delivery_cd
+                            - $ref: ../../schemas/std/delivery.schema.yaml#/delivery_nm
+                            - $ref: ../../schemas/out/release.schema.yaml#/stmt_no
+                            - $ref: ../../schemas/out/release.schema.yaml#/reg_date
+                            - $ref: ../../schemas/out/release.schema.yaml#/total_price
+                            - $ref: ../../schemas/out/release.schema.yaml#/total_qty
+                            - $ref: ../../schemas/out/release.schema.yaml#/remark
+                            - $ref: ../../schemas/common/timestamp.schema.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml
+
+post:
+  description: |
+    외주출고 전표 신규생성 및 상세전표를 추가 생성합니다. <br/>
+    상세전표 추가 생성시 header에 전표의 uuid를 입력해야 합니다.
+
+  summary: 외주출고 데이터 생성
+  tags:
+    - 외주출고(Release)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - header
+            - details
+          type: object
+          properties:
+            header:
+              description: Header Data
+              type: object
+              required:
+                - factory_uuid
+                - partner_uuid
+                - reg_date
+              allOf:
+                - $ref: ../../schemas/out/release.schema.yaml#/uuid
+                - $ref: ../../schemas/out/release.schema.yaml#/factory_uuid
+                - $ref: ../../schemas/out/release.schema.yaml#/partner_uuid
+                - $ref: ../../schemas/out/release.schema.yaml#/delivery_uuid
+                - $ref: ../../schemas/out/release.schema.yaml#/stmt_no
+                - $ref: ../../schemas/out/release.schema.yaml#/reg_date
+                - $ref: ../../schemas/out/release.schema.yaml#/remark
+            details:
+              description: Details Data
+              type: array
+              items:
+                required:
+                  - factory_uuid
+                  - prod_uuid
+                  - lot_no
+                  - qty
+                  - price
+                  - money_unit_uuid
+                  - exchange
+                  - from_store_uuid
+                  - from_location_uuid
+                type: object
+                allOf:        
+                  - $ref: ../../schemas/out/release-detail.schema.yaml#/release_uuid
+                  - $ref: ../../schemas/out/release-detail.schema.yaml#/factory_uuid
+                  - $ref: ../../schemas/out/release-detail.schema.yaml#/prod_uuid
+                  - $ref: ../../schemas/out/release-detail.schema.yaml#/lot_no
+                  - $ref: ../../schemas/out/release-detail.schema.yaml#/qty
+                  - $ref: ../../schemas/out/release-detail.schema.yaml#/price
+                  - $ref: ../../schemas/out/release-detail.schema.yaml#/money_unit_uuid
+                  - $ref: ../../schemas/out/release-detail.schema.yaml#/exchange
+                  - $ref: ../../schemas/out/release-detail.schema.yaml#/unit_qty
+                  - $ref: ../../schemas/out/release-detail.schema.yaml#/order_detail_uuid
+                  - $ref: ../../schemas/out/release-detail.schema.yaml#/from_store_uuid
+                  - $ref: ../../schemas/out/release-detail.schema.yaml#/from_location_uuid
+                  - $ref: ../../schemas/out/release-detail.schema.yaml#/remark
+                  - $ref: ../../schemas/out/release-detail.schema.yaml#/barcode
+  responses:
+    201:
+      $ref: ../../responses/common/succeed-create.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml
+
+put:
+  description: |
+    외주출고 전표 및 하위 상세전표 데이터를 수정합니다.
+  summary: 외주출고 데이터 수정
+  tags:
+    - 외주출고(Release)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - header
+            - details
+          type: object
+          properties:
+            header:
+              description: Header Data
+              type: object
+              required:
+                - uuid
+              allOf:
+                - $ref: ../../schemas/out/release.schema.yaml#/uuid
+                - $ref: ../../schemas/out/release.schema.yaml#/delivery_uuid
+                - $ref: ../../schemas/out/release.schema.yaml#/stmt_no
+                - $ref: ../../schemas/out/release.schema.yaml#/remark
+            details:
+              description: Details Data
+              type: array
+              items:
+                required:
+                  - uuid
+                  - qty
+                  - price
+                  - money_unit_uuid
+                  - exchange
+                  - carry_fg
+                type: object
+                allOf:        
+                  - $ref: ../../schemas/out/release-detail.schema.yaml#/uuid
+                  - $ref: ../../schemas/out/release-detail.schema.yaml#/qty
+                  - $ref: ../../schemas/out/release-detail.schema.yaml#/price
+                  - $ref: ../../schemas/out/release-detail.schema.yaml#/money_unit_uuid
+                  - $ref: ../../schemas/out/release-detail.schema.yaml#/exchange
+                  - $ref: ../../schemas/out/release-detail.schema.yaml#/unit_qty
+                  - $ref: ../../schemas/out/release-detail.schema.yaml#/remark
+  responses:
+    201:
+      $ref: ../../responses/common/succeed-update.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml
+
+patch:
+  description: |
+    외주출고 전표 및 하위 상세전표 데이터를 부분 수정합니다.
+  summary: 외주출고 데이터 수정
+  tags:
+    - 외주출고(Release)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - header
+            - details
+          type: object
+          properties:
+            header:
+              description: Header Data
+              type: object
+              required:
+                - uuid
+              allOf:
+                - $ref: ../../schemas/out/release.schema.yaml#/uuid
+                - $ref: ../../schemas/out/release.schema.yaml#/delivery_uuid
+                - $ref: ../../schemas/out/release.schema.yaml#/stmt_no
+                - $ref: ../../schemas/out/release.schema.yaml#/remark
+            details:
+              description: Details Data
+              type: array
+              items:
+                required:
+                  - uuid
+                type: object
+                allOf:        
+                  - $ref: ../../schemas/out/release-detail.schema.yaml#/uuid
+                  - $ref: ../../schemas/out/release-detail.schema.yaml#/qty
+                  - $ref: ../../schemas/out/release-detail.schema.yaml#/price
+                  - $ref: ../../schemas/out/release-detail.schema.yaml#/money_unit_uuid
+                  - $ref: ../../schemas/out/release-detail.schema.yaml#/exchange
+                  - $ref: ../../schemas/out/release-detail.schema.yaml#/unit_qty
+                  - $ref: ../../schemas/out/release-detail.schema.yaml#/remark
+  responses:
+    201:
+      $ref: ../../responses/common/succeed-update.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml
+
+delete:
+  description: |
+    외주출고 전표 및 하위 상세전표 데이터를 삭제합니다. <br/>
+    전표의 하위 상세전표가 모두 삭제되는 경우 전표를 삭제합니다.
+  summary: 외주출고 데이터 삭제
+  tags:
+    - 외주출고(Release)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - header
+            - details
+          type: object
+          properties:
+            header:
+              description: Header Data
+              type: object
+              required:
+                - uuid
+              allOf:
+                - $ref: ../../schemas/out/release.schema.yaml#/uuid
+            details:
+              description: Details Data
+              type: array
+              items:
+                required:
+                  - uuid
+                type: object
+                allOf:        
+                  - $ref: ../../schemas/out/release-detail.schema.yaml#/uuid
+
+  responses:
+    200:
+      $ref: ../../responses/common/succeed-delete.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

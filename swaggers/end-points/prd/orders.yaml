@@ -1,0 +1,270 @@
+get:
+  description: |
+    작업지시 데이터 목록을 조회합니다.
+  summary: 작업지시 데이터 조회
+  tags:
+    - 작업지시(Order)
+  parameters:
+    - name: factory_uuid
+      in: query
+      description: |
+        공장의 UUID를 입력하여 공장에 따라 작업지시 데이터를 조회합니다. <br/>
+        [전체 조회시 입력하지 않습니다.]
+      schema:
+        type: string
+        format: uuid
+
+    - name: sal_order_detail_uuid
+      in: query
+      description: |
+        수주상세의 UUID를 입력하여 수주상세에 따라 작업지시 데이터를 조회합니다. <br/>
+        [전체 조회시 입력하지 않습니다.]
+      schema:
+        type: string
+        format: uuid
+
+    - name: order_state
+      in: query
+      required: true
+      description: |
+        데이터 조회시 작업지시 진행상태 유형을 입력합니다. <br/> 
+        [all]: 지시내역 전체 조회 <br/>
+        [notProgressing]: 미진행된 지시내역 조회 <br/>
+        [wait]: 대기중인 지시내역 조회 <br/>
+        [ongoing]: 생산 진행중인 지시내역 조회 <br/>
+        [complete]: 마감된 지시내역 조회
+      schema:
+        type: string
+        format: string
+
+    - name: start_date
+      in: query
+      description: |
+        작업지시 내역을 조회할 기준 시작일자를 입력합니다. <br/>
+        [전체 조회시 입력하지 않습니다.] <br/>
+        ❗ 작업지시 기준일자 검색 조건은 시작, 종료일자가 모두 입력되어야 동작됩니다.
+      schema:
+        type: string
+        format: date
+        
+    - name: end_date
+      in: query
+      description: |
+        작업지시 내역을 조회할 기준 종료일자를 입력합니다. <br/>
+        [전체 조회시 입력하지 않습니다.] <br/>
+        ❗ 작업지시 기준일자 검색 조건은 시작, 종료일자가 모두 입력되어야 동작됩니다.
+      schema:
+        type: string
+        format: date
+
+  responses:
+    200:
+      description: Read OK
+      content:
+        application/json:
+          schema: 
+            allOf:
+              - $ref: ../../schemas/common/default-response.schema.yaml
+              - type: object
+                properties:
+                  datas:
+                    description: Enable
+                    type: object
+                    properties:
+                      value:
+                        description: Enable
+                        type: object
+                        properties:
+                          count: 
+                            description: 영향받은 데이터의 개수
+                            type: number
+                            format: int32
+                            minimum: 0
+                      raws:
+                        description: 작업지시 데이터 목록
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: ../../schemas/prd/order.schema.yaml#/order_uuid
+                            - $ref: ../../schemas/prd/order.schema.yaml#/factory_uuid
+                            - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
+                            - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
+                            - $ref: ../../schemas/prd/order.schema.yaml#/reg_date
+                            - $ref: ../../schemas/prd/order.schema.yaml#/order_no
+                            - $ref: ../../schemas/prd/order.schema.yaml#/proc_uuid
+                            - $ref: ../../schemas/std/proc.schema.yaml#/proc_cd
+                            - $ref: ../../schemas/std/proc.schema.yaml#/proc_nm
+                            - $ref: ../../schemas/prd/order.schema.yaml#/workings_uuid
+                            - $ref: ../../schemas/std/workings.schema.yaml#/workings_cd
+                            - $ref: ../../schemas/std/workings.schema.yaml#/workings_nm
+                            - $ref: ../../schemas/prd/order.schema.yaml#/equip_uuid
+                            - $ref: ../../schemas/std/equip.schema.yaml#/equip_cd
+                            - $ref: ../../schemas/std/equip.schema.yaml#/equip_nm
+                            - $ref: ../../schemas/prd/order.schema.yaml#/prod_uuid
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_no
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/item_type_uuid
+                            - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_cd
+                            - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_type_uuid
+                            - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_cd
+                            - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/model_uuid
+                            - $ref: ../../schemas/std/model.schema.yaml#/model_cd
+                            - $ref: ../../schemas/std/model.schema.yaml#/model_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/rev
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_std
+                            - $ref: ../../schemas/std/prod.schema.yaml#/unit_uuid
+                            - $ref: ../../schemas/std/unit.schema.yaml#/unit_cd
+                            - $ref: ../../schemas/std/unit.schema.yaml#/unit_nm
+                            - $ref: ../../schemas/std/store.schema.yaml#/to_store_uuid
+                            - $ref: ../../schemas/std/store.schema.yaml#/to_store_cd
+                            - $ref: ../../schemas/std/store.schema.yaml#/to_store_nm
+                            - $ref: ../../schemas/std/location.schema.yaml#/to_location_uuid
+                            - $ref: ../../schemas/std/location.schema.yaml#/to_location_cd
+                            - $ref: ../../schemas/std/location.schema.yaml#/to_location_nm
+                            - $ref: ../../schemas/prd/order.schema.yaml#/plan_qty
+                            - $ref: ../../schemas/prd/order.schema.yaml#/qty
+                            - $ref: ../../schemas/prd/order.schema.yaml#/seq
+                            - $ref: ../../schemas/prd/order.schema.yaml#/shift_uuid
+                            - $ref: ../../schemas/std/shift.schema.yaml#/shift_nm
+                            - $ref: ../../schemas/prd/order.schema.yaml#/start_date
+                            - $ref: ../../schemas/prd/order.schema.yaml#/end_date
+                            - $ref: ../../schemas/prd/order.schema.yaml#/worker_group_uuid
+                            - $ref: ../../schemas/std/worker-group.schema.yaml#/worker_group_cd
+                            - $ref: ../../schemas/std/worker-group.schema.yaml#/worker_group_nm
+                            - $ref: ../../schemas/prd/order.schema.yaml#/worker_cnt
+                            - $ref: ../../schemas/prd/order.schema.yaml#/sal_order_uuid
+                            - $ref: ../../schemas/prd/order.schema.yaml#/sal_order_detail_uuid
+                            - $ref: ../../schemas/prd/order.schema.yaml#/work_fg
+                            - $ref: ../../schemas/prd/order.schema.yaml#/complete_fg
+                            - $ref: ../../schemas/prd/order.schema.yaml#/order_state
+                            - $ref: ../../schemas/prd/order.schema.yaml#/complete_date
+                            - $ref: ../../schemas/prd/order.schema.yaml#/remark
+                            - $ref: ../../schemas/common/timestamp.schema.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml
+
+post:
+  description: |
+    작업지시 데이터를 생성합니다. <br/>
+    하위 데이터[자재투입, 작업자투입, 공정순서 정보]를 함께 생성합니다.
+  summary: 작업지시 데이터 생성
+  tags:
+    - 작업지시(Order)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - factory_uuid
+            - reg_date
+            - order_no
+            - proc_uuid
+            - workings_uuid
+            - prod_uuid
+            - shift_uuid
+          allOf:
+            - $ref: ../../schemas/prd/order.schema.yaml#/factory_uuid
+            - $ref: ../../schemas/prd/order.schema.yaml#/reg_date
+            - $ref: ../../schemas/prd/order.schema.yaml#/order_no
+            - $ref: ../../schemas/prd/order.schema.yaml#/proc_uuid
+            - $ref: ../../schemas/prd/order.schema.yaml#/workings_uuid
+            - $ref: ../../schemas/prd/order.schema.yaml#/equip_uuid
+            - $ref: ../../schemas/prd/order.schema.yaml#/prod_uuid
+            - $ref: ../../schemas/prd/order.schema.yaml#/plan_qty
+            - $ref: ../../schemas/prd/order.schema.yaml#/qty
+            - $ref: ../../schemas/prd/order.schema.yaml#/seq
+            - $ref: ../../schemas/prd/order.schema.yaml#/shift_uuid
+            - $ref: ../../schemas/prd/order.schema.yaml#/worker_group_uuid
+            - $ref: ../../schemas/prd/order.schema.yaml#/start_date
+            - $ref: ../../schemas/prd/order.schema.yaml#/end_date
+            - $ref: ../../schemas/prd/order.schema.yaml#/sal_order_detail_uuid
+            - $ref: ../../schemas/prd/order.schema.yaml#/remark
+  responses:
+    201:
+      $ref: ../../responses/common/succeed-create.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml
+
+put:
+  description: |
+    작업지시 데이터를 행(Row) 단위로 수정합니다. <br/>
+    ❗ 실적이 이미 저장된 경우 시작 종료 예정일자 및 비고 항목만 변경 가능합니다.
+  summary: 작업지시 데이터 수정
+  tags:
+    - 작업지시(Order)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - uuid
+            - qty
+          allOf:
+            - $ref: ../../schemas/prd/order.schema.yaml#/uuid
+            - $ref: ../../schemas/prd/order.schema.yaml#/order_no
+            - $ref: ../../schemas/prd/order.schema.yaml#/workings_uuid
+            - $ref: ../../schemas/prd/order.schema.yaml#/equip_uuid
+            - $ref: ../../schemas/prd/order.schema.yaml#/qty
+            - $ref: ../../schemas/prd/order.schema.yaml#/seq
+            - $ref: ../../schemas/prd/order.schema.yaml#/shift_uuid
+            - $ref: ../../schemas/prd/order.schema.yaml#/start_date
+            - $ref: ../../schemas/prd/order.schema.yaml#/end_date
+            - $ref: ../../schemas/prd/order.schema.yaml#/remark
+  responses:
+    201:
+      $ref: ../../responses/common/succeed-update.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml
+
+patch:
+  description: |
+    작업지시 데이터를 개별 항목 단위로 수정합니다. <br/>
+    ❗ 실적이 이미 저장된 경우 시작 종료 예정일자 및 비고 항목만 변경 가능합니다.
+  summary: 작업지시 데이터 수정
+  tags:
+    - 작업지시(Order)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - uuid
+          allOf:
+            - $ref: ../../schemas/prd/order.schema.yaml#/uuid
+            - $ref: ../../schemas/prd/order.schema.yaml#/order_no
+            - $ref: ../../schemas/prd/order.schema.yaml#/workings_uuid
+            - $ref: ../../schemas/prd/order.schema.yaml#/equip_uuid
+            - $ref: ../../schemas/prd/order.schema.yaml#/qty
+            - $ref: ../../schemas/prd/order.schema.yaml#/seq
+            - $ref: ../../schemas/prd/order.schema.yaml#/shift_uuid
+            - $ref: ../../schemas/prd/order.schema.yaml#/start_date
+            - $ref: ../../schemas/prd/order.schema.yaml#/end_date
+            - $ref: ../../schemas/prd/order.schema.yaml#/remark
+  responses:
+    201:
+      $ref: ../../responses/common/succeed-update.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml
+
+delete:
+  description: |
+    작업지시 및 하위데이터[자재투입, 작업자투입, 공정순서 정보]를 삭제합니다. <br/>
+    ❗ 실적이 이미 저장되어 있거나 지시가 마감상태인 경우 삭제가 불가능합니다.
+  summary: 작업지시 데이터 삭제
+  tags:
+    - 작업지시(Order)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - uuid
+          allOf:
+            - $ref: ../../schemas/prd/order.schema.yaml#/uuid
+  responses:
+    200:
+      $ref: ../../responses/common/succeed-delete.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

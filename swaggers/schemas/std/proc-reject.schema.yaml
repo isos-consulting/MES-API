@@ -1,0 +1,83 @@
+# STD_PROC_REJECT_TB
+
+# Columns
+proc_reject_id: 
+  type: object
+  properties: 
+    proc_reject_id:
+      description: 공정별 부적합ID
+      type: number
+      format: int4
+
+factory_id: 
+  type: object
+  properties: 
+    factory_id:
+      description: 공장ID
+      type: number
+      format: int4
+
+proc_id: 
+  type: object
+  properties: 
+    proc_id:
+      description: 공정ID
+      type: number
+      format: int4
+
+reject_id: 
+  type: object
+  properties: 
+    reject_id:
+      description: 부적합ID
+      type: number
+      format: int4
+
+remark: 
+  type: object
+  properties: 
+    remark:
+      description: 비고
+      type: string
+      format: varchar(250)
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 공정별 부적합UUID
+      type: string
+      format: uuid
+
+# Uuids
+proc_reject_uuid:
+  type: object
+  properties: 
+    proc_reject_uuid:
+      description: 공정별 부적합UUID
+      type: string
+      format: uuid
+
+factory_uuid:
+  type: object
+  properties: 
+    factory_uuid:
+      description: 공장UUID
+      type: string
+      format: uuid
+
+proc_uuid:
+  type: object
+  properties: 
+    proc_uuid:
+      description: 공정UUID
+      type: string
+      format: uuid
+
+reject_uuid:
+  type: object
+  properties: 
+    reject_uuid:
+      description: 부적합UUID
+      type: string
+      format: uuid

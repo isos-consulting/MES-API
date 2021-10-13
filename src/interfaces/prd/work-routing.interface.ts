@@ -1,0 +1,20 @@
+export default interface IPrdWorkRouting { // 공정 순서(실적)
+  work_routing_id?: number,
+  factory_id?: number,
+  work_id?: number,
+  proc_id?: number,
+  proc_no?: number,
+  workings_id?: number,
+  equip_id?: number | null,
+  qty?: number | null,
+  start_date?: string | null,
+  end_date?: string | null,
+  work_time?: string | null,
+  remark?: string | null,
+  created_at?: Date,
+  created_uid?: number,
+  updated_at?: Date,
+  updated_uid?: number,
+  uuid?: string,
+  tenant_uuid?: string
+}

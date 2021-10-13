@@ -1,0 +1,26 @@
+# ADM_REWORK_TYPE_VW
+
+# Columns
+rework_type_id: 
+  type: object
+  properties: 
+    rework_type_id:
+      description: 재작업유형ID
+      type: number
+      format: int4
+
+rework_type_cd: 
+  type: object
+  properties: 
+    rework_type_cd:
+      description: 재작업유형코드
+      type: string
+      format: varchar(20)
+
+rework_type_nm: 
+  type: object
+  properties: 
+    rework_type_nm:
+      description: 재작업유형명
+      type: string
+      format: varchar(50)

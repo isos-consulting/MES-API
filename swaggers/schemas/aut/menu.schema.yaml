@@ -1,0 +1,148 @@
+# AUT_MENU_TB
+
+# Columns
+menu_id: 
+  type: object
+  properties: 
+    menu_id:
+      description: 메뉴ID
+      type: number
+      format: int4
+
+menu_type_id: 
+  type: object
+  properties: 
+    menu_type_id:
+      description: 메뉴유형ID
+      type: number
+      format: int4
+
+menu_nm: 
+  type: object
+  properties: 
+    menu_nm:
+      description: 메뉴명
+      type: string
+      format: varchar(50)
+
+menu_uri: 
+  type: object
+  properties: 
+    menu_uri:
+      description: 메뉴 URI (API EndPoint)
+      type: string
+      format: varchar(250)
+
+menu_form_nm: 
+  type: object
+  properties: 
+    menu_form_nm:
+      description: 메뉴 Form 명 (VB Form Name)
+      type: string
+      format: varchar(250)
+
+component_nm: 
+  type: object
+  properties: 
+    component_nm:
+      description: 메뉴 컴포넌트명
+      type: string
+      format: varchar(50)
+
+icon: 
+  type: object
+  properties: 
+    icon:
+      description: 메뉴 아이콘 파일명
+      type: string
+      format: varchar(50)
+
+parent_id: 
+  type: object
+  properties: 
+    parent_id:
+      description: 부모 메뉴ID
+      type: number
+      format: int4
+
+sortby: 
+  type: object
+  properties: 
+    sortby:
+      description: 정렬
+      type: number
+      format: int4
+
+use_fg: 
+  type: object
+  properties: 
+    use_fg:
+      description: 메뉴 사용여부
+      type: boolean
+      format: boolean
+
+uuid:
+  type: object
+  properties: 
+    factory_uuid:
+      description: 메뉴UUID
+      type: string
+      format: uuid
+
+# Uuids
+menu_uuid:
+  type: object
+  properties: 
+    menu_uuid:
+      description: 메뉴UUID
+      type: string
+      format: uuid
+
+menu_type_uuid:
+  type: object
+  properties: 
+    menu_type_uuid:
+      description: 메뉴유형UUID
+      type: string
+      format: uuid
+
+parent_uuid:
+  type: object
+  properties: 
+    parent_uuid:
+      description: 부모 메뉴UUID
+      type: string
+      format: uuid
+
+# Others
+first_menu_uuid:
+  type: object
+  properties: 
+    first_menu_uuid:
+      description: 최상위(1Level) 메뉴UUID
+      type: string
+      format: uuid
+
+first_menu_nm: 
+  type: object
+  properties: 
+    first_menu_nm:
+      description: 최상위(1Level) 메뉴명
+      type: string
+      format: varchar(50)
+
+lv: 
+  type: object
+  properties: 
+    lv:
+      description: 메뉴 레벨
+      type: number
+      format: int4
+
+menu_type: 
+  type: object
+  properties: 
+    menu_type:
+      description: 메뉴 유형(menu, page)
+      type: string
+      format: varchar

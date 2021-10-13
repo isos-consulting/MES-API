@@ -1,0 +1,75 @@
+# STD_ROUTING_WORKINGS_TB
+
+# Columns
+routing_workings_id: 
+  type: object
+  properties: 
+    routing_workings_id:
+      description: 품목별 작업장ID
+      type: number
+      format: int4
+
+factory_id: 
+  type: object
+  properties: 
+    factory_id:
+      description: 공장ID
+      type: number
+      format: int4
+
+prod_id: 
+  type: object
+  properties: 
+    prod_id:
+      description: 품목ID
+      type: number
+      format: int4
+
+workings_id: 
+  type: object
+  properties: 
+    workings_id:
+      description: 작업장ID
+      type: number
+      format: int4
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 품목별 작업장UUID
+      type: string
+      format: uuid
+
+# Uuids
+routing_workings_uuid:
+  type: object
+  properties: 
+    routing_workings_uuid:
+      description: 품목별 작업장UUID
+      type: string
+      format: uuid
+
+factory_uuid:
+  type: object
+  properties: 
+    factory_uuid:
+      description: 공장UUID
+      type: string
+      format: uuid
+
+prod_uuid:
+  type: object
+  properties: 
+    prod_uuid:
+      description: 품목UUID
+      type: string
+      format: uuid
+
+workings_uuid:
+  type: object
+  properties: 
+    workings_uuid:
+      description: 작업장UUID
+      type: string
+      format: uuid

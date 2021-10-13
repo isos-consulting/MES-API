@@ -1,0 +1,21 @@
+put:
+  description: |
+    수주 데이터의 완료여부를 수정합니다.
+  summary: 제품수주 완료여부 수정
+  tags:
+    - 제품수주상세(OrderDetail)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - uuid
+            - complete_fg
+          allOf:
+            - $ref: ../../schemas/sal/order-detail.schema.yaml#/uuid
+            - $ref: ../../schemas/sal/order-detail.schema.yaml#/complete_fg
+  responses:
+    201:
+      $ref: ../../responses/common/succeed-update.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

@@ -1,0 +1,23 @@
+put:
+  description: |
+    작업지시의 작업조를 수정합니다. <br/>
+    입력한 작업조에 속한 작업자를 지시-작업자투입 정보에 저장합니다. <br/>
+    ❗ 실적이 진행 중이거나 지시가 마감된 경우 완료여부의 수정이 불가능합니다.
+  summary: 작업지시 작업조 수정
+  tags:
+    - 작업지시(Order)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - uuid
+            - worker_group_uuid
+          allOf:
+            - $ref: ../../schemas/prd/order.schema.yaml#/uuid
+            - $ref: ../../schemas/prd/order.schema.yaml#/worker_group_uuid
+  responses:
+    201:
+      $ref: ../../responses/common/succeed-update.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

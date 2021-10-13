@@ -1,0 +1,52 @@
+get:
+  description: |
+    하나의 사용자 데이터를 조회합니다.
+  summary: 사용자 데이터 단일 조회
+  tags:
+    - 사용자(User)
+  parameters:
+    - name: uuid
+      in: path
+      description: 사용자의 UUID 를 입력합니다.
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+  responses:
+    200:
+      description: Read OK
+      content:
+        application/json:
+          schema: 
+            allOf:
+              - $ref: ../../schemas/common/default-response.schema.yaml
+              - type: object
+                properties:
+                  datas:
+                    description: Enable
+                    type: object
+                    properties:
+                      value:
+                        description: Enable
+                        type: object
+                        properties:
+                          count: 
+                            description: 영향받은 데이터의 개수
+                            type: number
+                            format: int32
+                            minimum: 0
+                      raws:
+                        description: 사용자 데이터 목록
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: ../../schemas/aut/user.schema.yaml#/user_uuid
+                            - $ref: ../../schemas/aut/user.schema.yaml#/group_uuid
+                            - $ref: ../../schemas/aut/user.schema.yaml#/id
+                            - $ref: ../../schemas/aut/user.schema.yaml#/user_nm
+                            - $ref: ../../schemas/aut/user.schema.yaml#/email
+                            - $ref: ../../schemas/aut/user.schema.yaml#/pwd_fg
+                            - $ref: ../../schemas/aut/user.schema.yaml#/admin_fg
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

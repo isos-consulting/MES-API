@@ -1,0 +1,43 @@
+# STD_DEPT_TB
+
+# Columns
+dept_id: 
+  type: object
+  properties: 
+    dept_id:
+      description: 부서ID
+      type: number
+      format: int4
+
+dept_cd: 
+  type: object
+  properties: 
+    dept_cd:
+      description: 부서코드
+      type: string
+      format: varchar(20)
+
+dept_nm: 
+  type: object
+  properties: 
+    dept_nm:
+      description: 부서명
+      type: string
+      format: varchar(50)
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 부서UUID
+      type: string
+      format: uuid
+
+# Uuids
+dept_uuid:
+  type: object
+  properties: 
+    dept_uuid:
+      description: 부서UUID
+      type: string
+      format: uuid

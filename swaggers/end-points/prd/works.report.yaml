@@ -1,0 +1,244 @@
+get:
+  description: |
+    생산실적현황을 조회합니다. 
+  summary: 생산실적현황 데이터 조회
+  tags:
+    - 생산실적(Work)
+  parameters:    
+    - name: factory_uuid
+      in: query
+      description: 공장의 UUID를 입력하여 공장에 따라 생산실적현황 데이터를 조회합니다. [전체 조회시 입력하지 않습니다.]
+      schema:
+        type: string
+        format: uuid
+
+    - name: sub_total_type
+      in: query
+      required: true
+      description: |
+        실적현황의 소계를 유형에 따라 조회합니다.<br/>
+        [proc] 공정 단위 소계 조회 <br/>
+        [prod] 품목 단위 소계 조회 <br/>
+        [date] 생산일자 단위 소계 조회 <br/>
+        [none] 소계 미조회 <br/>
+      schema:
+        type: string
+        format: string
+
+    - name: start_date
+      in: query
+      description: |
+        실적현황을 조회할 실적번호 기준 시작일자를 입력합니다. [전체 조회시 입력하지 않습니다.] <br/>
+        ❗ 실적번호 기준일자 검색 조건은 시작, 종료일자가 모두 입력되어야 동작됩니다.
+      schema:
+        type: string
+        format: date
+        
+    - name: end_date
+      in: query
+      description: |
+        실적현황을 조회할 실적번호 기준 종료일자를 입력합니다. [전체 조회시 입력하지 않습니다.] <br/>
+        ❗ 실적번호 기준일자 검색 조건은 시작, 종료일자가 모두 입력되어야 동작됩니다.
+      schema:
+        type: string
+        format: date
+
+  responses:
+    200:
+      description: Read OK
+      content:
+        application/json:
+          schema: 
+            allOf:
+              - $ref: ../../schemas/common/default-response.schema.yaml
+              - type: object
+                properties:
+                  datas:
+                    description: Enable
+                    type: object
+                    properties:
+                      value:
+                        description: Enable
+                        type: object
+                        properties:
+                          count: 
+                            description: 영향받은 데이터의 개수
+                            type: number
+                            format: int32
+                            minimum: 0
+                      raws:
+                        description: 생산실적현황 데이터 조회
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            datas:
+                              description: Report Raw Data
+                              type: array
+                              items:
+                                type: object
+                                allOf:        
+                                  - $ref: ../../schemas/prd/work.schema.yaml#/row_type
+                                  - $ref: ../../schemas/prd/work.schema.yaml#/work_uuid
+                                  - $ref: ../../schemas/prd/work.schema.yaml#/order_uuid
+                                  - $ref: ../../schemas/prd/work.schema.yaml#/factory_uuid
+                                  - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
+                                  - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
+                                  - $ref: ../../schemas/prd/work.schema.yaml#/shift_uuid
+                                  - $ref: ../../schemas/std/shift.schema.yaml#/shift_nm
+                                  - $ref: ../../schemas/prd/work.schema.yaml#/reg_date
+                                  - $ref: ../../schemas/prd/work.schema.yaml#/proc_uuid
+                                  - $ref: ../../schemas/std/proc.schema.yaml#/proc_cd
+                                  - $ref: ../../schemas/std/proc.schema.yaml#/proc_nm
+                                  - $ref: ../../schemas/prd/work.schema.yaml#/workings_uuid
+                                  - $ref: ../../schemas/std/workings.schema.yaml#/workings_cd
+                                  - $ref: ../../schemas/std/workings.schema.yaml#/workings_nm
+                                  - $ref: ../../schemas/prd/work.schema.yaml#/equip_uuid
+                                  - $ref: ../../schemas/std/equip.schema.yaml#/equip_cd
+                                  - $ref: ../../schemas/std/equip.schema.yaml#/equip_nm
+                                  - $ref: ../../schemas/prd/work.schema.yaml#/prod_uuid
+                                  - $ref: ../../schemas/std/prod.schema.yaml#/prod_no
+                                  - $ref: ../../schemas/std/prod.schema.yaml#/prod_nm
+                                  - $ref: ../../schemas/std/prod.schema.yaml#/item_type_uuid
+                                  - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_cd
+                                  - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_nm
+                                  - $ref: ../../schemas/std/prod.schema.yaml#/prod_type_uuid
+                                  - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_cd
+                                  - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_nm
+                                  - $ref: ../../schemas/std/prod.schema.yaml#/model_uuid
+                                  - $ref: ../../schemas/std/model.schema.yaml#/model_cd
+                                  - $ref: ../../schemas/std/model.schema.yaml#/model_nm
+                                  - $ref: ../../schemas/std/prod.schema.yaml#/rev
+                                  - $ref: ../../schemas/std/prod.schema.yaml#/prod_std
+                                  - $ref: ../../schemas/std/prod.schema.yaml#/unit_uuid
+                                  - $ref: ../../schemas/std/unit.schema.yaml#/unit_cd
+                                  - $ref: ../../schemas/std/unit.schema.yaml#/unit_nm
+                                  - $ref: ../../schemas/prd/work.schema.yaml#/lot_no
+                                  - $ref: ../../schemas/prd/work.schema.yaml#/order_qty
+                                  - $ref: ../../schemas/prd/work.schema.yaml#/total_qty
+                                  - $ref: ../../schemas/prd/work.schema.yaml#/qty
+                                  - $ref: ../../schemas/prd/work.schema.yaml#/reject_qty
+                                  - $ref: ../../schemas/prd/work.schema.yaml#/start_date
+                                  - $ref: ../../schemas/prd/work.schema.yaml#/end_date
+                                  - $ref: ../../schemas/prd/work.schema.yaml#/to_store_uuid
+                                  - $ref: ../../schemas/std/store.schema.yaml#/to_store_cd
+                                  - $ref: ../../schemas/std/store.schema.yaml#/to_store_nm
+                                  - $ref: ../../schemas/prd/work.schema.yaml#/to_location_uuid
+                                  - $ref: ../../schemas/std/location.schema.yaml#/to_location_cd
+                                  - $ref: ../../schemas/std/location.schema.yaml#/to_location_nm
+                                  - $ref: ../../schemas/prd/work.schema.yaml#/remark
+                                  - $ref: ../../schemas/common/timestamp.schema.yaml
+
+                            subTotals:
+                              description: Report SubTotal Data
+                              type: array
+                              items:
+                                type: object
+                                allOf:        
+                                  - $ref: ../../schemas/prd/work.schema.yaml#/row_type
+                                  - $ref: ../../schemas/prd/work.schema.yaml#/work_uuid
+                                  - $ref: ../../schemas/prd/work.schema.yaml#/order_uuid
+                                  - $ref: ../../schemas/prd/work.schema.yaml#/factory_uuid
+                                  - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
+                                  - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
+                                  - $ref: ../../schemas/prd/work.schema.yaml#/shift_uuid
+                                  - $ref: ../../schemas/std/shift.schema.yaml#/shift_nm
+                                  - $ref: ../../schemas/prd/work.schema.yaml#/reg_date
+                                  - $ref: ../../schemas/prd/work.schema.yaml#/proc_uuid
+                                  - $ref: ../../schemas/std/proc.schema.yaml#/proc_cd
+                                  - $ref: ../../schemas/std/proc.schema.yaml#/proc_nm
+                                  - $ref: ../../schemas/prd/work.schema.yaml#/workings_uuid
+                                  - $ref: ../../schemas/std/workings.schema.yaml#/workings_cd
+                                  - $ref: ../../schemas/std/workings.schema.yaml#/workings_nm
+                                  - $ref: ../../schemas/prd/work.schema.yaml#/equip_uuid
+                                  - $ref: ../../schemas/std/equip.schema.yaml#/equip_cd
+                                  - $ref: ../../schemas/std/equip.schema.yaml#/equip_nm
+                                  - $ref: ../../schemas/prd/work.schema.yaml#/prod_uuid
+                                  - $ref: ../../schemas/std/prod.schema.yaml#/prod_no
+                                  - $ref: ../../schemas/std/prod.schema.yaml#/prod_nm
+                                  - $ref: ../../schemas/std/prod.schema.yaml#/item_type_uuid
+                                  - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_cd
+                                  - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_nm
+                                  - $ref: ../../schemas/std/prod.schema.yaml#/prod_type_uuid
+                                  - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_cd
+                                  - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_nm
+                                  - $ref: ../../schemas/std/prod.schema.yaml#/model_uuid
+                                  - $ref: ../../schemas/std/model.schema.yaml#/model_cd
+                                  - $ref: ../../schemas/std/model.schema.yaml#/model_nm
+                                  - $ref: ../../schemas/std/prod.schema.yaml#/rev
+                                  - $ref: ../../schemas/std/prod.schema.yaml#/prod_std
+                                  - $ref: ../../schemas/std/prod.schema.yaml#/unit_uuid
+                                  - $ref: ../../schemas/std/unit.schema.yaml#/unit_cd
+                                  - $ref: ../../schemas/std/unit.schema.yaml#/unit_nm
+                                  - $ref: ../../schemas/prd/work.schema.yaml#/lot_no
+                                  - $ref: ../../schemas/prd/work.schema.yaml#/order_qty
+                                  - $ref: ../../schemas/prd/work.schema.yaml#/total_qty
+                                  - $ref: ../../schemas/prd/work.schema.yaml#/qty
+                                  - $ref: ../../schemas/prd/work.schema.yaml#/reject_qty
+                                  - $ref: ../../schemas/prd/work.schema.yaml#/start_date
+                                  - $ref: ../../schemas/prd/work.schema.yaml#/end_date
+                                  - $ref: ../../schemas/prd/work.schema.yaml#/to_store_uuid
+                                  - $ref: ../../schemas/std/store.schema.yaml#/to_store_cd
+                                  - $ref: ../../schemas/std/store.schema.yaml#/to_store_nm
+                                  - $ref: ../../schemas/prd/work.schema.yaml#/to_location_uuid
+                                  - $ref: ../../schemas/std/location.schema.yaml#/to_location_cd
+                                  - $ref: ../../schemas/std/location.schema.yaml#/to_location_nm
+                                  - $ref: ../../schemas/prd/work.schema.yaml#/remark
+                                  - $ref: ../../schemas/common/timestamp.schema.yaml
+
+                            total:
+                              description: Report Total Data
+                              type: object
+                              allOf:
+                                - $ref: ../../schemas/prd/work.schema.yaml#/row_type
+                                - $ref: ../../schemas/prd/work.schema.yaml#/work_uuid
+                                - $ref: ../../schemas/prd/work.schema.yaml#/order_uuid
+                                - $ref: ../../schemas/prd/work.schema.yaml#/factory_uuid
+                                - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
+                                - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
+                                - $ref: ../../schemas/prd/work.schema.yaml#/shift_uuid
+                                - $ref: ../../schemas/std/shift.schema.yaml#/shift_nm
+                                - $ref: ../../schemas/prd/work.schema.yaml#/reg_date
+                                - $ref: ../../schemas/prd/work.schema.yaml#/proc_uuid
+                                - $ref: ../../schemas/std/proc.schema.yaml#/proc_cd
+                                - $ref: ../../schemas/std/proc.schema.yaml#/proc_nm
+                                - $ref: ../../schemas/prd/work.schema.yaml#/workings_uuid
+                                - $ref: ../../schemas/std/workings.schema.yaml#/workings_cd
+                                - $ref: ../../schemas/std/workings.schema.yaml#/workings_nm
+                                - $ref: ../../schemas/prd/work.schema.yaml#/equip_uuid
+                                - $ref: ../../schemas/std/equip.schema.yaml#/equip_cd
+                                - $ref: ../../schemas/std/equip.schema.yaml#/equip_nm
+                                - $ref: ../../schemas/prd/work.schema.yaml#/prod_uuid
+                                - $ref: ../../schemas/std/prod.schema.yaml#/prod_no
+                                - $ref: ../../schemas/std/prod.schema.yaml#/prod_nm
+                                - $ref: ../../schemas/std/prod.schema.yaml#/item_type_uuid
+                                - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_cd
+                                - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_nm
+                                - $ref: ../../schemas/std/prod.schema.yaml#/prod_type_uuid
+                                - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_cd
+                                - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_nm
+                                - $ref: ../../schemas/std/prod.schema.yaml#/model_uuid
+                                - $ref: ../../schemas/std/model.schema.yaml#/model_cd
+                                - $ref: ../../schemas/std/model.schema.yaml#/model_nm
+                                - $ref: ../../schemas/std/prod.schema.yaml#/rev
+                                - $ref: ../../schemas/std/prod.schema.yaml#/prod_std
+                                - $ref: ../../schemas/std/prod.schema.yaml#/unit_uuid
+                                - $ref: ../../schemas/std/unit.schema.yaml#/unit_cd
+                                - $ref: ../../schemas/std/unit.schema.yaml#/unit_nm
+                                - $ref: ../../schemas/prd/work.schema.yaml#/lot_no
+                                - $ref: ../../schemas/prd/work.schema.yaml#/order_qty
+                                - $ref: ../../schemas/prd/work.schema.yaml#/total_qty
+                                - $ref: ../../schemas/prd/work.schema.yaml#/qty
+                                - $ref: ../../schemas/prd/work.schema.yaml#/reject_qty
+                                - $ref: ../../schemas/prd/work.schema.yaml#/start_date
+                                - $ref: ../../schemas/prd/work.schema.yaml#/end_date
+                                - $ref: ../../schemas/prd/work.schema.yaml#/to_store_uuid
+                                - $ref: ../../schemas/std/store.schema.yaml#/to_store_cd
+                                - $ref: ../../schemas/std/store.schema.yaml#/to_store_nm
+                                - $ref: ../../schemas/prd/work.schema.yaml#/to_location_uuid
+                                - $ref: ../../schemas/std/location.schema.yaml#/to_location_cd
+                                - $ref: ../../schemas/std/location.schema.yaml#/to_location_nm
+                                - $ref: ../../schemas/prd/work.schema.yaml#/remark
+                                - $ref: ../../schemas/common/timestamp.schema.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

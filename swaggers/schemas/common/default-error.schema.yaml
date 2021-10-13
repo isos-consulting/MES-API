@@ -1,0 +1,23 @@
+type: object
+properties:
+  success:
+    description: 정상 응답 여부
+    type: boolean
+    default: false
+  message:
+    description: 에러 메세지
+    type: string
+  datas:
+    type: object
+    description: Disable
+    properties:
+      raws:
+        description: Disable
+        type: array
+        items:
+          type: object
+        default: []
+      value:
+        description: Disable
+        type: object
+        default: {}

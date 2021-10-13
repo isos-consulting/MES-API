@@ -1,0 +1,34 @@
+# ADM_STORE_TYPE_VW
+
+# Columns
+store_type_id: 
+  type: object
+  properties: 
+    store_type_id:
+      description: 창고유형ID
+      type: number
+      format: int4
+
+store_type_cd: 
+  type: object
+  properties: 
+    store_type_cd:
+      description: 창고유형코드
+      type: string
+      format: varchar(20)
+
+store_type_nm: 
+  type: object
+  properties: 
+    store_type_nm:
+      description: 창고유형명
+      type: string
+      format: varchar(50)
+
+parameter_nm: 
+  type: object
+  properties: 
+    parameter_nm:
+      description: 매개변수명
+      type: string
+      format: varchar(50)

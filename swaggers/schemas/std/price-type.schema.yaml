@@ -1,0 +1,43 @@
+# STD_PRICE_TYPE_TB
+
+# Columns
+price_type_id: 
+  type: object
+  properties: 
+    price_type_id:
+      description: 단가 유형ID
+      type: number
+      format: int4
+
+price_type_cd: 
+  type: object
+  properties: 
+    price_type_cd:
+      description: 단가 유형코드
+      type: string
+      format: varchar(20)
+
+price_type_nm: 
+  type: object
+  properties: 
+    price_type_nm:
+      description: 단가 유형명
+      type: string
+      format: varchar(50)
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 단가 유형UUID
+      type: string
+      format: uuid
+
+# Uuids
+price_type_uuid:
+  type: object
+  properties: 
+    price_type_uuid:
+      description: 단가 유형UUID
+      type: string
+      format: uuid

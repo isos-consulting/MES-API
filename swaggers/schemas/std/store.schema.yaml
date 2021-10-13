@@ -1,0 +1,196 @@
+# STD_STORE_TB
+
+# Columns
+store_id: 
+  type: object
+  properties: 
+    store_id:
+      description: 창고ID
+      type: number
+      format: int4
+
+factory_id: 
+  type: object
+  properties: 
+    factory_id:
+      description: 공장ID
+      type: number
+      format: int4
+      
+store_cd: 
+  type: object
+  properties: 
+    store_cd:
+      description: 창고코드
+      type: string
+      format: varchar(20)
+
+store_nm: 
+  type: object
+  properties: 
+    store_nm:
+      description: 창고명
+      type: string
+      format: varchar(50)
+
+reject_store_fg: 
+  type: object
+  properties: 
+    reject_store_fg:
+      description: 부적합창고 유무
+      type: boolean
+      format: boolean
+
+return_store_fg: 
+  type: object
+  properties: 
+    return_store_fg:
+      description: 반출창고 유무
+      type: boolean
+      format: boolean
+
+outgo_store_fg: 
+  type: object
+  properties: 
+    outgo_store_fg:
+      description: 출하창고 유무
+      type: boolean
+      format: boolean
+
+final_insp_store_fg: 
+  type: object
+  properties: 
+    final_insp_store_fg:
+      description: 최종검사 창고 유무
+      type: boolean
+      format: boolean
+
+available_store_fg: 
+  type: object
+  properties: 
+    available_store_fg:
+      description: 가용재고 창고 유무
+      type: boolean
+      format: boolean
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 창고UUID
+      type: string
+      format: uuid
+
+# Uuids
+store_uuid:
+  type: object
+  properties: 
+    store_uuid:
+      description: 창고UUID
+      type: string
+      format: uuid
+
+from_store_uuid:
+  type: object
+  properties: 
+    from_store_uuid:
+      description: 출고 창고UUID
+      type: string
+      format: uuid
+      
+to_store_uuid:
+  type: object
+  properties: 
+    to_store_uuid:
+      description: 입고 창고UUID
+      type: string
+      format: uuid
+
+factory_uuid:
+  type: object
+  properties: 
+    factory_uuid:
+      description: 공장UUID
+      type: string
+      format: uuid
+
+# Others
+from_store_cd: 
+  type: object
+  properties: 
+    from_store_cd:
+      description: 출고 창고코드
+      type: string
+      format: varchar(20)
+
+from_store_nm: 
+  type: object
+  properties: 
+    from_store_nm:
+      description: 출고 창고명
+      type: string
+      format: varchar(50)
+
+to_store_cd: 
+  type: object
+  properties: 
+    to_store_cd:
+      description: 입고 창고코드
+      type: string
+      format: varchar(20)
+
+to_store_nm: 
+  type: object
+  properties: 
+    to_store_nm:
+      description: 입고 창고명
+      type: string
+      format: varchar(50)
+
+income_store_cd: 
+  type: object
+  properties: 
+    income_store_cd:
+      description: 분해시 입고 창고코드
+      type: string
+      format: varchar(20)
+
+income_store_nm: 
+  type: object
+  properties: 
+    income_store_nm:
+      description: 분해시 입고 창고명
+      type: string
+      format: varchar(50)
+
+return_store_cd: 
+  type: object
+  properties: 
+    return_store_cd:
+      description: 반출 창고코드
+      type: string
+      format: varchar(20)
+
+return_store_nm: 
+  type: object
+  properties: 
+    return_store_nm:
+      description: 반출 창고명
+      type: string
+      format: varchar(50)
+
+reject_store_cd: 
+  type: object
+  properties: 
+    reject_store_cd:
+      description: 부적합 입고 창고코드
+      type: string
+      format: varchar(20)
+
+reject_store_nm: 
+  type: object
+  properties: 
+    reject_store_nm:
+      description: 부적합 입고 창고명
+      type: string
+      format: varchar(50)

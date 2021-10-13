@@ -1,0 +1,21 @@
+post:
+  description: |
+    사용자 로그인 기능을 수행합니다.
+  summary: 사용자 로그인
+  tags:
+    - 사용자(User)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - id
+            - pwd
+          allOf:
+            - $ref: ../../schemas/aut/user.schema.yaml#/id
+            - $ref: ../../schemas/aut/user.schema.yaml#/pwd
+  responses:
+    201:
+      $ref: ../../responses/common/succeed-create.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

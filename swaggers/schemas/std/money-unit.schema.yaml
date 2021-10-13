@@ -1,0 +1,43 @@
+# STD_MONTY_UNIT_TB
+
+# Columns
+money_unit_id: 
+  type: object
+  properties: 
+    money_unit_id:
+      description: 화폐 단위ID
+      type: number
+      format: int4
+
+money_unit_cd: 
+  type: object
+  properties: 
+    money_unit_cd:
+      description: 화폐 단위코드
+      type: string
+      format: varchar(20)
+
+money_unit_nm: 
+  type: object
+  properties: 
+    money_unit_nm:
+      description: 화폐 단위명
+      type: string
+      format: varchar(50)
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 화폐 단위UUID
+      type: string
+      format: uuid
+
+# Uuids
+money_unit_uuid:
+  type: object
+  properties: 
+    money_unit_uuid:
+      description: 화폐 단위UUID
+      type: string
+      format: uuid

@@ -1,0 +1,26 @@
+# ADM_PRD_PLAN_TYPE_VW
+
+# Columns
+prd_plan_type_id: 
+  type: object
+  properties: 
+    prd_plan_type_id:
+      description: 생산계획유형ID
+      type: number
+      format: int4
+
+prd_plan_type_cd: 
+  type: object
+  properties: 
+    prd_plan_type_cd:
+      description: 생산계획유형코드
+      type: string
+      format: varchar(20)
+
+prd_plan_type_nm: 
+  type: object
+  properties: 
+    prd_plan_type_nm:
+      description: 생산계획유형명
+      type: string
+      format: varchar(50)

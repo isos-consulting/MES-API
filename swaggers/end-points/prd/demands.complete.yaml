@@ -1,0 +1,21 @@
+put:
+  description: |
+    자재출고요청 데이터의 완료여부를 수정합니다.
+  summary: 자재출고요청 완료여부 수정
+  tags:
+    - 자재출고요청(Demand)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - uuid
+            - complete_fg
+          allOf:
+            - $ref: ../../schemas/prd/demand.schema.yaml#/uuid
+            - $ref: ../../schemas/prd/demand.schema.yaml#/complete_fg
+  responses:
+    201:
+      $ref: ../../responses/common/succeed-update.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

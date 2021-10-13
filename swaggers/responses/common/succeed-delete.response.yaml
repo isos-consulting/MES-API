@@ -1,0 +1,5 @@
+description: Deleted
+content:
+  application/json:
+    schema: 
+      $ref: ../../schemas/common/succeed-dml.schema.yaml

@@ -1,0 +1,72 @@
+post:
+  description: |
+    품목 데이터를 대량으로 생성 및 수정합니다. <br/>
+    uuid를 기준으로 데이터를 생성 및 수정합니다. <br/>
+    uuid가 없는 항목은 생성, 있는 항목은 수정을 진행합니다. <br/>
+    Excel Upload에 사용합니다.
+  summary: 품목 대량 데이터 입력 (Excel Upload)
+  tags:
+    - 품목(Prod)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - factory_cd
+            - prod_no
+            - prod_nm
+            - item_type_cd
+            - unit_cd
+            - lot_fg
+            - use_fg
+            - active_fg
+            - mat_order_fg
+            - sal_order_fg
+            - inv_use_fg
+            - qms_receive_insp_fg
+            - qms_proc_insp_fg
+            - qms_final_insp_fg
+            - prd_active_fg
+          allOf:
+            - $ref: ../../schemas/std/prod.schema.yaml#/factory_cd
+            - $ref: ../../schemas/std/prod.schema.yaml#/prod_no
+            - $ref: ../../schemas/std/prod.schema.yaml#/prod_nm
+            - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_cd
+            - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_cd
+            - $ref: ../../schemas/std/model.schema.yaml#/model_cd
+            - $ref: ../../schemas/std/unit.schema.yaml#/unit_cd
+            - $ref: ../../schemas/std/prod.schema.yaml#/rev
+            - $ref: ../../schemas/std/prod.schema.yaml#/prod_std
+            - $ref: ../../schemas/std/prod.schema.yaml#/lot_fg
+            - $ref: ../../schemas/std/prod.schema.yaml#/use_fg
+            - $ref: ../../schemas/std/prod.schema.yaml#/active_fg
+            - $ref: ../../schemas/std/prod.schema.yaml#/bom_type_cd
+            - $ref: ../../schemas/std/prod.schema.yaml#/width
+            - $ref: ../../schemas/std/prod.schema.yaml#/length
+            - $ref: ../../schemas/std/prod.schema.yaml#/height
+            - $ref: ../../schemas/std/prod.schema.yaml#/material
+            - $ref: ../../schemas/std/prod.schema.yaml#/color
+            - $ref: ../../schemas/std/prod.schema.yaml#/weight
+            - $ref: ../../schemas/std/prod.schema.yaml#/thickness
+            - $ref: ../../schemas/std/prod.schema.yaml#/mat_order_fg
+            - $ref: ../../schemas/std/prod.schema.yaml#/mat_unit_cd
+            - $ref: ../../schemas/std/prod.schema.yaml#/mat_order_min_qty
+            - $ref: ../../schemas/std/prod.schema.yaml#/mat_supply_days
+            - $ref: ../../schemas/std/prod.schema.yaml#/sal_order_fg
+            - $ref: ../../schemas/std/prod.schema.yaml#/inv_use_fg
+            - $ref: ../../schemas/std/prod.schema.yaml#/inv_unit_qty
+            - $ref: ../../schemas/std/prod.schema.yaml#/inv_safe_qty
+            - $ref: ../../schemas/std/prod.schema.yaml#/inv_to_store_cd
+            - $ref: ../../schemas/std/prod.schema.yaml#/inv_to_location_cd
+            - $ref: ../../schemas/std/prod.schema.yaml#/qms_receive_insp_fg
+            - $ref: ../../schemas/std/prod.schema.yaml#/qms_proc_insp_fg
+            - $ref: ../../schemas/std/prod.schema.yaml#/qms_final_insp_fg
+            - $ref: ../../schemas/std/prod.schema.yaml#/prd_active_fg
+            - $ref: ../../schemas/std/prod.schema.yaml#/prd_plan_type_cd
+            - $ref: ../../schemas/std/prod.schema.yaml#/prd_min
+            - $ref: ../../schemas/std/prod.schema.yaml#/prd_max
+  responses:
+    201:
+      $ref: ../../responses/common/succeed-create.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

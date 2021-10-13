@@ -1,0 +1,244 @@
+# SAL_OUTGO_TB
+
+# Columns
+outgo_id:
+  type: object
+  properties:
+    outgo_id:
+      description: 제품출하ID
+      type: number
+      format: int4
+
+factory_id:
+  type: object
+  properties:
+    factory_id:
+      description: 공장ID
+      type: number
+      format: int4
+
+partner_id:
+  type: object
+  properties:
+    partner_id:
+      description: 거래처ID
+      type: number
+      format: int4
+
+delivery_id:
+  type: object
+  properties:
+    delivery_id:
+      description: 납품처ID
+      type: number
+      format: int4
+
+stmt_no:
+  type: object
+  properties:
+    stmt_no:
+      description: 전표번호
+      type: string
+      format: varchar(50)
+
+reg_date:
+  type: object
+  properties:
+    reg_date:
+      description: 출하 일시
+      type: string
+      format: date-time
+
+total_price:
+  type: object
+  properties:
+    total_price:
+      description: 합계 금액
+      type: number
+      format: numeric(19, 6)
+
+total_qty:
+  type: object
+  properties:
+    total_qty:
+      description: 합계 수량
+      type: number
+      format: numeric(19, 6)
+
+order_id:
+  type: object
+  properties:
+    order_id:
+      description: 제품수주ID
+      type: number
+      format: int4
+
+outgo_order_id:
+  type: object
+  properties:
+    outgo_order_id:
+      description: 제품출하지시ID
+      type: number
+      format: int4
+
+remark:
+  type: object
+  properties:
+    remark:
+      description: 비고
+      type: string
+      format: varchar(250)
+
+uuid:
+  type: object
+  properties:
+    uuid:
+      description: 제품출하UUID
+      type: string
+      format: uuid
+
+# Uuids
+outgo_uuid:
+  type: object
+  properties:
+    outgo_uuid:
+      description: 제품출하UUID
+      type: string
+      format: uuid
+
+factory_uuid:
+  type: object
+  properties:
+    factory_uuid:
+      description: 공장UUID
+      type: string
+      format: uuid
+
+partner_uuid:
+  type: object
+  properties:
+    partner_uuid:
+      description: 거래처UUID
+      type: string
+      format: uuid
+
+delivery_uuid:
+  type: object
+  properties:
+    delivery_uuid:
+      description: 납품처UUID
+      type: string
+      format: uuid
+
+order_uuid:
+  type: object
+  properties:
+    order_uuid:
+      description: 제품수주UUID
+      type: string
+      format: uuid
+
+outgo_order_uuid:
+  type: object
+  properties:
+    outgo_order_uuid:
+      description: 제품출하지시UUID
+      type: string
+      format: uuid
+
+# Others
+order_stmt_no:
+  type: object
+  properties:
+    order_stmt_no:
+      description: 수주전표번호
+      type: string
+      format: varchar(50)
+
+order_date:
+  type: object
+  properties:
+    order_date:
+      description: 수주 일시
+      type: string
+      format: date-time
+
+order_total_price:
+  type: object
+  properties:
+    order_total_price:
+      description: 수주 합계 금액
+      type: number
+      format: numeric(19, 6)
+
+order_total_qty:
+  type: object
+  properties:
+    order_total_qty:
+      description: 수주 합계 수량
+      type: number
+      format: numeric(19, 6)
+
+outgo_order_date:
+  type: object
+  properties:
+    outgo_order_date:
+      description: 출하지시 일시
+      type: string
+      format: date-time
+
+outgo_order_total_qty:
+  type: object
+  properties:
+    outgo_order_total_qty:
+      description: 출하지시 합계 수량
+      type: number
+      format: numeric(19, 6)
+
+row_type:
+  type: object
+  properties:
+    row_type:
+      description: 조회 Row의 Type(일반[data], 소계[sub-total], 합계[total])
+      type: string
+      format: varchar
+
+supply_price:
+  type: object
+  properties:
+    supply_price:
+      description: 공급가액
+      type: number
+      format: numeric(19, 6)
+
+tax:
+  type: object
+  properties:
+    tax:
+      description: 부가세
+      type: number
+      format: numeric(19, 6)
+
+outgo_order_qty:
+  type: object
+  properties:
+    outgo_order_qty:
+      description: 출하지시 수량
+      type: number
+      format: numeric(19, 6)
+
+outgo_date:
+  type: object
+  properties:
+    outgo_date:
+      description: 출하 일시
+      type: string
+      format: date-time
+
+outgo_qty:
+  type: object
+  properties:
+    outgo_qty:
+      description: 출하 수량
+      type: number
+      format: numeric(19, 6)

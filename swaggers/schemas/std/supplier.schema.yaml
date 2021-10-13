@@ -1,0 +1,131 @@
+# STD_SUPPLIER_TB
+
+# Columns
+supplier_id: 
+  type: object
+  properties: 
+    supplier_id:
+      description: 공급처ID
+      type: number
+      format: int4
+
+partner_id: 
+  type: object
+  properties: 
+    partner_id:
+      description: 거래처ID
+      type: number
+      format: int4
+      
+supplier_cd: 
+  type: object
+  properties: 
+    supplier_cd:
+      description: 공급처코드
+      type: string
+      format: varchar(20)
+
+supplier_nm: 
+  type: object
+  properties: 
+    supplier_nm:
+      description: 공급처명
+      type: string
+      format: varchar(50)
+
+manager: 
+  type: object
+  properties: 
+    manager:
+      description: 담당자
+      type: string
+      format: varchar(20)
+
+email: 
+  type: object
+  properties: 
+    email:
+      description: 이메일
+      type: string
+      format: varchar(50)
+
+tel: 
+  type: object
+  properties: 
+    tel:
+      description: 전화번호
+      type: string
+      format: varchar(13)
+
+fax: 
+  type: object
+  properties: 
+    fax:
+      description: 팩스번호
+      type: string
+      format: varchar(13)
+
+post: 
+  type: object
+  properties: 
+    post:
+      description: 우편번호
+      type: string
+      format: varchar(6)
+
+addr: 
+  type: object
+  properties: 
+    addr:
+      description: 주소
+      type: string
+      format: varchar(100)
+
+addr_detail: 
+  type: object
+  properties: 
+    addr_detail:
+      description: 상세주소
+      type: string
+      format: varchar(250)
+
+use_fg: 
+  type: object
+  properties: 
+    use_fg:
+      description: 사용유무
+      type: boolean
+      format: boolean
+
+remark: 
+  type: object
+  properties: 
+    remark:
+      description: 비고
+      type: string
+      format: varchar(250)
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 공급처UUID
+      type: string
+      format: uuid
+
+# Uuids
+supplier_uuid:
+  type: object
+  properties: 
+    supplier_uuid:
+      description: 공급처UUID
+      type: string
+      format: uuid
+
+partner_uuid:
+  type: object
+  properties: 
+    partner_uuid:
+      description: 거래처UUID
+      type: string
+      format: uuid

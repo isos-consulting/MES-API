@@ -1,0 +1,56 @@
+get:
+  description: |
+    하나의 생산실적의 작업자투입 데이터를 조회합니다.
+  summary: 실적-작업자투입 데이터 단일 조회
+  tags:
+    - 실적-작업자투입(WorkWorker)
+  parameters:
+    - name: uuid
+      in: path
+      description: 실적별 작업자투입의 UUID 를 입력합니다.
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+  responses:
+    200:
+      description: Read OK
+      content:
+        application/json:
+          schema: 
+            allOf:
+              - $ref: ../../schemas/common/default-response.schema.yaml
+              - type: object
+                properties:
+                  datas:
+                    description: Enable
+                    type: object
+                    properties:
+                      value:
+                        description: Enable
+                        type: object
+                        properties:
+                          count: 
+                            description: 영향받은 데이터의 개수
+                            type: number
+                            format: int32
+                            minimum: 0
+                      raws:
+                        description: 실적별 작업자투입 데이터 목록
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: ../../schemas/prd/work-worker.schema.yaml#/work_worker_uuid
+                            - $ref: ../../schemas/prd/work-worker.schema.yaml#/factory_uuid
+                            - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
+                            - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
+                            - $ref: ../../schemas/prd/work-worker.schema.yaml#/work_uuid
+                            - $ref: ../../schemas/prd/work-worker.schema.yaml#/worker_uuid
+                            - $ref: ../../schemas/std/worker.schema.yaml#/worker_nm
+                            - $ref: ../../schemas/prd/work-worker.schema.yaml#/start_date
+                            - $ref: ../../schemas/prd/work-worker.schema.yaml#/end_date
+                            - $ref: ../../schemas/prd/work-worker.schema.yaml#/work_time
+                            - $ref: ../../schemas/common/timestamp.schema.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

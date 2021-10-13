@@ -1,0 +1,115 @@
+# STD_ROUTING_TB
+
+# Columns
+routing_id: 
+  type: object
+  properties: 
+    routing_id:
+      description: 라우팅ID
+      type: number
+      format: int4
+
+factory_id: 
+  type: object
+  properties: 
+    factory_id:
+      description: 공장ID
+      type: number
+      format: int4
+
+prod_id: 
+  type: object
+  properties: 
+    prod_id:
+      description: 품목ID
+      type: number
+      format: int4
+
+proc_id: 
+  type: object
+  properties: 
+    proc_id:
+      description: 공정ID
+      type: number
+      format: int4
+      
+proc_no: 
+  type: object
+  properties: 
+    proc_no:
+      description: 공정순서
+      type: number
+      format: int4
+
+auto_work_fg: 
+  type: object
+  properties: 
+    auto_work_fg:
+      description: 자동 실적처리유무
+      type: boolean
+      format: boolean
+      
+cycle_time: 
+  type: object
+  properties: 
+    cycle_time:
+      description: Cycle time [소요시간]
+      type: number
+      format: numeric(19, 6)
+      
+uph: 
+  type: object
+  properties: 
+    uph:
+      description: UPH(Unit Per Hour) [시간당 생산량]
+      type: number
+      format: numeric(19, 6)
+      
+routing_cd: 
+  type: object
+  properties: 
+    routing_cd:
+      description: 라우팅코드
+      type: number
+      format: numeric(19, 6)
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 라우팅UUID
+      type: string
+      format: uuid
+
+# Uuids
+routing_uuid:
+  type: object
+  properties: 
+    routing_uuid:
+      description: 라우팅UUID
+      type: string
+      format: uuid
+
+factory_uuid:
+  type: object
+  properties: 
+    factory_uuid:
+      description: 공장UUID
+      type: string
+      format: uuid
+
+prod_uuid:
+  type: object
+  properties: 
+    prod_uuid:
+      description: 품목UUID
+      type: string
+      format: uuid
+
+proc_uuid:
+  type: object
+  properties: 
+    proc_uuid:
+      description: 공정UUID
+      type: string
+      format: uuid

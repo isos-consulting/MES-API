@@ -1,0 +1,21 @@
+put:
+  description: |
+    제품출하지시의 완료여부를 수정합니다.
+  summary: 제품출하지시 완료여부 수정
+  tags:
+    - 제품출하지시상세(OutgoOrderDetail)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - uuid
+            - complete_fg
+          allOf:
+            - $ref: ../../schemas/sal/outgo-order-detail.schema.yaml#/uuid
+            - $ref: ../../schemas/sal/outgo-order-detail.schema.yaml#/complete_fg
+  responses:
+    201:
+      $ref: ../../responses/common/succeed-update.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

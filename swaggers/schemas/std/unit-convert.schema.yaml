@@ -1,0 +1,140 @@
+# STD_UNIT_CONVERT_TB
+
+# Columns
+unit_convert_id: 
+  type: object
+  properties: 
+    unit_convert_id:
+      description: 단위변환ID
+      type: number
+      format: int4
+
+from_unit_id: 
+  type: object
+  properties: 
+    from_unit_id:
+      description: From 단위ID
+      type: number
+      format: int4
+
+to_unit_id: 
+  type: object
+  properties: 
+    to_unit_id:
+      description: To 단위ID
+      type: number
+      format: int4
+
+from_value: 
+  type: object
+  properties: 
+    from_value:
+      description: 변환 전 값
+      type: number
+      format: numeric(19, 6)
+
+to_value: 
+  type: object
+  properties: 
+    to_value:
+      description: 변환 후 값
+      type: number
+      format: numeric(19, 6)
+
+convert_value: 
+  type: object
+  properties: 
+    convert_value:
+      description: 변환 값(계산 값)
+      type: number
+      format: numeric(19, 6)
+
+prod_id: 
+  type: object
+  properties: 
+    prod_id:
+      description: 품목ID
+      type: number
+      format: int4
+      
+remark: 
+  type: object
+  properties: 
+    remark:
+      description: 비고
+      type: string
+      format: varchar(250)
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 설비UUID
+      type: string
+      format: uuid
+
+# Uuids
+unit_convert_uuid:
+  type: object
+  properties: 
+    unit_convert_uuid:
+      description: 단위변환UUID
+      type: string
+      format: uuid
+
+from_unit_uuid:
+  type: object
+  properties: 
+    from_unit_uuid:
+      description: From 단위UUID
+      type: string
+      format: uuid
+
+to_unit_uuid:
+  type: object
+  properties: 
+    to_unit_uuid:
+      description: To 단위UUID
+      type: string
+      format: uuid
+
+prod_uuid:
+  type: object
+  properties: 
+    prod_uuid:
+      description: 품목UUID
+      type: string
+      format: uuid
+
+# Others
+from_unit_cd: 
+  type: object
+  properties: 
+    from_unit_cd:
+      description: From 단위코드
+      type: string
+      format: varchar(20)
+
+from_unit_nm: 
+  type: object
+  properties: 
+    from_unit_nm:
+      description: From 단위명
+      type: string
+      format: varchar(50)
+
+to_unit_cd: 
+  type: object
+  properties: 
+    to_unit_cd:
+      description: To 단위코드
+      type: string
+      format: varchar(20)
+
+to_unit_nm: 
+  type: object
+  properties: 
+    to_unit_nm:
+      description: To 단위명
+      type: string
+      format: varchar(50)

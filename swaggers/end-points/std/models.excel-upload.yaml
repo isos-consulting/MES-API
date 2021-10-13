@@ -1,0 +1,25 @@
+post:
+  description: |
+    모델 데이터를 대량으로 생성 및 수정합니다. <br/>
+    uuid를 기준으로 데이터를 생성 및 수정합니다. <br/>
+    uuid가 없는 항목은 생성, 있는 항목은 수정을 진행합니다. <br/>
+    Excel Upload에 사용합니다.
+  summary: 모델 대량 데이터 입력 (Excel Upload)
+  tags:
+    - 모델(Model)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - model_cd
+            - model_nm
+          allOf:
+            - $ref: ../../schemas/std/model.schema.yaml#/uuid
+            - $ref: ../../schemas/std/model.schema.yaml#/model_cd
+            - $ref: ../../schemas/std/model.schema.yaml#/model_nm
+  responses:
+    201:
+      $ref: ../../responses/common/succeed-create.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

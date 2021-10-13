@@ -1,0 +1,43 @@
+# STD_PARTNER_TYPE_TB
+
+# Columns
+partner_type_id: 
+  type: object
+  properties: 
+    partner_type_id:
+      description: 거래처 유형ID
+      type: number
+      format: int4
+
+partner_type_cd: 
+  type: object
+  properties: 
+    partner_type_cd:
+      description: 거래처 유형코드
+      type: string
+      format: varchar(20)
+
+partner_type_nm: 
+  type: object
+  properties: 
+    partner_type_nm:
+      description: 거래처 유형명
+      type: string
+      format: varchar(50)
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 거래처 유형UUID
+      type: string
+      format: uuid
+
+# Uuids
+partner_type_uuid:
+  type: object
+  properties: 
+    partner_type_uuid:
+      description: 거래처 유형UUID
+      type: string
+      format: uuid

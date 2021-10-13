@@ -1,0 +1,52 @@
+get:
+  description: |
+    하나의 메뉴유형 데이터를 조회합니다.
+  summary: 메뉴유형 데이터 단일 조회
+  tags:
+    - 메뉴유형(MenuType)
+  parameters:
+    - name: uuid
+      in: path
+      description: 메뉴유형의 UUID 를 입력합니다.
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+  responses:
+    200:
+      description: Read OK
+      content:
+        application/json:
+          schema: 
+            allOf:
+              - $ref: ../../schemas/common/default-response.schema.yaml
+              - type: object
+                properties:
+                  datas:
+                    description: Enable
+                    type: object
+                    properties:
+                      value:
+                        description: Enable
+                        type: object
+                        properties:
+                          count: 
+                            description: 영향받은 데이터의 개수
+                            type: number
+                            format: int32
+                            minimum: 0
+                      raws:
+                        description: 메뉴유형 데이터 목록
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: ../../schemas/aut/menu-type.schema.yaml#/menu_type_uuid
+                            - $ref: ../../schemas/aut/menu-type.schema.yaml#/menu_type_nm
+                            - $ref: ../../schemas/aut/menu-type.schema.yaml#/create_fg
+                            - $ref: ../../schemas/aut/menu-type.schema.yaml#/read_fg
+                            - $ref: ../../schemas/aut/menu-type.schema.yaml#/update_fg
+                            - $ref: ../../schemas/aut/menu-type.schema.yaml#/delete_fg
+                            - $ref: ../../schemas/common/timestamp.schema.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

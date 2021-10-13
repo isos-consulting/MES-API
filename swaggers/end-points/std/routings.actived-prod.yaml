@@ -1,0 +1,84 @@
+get:
+  description: |
+    생산가능한 품목의 라우팅 데이터를 조회합니다. 
+  summary: 생산가능품목 라우팅 데이터 조회
+  tags:
+    - 라우팅(Routing)
+  parameters:    
+    - name: factory_uuid
+      in: query
+      description: |
+        공장의 UUID를 입력하여 공장에 따라 라우팅 데이터를 조회합니다. <br/>
+        [전체 조회시 입력하지 않습니다.]
+      schema:
+        type: string
+        format: uuid
+
+    - name: prod_uuid
+      in: query
+      description: |
+        품목의 UUID를 입력하여 품목에 따라 라우팅 데이터를 조회합니다. <br/>
+        [전체 조회시 입력하지 않습니다.]
+      schema:
+        type: string
+        format: uuid
+
+  responses:
+    200:
+      description: Read OK
+      content:
+        application/json:
+          schema: 
+            allOf:
+              - $ref: ../../schemas/common/default-response.schema.yaml
+              - type: object
+                properties:
+                  datas:
+                    description: Enable
+                    type: object
+                    properties:
+                      value:
+                        description: Enable
+                        type: object
+                        properties:
+                          count: 
+                            description: 영향받은 데이터의 개수
+                            type: number
+                            format: int32
+                            minimum: 0
+                      raws:
+                        description: 라우팅 데이터 조회
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: ../../schemas/std/routing.schema.yaml#/routing_uuid
+                            - $ref: ../../schemas/std/routing.schema.yaml#/factory_uuid
+                            - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
+                            - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
+                            - $ref: ../../schemas/std/routing.schema.yaml#/proc_no
+                            - $ref: ../../schemas/std/routing.schema.yaml#/proc_uuid
+                            - $ref: ../../schemas/std/proc.schema.yaml#/proc_cd
+                            - $ref: ../../schemas/std/proc.schema.yaml#/proc_nm
+                            - $ref: ../../schemas/std/routing-workings.schema.yaml#/workings_uuid
+                            - $ref: ../../schemas/std/workings.schema.yaml#/workings_cd
+                            - $ref: ../../schemas/std/workings.schema.yaml#/workings_nm
+                            - $ref: ../../schemas/std/routing.schema.yaml#/prod_uuid
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_no
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/item_type_uuid
+                            - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_cd
+                            - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_type_uuid
+                            - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_cd
+                            - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/model_uuid
+                            - $ref: ../../schemas/std/model.schema.yaml#/model_cd
+                            - $ref: ../../schemas/std/model.schema.yaml#/model_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/rev
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_std
+                            - $ref: ../../schemas/std/prod.schema.yaml#/unit_uuid
+                            - $ref: ../../schemas/std/unit.schema.yaml#/unit_cd
+                            - $ref: ../../schemas/std/unit.schema.yaml#/unit_nm
+                            - $ref: ../../schemas/std/routing.schema.yaml#/auto_work_fg
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

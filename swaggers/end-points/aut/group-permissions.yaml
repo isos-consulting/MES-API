@@ -1,0 +1,81 @@
+get:
+  description: |
+    메뉴별 그룹권한 데이터 목록을 조회합니다.
+  summary: 메뉴별 그룹권한 데이터 조회
+  tags:
+    - 그룹권한(GroupPermission)
+  parameters:
+    - name: group_uuid
+      in: query
+      required: true
+      description: 그룹의 UUID를 입력하여 그룹에 따라 메뉴별 그룹권한 데이터를 조회합니다.
+      schema:
+        type: string
+        format: uuid
+
+  responses:
+    200:
+      description: Read OK
+      content:
+        application/json:
+          schema: 
+            allOf:
+              - $ref: ../../schemas/common/default-response.schema.yaml
+              - type: object
+                properties:
+                  datas:
+                    description: Enable
+                    type: object
+                    properties:
+                      value:
+                        description: Enable
+                        type: object
+                        properties:
+                          count: 
+                            description: 영향받은 데이터의 개수
+                            type: number
+                            format: int32
+                            minimum: 0
+                      raws:
+                        description: 메뉴별 그룹권한 데이터 목록
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: ../../schemas/aut/menu.schema.yaml#/menu_uuid
+                            - $ref: ../../schemas/aut/menu.schema.yaml#/menu_nm
+                            - $ref: ../../schemas/aut/menu.schema.yaml#/first_menu_nm
+                            - $ref: ../../schemas/aut/menu.schema.yaml#/sortby
+                            - $ref: ../../schemas/aut/menu.schema.yaml#/menu_type_uuid
+                            - $ref: ../../schemas/aut/menu-type.schema.yaml#/menu_type_nm
+                            - $ref: ../../schemas/aut/group-permission.schema.yaml#/group_permission_uuid
+                            - $ref: ../../schemas/aut/group-permission.schema.yaml#/permission_uuid
+                            - $ref: ../../schemas/aut/permission.schema.yaml#/permission_nm
+                            - $ref: ../../schemas/common/timestamp.schema.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml
+
+put:
+  description: |
+    메뉴별 그룹권한 데이터를 생성 및 수정합니다. <br/>
+    uuid 데이터를 입력하지 않을경우 데이터를 생성, 입력할 경우 수정합니다. <br/>
+    [생성] group_uuid, menu_uuid, permission_uuid 입력 <br/>
+    [수정] uuid, permission_uuid 입력
+  summary: 메뉴별 그룹권한 데이터 생성 및 수정
+  tags:
+    - 그룹권한(GroupPermission)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - permission_uuid
+          allOf:
+            - $ref: ../../schemas/aut/group-permission.schema.yaml#/uuid
+            - $ref: ../../schemas/aut/group-permission.schema.yaml#/group_uuid
+            - $ref: ../../schemas/aut/group-permission.schema.yaml#/menu_uuid
+            - $ref: ../../schemas/aut/group-permission.schema.yaml#/permission_uuid
+  responses:
+    201:
+      $ref: ../../responses/common/succeed-update.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

@@ -1,0 +1,26 @@
+# ADM_DEMAND_TYPE_VW
+
+# Columns
+demand_type_id: 
+  type: object
+  properties: 
+    demand_type_id:
+      description: 요청유형ID
+      type: number
+      format: int4
+
+demand_type_cd: 
+  type: object
+  properties: 
+    demand_type_cd:
+      description: 요청유형코드
+      type: string
+      format: varchar(20)
+
+demand_type_nm: 
+  type: object
+  properties: 
+    demand_type_nm:
+      description: 요청유형명
+      type: string
+      format: varchar(50)

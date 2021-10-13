@@ -1,0 +1,22 @@
+{
+  "compilerOptions": {
+    "module": "commonjs",
+    "target": "es6",
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "sourceMap": true,
+    "declaration": true,
+    "strictNullChecks": true,
+    "noUnusedLocals": true,
+    "pretty": true,
+    "skipLibCheck": true,
+    "lib": [ "es6" ],
+    "outDir": "./dist",
+    "moduleResolution": "node",
+    //"isolatedModules": true,
+    "noImplicitAny": true,
+    "noImplicitReturns": true,
+  },
+  "include": ["src/**/*.ts", "src/**/**/*.test.ts"],
+  "exclude": ["node_modules"]
+}

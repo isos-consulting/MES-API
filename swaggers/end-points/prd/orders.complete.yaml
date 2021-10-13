@@ -1,0 +1,24 @@
+put:
+  description: |
+    작업지시의 완료여부를 수정합니다. <br/>
+    ❗ 완료일시를 입력하지 않을 경우 현재 일시가 저장됩니다. <br/>
+    ❗ 실적이 진행 중인 경우 완료여부의 수정이 불가능합니다.
+  summary: 작업지시 완료여부 수정
+  tags:
+    - 작업지시(Order)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - uuid
+            - complete_fg
+          allOf:
+            - $ref: ../../schemas/prd/order.schema.yaml#/uuid
+            - $ref: ../../schemas/prd/order.schema.yaml#/complete_fg
+            - $ref: ../../schemas/prd/order.schema.yaml#/complete_date
+  responses:
+    201:
+      $ref: ../../responses/common/succeed-update.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

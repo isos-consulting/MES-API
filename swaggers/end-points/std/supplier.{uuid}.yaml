@@ -1,0 +1,61 @@
+get:
+  description: |
+    하나의 공급처 데이터를 조회합니다.
+  summary: 공급처 데이터 단일 조회
+  tags:
+    - 공급처(Supplier)
+  parameters:
+    - name: uuid
+      in: path
+      description: 공급처의 UUID 를 입력합니다.
+      required: true
+      schema:
+        type: string
+        format: uuid
+        
+  responses:
+    200:
+      description: Read OK
+      content:
+        application/json:
+          schema: 
+            allOf:
+              - $ref: ../../schemas/common/default-response.schema.yaml
+              - type: object
+                properties:
+                  datas:
+                    description: Enable
+                    type: object
+                    properties:
+                      value:
+                        description: Enable
+                        type: object
+                        properties:
+                          count: 
+                            description: 영향받은 데이터의 개수
+                            type: number
+                            format: int32
+                            minimum: 0
+                      raws:
+                        description: 공급처 데이터 목록
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: ../../schemas/std/supplier.schema.yaml#/supplier_uuid
+                            - $ref: ../../schemas/std/supplier.schema.yaml#/supplier_cd
+                            - $ref: ../../schemas/std/supplier.schema.yaml#/supplier_nm
+                            - $ref: ../../schemas/std/supplier.schema.yaml#/partner_uuid
+                            - $ref: ../../schemas/std/partner.schema.yaml#/partner_cd
+                            - $ref: ../../schemas/std/partner.schema.yaml#/partner_nm
+                            - $ref: ../../schemas/std/supplier.schema.yaml#/manager
+                            - $ref: ../../schemas/std/supplier.schema.yaml#/email
+                            - $ref: ../../schemas/std/supplier.schema.yaml#/tel
+                            - $ref: ../../schemas/std/supplier.schema.yaml#/fax
+                            - $ref: ../../schemas/std/supplier.schema.yaml#/post
+                            - $ref: ../../schemas/std/supplier.schema.yaml#/addr
+                            - $ref: ../../schemas/std/supplier.schema.yaml#/addr_detail
+                            - $ref: ../../schemas/std/supplier.schema.yaml#/use_fg
+                            - $ref: ../../schemas/std/supplier.schema.yaml#/remark
+                            - $ref: ../../schemas/common/timestamp.schema.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

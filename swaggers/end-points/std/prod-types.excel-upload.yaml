@@ -1,0 +1,25 @@
+post:
+  description: |
+    제품 유형 데이터를 대량으로 생성 및 수정합니다. <br/>
+    uuid를 기준으로 데이터를 생성 및 수정합니다. <br/>
+    uuid가 없는 항목은 생성, 있는 항목은 수정을 진행합니다. <br/>
+    Excel Upload에 사용합니다.
+  summary: 제품 유형 대량 데이터 입력 (Excel Upload)
+  tags:
+    - 제품 유형(ProdType)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - prod_type_cd
+            - prod_type_nm
+          allOf:
+            - $ref: ../../schemas/std/prod-type.schema.yaml#/uuid
+            - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_cd
+            - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_nm
+  responses:
+    201:
+      $ref: ../../responses/common/succeed-create.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

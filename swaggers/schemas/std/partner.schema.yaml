@@ -1,0 +1,163 @@
+# STD_PARTNER_TB
+
+# Columns
+partner_id: 
+  type: object
+  properties: 
+    partner_id:
+      description: 거래처ID
+      type: number
+      format: int4
+      
+partner_cd: 
+  type: object
+  properties: 
+    partner_cd:
+      description: 거래처코드
+      type: string
+      format: varchar(20)
+
+partner_nm: 
+  type: object
+  properties: 
+    partner_nm:
+      description: 거래처명
+      type: string
+      format: varchar(50)
+
+partner_type_id: 
+  type: object
+  properties: 
+    partner_type_id:
+      description: 거래처 유형ID
+      type: number
+      format: int4
+
+partner_no: 
+  type: object
+  properties: 
+    partner_no:
+      description: 거래처 사업자등록번호
+      type: string
+      format: varchar(12)
+
+boss_nm: 
+  type: object
+  properties: 
+    boss_nm:
+      description: 대표자명
+      type: string
+      format: varchar(20)
+
+manager: 
+  type: object
+  properties: 
+    manager:
+      description: 담당자
+      type: string
+      format: varchar(20)
+
+email: 
+  type: object
+  properties: 
+    email:
+      description: 이메일
+      type: string
+      format: varchar(50)
+
+tel: 
+  type: object
+  properties: 
+    tel:
+      description: 전화번호
+      type: string
+      format: varchar(13)
+
+fax: 
+  type: object
+  properties: 
+    fax:
+      description: 팩스번호
+      type: string
+      format: varchar(13)
+
+post: 
+  type: object
+  properties: 
+    post:
+      description: 우편번호
+      type: string
+      format: varchar(6)
+
+addr: 
+  type: object
+  properties: 
+    addr:
+      description: 주소
+      type: string
+      format: varchar(100)
+
+addr_detail: 
+  type: object
+  properties: 
+    addr_detail:
+      description: 상세주소
+      type: string
+      format: varchar(250)
+
+use_fg: 
+  type: object
+  properties: 
+    use_fg:
+      description: 사용유무
+      type: boolean
+      format: boolean
+
+vendor_fg: 
+  type: object
+  properties: 
+    vendor_fg:
+      description: 매입처유무
+      type: boolean
+      format: boolean
+
+customer_fg: 
+  type: object
+  properties: 
+    customer_fg:
+      description: 매출처유무
+      type: boolean
+      format: boolean
+
+remark: 
+  type: object
+  properties: 
+    remark:
+      description: 비고
+      type: string
+      format: varchar(250)
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 거래처UUID
+      type: string
+      format: uuid
+
+# Uuids
+partner_uuid:
+  type: object
+  properties: 
+    partner_uuid:
+      description: 거래처UUID
+      type: string
+      format: uuid
+
+partner_type_uuid:
+  type: object
+  properties: 
+    partner_type_uuid:
+      description: 거래처 유형UUID
+      type: string
+      format: uuid

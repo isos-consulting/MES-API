@@ -1,0 +1,91 @@
+# STD_COMPANY_TB
+
+# Columns
+company_id: 
+  type: object
+  properties: 
+    company_id:
+      description: 회사ID
+      type: number
+      format: int4
+
+company_nm: 
+  type: object
+  properties: 
+    company_nm:
+      description: 회사명
+      type: string
+      format: varchar(50)
+
+company_no: 
+  type: object
+  properties: 
+    company_no:
+      description: 회사 사업자등록번호
+      type: string
+      format: varchar(12)
+
+boss_nm: 
+  type: object
+  properties: 
+    boss_nm:
+      description: 대표자명
+      type: string
+      format: varchar(20)
+
+tel: 
+  type: object
+  properties: 
+    tel:
+      description: 전화번호
+      type: string
+      format: varchar(13)
+
+fax: 
+  type: object
+  properties: 
+    fax:
+      description: 팩스번호
+      type: string
+      format: varchar(13)
+
+post: 
+  type: object
+  properties: 
+    post:
+      description: 우편번호
+      type: string
+      format: varchar(6)
+
+addr: 
+  type: object
+  properties: 
+    addr:
+      description: 주소
+      type: string
+      format: varchar(100)
+
+addr_detail: 
+  type: object
+  properties: 
+    addr_detail:
+      description: 상세주소
+      type: string
+      format: varchar(250)
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 회사UUID
+      type: string
+      format: uuid
+
+# Uuids
+company_uuid:
+  type: object
+  properties: 
+    company_uuid:
+      description: 회사UUID
+      type: string
+      format: uuid

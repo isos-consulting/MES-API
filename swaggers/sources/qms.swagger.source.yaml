@@ -1,0 +1,107 @@
+---
+# Response 메세지 정의 (정상응답, 에러)
+#   -> 정상응답 중에서 각 HTTP METHOD 에 해당하는 코드 정리
+#   -> 에러 코드도 일반적으로 사용하는 것을 제외하고 우리만 사용하는 코드 정의
+#      EX) DB 에러 (종류에 따라 라던지), 토큰 Not Found 에러 등등
+# response, schemas, examples 어느 범위 까지 모듈로 빼서 사용할지?
+#   -> Error 쪽은 빼서 사용하는게 맞는데 나머지는 어떻게 하는게 좋을지?
+# 하나의 API 요청은 Response Schema도 하나여야 하는 개념인 것 같은데 어떻게 생각하시는지?
+# sub tag 기능이 없음 (유료버전 Swagger Hub 에는 있는데 무리인 것 같음 너무 비쌈)
+#   -> View 이름을 앞에 붙이고 기능을 뒤에 쓰는 방식으로 해서 구분 짓는 방식 생각 중
+# 코드 재사용 관련 기능으로 상속(inherit) / 콤보박스 처럼 조건 거는 기능(discriminate) 알아봐야 함
+# SECURITY 부분은 아직 알아보지 못했음 추후에 더 알아봐야 함
+
+# 일단 비슷한 API 요청이 여러개인 경우 path parameter로 받고 API 명세에는 구분해서 넣는 방식으로 (나중에 합치고)
+
+openapi: '3.0.2'
+info:
+  title: MES API Document
+  version: '1.0.0'
+  license:
+    name: 'MIT'
+    url: 'https://spdx.org/licenses/MIT.html'
+  contact:
+    name: 'KISOS'
+    url: 'https://www.kisos.net'
+    email: 'kisos@kisos.net'
+servers:
+  - url: https://isos.iptime.org:13221
+    description: MES TEST SERVER
+
+components:
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
+    petstore_auth:
+      type: oauth2
+      flows: 
+        implicit:
+          authorizationUrl: http://example.org/api/oauth/dialog
+          scopes:
+            write:pets: modify pets in your account
+            read:pets: read your pets
+
+paths:
+  # ✅ Insp (검사기준서)
+  /qms/insps/apply:
+    $ref: ../end-points/qms/insps.apply.yaml
+  /qms/insps/cancel-apply:
+    $ref: ../end-points/qms/insps.cancel-apply.yaml
+  /qms/insp/{uuid}:
+    $ref: ../end-points/qms/insp.{uuid}.yaml
+  /qms/insp/{uuid}/details:
+    $ref: ../end-points/qms/insp.{uuid}.details.yaml
+  /qms/insp/{uuid}/include-details:
+    $ref: ../end-points/qms/insp.{uuid}.include-details.yaml
+  /qms/receive/insp/include-details:
+    $ref: ../end-points/qms/receive.insp.include-details.yaml
+  /qms/proc/insp/include-details:
+    $ref: ../end-points/qms/proc.insp.include-details.yaml
+  /qms/insps:
+    $ref: ../end-points/qms/insps.yaml
+
+  # ✅ InspDetail (검사기준서상세)
+  /qms/insp-detail/{uuid}:
+    $ref: ../end-points/qms/insp-detail.{uuid}.yaml
+  /qms/insp-details:
+    $ref: ../end-points/qms/insp-details.yaml
+
+  # ✅ ProcDetail (공정검사 성적서)
+  /qms/proc/insp-results/max-seq:
+    $ref: ../end-points/qms/proc.insp-results.max-seq.yaml
+  /qms/proc/insp-results/report:
+    $ref: ../end-points/qms/proc.insp-results.report.yaml
+  /qms/proc/insp-result/{uuid}/include-details:
+    $ref: ../end-points/qms/proc.insp-result.{uuid}.include-details.yaml
+  /qms/proc/insp-results:
+    $ref: ../end-points/qms/proc.insp-results.yaml
+
+  # ✅ ReceiveDetail (수입검사 성적서)
+  /qms/receive/insp-result/waiting:
+    $ref: ../end-points/qms/receive.insp-result.waiting.yaml
+  /qms/receive/insp-result/{uuid}/include-details:
+    $ref: ../end-points/qms/receive.insp-result.{uuid}.include-details.yaml
+  /qms/receive/insp-results:
+    $ref: ../end-points/qms/receive.insp-results.yaml
+
+  # ✅ FinalDetail (최종검사 성적서)
+  /qms/final/insp-result/{uuid}/include-details:
+    $ref: ../end-points/qms/final.insp-result.{uuid}.include-details.yaml
+  /qms/final/insp-results:
+    $ref: ../end-points/qms/final.insp-results.yaml
+
+  # ✅ Rework (부적합품판정)
+  /qms/rework/{uuid}:
+    $ref: ../end-points/qms/rework.{uuid}.yaml
+  /qms/reworks/disassembles:
+    $ref: ../end-points/qms/reworks.disassemble.yaml
+  /qms/reworks:
+    $ref: ../end-points/qms/reworks.yaml
+
+# ✅ ReworkDisassemble (부적합품판정 분해이력)
+  /qms/rework-disassemble/{uuid}:
+    $ref: ../end-points/qms/rework-disassemble.{uuid}.yaml
+  /qms/rework-disassembles:
+    $ref: ../end-points/qms/rework-disassembles.yaml

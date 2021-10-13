@@ -1,0 +1,19 @@
+put:
+  description: |
+    검사기준서를 적용해제(비활성화)합니다.
+  summary: 검사기준서 적용해제
+  tags:
+    - 검사기준서(Insp)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - uuid
+          allOf:
+            - $ref: ../../schemas/qms/insp.schema.yaml#/uuid
+  responses:
+    201:
+      $ref: ../../responses/common/succeed-update.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

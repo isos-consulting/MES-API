@@ -1,0 +1,11 @@
+description: General Error (500)
+content:
+  application/json:
+    schema:
+      $ref: '../../schemas/common/default-error.schema.yaml'
+    example:
+      success: false
+      message: Error Message
+      datas:
+        raws: []
+        value: {}

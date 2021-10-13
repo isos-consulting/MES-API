@@ -1,0 +1,157 @@
+# PRD_WORK_ROUTING_TB
+
+# Columns
+work_routing_id: 
+  type: object
+  properties: 
+    work_routing_id:
+      description: 공정순서ID
+      type: number
+      format: int4
+
+factory_id: 
+  type: object
+  properties: 
+    factory_id:
+      description: 공장ID
+      type: number
+      format: int4
+
+work_id: 
+  type: object
+  properties: 
+    work_id:
+      description: 생산실적ID
+      type: number
+      format: int4
+
+proc_id: 
+  type: object
+  properties: 
+    proc_id:
+      description: 공정ID
+      type: number
+      format: int4
+
+proc_no: 
+  type: object
+  properties: 
+    proc_no:
+      description: 공정순서
+      type: number
+      format: int4
+
+workings_id: 
+  type: object
+  properties: 
+    workings_id:
+      description: 작업장ID
+      type: number
+      format: int4
+
+equip_id: 
+  type: object
+  properties: 
+    equip_id:
+      description: 설비ID
+      type: number
+      format: int4
+
+qty: 
+  type: object
+  properties: 
+    qty:
+      description: 생산 수량
+      type: number
+      format: numeric(19, 6)
+
+start_date: 
+  type: object
+  properties: 
+    start_date:
+      description: 시작 일시
+      type: string
+      format: date-time
+
+end_date: 
+  type: object
+  properties: 
+    end_date:
+      description: 종료 일시
+      type: string
+      format: date-time
+
+work_time: 
+  type: object
+  properties: 
+    work_time:
+      description: 작업시간
+      type: number
+      format: int4
+
+remark: 
+  type: object
+  properties: 
+    remark:
+      description: 비고
+      type: string
+      format: varchar(250)
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 공정순서UUID
+      type: string
+      format: uuid
+
+# Uuids
+work_routing_uuid:
+  type: object
+  properties: 
+    work_routing_uuid:
+      description: 공정순서UUID
+      type: string
+      format: uuid
+
+factory_uuid:
+  type: object
+  properties: 
+    factory_uuid:
+      description: 공장UUID
+      type: string
+      format: uuid
+
+work_uuid:
+  type: object
+  properties: 
+    work_uuid:
+      description: 생산실적UUID
+      type: string
+      format: uuid
+
+proc_uuid:
+  type: object
+  properties: 
+    proc_uuid:
+      description: 공정UUID
+      type: string
+      format: uuid
+
+workings_uuid:
+  type: object
+  properties: 
+    workings_uuid:
+      description: 작업장UUID
+      type: string
+      format: uuid
+
+equip_uuid:
+  type: object
+  properties: 
+    equip_uuid:
+      description: 설비UUID
+      type: string
+      format: uuid
+
+# Others

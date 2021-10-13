@@ -1,0 +1,155 @@
+# STD_EMP_TB
+
+# Columns
+emp_id: 
+  type: object
+  properties: 
+    emp_id:
+      description: 사원ID
+      type: number
+      format: int4
+      
+emp_cd: 
+  type: object
+  properties: 
+    emp_cd:
+      description: 사원코드
+      type: string
+      format: varchar(20)
+
+emp_nm: 
+  type: object
+  properties: 
+    emp_nm:
+      description: 사원명
+      type: string
+      format: varchar(50)
+
+uid: 
+  type: object
+  properties: 
+    uid:
+      description: 사용자ID
+      type: number
+      format: int4
+
+dept_id: 
+  type: object
+  properties: 
+    dept_id:
+      description: 부서ID
+      type: number
+      format: int4
+
+grade_id: 
+  type: object
+  properties: 
+    grade_id:
+      description: 직급ID
+      type: number
+      format: int4
+
+birthday: 
+  type: object
+  properties: 
+    birthday:
+      description: 생년월일
+      type: string
+      format: date
+
+hp: 
+  type: object
+  properties: 
+    hp:
+      description: 전화번호
+      type: string
+      format: varchar(13)
+
+post: 
+  type: object
+  properties: 
+    post:
+      description: 우편번호
+      type: string
+      format: varchar(6)
+
+addr: 
+  type: object
+  properties: 
+    addr:
+      description: 주소
+      type: string
+      format: varchar(100)
+
+addr_detail: 
+  type: object
+  properties: 
+    addr_detail:
+      description: 상세주소
+      type: string
+      format: varchar(250)
+
+enter_date: 
+  type: object
+  properties: 
+    enter_date:
+      description: 입사일자
+      type: string
+      format: date
+
+leave_date: 
+  type: object
+  properties: 
+    leave_date:
+      description: 퇴사일자
+      type: string
+      format: date
+      
+remark: 
+  type: object
+  properties: 
+    remark:
+      description: 비고
+      type: string
+      format: varchar(250)
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 사원UUID
+      type: string
+      format: uuid
+
+# Uuids
+emp_uuid:
+  type: object
+  properties: 
+    emp_uuid:
+      description: 사원UUID
+      type: string
+      format: uuid
+      
+user_uuid:
+  type: object
+  properties: 
+    user_uuid:
+      description: 사용자UUID
+      type: string
+      format: uuid
+
+dept_uuid:
+  type: object
+  properties: 
+    dept_uuid:
+      description: 부서UUID
+      type: string
+      format: uuid
+
+grade_uuid:
+  type: object
+  properties: 
+    grade_uuid:
+      description: 직급UUID
+      type: string
+      format: uuid

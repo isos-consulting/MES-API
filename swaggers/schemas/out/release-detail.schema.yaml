@@ -1,0 +1,228 @@
+# OUT_RELEASE_DETAIL_TB
+
+# Columns
+release_detail_id: 
+  type: object
+  properties: 
+    release_detail_id:
+      description: 외주출고상세ID
+      type: number
+      format: int4
+      
+release_id: 
+  type: object
+  properties: 
+    release_id:
+      description: 외주출고ID
+      type: number
+      format: int4
+      
+seq: 
+  type: object
+  properties: 
+    seq:
+      description: 출하 순번
+      type: number
+      format: int4
+
+factory_id: 
+  type: object
+  properties: 
+    factory_id:
+      description: 공장ID
+      type: number
+      format: int4
+
+prod_id: 
+  type: object
+  properties: 
+    prod_id:
+      description: 품목ID
+      type: number
+      format: int4
+
+lot_no: 
+  type: object
+  properties: 
+    lot_no:
+      description: LOT NO
+      type: string
+      format: varchar(25)
+
+qty: 
+  type: object
+  properties: 
+    qty:
+      description: 수량
+      type: number
+      format: numeric(19, 6)
+
+price: 
+  type: object
+  properties: 
+    price:
+      description: 금액
+      type: number
+      format: numeric(19, 6)
+
+money_unit_id: 
+  type: object
+  properties: 
+    money_unit_id:
+      description: 화폐 단위ID
+      type: number
+      format: int4
+      
+exchange: 
+  type: object
+  properties: 
+    exchange:
+      description: 환율
+      type: string
+      format: numeric(19, 6)
+
+total_price: 
+  type: object
+  properties: 
+    total_price:
+      description: 합계 금액
+      type: number
+      format: numeric(19, 6)
+
+unit_qty: 
+  type: object
+  properties: 
+    unit_qty:
+      description: 단위 수량
+      type: number
+      format: numeric(19, 6)
+
+order_detail_id: 
+  type: object
+  properties: 
+    order_detail_id:
+      description: 발주 상세ID
+      type: number
+      format: int4
+
+from_store_id: 
+  type: object
+  properties: 
+    from_store_id:
+      description: 출고 창고ID
+      type: number
+      format: int4
+
+from_location_id: 
+  type: object
+  properties: 
+    from_location_id:
+      description: 출고 위치ID
+      type: number
+      format: int4
+
+remark: 
+  type: object
+  properties: 
+    remark:
+      description: 비고
+      type: string
+      format: varchar(250)
+
+barcode: 
+  type: object
+  properties: 
+    barcode:
+      description: 바코드
+      type: string
+      format: varchar(100)
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 외주출고상세UUID
+      type: string
+      format: uuid
+
+# Uuids
+release_detail_uuid:
+  type: object
+  properties: 
+    release_detail_uuid:
+      description: 외주출고상세UUID
+      type: string
+      format: uuid
+
+release_uuid:
+  type: object
+  properties: 
+    release_uuid:
+      description: 외주출고UUID
+      type: string
+      format: uuid
+
+factory_uuid:
+  type: object
+  properties: 
+    factory_uuid:
+      description: 공장UUID
+      type: string
+      format: uuid
+
+prod_uuid:
+  type: object
+  properties: 
+    prod_uuid:
+      description: 품목UUID
+      type: string
+      format: uuid
+
+money_unit_uuid:
+  type: object
+  properties: 
+    money_unit_uuid:
+      description: 화폐 단위UUID
+      type: string
+      format: uuid
+
+order_detail_uuid:
+  type: object
+  properties: 
+    order_detail_uuid:
+      description: 발주 상세UUID
+      type: string
+      format: uuid
+
+from_store_uuid:
+  type: object
+  properties: 
+    from_store_uuid:
+      description: 출고 창고UUID
+      type: string
+      format: uuid
+
+from_location_uuid:
+  type: object
+  properties: 
+    from_location_uuid:
+      description: 출고 위치UUID
+      type: string
+      format: uuid
+
+# Others
+stmt_no_sub: 
+  type: object
+  properties: 
+    stmt_no_sub:
+      description: 상세전표번호
+      type: string
+      format: varchar
+      
+order_qty: 
+  type: object
+  properties: 
+    order_qty:
+      description: 발주 수량
+      type: number
+      format: numeric(19, 6)

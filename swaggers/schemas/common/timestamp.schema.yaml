@@ -1,0 +1,16 @@
+type: object
+properties:
+  created_at:
+    description: 데이터 생성 일시(datetime)
+    type: string
+    format: date-time
+  created_nm:
+    description: 데이터 생성자 성명
+    type: string
+  updated_at:
+    description: 마지막 데이터 수정 일시(datetime)
+    type: string
+    format: date-time
+  updated_nm:
+    description: 마지막 데이터 수정자 성명
+    type: string

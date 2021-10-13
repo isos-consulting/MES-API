@@ -1,0 +1,236 @@
+# QMS_INSP_DETAIL_TB
+
+# Columns
+insp_detail_id: 
+  type: object
+  properties: 
+    insp_detail_id:
+      description: 검사기준서상세ID
+      type: number
+      format: int4
+      
+insp_id: 
+  type: object
+  properties: 
+    insp_id:
+      description: 검사기준서ID
+      type: number
+      format: int4
+      
+seq: 
+  type: object
+  properties: 
+    seq:
+      description: 기준서 순번
+      type: number
+      format: int4
+
+factory_id: 
+  type: object
+  properties: 
+    factory_id:
+      description: 공장ID
+      type: number
+      format: int4
+
+insp_item_id: 
+  type: object
+  properties: 
+    insp_item_id:
+      description: 검사항목ID
+      type: number
+      format: int4
+
+insp_item_desc: 
+  type: object
+  properties: 
+    insp_item_desc:
+      description: 검사항목 상세내용
+      type: string
+      format: varchar(250)
+
+spec_std: 
+  type: object
+  properties: 
+    spec_std:
+      description: 검사 기준
+      type: string
+      format: varchar(250)
+
+spec_min: 
+  type: object
+  properties: 
+    spec_min:
+      description: 최소 값
+      type: number
+      format: numeric(19, 6)
+
+spec_max: 
+  type: object
+  properties: 
+    spec_max:
+      description: 최대 값
+      type: number
+      format: numeric(19, 6)
+
+insp_tool_id: 
+  type: object
+  properties: 
+    insp_tool_id:
+      description: 검사구ID
+      type: number
+      format: int4
+
+insp_method_id: 
+  type: object
+  properties: 
+    insp_method_id:
+      description: 검사방법ID
+      type: number
+      format: int4
+
+sortby: 
+  type: object
+  properties: 
+    sortby:
+      description: 정렬
+      type: number
+      format: int4
+
+position_no: 
+  type: object
+  properties: 
+    position_no:
+      description: 위치번호
+      type: number
+      format: int4
+
+special_property: 
+  type: object
+  properties: 
+    special_property:
+      description: 특별특성
+      type: string
+      format: varchar(250)
+
+worker_sample_cnt: 
+  type: object
+  properties: 
+    worker_sample_cnt:
+      description: 시료 수량(작업자)
+      type: number
+      format: int4
+
+worker_insp_cycle: 
+  type: object
+  properties: 
+    worker_insp_cycle:
+      description: 검사 주기(작업자)
+      type: string
+      format: varchar(250)
+
+inspector_sample_cnt: 
+  type: object
+  properties: 
+    inspector_sample_cnt:
+      description: 시료 수량(검사원)
+      type: number
+      format: int4
+
+inspector_insp_cycle: 
+  type: object
+  properties: 
+    inspector_insp_cycle:
+      description: 검사 주기(검사원)
+      type: string
+      format: varchar(250)
+
+remark: 
+  type: object
+  properties: 
+    remark:
+      description: 비고
+      type: string
+      format: varchar(250)
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 검사기준서상세UUID
+      type: string
+      format: uuid
+
+# Uuids
+insp_detail_uuid:
+  type: object
+  properties: 
+    insp_detail_uuid:
+      description: 검사기준서상세UUID
+      type: string
+      format: uuid
+
+insp_uuid:
+  type: object
+  properties: 
+    insp_uuid:
+      description: 검사기준서UUID
+      type: string
+      format: uuid
+
+factory_uuid:
+  type: object
+  properties: 
+    factory_uuid:
+      description: 공장UUID
+      type: string
+      format: uuid
+
+insp_item_uuid:
+  type: object
+  properties: 
+    insp_item_uuid:
+      description: 검사항목UUID
+      type: string
+      format: uuid
+
+insp_method_uuid:
+  type: object
+  properties: 
+    insp_method_uuid:
+      description: 검사방법UUID
+      type: string
+      format: uuid
+
+insp_tool_uuid:
+  type: object
+  properties: 
+    insp_tool_uuid:
+      description: 검사구UUID
+      type: string
+      format: uuid
+
+# Others
+insp_no_sub: 
+  type: object
+  properties: 
+    insp_no_sub:
+      description: 상세기준서번호
+      type: string
+      format: varchar
+
+sample_cnt: 
+  type: object
+  properties: 
+    sample_cnt:
+      description: 시료 수량
+      type: number
+      format: int4
+
+insp_cycle: 
+  type: object
+  properties: 
+    insp_cycle:
+      description: 검사 주기
+      type: string
+      format: varchar(250)

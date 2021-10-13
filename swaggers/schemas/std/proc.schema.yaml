@@ -1,0 +1,59 @@
+# STD_PROC_TB
+
+# Columns
+proc_id: 
+  type: object
+  properties: 
+    proc_id:
+      description: 공정ID
+      type: number
+      format: int4
+
+factory_id: 
+  type: object
+  properties: 
+    factory_id:
+      description: 공장ID
+      type: number
+      format: int4
+      
+proc_cd: 
+  type: object
+  properties: 
+    proc_cd:
+      description: 공정코드
+      type: string
+      format: varchar(20)
+
+proc_nm: 
+  type: object
+  properties: 
+    proc_nm:
+      description: 공정명
+      type: string
+      format: varchar(50)
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 공정UUID
+      type: string
+      format: uuid
+
+# Uuids
+proc_uuid:
+  type: object
+  properties: 
+    proc_uuid:
+      description: 공정UUID
+      type: string
+      format: uuid
+
+factory_uuid:
+  type: object
+  properties: 
+    factory_uuid:
+      description: 공장UUID
+      type: string
+      format: uuid

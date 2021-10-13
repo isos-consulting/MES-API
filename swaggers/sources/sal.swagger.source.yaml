@@ -1,0 +1,137 @@
+---
+# Response 메세지 정의 (정상응답, 에러)
+#   -> 정상응답 중에서 각 HTTP METHOD 에 해당하는 코드 정리
+#   -> 에러 코드도 일반적으로 사용하는 것을 제외하고 우리만 사용하는 코드 정의
+#      EX) DB 에러 (종류에 따라 라던지), 토큰 Not Found 에러 등등
+# response, schemas, examples 어느 범위 까지 모듈로 빼서 사용할지?
+#   -> Error 쪽은 빼서 사용하는게 맞는데 나머지는 어떻게 하는게 좋을지?
+# 하나의 API 요청은 Response Schema도 하나여야 하는 개념인 것 같은데 어떻게 생각하시는지?
+# sub tag 기능이 없음 (유료버전 Swagger Hub 에는 있는데 무리인 것 같음 너무 비쌈)
+#   -> View 이름을 앞에 붙이고 기능을 뒤에 쓰는 방식으로 해서 구분 짓는 방식 생각 중
+# 코드 재사용 관련 기능으로 상속(inherit) / 콤보박스 처럼 조건 거는 기능(discriminate) 알아봐야 함
+# SECURITY 부분은 아직 알아보지 못했음 추후에 더 알아봐야 함
+
+# 일단 비슷한 API 요청이 여러개인 경우 path parameter로 받고 API 명세에는 구분해서 넣는 방식으로 (나중에 합치고)
+
+openapi: "3.0.2"
+info:
+  title: MES API Document
+  version: "1.0.0"
+  license:
+    name: "MIT"
+    url: "https://spdx.org/licenses/MIT.html"
+  contact:
+    name: "KISOS"
+    url: "https://www.kisos.net"
+    email: "kisos@kisos.net"
+servers:
+  - url: https://isos.iptime.org:13221
+    description: MES TEST SERVER
+
+components:
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
+    petstore_auth:
+      type: oauth2
+      flows:
+        implicit:
+          authorizationUrl: http://example.org/api/oauth/dialog
+          scopes:
+            write:pets: modify pets in your account
+            read:pets: read your pets
+
+paths:
+  # ✅ Return (제품반입)
+  /sal/returns/report:
+    $ref: ../end-points/sal/returns.report.yaml
+  /sal/return/{uuid}:
+    $ref: ../end-points/sal/return.{uuid}.yaml
+  /sal/return/{uuid}/details:
+    $ref: ../end-points/sal/return.{uuid}.details.yaml
+  /sal/return/{uuid}/include-details:
+    $ref: ../end-points/sal/return.{uuid}.include-details.yaml
+  /sal/returns:
+    $ref: ../end-points/sal/returns.yaml
+
+  # ✅ ReturnDetail (제품반입상세)
+  /sal/return-detail/{uuid}:
+    $ref: ../end-points/sal/return-detail.{uuid}.yaml
+  /sal/return-details:
+    $ref: ../end-points/sal/return-details.yaml
+
+  # ✅ Order (제품수주)
+  /sal/orders/report:
+    $ref: ../end-points/sal/orders.report.yaml
+  /sal/order/{uuid}:
+    $ref: ../end-points/sal/order.{uuid}.yaml
+  /sal/order/{uuid}/details:
+    $ref: ../end-points/sal/order.{uuid}.details.yaml
+  /sal/order/{uuid}/include-details:
+    $ref: ../end-points/sal/order.{uuid}.include-details.yaml
+  /sal/orders:
+    $ref: ../end-points/sal/orders.yaml
+
+  # ✅ OrderDetail (제품수주상세)
+  /sal/order-details/complete:
+    $ref: ../end-points/sal/order-details.complete.yaml
+  /sal/order-detail/{uuid}:
+    $ref: ../end-points/sal/order-detail.{uuid}.yaml
+  /sal/order-details:
+    $ref: ../end-points/sal/order-details.yaml
+
+  # ✅ Income (제품입고)
+  /sal/incomes/report:
+    $ref: ../end-points/sal/incomes.report.yaml
+  /sal/income/{uuid}:
+    $ref: ../end-points/sal/income.{uuid}.yaml
+  /sal/incomes:
+    $ref: ../end-points/sal/incomes.yaml
+
+  # ✅ Release (제품출고)
+  /sal/releases/report:
+    $ref: ../end-points/sal/releases.report.yaml
+  /sal/release/{uuid}:
+    $ref: ../end-points/sal/release.{uuid}.yaml
+  /sal/releases:
+    $ref: ../end-points/sal/releases.yaml
+
+  # ✅ OutgoOrder (제품출하지시)
+  /sal/outgo-order/{uuid}:
+    $ref: ../end-points/sal/outgo-order.{uuid}.yaml
+  /sal/outgo-order/{uuid}/details:
+    $ref: ../end-points/sal/outgo-order.{uuid}.details.yaml
+  /sal/outgo-order/{uuid}/include-details:
+    $ref: ../end-points/sal/outgo-order.{uuid}.include-details.yaml
+  /sal/outgo-orders:
+    $ref: ../end-points/sal/outgo-orders.yaml
+
+  # ✅ OutgoOrderDetail (제품출하지시상세)
+  /sal/outgo-order-details/complete:
+    $ref: ../end-points/sal/outgo-order-details.complete.yaml
+  /sal/outgo-order-detail/{uuid}:
+    $ref: ../end-points/sal/outgo-order-detail.{uuid}.yaml
+  /sal/outgo-order-details:
+    $ref: ../end-points/sal/outgo-order-details.yaml
+
+  # ✅ Outgo (제품출하)
+  /sal/outgo/report:
+    $ref: ../end-points/sal/outgo.lot.tracking.yaml
+  /sal/outgos/report:
+    $ref: ../end-points/sal/outgos.report.yaml
+  /sal/outgo/{uuid}:
+    $ref: ../end-points/sal/outgo.{uuid}.yaml
+  /sal/outgo/{uuid}/details:
+    $ref: ../end-points/sal/outgo.{uuid}.details.yaml
+  /sal/outgo/{uuid}/include-details:
+    $ref: ../end-points/sal/outgo.{uuid}.include-details.yaml
+  /sal/outgos:
+    $ref: ../end-points/sal/outgos.yaml
+
+  # ✅ OutgoDetail (제품출하상세)
+  /sal/outgo-detail/{uuid}:
+    $ref: ../end-points/sal/outgo-detail.{uuid}.yaml
+  /sal/outgo-details:
+    $ref: ../end-points/sal/outgo-details.yaml

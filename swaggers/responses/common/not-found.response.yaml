@@ -1,0 +1,11 @@
+description: Not Found (404)
+content:
+  application/json:
+    schema:
+      $ref: '../../schemas/common/default-error.schema.yaml'
+    example:
+      success: false
+      message: 404 Not Found
+      datas:
+        raws: []
+        value: {}

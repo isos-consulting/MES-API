@@ -1,0 +1,50 @@
+# ADM_INSP_DETAIL_TYPE_VW
+
+# Columns
+insp_detail_type_id: 
+  type: object
+  properties: 
+    insp_detail_type_id:
+      description: 세부검사유형ID
+      type: number
+      format: int4
+
+insp_detail_type_cd: 
+  type: object
+  properties: 
+    insp_detail_type_cd:
+      description: 세부검사유형코드
+      type: string
+      format: varchar(20)
+
+insp_detail_type_nm: 
+  type: object
+  properties: 
+    insp_detail_type_nm:
+      description: 세부검사유형명
+      type: string
+      format: varchar(50)
+
+insp_type_cd: 
+  type: object
+  properties: 
+    insp_type_cd:
+      description: 검사유형코드
+      type: string
+      format: varchar(50)
+
+worker_fg: 
+  type: object
+  properties: 
+    worker_fg:
+      description: 작업자 검사 여부
+      type: boolean
+      format: boolean
+
+inspector_fg: 
+  type: object
+  properties: 
+    inspector_fg:
+      description: 검사자 검사 여부
+      type: boolean
+      format: boolean

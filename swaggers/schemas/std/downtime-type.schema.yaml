@@ -1,0 +1,59 @@
+# STD_DOWNTIME_TYPE_TB
+
+# Columns
+downtime_type_id: 
+  type: object
+  properties: 
+    downtime_type_id:
+      description: 비가동 유형ID
+      type: number
+      format: int4
+
+factory_id: 
+  type: object
+  properties: 
+    factory_id:
+      description: 공장ID
+      type: number
+      format: int4
+      
+downtime_type_cd: 
+  type: object
+  properties: 
+    downtime_type_cd:
+      description: 비가동 유형코드
+      type: string
+      format: varchar(20)
+
+downtime_type_nm: 
+  type: object
+  properties: 
+    downtime_type_nm:
+      description: 비가동 유형명
+      type: string
+      format: varchar(50)
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 비가동 유형UUID
+      type: string
+      format: uuid
+
+# Uuids
+downtime_type_uuid:
+  type: object
+  properties: 
+    downtime_type_uuid:
+      description: 비가동 유형UUID
+      type: string
+      format: uuid
+
+factory_uuid:
+  type: object
+  properties: 
+    factory_uuid:
+      description: 공장UUID
+      type: string
+      format: uuid

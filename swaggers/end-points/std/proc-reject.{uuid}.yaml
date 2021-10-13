@@ -1,0 +1,60 @@
+get:
+  description: |
+    하나의 공정별 부적합 데이터를 조회합니다.
+  summary: 공정별 부적합 데이터 단일 조회
+  tags:
+    - 공정별 부적합(ProcReject)
+  parameters:
+    - name: uuid
+      in: path
+      description: 공정별 부적합의 UUID 를 입력합니다.
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+  responses:
+    200:
+      description: Read OK
+      content:
+        application/json:
+          schema: 
+            allOf:
+              - $ref: ../../schemas/common/default-response.schema.yaml
+              - type: object
+                properties:
+                  datas:
+                    description: Enable
+                    type: object
+                    properties:
+                      value:
+                        description: Enable
+                        type: object
+                        properties:
+                          count: 
+                            description: 영향받은 데이터의 개수
+                            type: number
+                            format: int32
+                            minimum: 0
+                      raws:
+                        description: 공정별 부적합 데이터 목록
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: ../../schemas/std/proc-reject.schema.yaml#/proc_reject_uuid
+                            - $ref: ../../schemas/std/proc-reject.schema.yaml#/factory_uuid
+                            - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
+                            - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
+                            - $ref: ../../schemas/std/proc-reject.schema.yaml#/proc_uuid
+                            - $ref: ../../schemas/std/proc.schema.yaml#/proc_cd
+                            - $ref: ../../schemas/std/proc.schema.yaml#/proc_nm
+                            - $ref: ../../schemas/std/proc-reject.schema.yaml#/reject_uuid
+                            - $ref: ../../schemas/std/reject.schema.yaml#/reject_cd
+                            - $ref: ../../schemas/std/reject.schema.yaml#/reject_nm
+                            - $ref: ../../schemas/std/reject.schema.yaml#/reject_type_uuid
+                            - $ref: ../../schemas/std/reject-type.schema.yaml#/reject_type_cd
+                            - $ref: ../../schemas/std/reject-type.schema.yaml#/reject_type_nm
+                            - $ref: ../../schemas/std/proc-reject.schema.yaml#/remark
+                            - $ref: ../../schemas/common/timestamp.schema.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

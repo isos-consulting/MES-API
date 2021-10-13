@@ -1,0 +1,68 @@
+post:
+  description: |
+    부적합품 판정 신규생성 및 분해이력을 추가 생성합니다. <br/>
+    분해이력 추가 생성시 header에 부적합품 판정의 uuid를 입력해야 합니다.
+
+  summary: 부적합품 판정 및 분해이력 데이터 생성
+  tags:
+    - 부적합품판정(Rework)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - header
+            - details
+          type: object
+          properties:
+            header:
+              description: Header Data
+              type: object
+              required:
+                - factory_uuid
+                - reg_date
+                - prod_uuid
+                - lot_no
+                - reject_uuid
+                - qty
+              allOf:
+                - $ref: ../../schemas/qms/rework.schema.yaml#/factory_uuid
+                - $ref: ../../schemas/qms/rework.schema.yaml#/reg_date
+                - $ref: ../../schemas/qms/rework.schema.yaml#/prod_uuid
+                - $ref: ../../schemas/qms/rework.schema.yaml#/lot_no
+                - $ref: ../../schemas/qms/rework.schema.yaml#/reject_uuid
+                - $ref: ../../schemas/qms/rework.schema.yaml#/qty
+                - $ref: ../../schemas/qms/rework.schema.yaml#/from_store_uuid
+                - $ref: ../../schemas/qms/rework.schema.yaml#/from_location_uuid
+                - $ref: ../../schemas/qms/rework.schema.yaml#/to_store_uuid
+                - $ref: ../../schemas/qms/rework.schema.yaml#/to_location_uuid
+                - $ref: ../../schemas/qms/rework.schema.yaml#/remark
+            details:
+              description: Details Data
+              type: array
+              items:
+                required:
+                  - factory_uuid
+                  - prod_uuid
+                  - lot_no
+                  - income_qty
+                  - return_qty
+                  - disposal_qty
+                type: object
+                allOf:        
+                  - $ref: ../../schemas/qms/rework-disassemble.schema.yaml#/factory_uuid
+                  - $ref: ../../schemas/qms/rework-disassemble.schema.yaml#/prod_uuid
+                  - $ref: ../../schemas/qms/rework-disassemble.schema.yaml#/lot_no
+                  - $ref: ../../schemas/qms/rework-disassemble.schema.yaml#/income_qty
+                  - $ref: ../../schemas/qms/rework-disassemble.schema.yaml#/return_qty
+                  - $ref: ../../schemas/qms/rework-disassemble.schema.yaml#/disposal_qty
+                  - $ref: ../../schemas/qms/rework-disassemble.schema.yaml#/income_store_uuid
+                  - $ref: ../../schemas/qms/rework-disassemble.schema.yaml#/income_location_uuid
+                  - $ref: ../../schemas/qms/rework-disassemble.schema.yaml#/return_store_uuid
+                  - $ref: ../../schemas/qms/rework-disassemble.schema.yaml#/return_location_uuid
+                  - $ref: ../../schemas/qms/rework-disassemble.schema.yaml#/remark
+  responses:
+    201:
+      $ref: ../../responses/common/succeed-create.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

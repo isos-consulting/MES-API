@@ -1,0 +1,77 @@
+# PRD_ORDER_WORKER_TB
+
+# Columns
+order_worker_id: 
+  type: object
+  properties: 
+    order_worker_id:
+      description: 작업자 투입ID
+      type: number
+      format: int4
+
+factory_id: 
+  type: object
+  properties: 
+    factory_id:
+      description: 공장ID
+      type: number
+      format: int4
+
+order_id: 
+  type: object
+  properties: 
+    order_id:
+      description: 작업지시ID
+      type: number
+      format: int4
+
+worker_id: 
+  type: object
+  properties: 
+    worker_id:
+      description: 작업자ID
+      type: number
+      format: int4
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 작업자 투입UUID
+      type: string
+      format: uuid
+
+# Uuids
+order_worker_uuid:
+  type: object
+  properties: 
+    order_worker_uuid:
+      description: 작업자 투입UUID
+      type: string
+      format: uuid
+
+factory_uuid:
+  type: object
+  properties: 
+    factory_uuid:
+      description: 공장UUID
+      type: string
+      format: uuid
+
+order_uuid:
+  type: object
+  properties: 
+    order_uuid:
+      description: 작업지시UUID
+      type: string
+      format: uuid
+
+worker_uuid:
+  type: object
+  properties: 
+    worker_uuid:
+      description: 작업자UUID
+      type: string
+      format: uuid
+      
+# Others

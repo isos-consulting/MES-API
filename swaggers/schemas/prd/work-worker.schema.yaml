@@ -1,0 +1,101 @@
+# PRD_WORK_WORKER_TB
+
+# Columns
+work_worker_id: 
+  type: object
+  properties: 
+    work_worker_id:
+      description: 작업자 투입ID
+      type: number
+      format: int4
+
+factory_id: 
+  type: object
+  properties: 
+    factory_id:
+      description: 공장ID
+      type: number
+      format: int4
+
+work_id: 
+  type: object
+  properties: 
+    work_id:
+      description: 생산실적ID
+      type: number
+      format: int4
+
+worker_id: 
+  type: object
+  properties: 
+    worker_id:
+      description: 작업자ID
+      type: number
+      format: int4
+
+start_date: 
+  type: object
+  properties: 
+    start_date:
+      description: 작업시작 일시
+      type: string
+      format: date-time
+
+end_date: 
+  type: object
+  properties: 
+    end_date:
+      description: 작업종료 일시
+      type: string
+      format: date-time
+
+work_time: 
+  type: object
+  properties: 
+    work_time:
+      description: 작업시간
+      type: number
+      format: numeric(19, 6)
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 작업자 투입UUID
+      type: string
+      format: uuid
+
+# Uuids
+work_worker_uuid:
+  type: object
+  properties: 
+    work_worker_uuid:
+      description: 작업자 투입UUID
+      type: string
+      format: uuid
+
+factory_uuid:
+  type: object
+  properties: 
+    factory_uuid:
+      description: 공장UUID
+      type: string
+      format: uuid
+
+work_uuid:
+  type: object
+  properties: 
+    work_uuid:
+      description: 생산실적UUID
+      type: string
+      format: uuid
+
+worker_uuid:
+  type: object
+  properties: 
+    worker_uuid:
+      description: 작업자UUID
+      type: string
+      format: uuid
+      
+# Others

@@ -1,0 +1,20 @@
+put:
+  description: |
+    검사기준서를 적용(활성화)합니다. <br/>
+    ❗ 공정검사 기준서는 해당 품번의 생산이 진행중일 경우 기준서 적용이 불가능합니다.
+  summary: 검사기준서 적용
+  tags:
+    - 검사기준서(Insp)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - uuid
+          allOf:
+            - $ref: ../../schemas/qms/insp.schema.yaml#/uuid
+  responses:
+    201:
+      $ref: ../../responses/common/succeed-update.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

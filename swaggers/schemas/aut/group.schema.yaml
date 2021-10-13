@@ -1,0 +1,35 @@
+# AUT_GROUP_TB
+
+# Columns
+group_id: 
+  type: object
+  properties: 
+    group_id:
+      description: 권한그룹ID
+      type: number
+      format: int4
+      
+group_nm: 
+  type: object
+  properties: 
+    group_nm:
+      description: 권한그룹명
+      type: number
+      format: int4
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 권한그룹UUID
+      type: string
+      format: uuid
+
+# Uuids
+group_uuid:
+  type: object
+  properties: 
+    group_uuid:
+      description: 권한그룹UUID
+      type: string
+      format: uuid

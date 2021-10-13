@@ -1,0 +1,180 @@
+# PRD_WORK_REJECT_TB
+
+# Columns
+work_reject_id: 
+  type: object
+  properties: 
+    work_reject_id:
+      description: 생산부적합ID
+      type: number
+      format: int4
+
+factory_id: 
+  type: object
+  properties: 
+    factory_id:
+      description: 공장ID
+      type: number
+      format: int4
+
+work_id: 
+  type: object
+  properties: 
+    work_id:
+      description: 생산실적ID
+      type: number
+      format: int4
+
+proc_id: 
+  type: object
+  properties: 
+    proc_id:
+      description: 공정ID
+      type: number
+      format: int4
+
+reject_id: 
+  type: object
+  properties: 
+    reject_id:
+      description: 부적합ID
+      type: number
+      format: int4
+
+qty: 
+  type: object
+  properties: 
+    qty:
+      description: 부적합 수량
+      type: number
+      format: numeric(19, 6)
+
+to_store_id: 
+  type: object
+  properties: 
+    to_store_id:
+      description: 입고 창고ID
+      type: number
+      format: int4
+
+to_location_id: 
+  type: object
+  properties: 
+    to_location_id:
+      description: 입고 위치ID
+      type: number
+      format: int4
+
+remark: 
+  type: object
+  properties: 
+    remark:
+      description: 비고
+      type: string
+      format: varchar(250)
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 생산부적합UUID
+      type: string
+      format: uuid
+
+# Uuids
+work_reject_uuid:
+  type: object
+  properties: 
+    work_reject_uuid:
+      description: 생산부적합UUID
+      type: string
+      format: uuid
+
+factory_uuid:
+  type: object
+  properties: 
+    factory_uuid:
+      description: 공장UUID
+      type: string
+      format: uuid
+
+work_uuid:
+  type: object
+  properties: 
+    work_uuid:
+      description: 생산실적UUID
+      type: string
+      format: uuid
+
+proc_uuid:
+  type: object
+  properties: 
+    proc_uuid:
+      description: 공정UUID
+      type: string
+      format: uuid
+
+reject_uuid:
+  type: object
+  properties: 
+    reject_uuid:
+      description: 부적합UUID
+      type: string
+      format: uuid
+
+to_store_uuid:
+  type: object
+  properties: 
+    to_store_uuid:
+      description: 입고 창고UUID
+      type: string
+      format: uuid
+
+to_location_uuid:
+  type: object
+  properties: 
+    to_location_uuid:
+      description: 입고 위치UUID
+      type: string
+      format: uuid
+
+# Others
+row_type: 
+  type: object
+  properties: 
+    row_type:
+      description: 조회 Row의 Type(일반[data], 소계[sub-total], 합계[total])
+      type: string
+      format: varchar
+
+reject_proc_uuid: 
+  type: object
+  properties: 
+    reject_proc_uuid:
+      description: 부적합공정UUID
+      type: string
+      format: uuid
+
+reject_proc_cd: 
+  type: object
+  properties: 
+    reject_proc_cd:
+      description: 부적합공정코드
+      type: string
+      format: varchar(20)
+
+reject_proc_nm: 
+  type: object
+  properties: 
+    reject_proc_nm:
+      description: 부적합공정명
+      type: string
+      format: varchar(50)
+
+reject_detail_qty: 
+  type: object
+  properties: 
+    reject_detail_qty:
+      description: 부적합 항목별 수량
+      type: number
+      format: numeric(19, 6)

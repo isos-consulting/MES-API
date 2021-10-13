@@ -1,0 +1,180 @@
+get:
+  description: |
+    공급처 데이터 목록을 조회합니다.
+  summary: 공급처 데이터 조회
+  tags:
+    - 공급처(Supplier)
+  parameters:
+    - name: partner_uuid
+      in: query
+      description: 거래처의 UUID 를 입력하여 거래처에 따라 공급처를 조회합니다. [전체 조회시 입력하지 않습니다.]
+      schema:
+        type: string
+        format: uuid
+
+  responses:
+    200:
+      description: Read OK
+      content:
+        application/json:
+          schema: 
+            allOf:
+              - $ref: ../../schemas/common/default-response.schema.yaml
+              - type: object
+                properties:
+                  datas:
+                    description: Enable
+                    type: object
+                    properties:
+                      value:
+                        description: Enable
+                        type: object
+                        properties:
+                          count: 
+                            description: 영향받은 데이터의 개수
+                            type: number
+                            format: int32
+                            minimum: 0
+                      raws:
+                        description: 공급처 데이터 목록
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: ../../schemas/std/supplier.schema.yaml#/supplier_uuid
+                            - $ref: ../../schemas/std/supplier.schema.yaml#/supplier_cd
+                            - $ref: ../../schemas/std/supplier.schema.yaml#/supplier_nm
+                            - $ref: ../../schemas/std/supplier.schema.yaml#/partner_uuid
+                            - $ref: ../../schemas/std/partner.schema.yaml#/partner_cd
+                            - $ref: ../../schemas/std/partner.schema.yaml#/partner_nm
+                            - $ref: ../../schemas/std/supplier.schema.yaml#/manager
+                            - $ref: ../../schemas/std/supplier.schema.yaml#/email
+                            - $ref: ../../schemas/std/supplier.schema.yaml#/tel
+                            - $ref: ../../schemas/std/supplier.schema.yaml#/fax
+                            - $ref: ../../schemas/std/supplier.schema.yaml#/post
+                            - $ref: ../../schemas/std/supplier.schema.yaml#/addr
+                            - $ref: ../../schemas/std/supplier.schema.yaml#/addr_detail
+                            - $ref: ../../schemas/std/supplier.schema.yaml#/use_fg
+                            - $ref: ../../schemas/std/supplier.schema.yaml#/remark
+                            - $ref: ../../schemas/common/timestamp.schema.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml
+
+post:
+  description: |
+    공급처 데이터를 생성합니다.
+  summary: 공급처 데이터 생성
+  tags:
+    - 공급처(Supplier)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - supplier_cd
+            - supplier_nm
+            - partner_uuid
+            - use_fg
+          allOf:
+            - $ref: ../../schemas/std/supplier.schema.yaml#/supplier_cd
+            - $ref: ../../schemas/std/supplier.schema.yaml#/supplier_nm
+            - $ref: ../../schemas/std/supplier.schema.yaml#/partner_uuid
+            - $ref: ../../schemas/std/supplier.schema.yaml#/manager
+            - $ref: ../../schemas/std/supplier.schema.yaml#/email
+            - $ref: ../../schemas/std/supplier.schema.yaml#/tel
+            - $ref: ../../schemas/std/supplier.schema.yaml#/fax
+            - $ref: ../../schemas/std/supplier.schema.yaml#/post
+            - $ref: ../../schemas/std/supplier.schema.yaml#/addr
+            - $ref: ../../schemas/std/supplier.schema.yaml#/addr_detail
+            - $ref: ../../schemas/std/supplier.schema.yaml#/use_fg
+            - $ref: ../../schemas/std/supplier.schema.yaml#/remark
+  responses:
+    201:
+      $ref: ../../responses/common/succeed-create.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml
+
+put:
+  description: |
+    공급처 데이터를 행(Row) 단위로 수정합니다.
+  summary: 공급처 데이터 수정
+  tags:
+    - 공급처(Supplier)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - uuid
+            - supplier_cd
+            - supplier_nm
+            - partner_uuid
+            - use_fg
+          allOf:
+            - $ref: ../../schemas/std/supplier.schema.yaml#/supplier_cd
+            - $ref: ../../schemas/std/supplier.schema.yaml#/supplier_nm
+            - $ref: ../../schemas/std/supplier.schema.yaml#/partner_uuid
+            - $ref: ../../schemas/std/supplier.schema.yaml#/manager
+            - $ref: ../../schemas/std/supplier.schema.yaml#/email
+            - $ref: ../../schemas/std/supplier.schema.yaml#/tel
+            - $ref: ../../schemas/std/supplier.schema.yaml#/fax
+            - $ref: ../../schemas/std/supplier.schema.yaml#/post
+            - $ref: ../../schemas/std/supplier.schema.yaml#/addr
+            - $ref: ../../schemas/std/supplier.schema.yaml#/addr_detail
+            - $ref: ../../schemas/std/supplier.schema.yaml#/use_fg
+            - $ref: ../../schemas/std/supplier.schema.yaml#/remark
+  responses:
+    201:
+      $ref: ../../responses/common/succeed-update.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml
+
+patch:
+  description: |
+    공급처 데이터를 개별 항목 단위로 수정합니다.
+  summary: 공급처 데이터 수정
+  tags:
+    - 공급처(Supplier)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - uuid
+          allOf:
+            - $ref: ../../schemas/std/supplier.schema.yaml#/supplier_cd
+            - $ref: ../../schemas/std/supplier.schema.yaml#/supplier_nm
+            - $ref: ../../schemas/std/supplier.schema.yaml#/partner_uuid
+            - $ref: ../../schemas/std/supplier.schema.yaml#/manager
+            - $ref: ../../schemas/std/supplier.schema.yaml#/email
+            - $ref: ../../schemas/std/supplier.schema.yaml#/tel
+            - $ref: ../../schemas/std/supplier.schema.yaml#/fax
+            - $ref: ../../schemas/std/supplier.schema.yaml#/post
+            - $ref: ../../schemas/std/supplier.schema.yaml#/addr
+            - $ref: ../../schemas/std/supplier.schema.yaml#/addr_detail
+            - $ref: ../../schemas/std/supplier.schema.yaml#/use_fg
+            - $ref: ../../schemas/std/supplier.schema.yaml#/remark
+  responses:
+    201:
+      $ref: ../../responses/common/succeed-update.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml
+
+delete:
+  description: |
+    공급처 데이터를 삭제합니다.
+  summary: 공급처 데이터 삭제
+  tags:
+    - 공급처(Supplier)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - uuid
+          allOf:
+            - $ref: ../../schemas/std/supplier.schema.yaml#/uuid
+  responses:
+    200:
+      $ref: ../../responses/common/succeed-delete.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

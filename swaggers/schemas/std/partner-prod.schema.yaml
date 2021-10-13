@@ -1,0 +1,75 @@
+# STD_PARTNER_PROD_TB
+
+# Columns
+partner_prod_id: 
+  type: object
+  properties: 
+    partner_prod_id:
+      description: 거래처 품목ID
+      type: number
+      format: int4
+
+partner_id: 
+  type: object
+  properties: 
+    partner_id:
+      description: 거래처ID
+      type: number
+      format: int4
+
+prod_id: 
+  type: object
+  properties: 
+    prod_id:
+      description: 품목ID
+      type: number
+      format: int4
+      
+partner_prod_no: 
+  type: object
+  properties: 
+    partner_prod_no:
+      description: 거래처 품번
+      type: string
+      format: varchar(50)
+
+remark: 
+  type: object
+  properties: 
+    remark:
+      description: 비고
+      type: string
+      format: varchar(250)
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 거래처 품목UUID
+      type: string
+      format: uuid
+
+# Uuids
+partner_prod_uuid:
+  type: object
+  properties: 
+    partner_prod_uuid:
+      description: 거래처 품목UUID
+      type: string
+      format: uuid
+
+partner_uuid:
+  type: object
+  properties: 
+    partner_uuid:
+      description: 거래처UUID
+      type: string
+      format: uuid
+
+prod_uuid:
+  type: object
+  properties: 
+    prod_uuid:
+      description: 품목UUID
+      type: string
+      format: uuid

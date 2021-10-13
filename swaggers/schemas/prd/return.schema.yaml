@@ -1,0 +1,164 @@
+# PRD_RETURN_TB
+
+# Columns
+return_id: 
+  type: object
+  properties: 
+    return_id:
+      description: 자재반납ID
+      type: number
+      format: int4
+
+factory_id: 
+  type: object
+  properties: 
+    factory_id:
+      description: 공장ID
+      type: number
+      format: int4
+
+reg_date: 
+  type: object
+  properties: 
+    reg_date:
+      description: 자재반납 일시
+      type: date
+      format: date-time
+
+prod_id: 
+  type: object
+  properties: 
+    prod_id:
+      description: 품목ID
+      type: number
+      format: int4
+
+lot_no: 
+  type: object
+  properties: 
+    lot_no:
+      description: LOT NO
+      type: string
+      format: varchar(25)
+
+qty: 
+  type: object
+  properties: 
+    qty:
+      description: 수량
+      type: number
+      format: numeric(19, 6)
+
+from_store_id: 
+  type: object
+  properties: 
+    from_store_id:
+      description: 출고 창고ID
+      type: number
+      format: int4
+
+from_location_id: 
+  type: object
+  properties: 
+    from_location_id:
+      description: 출고 위치ID
+      type: number
+      format: int4
+
+to_store_id: 
+  type: object
+  properties: 
+    to_store_id:
+      description: 입고 창고ID
+      type: number
+      format: int4
+
+to_location_id: 
+  type: object
+  properties: 
+    to_location_id:
+      description: 입고 위치ID
+      type: number
+      format: int4
+
+remark: 
+  type: object
+  properties: 
+    remark:
+      description: 비고
+      type: string
+      format: varchar(250)
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 자재반납UUID
+      type: string
+      format: uuid
+
+# Uuids
+return_uuid:
+  type: object
+  properties: 
+    return_uuid:
+      description: 자재반납UUID
+      type: string
+      format: uuid
+
+factory_uuid:
+  type: object
+  properties: 
+    factory_uuid:
+      description: 공장UUID
+      type: string
+      format: uuid
+
+prod_uuid:
+  type: object
+  properties: 
+    prod_uuid:
+      description: 품목UUID
+      type: string
+      format: uuid
+
+from_store_uuid:
+  type: object
+  properties: 
+    from_store_uuid:
+      description: 출고 창고UUID
+      type: string
+      format: uuid
+
+from_location_uuid:
+  type: object
+  properties: 
+    from_location_uuid:
+      description: 출고 위치UUID
+      type: string
+      format: uuid
+
+to_store_uuid:
+  type: object
+  properties: 
+    to_store_uuid:
+      description: 입고 창고UUID
+      type: string
+      format: uuid
+
+to_location_uuid:
+  type: object
+  properties: 
+    to_location_uuid:
+      description: 입고 위치UUID
+      type: string
+      format: uuid
+
+# Others
+row_type: 
+  type: object
+  properties: 
+    row_type:
+      description: 조회 Row의 Type(일반[data], 소계[sub-total], 합계[total])
+      type: string
+      format: varchar

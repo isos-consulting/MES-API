@@ -1,0 +1,81 @@
+get:
+  description: |
+    하나의 재고수불 데이터 목록을 조회합니다.
+  summary: 재고수불 데이터 단일 조회
+  tags:
+    - 재고관리(Store)
+  parameters:
+    - name: uuid
+      in: path
+      description: 재고수불의 UUID 를 입력합니다.
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+  responses:
+    200:
+      description: Read OK
+      content:
+        application/json:
+          schema: 
+            allOf:
+              - $ref: ../../schemas/common/default-response.schema.yaml
+              - type: object
+                properties:
+                  datas:
+                    description: Enable
+                    type: object
+                    properties:
+                      value:
+                        description: Enable
+                        type: object
+                        properties:
+                          count: 
+                            description: 영향받은 데이터의 개수
+                            type: number
+                            format: int32
+                            minimum: 0
+                      raws:
+                        description: 재고수불 데이터 목록
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: ../../schemas/inv/store.schema.yaml#/inv_store_uuid
+                            - $ref: ../../schemas/inv/store.schema.yaml#/factory_uuid
+                            - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
+                            - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
+                            - $ref: ../../schemas/inv/store.schema.yaml#/reg_date
+                            - $ref: ../../schemas/inv/store.schema.yaml#/prod_uuid
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_no
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/item_type_uuid
+                            - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_cd
+                            - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_type_uuid
+                            - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_cd
+                            - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/model_uuid
+                            - $ref: ../../schemas/std/model.schema.yaml#/model_cd
+                            - $ref: ../../schemas/std/model.schema.yaml#/model_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/rev
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_std
+                            - $ref: ../../schemas/std/prod.schema.yaml#/unit_uuid
+                            - $ref: ../../schemas/std/unit.schema.yaml#/unit_cd
+                            - $ref: ../../schemas/std/unit.schema.yaml#/unit_nm
+                            - $ref: ../../schemas/inv/store.schema.yaml#/reject_uuid
+                            - $ref: ../../schemas/std/reject.schema.yaml#/reject_cd
+                            - $ref: ../../schemas/std/reject.schema.yaml#/reject_nm
+                            - $ref: ../../schemas/inv/store.schema.yaml#/lot_no
+                            - $ref: ../../schemas/inv/store.schema.yaml#/qty
+                            - $ref: ../../schemas/inv/store.schema.yaml#/inout_state
+                            - $ref: ../../schemas/inv/store.schema.yaml#/store_uuid
+                            - $ref: ../../schemas/std/store.schema.yaml#/store_cd
+                            - $ref: ../../schemas/std/store.schema.yaml#/store_nm
+                            - $ref: ../../schemas/inv/store.schema.yaml#/location_uuid
+                            - $ref: ../../schemas/std/location.schema.yaml#/location_cd
+                            - $ref: ../../schemas/std/location.schema.yaml#/location_nm
+                            - $ref: ../../schemas/inv/store.schema.yaml#/remark
+                            - $ref: ../../schemas/common/timestamp.schema.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

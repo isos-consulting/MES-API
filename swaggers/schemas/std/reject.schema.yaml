@@ -1,0 +1,75 @@
+# STD_REJECT_TB
+
+# Columns
+reject_id: 
+  type: object
+  properties: 
+    reject_id:
+      description: 부적합ID
+      type: number
+      format: int4
+
+factory_id: 
+  type: object
+  properties: 
+    factory_id:
+      description: 공장ID
+      type: number
+      format: int4
+
+reject_type_id: 
+  type: object
+  properties: 
+    reject_type_id:
+      description: 부적합 유형ID
+      type: number
+      format: int4
+      
+reject_cd: 
+  type: object
+  properties: 
+    reject_cd:
+      description: 부적합코드
+      type: string
+      format: varchar(20)
+
+reject_nm: 
+  type: object
+  properties: 
+    reject_nm:
+      description: 부적합명
+      type: string
+      format: varchar(50)
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 부적합UUID
+      type: string
+      format: uuid
+
+# Uuids
+reject_uuid:
+  type: object
+  properties: 
+    reject_uuid:
+      description: 부적합UUID
+      type: string
+      format: uuid
+
+factory_uuid:
+  type: object
+  properties: 
+    factory_uuid:
+      description: 공장UUID
+      type: string
+      format: uuid
+
+reject_type_uuid:
+  type: object
+  properties: 
+    reject_type_uuid:
+      description: 부적합 유형UUID
+      type: string
+      format: uuid

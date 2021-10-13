@@ -1,0 +1,180 @@
+# OUT_RECEIVE_TB
+
+# Columns
+receive_id: 
+  type: object
+  properties: 
+    receive_id:
+      description: 외주입하ID
+      type: number
+      format: int4
+
+factory_id: 
+  type: object
+  properties: 
+    factory_id:
+      description: 공장ID
+      type: number
+      format: int4
+
+partner_id: 
+  type: object
+  properties: 
+    partner_id:
+      description: 거래처ID
+      type: number
+      format: int4
+
+supplier_id: 
+  type: object
+  properties: 
+    supplier_id:
+      description: 공급처ID
+      type: number
+      format: int4
+      
+stmt_no: 
+  type: object
+  properties: 
+    stmt_no:
+      description: 전표번호
+      type: string
+      format: varchar(50)
+
+reg_date: 
+  type: object
+  properties: 
+    reg_date:
+      description: 입하 일시
+      type: string
+      format: date-time
+
+total_price: 
+  type: object
+  properties: 
+    total_price:
+      description: 합계 금액
+      type: number
+      format: numeric(19, 6)
+
+total_qty: 
+  type: object
+  properties: 
+    total_qty:
+      description: 합계 수량
+      type: number
+      format: numeric(19, 6)
+
+remark: 
+  type: object
+  properties: 
+    remark:
+      description: 비고
+      type: string
+      format: varchar(250)
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 외주입하UUID
+      type: string
+      format: uuid
+
+# Uuids
+receive_uuid:
+  type: object
+  properties: 
+    receive_uuid:
+      description: 외주입하UUID
+      type: string
+      format: uuid
+
+factory_uuid:
+  type: object
+  properties: 
+    factory_uuid:
+      description: 공장UUID
+      type: string
+      format: uuid
+
+partner_uuid:
+  type: object
+  properties: 
+    partner_uuid:
+      description: 거래처UUID
+      type: string
+      format: uuid
+
+supplier_uuid:
+  type: object
+  properties: 
+    supplier_uuid:
+      description: 공급처UUID
+      type: string
+      format: uuid
+
+# Others
+row_type: 
+  type: object
+  properties: 
+    row_type:
+      description: 조회 Row의 Type(일반[data], 소계[sub-total], 합계[total])
+      type: string
+      format: varchar
+
+supply_price: 
+  type: object
+  properties: 
+    supply_price:
+      description: 공급가액
+      type: number
+      format: numeric(19, 6)
+
+tax: 
+  type: object
+  properties: 
+    tax:
+      description: 부가세
+      type: number
+      format: numeric(19, 6)
+
+order_qty: 
+  type: object
+  properties: 
+    order_qty:
+      description: 발주 수량
+      type: number
+      format: numeric(19, 6)
+
+income_qty: 
+  type: object
+  properties: 
+    income_qty:
+      description: 입고 수량
+      type: number
+      format: numeric(19, 6)
+
+insp_state: 
+  type: object
+  properties: 
+    insp_state:
+      description: 검사 완료 여부(무검사, 미완료, 완료)
+      type: string
+      format: varchar
+
+insp_result_state: 
+  type: object
+  properties: 
+    insp_result_state:
+      description: 검사 합격 여부(합격, 불합격)
+      type: string
+      format: varchar
+
+reject_qty: 
+  type: object
+  properties: 
+    reject_qty:
+      description: 부적합 수량
+      type: number
+      format: numeric(19, 6)

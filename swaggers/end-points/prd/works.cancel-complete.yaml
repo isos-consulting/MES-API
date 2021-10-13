@@ -1,0 +1,20 @@
+put:
+  description: |
+    완료된 생산실적을 생산중 상태로 변경합니다. <br/>
+    ❗ 지시가 이미 마감된 경우 데이터의 수정이 불가능합니다.
+  summary: 생산실적 완료취소
+  tags:
+    - 생산실적(Work)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - uuid
+          allOf:
+            - $ref: ../../schemas/prd/work.schema.yaml#/uuid
+  responses:
+    201:
+      $ref: ../../responses/common/succeed-update.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

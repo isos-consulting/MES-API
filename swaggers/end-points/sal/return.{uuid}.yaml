@@ -1,0 +1,65 @@
+get:
+  description: |
+    하나의 제품반입 데이터 목록을 조회합니다. 
+  summary: 제품반입 데이터 단일 조회
+  tags:
+    - 제품반입(Return)
+  parameters:
+    - name: uuid
+      in: path
+      required: true
+      description: 제품반입의 UUID 를 입력합니다.
+      schema:
+        type: string
+        format: uuid
+
+  responses:
+    200:
+      description: Read OK
+      content:
+        application/json:
+          schema: 
+            allOf:
+              - $ref: ../../schemas/common/default-response.schema.yaml
+              - type: object
+                properties:
+                  datas:
+                    description: Enable
+                    type: object
+                    properties:
+                      value:
+                        description: Enable
+                        type: object
+                        properties:
+                          count: 
+                            description: 영향받은 데이터의 개수
+                            type: number
+                            format: int32
+                            minimum: 0
+                      raws:
+                        description: 제품반입 데이터 목록
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: ../../schemas/sal/return.schema.yaml#/return_uuid
+                            - $ref: ../../schemas/sal/return.schema.yaml#/factory_uuid
+                            - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
+                            - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
+                            - $ref: ../../schemas/sal/return.schema.yaml#/partner_uuid
+                            - $ref: ../../schemas/std/partner.schema.yaml#/partner_cd
+                            - $ref: ../../schemas/std/partner.schema.yaml#/partner_nm
+                            - $ref: ../../schemas/sal/return.schema.yaml#/delivery_uuid
+                            - $ref: ../../schemas/std/delivery.schema.yaml#/delivery_cd
+                            - $ref: ../../schemas/std/delivery.schema.yaml#/delivery_nm
+                            - $ref: ../../schemas/sal/return.schema.yaml#/stmt_no
+                            - $ref: ../../schemas/sal/return.schema.yaml#/reg_date
+                            - $ref: ../../schemas/sal/return.schema.yaml#/total_price
+                            - $ref: ../../schemas/sal/return.schema.yaml#/total_qty
+                            - $ref: ../../schemas/sal/return.schema.yaml#/outgo_stmt_no
+                            - $ref: ../../schemas/sal/return.schema.yaml#/outgo_date
+                            - $ref: ../../schemas/sal/return.schema.yaml#/outgo_total_price
+                            - $ref: ../../schemas/sal/return.schema.yaml#/outgo_total_qty
+                            - $ref: ../../schemas/sal/return.schema.yaml#/remark
+                            - $ref: ../../schemas/common/timestamp.schema.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

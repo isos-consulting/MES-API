@@ -1,0 +1,32 @@
+post:
+  description: |
+    단위변환 데이터를 대량으로 생성 및 수정합니다. <br/>
+    uuid를 기준으로 데이터를 생성 및 수정합니다. <br/>
+    uuid가 없는 항목은 생성, 있는 항목은 수정을 진행합니다. <br/>
+    Excel Upload에 사용합니다.
+  summary: 단위변환 대량 데이터 입력 (Excel Upload)
+  tags:
+    - 단위변환(UnitConvert)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - from_unit_cd
+            - to_unit_cd
+            - convert_value
+          allOf:
+            - $ref: ../../schemas/std/unit-convert.schema.yaml#/uuid
+            - $ref: ../../schemas/std/unit-convert.schema.yaml#/from_unit_cd
+            - $ref: ../../schemas/std/unit-convert.schema.yaml#/to_unit_cd
+            - $ref: ../../schemas/std/unit-convert.schema.yaml#/from_value
+            - $ref: ../../schemas/std/unit-convert.schema.yaml#/to_value
+            - $ref: ../../schemas/std/unit-convert.schema.yaml#/convert_value
+            - $ref: ../../schemas/std/prod.schema.yaml#/prod_no
+            - $ref: ../../schemas/std/prod.schema.yaml#/rev
+            - $ref: ../../schemas/std/unit-convert.schema.yaml#/remark
+  responses:
+    201:
+      $ref: ../../responses/common/succeed-create.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

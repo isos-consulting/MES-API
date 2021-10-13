@@ -1,0 +1,58 @@
+# ADM_PATTERN_OPT_VW
+
+# Columns
+pattern_opt_id: 
+  type: object
+  properties: 
+    pattern_opt_id:
+      description: 자동발행옵션ID
+      type: number
+      format: int4
+
+pattern_opt_cd: 
+  type: object
+  properties: 
+    pattern_opt_cd:
+      description: 자동발행옵션코드
+      type: string
+      format: varchar(20)
+
+pattern_opt_nm: 
+  type: object
+  properties: 
+    pattern_opt_nm:
+      description: 자동발행옵션명
+      type: string
+      format: varchar(50)
+
+table_nm: 
+  type: object
+  properties: 
+    table_nm:
+      description: 테이블명
+      type: string
+      format: varchar(100)
+
+auto_fg: 
+  type: object
+  properties: 
+    auto_fg:
+      description: 자동발행여부
+      type: boolean
+      format: boolean
+
+col_nm: 
+  type: object
+  properties: 
+    col_nm:
+      description: 컬럼명
+      type: string
+      format: varchar(100)
+
+pattern: 
+  type: object
+  properties: 
+    pattern:
+      description: 패턴
+      type: string
+      format: varchar(200)

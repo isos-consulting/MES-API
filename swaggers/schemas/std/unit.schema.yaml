@@ -1,0 +1,43 @@
+# STD_UNIT_TB
+
+# Columns
+unit_id: 
+  type: object
+  properties: 
+    unit_id:
+      description: 단위ID
+      type: number
+      format: int4
+
+unit_cd: 
+  type: object
+  properties: 
+    unit_cd:
+      description: 단위코드
+      type: string
+      format: varchar(20)
+
+unit_nm: 
+  type: object
+  properties: 
+    unit_nm:
+      description: 단위명
+      type: string
+      format: varchar(50)
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 단위UUID
+      type: string
+      format: uuid
+
+# Uuids
+unit_uuid:
+  type: object
+  properties: 
+    unit_uuid:
+      description: 단위UUID
+      type: string
+      format: uuid

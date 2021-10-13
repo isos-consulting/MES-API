@@ -1,0 +1,10 @@
+type: object
+properties:      
+  success: 
+    description: 정상 응답 여부
+    type: boolean
+    default: true
+  message:
+    description: 응답 메세지
+    type: string
+    default: ''

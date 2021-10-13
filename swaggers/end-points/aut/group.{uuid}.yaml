@@ -1,0 +1,48 @@
+get:
+  description: |
+    하나의 그룹 데이터를 조회합니다.
+  summary: 그룹 데이터 단일 조회
+  tags:
+    - 그룹(Group)
+  parameters:
+    - name: uuid
+      in: path
+      description: 그룹의 UUID 를 입력합니다.
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+  responses:
+    200:
+      description: Read OK
+      content:
+        application/json:
+          schema: 
+            allOf:
+              - $ref: ../../schemas/common/default-response.schema.yaml
+              - type: object
+                properties:
+                  datas:
+                    description: Enable
+                    type: object
+                    properties:
+                      value:
+                        description: Enable
+                        type: object
+                        properties:
+                          count: 
+                            description: 영향받은 데이터의 개수
+                            type: number
+                            format: int32
+                            minimum: 0
+                      raws:
+                        description: 그룹 데이터 목록
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: ../../schemas/aut/group.schema.yaml#/group_uuid
+                            - $ref: ../../schemas/aut/group.schema.yaml#/group_nm
+                            - $ref: ../../schemas/common/timestamp.schema.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

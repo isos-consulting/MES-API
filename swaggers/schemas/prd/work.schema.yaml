@@ -1,0 +1,348 @@
+# PRD_WORK_TB
+
+# Columns
+work_id:
+  type: object
+  properties:
+    work_id:
+      description: 생산실적ID
+      type: number
+      format: int4
+
+factory_id:
+  type: object
+  properties:
+    factory_id:
+      description: 공장ID
+      type: number
+      format: int4
+
+reg_date:
+  type: object
+  properties:
+    reg_date:
+      description: 실적 일시
+      type: string
+      format: date-time
+
+order_id:
+  type: object
+  properties:
+    order_id:
+      description: 작업지시ID
+      type: number
+      format: int4
+
+seq:
+  type: object
+  properties:
+    seq:
+      description: 생산실적 순번
+      type: number
+      format: int4
+
+proc_id:
+  type: object
+  properties:
+    proc_id:
+      description: 공정ID
+      type: number
+      format: int4
+
+workings_id:
+  type: object
+  properties:
+    workings_id:
+      description: 작업장ID
+      type: number
+      format: int4
+
+equip_id:
+  type: object
+  properties:
+    equip_id:
+      description: 설비ID
+      type: number
+      format: int4
+
+prod_id:
+  type: object
+  properties:
+    prod_id:
+      description: 품목ID
+      type: number
+      format: int4
+
+lot_no:
+  type: object
+  properties:
+    lot_no:
+      description: LOT NO
+      type: string
+      format: varchar(25)
+
+qty:
+  type: object
+  properties:
+    qty:
+      description: 양품 수량
+      type: number
+      format: numeric(19, 6)
+
+reject_qty:
+  type: object
+  properties:
+    reject_qty:
+      description: 부적합 수량
+      type: number
+      format: numeric(19, 6)
+
+start_date:
+  type: object
+  properties:
+    start_date:
+      description: 생산시작 일시
+      type: string
+      format: date-time
+
+end_date:
+  type: object
+  properties:
+    end_date:
+      description: 생산종료 일시
+      type: string
+      format: date-time
+
+work_time:
+  type: object
+  properties:
+    work_time:
+      description: 작업시간
+      type: number
+      format: int4
+
+shift_id:
+  type: object
+  properties:
+    shift_id:
+      description: 작업교대ID
+      type: number
+      format: int4
+
+complete_fg:
+  type: object
+  properties:
+    complete_fg:
+      description: 생산 종료여부
+      type: boolean
+      format: boolean
+
+to_store_id:
+  type: object
+  properties:
+    to_store_id:
+      description: 입고 창고ID
+      type: number
+      format: int4
+
+to_location_id:
+  type: object
+  properties:
+    to_location_id:
+      description: 입고 위치ID
+      type: number
+      format: int4
+
+remark:
+  type: object
+  properties:
+    remark:
+      description: 비고
+      type: string
+      format: varchar(250)
+
+uuid:
+  type: object
+  properties:
+    uuid:
+      description: 생산실적UUID
+      type: string
+      format: uuid
+
+# Uuids
+work_uuid:
+  type: object
+  properties:
+    work_uuid:
+      description: 생산실적UUID
+      type: string
+      format: uuid
+
+factory_uuid:
+  type: object
+  properties:
+    factory_uuid:
+      description: 공장UUID
+      type: string
+      format: uuid
+
+order_uuid:
+  type: object
+  properties:
+    order_uuid:
+      description: 작업지시UUID
+      type: string
+      format: uuid
+
+proc_uuid:
+  type: object
+  properties:
+    proc_uuid:
+      description: 공정UUID
+      type: string
+      format: uuid
+
+workings_uuid:
+  type: object
+  properties:
+    workings_uuid:
+      description: 작업장UUID
+      type: string
+      format: uuid
+
+equip_uuid:
+  type: object
+  properties:
+    equip_uuid:
+      description: 설비UUID
+      type: string
+      format: uuid
+
+prod_uuid:
+  type: object
+  properties:
+    prod_uuid:
+      description: 품목UUID
+      type: string
+      format: uuid
+
+shift_uuid:
+  type: object
+  properties:
+    shift_uuid:
+      description: 작업교대UUID
+      type: string
+      format: uuid
+
+to_store_uuid:
+  type: object
+  properties:
+    to_store_uuid:
+      description: 입고 창고UUID
+      type: string
+      format: uuid
+
+to_location_uuid:
+  type: object
+  properties:
+    to_location_uuid:
+      description: 입고 위치UUID
+      type: string
+      format: uuid
+
+# Others
+order_qty:
+  type: object
+  properties:
+    order_qty:
+      description: 지시 수량
+      type: number
+      format: numeric(19, 6)
+
+total_qty:
+  type: object
+  properties:
+    total_qty:
+      description: 생산 수량
+      type: number
+      format: numeric(19, 6)
+
+worker_cnt:
+  type: object
+  properties:
+    worker_cnt:
+      description: 작업자 인원 수
+      type: number
+      format: int4
+
+complete_state:
+  type: object
+  properties:
+    complete_state:
+      description: 생산 완료여부(완료, 미완료)
+      type: string
+      format: varchar
+
+order_remark:
+  type: object
+  properties:
+    order_remark:
+      description: 작업지시 비고
+      type: string
+      format: varchar(250)
+
+row_type:
+  type: object
+  properties:
+    row_type:
+      description: 조회 Row의 Type(일반[data], 소계[sub-total], 합계[total])
+      type: string
+      format: varchar
+
+work_prod_no:
+  type: object
+  properties:
+    work_prod_no:
+      description: 생산품번
+      type: string
+      format: varchar(50)
+
+work_prod_nm:
+  type: object
+  properties:
+    work_prod_no:
+      description: 생산품목명
+      type: string
+      format: varchar(100)
+
+work_item_type_cd:
+  type: object
+  properties:
+    work_item_type_cd:
+      description: 생산품목 유형코드
+      type: string
+      format: varchar(20)
+
+work_item_type_nm:
+  type: object
+  properties:
+    work_item_type_nm:
+      description: 생산품목 유형명
+      type: string
+      format: varchar(50)
+
+work_lot_no:
+  type: object
+  properties:
+    work_lot_no:
+      description: 생산 LOT NO
+      type: string
+      format: varchar(25)
+
+work_date:
+  type: object
+  properties:
+    work_date:
+      description: 생산 일자
+      type: string
+      format: date-time

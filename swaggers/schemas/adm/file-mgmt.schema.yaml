@@ -1,0 +1,83 @@
+# ADM_FILE_MGMT_TB
+
+# Columns
+file_mgmt_id: 
+  type: object
+  properties: 
+    file_mgmt_id:
+      description: 파일관리ID
+      type: number
+      format: int4
+
+file_mgmt_cd: 
+  type: object
+  properties: 
+    file_mgmt_cd:
+      description: 파일관리코드
+      type: string
+      format: varchar(20)
+
+reference_id: 
+  type: object
+  properties: 
+    reference_id:
+      description: 파일관련 테이블 Row ID
+      type: number
+      format: int4
+
+reference_uuid: 
+  type: object
+  properties: 
+    reference_uuid:
+      description: 파일관련 테이블 Row UUID
+      type: string
+      format: uuid
+
+file_nm: 
+  type: object
+  properties: 
+    file_nm:
+      description: 파일명
+      type: string
+      format: varchar(50)
+
+file_extension: 
+  type: object
+  properties: 
+    file_extension:
+      description: 파일확장자
+      type: string
+      format: varchar(50)
+
+ip: 
+  type: object
+  properties: 
+    ip:
+      description: IP Address
+      type: string
+      format: varchar(50)
+
+remark: 
+  type: object
+  properties: 
+    remark:
+      description: 비고
+      type: string
+      format: varchar(50)
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 파일관리UUID
+      type: string
+      format: uuid
+
+# Uuids
+file_mgmt_uuid:
+  type: object
+  properties: 
+    file_mgmt_uuid:
+      description: 파일관리UUID
+      type: string
+      format: uuid

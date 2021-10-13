@@ -1,0 +1,79 @@
+get:
+  description: |
+    하나의 고객사 단가 데이터를 조회합니다.
+  summary: 고객사 단가 데이터 단일 조회
+  tags:
+    - 고객사 단가(CustomerPrice)
+  parameters:
+    - name: uuid
+      in: path
+      description: 고객사 단가의 UUID 를 입력합니다.
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+  responses:
+    200:
+      description: Read OK
+      content:
+        application/json:
+          schema: 
+            allOf:
+              - $ref: ../../schemas/common/default-response.schema.yaml
+              - type: object
+                properties:
+                  datas:
+                    description: Enable
+                    type: object
+                    properties:
+                      value:
+                        description: Enable
+                        type: object
+                        properties:
+                          count: 
+                            description: 영향받은 데이터의 개수
+                            type: number
+                            format: int32
+                            minimum: 0
+                      raws:
+                        description: 고객사 단가 데이터 목록
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: ../../schemas/std/customer-price.schema.yaml#/customer_price_uuid
+                            - $ref: ../../schemas/std/customer-price.schema.yaml#/partner_uuid
+                            - $ref: ../../schemas/std/partner.schema.yaml#/partner_cd
+                            - $ref: ../../schemas/std/partner.schema.yaml#/partner_nm
+                            - $ref: ../../schemas/std/customer-price.schema.yaml#/prod_uuid
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_no
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/item_type_uuid
+                            - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_cd
+                            - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_type_uuid
+                            - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_cd
+                            - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/model_uuid
+                            - $ref: ../../schemas/std/model.schema.yaml#/model_cd
+                            - $ref: ../../schemas/std/model.schema.yaml#/model_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/rev
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_std
+                            - $ref: ../../schemas/std/unit.schema.yaml#/unit_cd
+                            - $ref: ../../schemas/std/unit.schema.yaml#/unit_nm
+                            - $ref: ../../schemas/std/customer-price.schema.yaml#/money_unit_uuid
+                            - $ref: ../../schemas/std/money-unit.schema.yaml#/money_unit_cd
+                            - $ref: ../../schemas/std/money-unit.schema.yaml#/money_unit_nm
+                            - $ref: ../../schemas/std/customer-price.schema.yaml#/price_type_uuid
+                            - $ref: ../../schemas/std/price-type.schema.yaml#/price_type_cd
+                            - $ref: ../../schemas/std/price-type.schema.yaml#/price_type_nm
+                            - $ref: ../../schemas/std/customer-price.schema.yaml#/price
+                            - $ref: ../../schemas/std/customer-price.schema.yaml#/start_date
+                            - $ref: ../../schemas/std/customer-price.schema.yaml#/end_date
+                            - $ref: ../../schemas/std/customer-price.schema.yaml#/retroactive_price
+                            - $ref: ../../schemas/std/customer-price.schema.yaml#/division
+                            - $ref: ../../schemas/std/prod.schema.yaml#/unit_qty
+                            - $ref: ../../schemas/std/customer-price.schema.yaml#/remark
+                            - $ref: ../../schemas/common/timestamp.schema.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

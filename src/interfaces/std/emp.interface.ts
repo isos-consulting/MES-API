@@ -1,0 +1,22 @@
+export default interface IStdEmp {
+  emp_id?: number,
+  emp_cd?: string,
+  emp_nm?: string,
+  uid?: number | null,
+  dept_id?: number | null,
+  grade_id?: number | null,
+  birthday?: string | null,
+  addr?: string | null,
+  addr_detail?: string | null,
+  post?: string | null,
+  hp?: string | null,
+  enter_date?: string,
+  leave_date?: string | null,
+  remark?: string | null,
+  created_at?: Date,
+  created_uid?: number,
+  updated_at?: Date,
+  updated_uid?: number,
+  uuid?: string,
+  tenant_uuid?: string
+}

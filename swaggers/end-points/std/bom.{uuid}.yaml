@@ -1,0 +1,93 @@
+get:
+  description: |
+    하나의 BOM 데이터 목록을 조회합니다.
+  summary: BOM 데이터 단일 조회
+  tags:
+    - BOM
+  parameters:
+    - name: uuid
+      in: path
+      description: BOM 의 UUID 를 입력합니다.
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+  responses:
+    200:
+      description: Read OK
+      content:
+        application/json:
+          schema: 
+            allOf:
+              - $ref: ../../schemas/common/default-response.schema.yaml
+              - type: object
+                properties:
+                  datas:
+                    description: Enable
+                    type: object
+                    properties:
+                      value:
+                        description: Enable
+                        type: object
+                        properties:
+                          count: 
+                            description: 영향받은 데이터의 개수
+                            type: number
+                            format: int32
+                            minimum: 0
+                      raws:
+                        description: BOM 데이터 목록
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: ../../schemas/std/bom.schema.yaml#/bom_uuid
+                            - $ref: ../../schemas/std/bom.schema.yaml#/factory_uuid
+                            - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
+                            - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
+                            - $ref: ../../schemas/std/bom.schema.yaml#/p_prod_uuid
+                            - $ref: ../../schemas/std/bom.schema.yaml#/p_prod_no
+                            - $ref: ../../schemas/std/bom.schema.yaml#/p_prod_nm
+                            - $ref: ../../schemas/std/bom.schema.yaml#/p_item_type_uuid
+                            - $ref: ../../schemas/std/bom.schema.yaml#/p_item_type_cd
+                            - $ref: ../../schemas/std/bom.schema.yaml#/p_item_type_nm
+                            - $ref: ../../schemas/std/bom.schema.yaml#/p_prod_type_uuid
+                            - $ref: ../../schemas/std/bom.schema.yaml#/p_prod_type_cd
+                            - $ref: ../../schemas/std/bom.schema.yaml#/p_prod_type_nm
+                            - $ref: ../../schemas/std/bom.schema.yaml#/p_model_uuid
+                            - $ref: ../../schemas/std/bom.schema.yaml#/p_model_cd
+                            - $ref: ../../schemas/std/bom.schema.yaml#/p_model_nm
+                            - $ref: ../../schemas/std/bom.schema.yaml#/p_rev
+                            - $ref: ../../schemas/std/bom.schema.yaml#/p_prod_std
+                            - $ref: ../../schemas/std/bom.schema.yaml#/p_unit_uuid
+                            - $ref: ../../schemas/std/bom.schema.yaml#/p_unit_cd
+                            - $ref: ../../schemas/std/bom.schema.yaml#/p_unit_nm
+                            - $ref: ../../schemas/std/bom.schema.yaml#/c_prod_uuid
+                            - $ref: ../../schemas/std/bom.schema.yaml#/c_prod_no
+                            - $ref: ../../schemas/std/bom.schema.yaml#/c_prod_nm
+                            - $ref: ../../schemas/std/bom.schema.yaml#/c_item_type_uuid
+                            - $ref: ../../schemas/std/bom.schema.yaml#/c_item_type_cd
+                            - $ref: ../../schemas/std/bom.schema.yaml#/c_item_type_nm
+                            - $ref: ../../schemas/std/bom.schema.yaml#/c_prod_type_uuid
+                            - $ref: ../../schemas/std/bom.schema.yaml#/c_prod_type_cd
+                            - $ref: ../../schemas/std/bom.schema.yaml#/c_prod_type_nm
+                            - $ref: ../../schemas/std/bom.schema.yaml#/c_model_uuid
+                            - $ref: ../../schemas/std/bom.schema.yaml#/c_model_cd
+                            - $ref: ../../schemas/std/bom.schema.yaml#/c_model_nm
+                            - $ref: ../../schemas/std/bom.schema.yaml#/c_rev
+                            - $ref: ../../schemas/std/bom.schema.yaml#/c_prod_std
+                            - $ref: ../../schemas/std/bom.schema.yaml#/c_unit_uuid
+                            - $ref: ../../schemas/std/bom.schema.yaml#/c_unit_cd
+                            - $ref: ../../schemas/std/bom.schema.yaml#/c_unit_nm
+                            - $ref: ../../schemas/std/bom.schema.yaml#/c_usage
+                            - $ref: ../../schemas/std/bom.schema.yaml#/sortby
+                            - $ref: ../../schemas/std/bom.schema.yaml#/from_store_uuid
+                            - $ref: ../../schemas/std/store.schema.yaml#/store_cd
+                            - $ref: ../../schemas/std/store.schema.yaml#/store_nm
+                            - $ref: ../../schemas/std/bom.schema.yaml#/from_location_uuid
+                            - $ref: ../../schemas/std/location.schema.yaml#/location_cd
+                            - $ref: ../../schemas/std/location.schema.yaml#/location_nm
+                            - $ref: ../../schemas/std/bom.schema.yaml#/remark
+                            - $ref: ../../schemas/common/timestamp.schema.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

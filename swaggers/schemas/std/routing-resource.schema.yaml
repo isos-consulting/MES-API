@@ -1,0 +1,107 @@
+# STD_ROUTING_RESOURCE_TB
+
+# Columns
+routing_resource_id: 
+  type: object
+  properties: 
+    routing_resource_id:
+      description: 생산자원ID
+      type: number
+      format: int4
+
+factory_id: 
+  type: object
+  properties: 
+    factory_id:
+      description: 공장ID
+      type: number
+      format: int4
+
+routing_id: 
+  type: object
+  properties: 
+    routing_id:
+      description: 라우팅ID
+      type: number
+      format: int4
+      
+resource_type: 
+  type: object
+  properties: 
+    resource_type:
+      description: 자원 유형(사람 OR 설비)
+      type: string
+      format: varchar(10)
+
+equip_id: 
+  type: object
+  properties: 
+    equip_id:
+      description: 설비ID (자원이 설비일 경우)
+      type: number
+      format: int4
+
+emp_cnt: 
+  type: object
+  properties: 
+    emp_cnt:
+      description: 인원 (자원이 사람일 경우)
+      type: number
+      format: int4
+
+cycle_time: 
+  type: object
+  properties: 
+    cycle_time:
+      description: Cycle time [소요시간]
+      type: number
+      format: numeric(19, 6)
+      
+uph: 
+  type: object
+  properties: 
+    uph:
+      description: UPH(Unit Per Hour) [시간당 생산량]
+      type: number
+      format: numeric(19, 6)
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 생산자원UUID
+      type: string
+      format: uuid
+
+# Uuids
+routing_resource_uuid:
+  type: object
+  properties: 
+    routing_resource_uuid:
+      description: 생산자원UUID
+      type: string
+      format: uuid
+
+factory_uuid:
+  type: object
+  properties: 
+    factory_uuid:
+      description: 공장UUID
+      type: string
+      format: uuid
+
+routing_uuid:
+  type: object
+  properties: 
+    routing_uuid:
+      description: 라우팅UUID
+      type: string
+      format: uuid
+
+equip_uuid:
+  type: object
+  properties: 
+    equip_uuid:
+      description: 설비UUID
+      type: string
+      format: uuid

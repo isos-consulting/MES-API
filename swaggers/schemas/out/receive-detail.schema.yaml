@@ -1,0 +1,276 @@
+# OUT_RECEIVE_DETAIL_TB
+
+# Columns
+receive_detail_id: 
+  type: object
+  properties: 
+    receive_detail_id:
+      description: 외주입하상세ID
+      type: number
+      format: int4
+      
+receive_id: 
+  type: object
+  properties: 
+    receive_id:
+      description: 외주입하ID
+      type: number
+      format: int4
+      
+seq: 
+  type: object
+  properties: 
+    seq:
+      description: 입하 순번
+      type: number
+      format: int4
+
+factory_id: 
+  type: object
+  properties: 
+    factory_id:
+      description: 공장ID
+      type: number
+      format: int4
+
+prod_id: 
+  type: object
+  properties: 
+    prod_id:
+      description: 품목ID
+      type: number
+      format: int4
+
+unit_id: 
+  type: object
+  properties: 
+    unit_id:
+      description: 단위ID
+      type: number
+      format: int4
+
+lot_no: 
+  type: object
+  properties: 
+    lot_no:
+      description: LOT NO
+      type: string
+      format: varchar(25)
+
+manufactured_lot_no: 
+  type: object
+  properties: 
+    manufactured_lot_no:
+      description: 제조 LOT NO
+      type: string
+      format: varchar(25)
+
+qty: 
+  type: object
+  properties: 
+    qty:
+      description: 수량
+      type: number
+      format: numeric(19, 6)
+
+price: 
+  type: object
+  properties: 
+    price:
+      description: 금액
+      type: number
+      format: numeric(19, 6)
+
+money_unit_id: 
+  type: object
+  properties: 
+    money_unit_id:
+      description: 화폐 단위ID
+      type: number
+      format: int4
+      
+exchange: 
+  type: object
+  properties: 
+    exchange:
+      description: 환율
+      type: string
+      format: numeric(19, 6)
+
+total_price: 
+  type: object
+  properties: 
+    total_price:
+      description: 합계 금액
+      type: number
+      format: numeric(19, 6)
+
+unit_qty: 
+  type: object
+  properties: 
+    unit_qty:
+      description: 단위 수량
+      type: number
+      format: numeric(19, 6)
+
+insp_fg: 
+  type: object
+  properties: 
+    insp_fg:
+      description: 검사항목 여부
+      type: boolean
+      format: boolean
+
+carry_fg: 
+  type: object
+  properties: 
+    carry_fg:
+      description: 이월 여부
+      type: boolean
+      format: boolean
+
+order_detail_id: 
+  type: object
+  properties: 
+    order_detail_id:
+      description: 발주 상세ID
+      type: number
+      format: int4
+
+to_store_id: 
+  type: object
+  properties: 
+    to_store_id:
+      description: 입고 창고ID
+      type: number
+      format: int4
+
+to_location_id: 
+  type: object
+  properties: 
+    to_location_id:
+      description: 입고 위치ID
+      type: number
+      format: int4
+
+remark: 
+  type: object
+  properties: 
+    remark:
+      description: 비고
+      type: string
+      format: varchar(250)
+
+barcode: 
+  type: object
+  properties: 
+    barcode:
+      description: 바코드
+      type: string
+      format: varchar(100)
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 외주입하상세UUID
+      type: string
+      format: uuid
+
+# Uuids
+receive_detail_uuid:
+  type: object
+  properties: 
+    receive_detail_uuid:
+      description: 외주입하상세UUID
+      type: string
+      format: uuid
+
+receive_uuid:
+  type: object
+  properties: 
+    receive_uuid:
+      description: 외주입하UUID
+      type: string
+      format: uuid
+
+factory_uuid:
+  type: object
+  properties: 
+    factory_uuid:
+      description: 공장UUID
+      type: string
+      format: uuid
+
+prod_uuid:
+  type: object
+  properties: 
+    prod_uuid:
+      description: 품목UUID
+      type: string
+      format: uuid
+
+unit_uuid:
+  type: object
+  properties: 
+    unit_uuid:
+      description: 단위UUID
+      type: string
+      format: uuid
+
+money_unit_uuid:
+  type: object
+  properties: 
+    money_unit_uuid:
+      description: 화폐 단위UUID
+      type: string
+      format: uuid
+
+order_detail_uuid:
+  type: object
+  properties: 
+    order_detail_uuid:
+      description: 발주 상세UUID
+      type: string
+      format: uuid
+
+to_store_uuid:
+  type: object
+  properties: 
+    to_store_uuid:
+      description: 입고 창고UUID
+      type: string
+      format: uuid
+
+to_location_uuid:
+  type: object
+  properties: 
+    to_location_uuid:
+      description: 입고 위치UUID
+      type: string
+      format: uuid
+
+# Others
+stmt_no_sub: 
+  type: object
+  properties: 
+    stmt_no_sub:
+      description: 상세전표번호
+      type: string
+      format: varchar
+      
+insp_result: 
+  type: object
+  properties: 
+    insp_result:
+      description: 검사완료 여부
+      type: string
+      format: varchar
+
+order_qty: 
+  type: object
+  properties: 
+    order_qty:
+      description: 발주 수량
+      type: number
+      format: numeric(19, 6)

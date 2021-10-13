@@ -1,0 +1,180 @@
+# PRD_WORK_DOWNTIME_TB
+
+# Columns
+work_downtime_id: 
+  type: object
+  properties: 
+    work_downtime_id:
+      description: 비가동이력ID
+      type: number
+      format: int4
+
+factory_id: 
+  type: object
+  properties: 
+    factory_id:
+      description: 공장ID
+      type: number
+      format: int4
+
+work_id: 
+  type: object
+  properties: 
+    work_id:
+      description: 생산실적ID
+      type: number
+      format: int4
+
+proc_id: 
+  type: object
+  properties: 
+    proc_id:
+      description: 공정ID
+      type: number
+      format: int4
+
+equip_id: 
+  type: object
+  properties: 
+    equip_id:
+      description: 설비ID
+      type: number
+      format: int4
+
+downtime_id: 
+  type: object
+  properties: 
+    downtime_id:
+      description: 비가동ID
+      type: number
+      format: int4
+
+start_date: 
+  type: object
+  properties: 
+    start_date:
+      description: 비가동 시작 일시
+      type: string
+      format: date-time
+
+end_date: 
+  type: object
+  properties: 
+    end_date:
+      description: 비가동 종료 일시
+      type: string
+      format: date-time
+
+downtime: 
+  type: object
+  properties: 
+    downtime:
+      description: 비가동 시간
+      type: number
+      format: numeric(19, 6)
+
+remark: 
+  type: object
+  properties: 
+    remark:
+      description: 비고
+      type: string
+      format: varchar(250)
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 비가동이력UUID
+      type: string
+      format: uuid
+
+# Uuids
+work_downtime_uuid:
+  type: object
+  properties: 
+    work_downtime_uuid:
+      description: 비가동이력UUID
+      type: string
+      format: uuid
+
+factory_uuid:
+  type: object
+  properties: 
+    factory_uuid:
+      description: 공장UUID
+      type: string
+      format: uuid
+
+work_uuid:
+  type: object
+  properties: 
+    work_uuid:
+      description: 생산실적UUID
+      type: string
+      format: uuid
+
+proc_uuid:
+  type: object
+  properties: 
+    proc_uuid:
+      description: 공정UUID
+      type: string
+      format: uuid
+
+equip_uuid:
+  type: object
+  properties: 
+    equip_uuid:
+      description: 설비UUID
+      type: string
+      format: uuid
+
+downtime_uuid:
+  type: object
+  properties: 
+    downtime_uuid:
+      description: 비가동UUID
+      type: string
+      format: uuid
+
+# Others
+row_type: 
+  type: object
+  properties: 
+    row_type:
+      description: 조회 Row의 Type(일반[data], 소계[sub-total], 합계[total])
+      type: string
+      format: varchar
+
+work_start_date: 
+  type: object
+  properties: 
+    work_start_date:
+      description: 생산시작 일시
+      type: string
+      format: date-time
+
+work_end_date: 
+  type: object
+  properties: 
+    work_end_date:
+      description: 생산종료 일시
+      type: string
+      format: date-time
+
+downtime_start_date: 
+  type: object
+  properties: 
+    downtime_start_date:
+      description: 비가동 시작 일시
+      type: string
+      format: date-time
+
+downtime_end_date: 
+  type: object
+  properties: 
+    downtime_end_date:
+      description: 비가동 종료 일시
+      type: string
+      format: date-time

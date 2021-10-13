@@ -1,0 +1,212 @@
+# PRD_WORK_INPUT_TB
+
+# Columns
+work_input_id:
+  type: object
+  properties:
+    work_input_id:
+      description: 투입이력ID
+      type: number
+      format: int4
+
+factory_id:
+  type: object
+  properties:
+    factory_id:
+      description: 공장ID
+      type: number
+      format: int4
+
+work_id:
+  type: object
+  properties:
+    work_id:
+      description: 생산실적ID
+      type: number
+      format: int4
+
+prod_id:
+  type: object
+  properties:
+    prod_id:
+      description: 품목ID
+      type: number
+      format: int4
+
+lot_no:
+  type: object
+  properties:
+    lot_no:
+      description: LOT NO
+      type: string
+      format: varchar(25)
+
+qty:
+  type: object
+  properties:
+    qty:
+      description: 투입 수량
+      type: number
+      format: numeric(19, 6)
+
+c_usage:
+  type: object
+  properties:
+    c_usage:
+      description: 소요량
+      type: number
+      format: numeric(19, 6)
+
+unit_id:
+  type: object
+  properties:
+    unit_id:
+      description: 단위ID
+      type: number
+      format: int4
+
+from_store_id:
+  type: object
+  properties:
+    from_store_id:
+      description: 출고 창고ID
+      type: number
+      format: int4
+
+from_location_id:
+  type: object
+  properties:
+    from_location_id:
+      description: 출고 위치ID
+      type: number
+      format: int4
+
+remark:
+  type: object
+  properties:
+    remark:
+      description: 비고
+      type: string
+      format: varchar(250)
+
+uuid:
+  type: object
+  properties:
+    uuid:
+      description: 투입이력UUID
+      type: string
+      format: uuid
+
+# Uuids
+work_input_uuid:
+  type: object
+  properties:
+    work_input_uuid:
+      description: 투입이력UUID
+      type: string
+      format: uuid
+
+factory_uuid:
+  type: object
+  properties:
+    factory_uuid:
+      description: 공장UUID
+      type: string
+      format: uuid
+
+work_uuid:
+  type: object
+  properties:
+    work_uuid:
+      description: 생산실적UUID
+      type: string
+      format: uuid
+
+prod_uuid:
+  type: object
+  properties:
+    prod_uuid:
+      description: 품목UUID
+      type: string
+      format: uuid
+
+unit_uuid:
+  type: object
+  properties:
+    unit_uuid:
+      description: 단위UUID
+      type: string
+      format: uuid
+
+from_store_uuid:
+  type: object
+  properties:
+    from_store_uuid:
+      description: 출고 창고UUID
+      type: string
+      format: uuid
+
+from_location_uuid:
+  type: object
+  properties:
+    from_location_uuid:
+      description: 출고 위치UUID
+      type: string
+      format: uuid
+
+# Others
+required_order_qty:
+  type: object
+  properties:
+    required_order_qty:
+      description: 지시기준 투입필요 수량
+      type: number
+      format: numeric(19, 6)
+
+required_work_qty:
+  type: object
+  properties:
+    required_work_qty:
+      description: 실적기준 투입필요 수량
+      type: number
+      format: numeric(19, 6)
+
+input_prod_no:
+  type: object
+  properties:
+    input_prod_no:
+      description: 투입 품번
+      type: string
+      format: varchar(50)
+
+input_prod_nm:
+  type: object
+  properties:
+    input_prod_no:
+      description: 투입 품목명
+      type: string
+      format: varchar(100)
+      
+input_item_type_cd:
+  type: object
+  properties:
+    input_item_type_cd:
+      description: 투입 품목 유형코드
+      type: string
+      format: varchar(20)
+
+input_item_type_nm:
+  type: object
+  properties:
+    input_item_type_nm:
+      description: 투입 품목 유형명
+      type: string
+      format: varchar(50)
+
+input_lot_no:
+  type: object
+  properties:
+    input_lot_no:
+      description: 투입 LOT NO
+      type: string
+      format: varchar(25)

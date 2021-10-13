@@ -1,0 +1,181 @@
+get:
+  description: |
+    생산자원 정보 데이터 목록을 조회합니다.
+  summary: 생산자원 정보 데이터 조회
+  tags:
+    - 생산자원 정보(RoutingResource)
+  parameters:    
+    - name: resource_type
+      in: query
+      required: true
+      description: |
+        생산자원유형에 따라 생산자원을 조회합니다. <br/> 
+        [all]: 전체 조회 <br/>
+        [equip]: 설비 자원 조회 <br/>
+        [emp]: 인원 자원 조회 <br/>
+      schema:
+        type: string
+        format: string
+
+    - name: factory_uuid
+      in: query
+      description: |
+        공장의 UUID를 입력하여 공장에 따라 생산자원을 조회합니다. <br/> 
+        [전체 조회시 입력하지 않습니다.]
+      schema:
+        type: string
+        format: uuid
+    
+    - name: routing_uuid
+      in: query
+      description: |
+        라우팅의 UUID를 입력하여 라우팅에 따라 생산자원을 조회합니다. <br/>
+        [전체 조회시 입력하지 않습니다.]
+      schema:
+        type: string
+        format: uuid
+
+  responses:
+    200:
+      description: Read OK
+      content:
+        application/json:
+          schema: 
+            allOf:
+              - $ref: ../../schemas/common/default-response.schema.yaml
+              - type: object
+                properties:
+                  datas:
+                    description: Enable
+                    type: object
+                    properties:
+                      value:
+                        description: Enable
+                        type: object
+                        properties:
+                          count: 
+                            description: 영향받은 데이터의 개수
+                            type: number
+                            format: int32
+                            minimum: 0
+                      raws:
+                        description: 생산자원 정보 데이터 목록
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: ../../schemas/std/routing-resource.schema.yaml#/routing_resource_uuid
+                            - $ref: ../../schemas/std/routing-resource.schema.yaml#/factory_uuid
+                            - $ref: ../../schemas/std/routing-resource.schema.yaml#/routing_uuid
+                            - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
+                            - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
+                            - $ref: ../../schemas/std/routing-resource.schema.yaml#/resource_type
+                            - $ref: ../../schemas/std/routing-resource.schema.yaml#/equip_uuid
+                            - $ref: ../../schemas/std/equip.schema.yaml#/equip_cd
+                            - $ref: ../../schemas/std/equip.schema.yaml#/equip_nm
+                            - $ref: ../../schemas/std/routing-resource.schema.yaml#/emp_cnt
+                            - $ref: ../../schemas/std/routing-resource.schema.yaml#/cycle_time
+                            - $ref: ../../schemas/std/routing.schema.yaml#/uph
+                            - $ref: ../../schemas/common/timestamp.schema.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml
+
+post:
+  description: |
+    생산자원 정보 데이터를 생성합니다.
+  summary: 생산자원 정보 데이터 생성
+  tags:
+    - 생산자원 정보(RoutingResource)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - factory_uuid
+            - routing_uuid
+            - resource_type
+            - cycle_time
+          allOf:
+            - $ref: ../../schemas/std/routing-resource.schema.yaml#/factory_uuid
+            - $ref: ../../schemas/std/routing-resource.schema.yaml#/routing_uuid
+            - $ref: ../../schemas/std/routing-resource.schema.yaml#/resource_type
+            - $ref: ../../schemas/std/routing-resource.schema.yaml#/equip_uuid
+            - $ref: ../../schemas/std/routing-resource.schema.yaml#/emp_cnt
+            - $ref: ../../schemas/std/routing-resource.schema.yaml#/cycle_time
+            - $ref: ../../schemas/std/routing.schema.yaml#/uph
+  responses:
+    201:
+      $ref: ../../responses/common/succeed-create.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml
+
+put:
+  description: |
+    생산자원 정보 데이터를 행(Row) 단위로 수정합니다.
+  summary: 생산자원 정보 데이터 수정
+  tags:
+    - 생산자원 정보(RoutingResource)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - uuid
+            - resource_type
+            - cycle_time
+          allOf:
+            - $ref: ../../schemas/std/routing-resource.schema.yaml#/uuid
+            - $ref: ../../schemas/std/routing-resource.schema.yaml#/resource_type
+            - $ref: ../../schemas/std/routing-resource.schema.yaml#/equip_uuid
+            - $ref: ../../schemas/std/routing-resource.schema.yaml#/emp_cnt
+            - $ref: ../../schemas/std/routing-resource.schema.yaml#/cycle_time
+            - $ref: ../../schemas/std/routing.schema.yaml#/uph
+  responses:
+    201:
+      $ref: ../../responses/common/succeed-update.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml
+
+patch:
+  description: |
+    생산자원 정보 데이터를 개별 항목 단위로 수정합니다.
+  summary: 생산자원 정보 데이터 수정
+  tags:
+    - 생산자원 정보(RoutingResource)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - uuid
+          allOf:
+            - $ref: ../../schemas/std/routing-resource.schema.yaml#/uuid
+            - $ref: ../../schemas/std/routing-resource.schema.yaml#/resource_type
+            - $ref: ../../schemas/std/routing-resource.schema.yaml#/equip_uuid
+            - $ref: ../../schemas/std/routing-resource.schema.yaml#/emp_cnt
+            - $ref: ../../schemas/std/routing-resource.schema.yaml#/cycle_time
+            - $ref: ../../schemas/std/routing.schema.yaml#/uph
+  responses:
+    201:
+      $ref: ../../responses/common/succeed-update.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml
+
+delete:
+  description: |
+    생산자원 정보 데이터를 삭제합니다.
+  summary: 생산자원 정보 데이터 삭제
+  tags:
+    - 생산자원 정보(RoutingResource)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - uuid
+          allOf:
+            - $ref: ../../schemas/std/routing-resource.schema.yaml#/uuid
+  responses:
+    200:
+      $ref: ../../responses/common/succeed-delete.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

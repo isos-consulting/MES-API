@@ -1,0 +1,428 @@
+# STD_BOM_TB
+
+# Columns
+bom_id: 
+  type: object
+  properties: 
+    bom_id:
+      description: BOM ID
+      type: number
+      format: int4
+
+factory_id: 
+  type: object
+  properties: 
+    factory_id:
+      description: 공장ID
+      type: number
+      format: int4
+
+p_prod_id: 
+  type: object
+  properties: 
+    p_prod_id:
+      description: 부모품목ID
+      type: number
+      format: int4
+
+c_prod_id: 
+  type: object
+  properties: 
+    c_prod_id:
+      description: 자식품목ID
+      type: number
+      format: int4
+
+c_usage: 
+  type: object
+  properties: 
+    c_usage:
+      description: 소요량
+      type: number
+      format: numeric(19, 6)
+
+unit_id: 
+  type: object
+  properties: 
+    unit_id:
+      description: 단위ID
+      type: number
+      format: int4
+
+sortby: 
+  type: object
+  properties: 
+    sortby:
+      description: 정렬
+      type: number
+      format: int4
+      
+from_store_id: 
+  type: object
+  properties: 
+    from_store_id:
+      description: 출고 창고ID
+      type: number
+      format: int4
+      
+from_location_id: 
+  type: object
+  properties: 
+    from_location_id:
+      description: 출고 위치ID
+      type: number
+      format: int4
+      
+remark: 
+  type: object
+  properties: 
+    remark:
+      description: 비고
+      type: string
+      format: varchar(250)
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: BOM UUID
+      type: string
+      format: uuid
+
+# Uuids
+bom_uuid:
+  type: object
+  properties: 
+    bom_uuid:
+      description: BOM UUID
+      type: string
+      format: uuid
+
+factory_uuid:
+  type: object
+  properties: 
+    factory_uuid:
+      description: 공장UUID
+      type: string
+      format: uuid
+
+unit_uuid:
+  type: object
+  properties: 
+    unit_uuid:
+      description: 단위UUID
+      type: string
+      format: uuid
+
+p_prod_uuid:
+  type: object
+  properties: 
+    p_prod_uuid:
+      description: 부모품목UUID
+      type: string
+      format: uuid
+
+c_prod_uuid:
+  type: object
+  properties: 
+    c_prod_uuid:
+      description: 자식품목UUID
+      type: string
+      format: uuid
+
+from_store_uuid:
+  type: object
+  properties: 
+    from_store_uuid:
+      description: 출고 창고UUID
+      type: string
+      format: uuid
+
+from_location_uuid:
+  type: object
+  properties: 
+    from_location_uuid:
+      description: 출고 위치UUID
+      type: string
+      format: uuid
+
+# Others
+lv:
+  type: object
+  properties: 
+    lv:
+      description: BOM 레벨
+      type: number
+      format: int4
+
+main_prod_uuid:
+  type: object
+  properties: 
+    main_prod_uuid:
+      description: 0 Level 품목UUID
+      type: string
+      format: uuid
+
+t_usage: 
+  type: object
+  properties: 
+    t_usage:
+      description: 0 Level 품목 기준 소요량
+      type: number
+      format: numeric(19, 6)
+
+p_prod_no:
+  type: object
+  properties: 
+    p_prod_no:
+      description: 부모 품목 품번
+      type: string
+      format: varchar(50)
+
+p_prod_nm:
+  type: object
+  properties: 
+    p_prod_nm:
+      description: 부모 품목 품명
+      type: string
+      format: varchar(50)
+
+p_item_type_uuid:
+  type: object
+  properties: 
+    p_item_type_uuid:
+      description: 부모 품목 품목유형UUID
+      type: string
+      format: uuid
+
+p_item_type_cd:
+  type: object
+  properties: 
+    p_item_type_cd:
+      description: 부모 품목 품목유형코드
+      type: string
+      format: varchar(20)
+
+p_item_type_nm:
+  type: object
+  properties: 
+    p_item_type_nm:
+      description: 부모 품목 품목유형명
+      type: string
+      format: varchar(50)
+
+p_prod_type_uuid:
+  type: object
+  properties: 
+    p_prod_type_uuid:
+      description: 부모 품목 제품유형UUID
+      type: string
+      format: uuid
+
+p_prod_type_cd:
+  type: object
+  properties: 
+    p_prod_type_cd:
+      description: 부모 품목 제품유형코드
+      type: string
+      format: varchar(20)
+
+p_prod_type_nm:
+  type: object
+  properties: 
+    p_prod_type_nm:
+      description: 부모 품목 제품유형명
+      type: string
+      format: varchar(50)
+
+p_model_uuid:
+  type: object
+  properties: 
+    p_model_uuid:
+      description: 부모 품목 모델UUID
+      type: string
+      format: uuid
+
+p_model_cd:
+  type: object
+  properties: 
+    p_model_cd:
+      description: 부모 품목 모델코드
+      type: string
+      format: varchar(20)
+
+p_model_nm:
+  type: object
+  properties: 
+    p_model_nm:
+      description: 부모 품목 모델명
+      type: string
+      format: varchar(50)
+
+p_rev: 
+  type: object
+  properties: 
+    p_rev:
+      description: 부모 품목 리비전
+      type: string
+      format: varchar(10)
+
+p_prod_std: 
+  type: object
+  properties: 
+    p_prod_std:
+      description: 부모 품목 규격
+      type: string
+      format: varchar(250)
+
+p_unit_uuid:
+  type: object
+  properties: 
+    p_unit_uuid:
+      description: 부모 품목 단위UUID
+      type: string
+      format: uuid
+
+p_unit_cd:
+  type: object
+  properties: 
+    p_unit_cd:
+      description: 부모 품목 단위코드
+      type: string
+      format: varchar(20)
+
+p_unit_nm:
+  type: object
+  properties: 
+    p_unit_nm:
+      description: 부모 품목 단위명
+      type: string
+      format: varchar(50)
+
+c_prod_no:
+  type: object
+  properties: 
+    c_prod_no:
+      description: 자식 품목 품번
+      type: string
+      format: varchar(50)
+
+c_prod_nm:
+  type: object
+  properties: 
+    c_prod_nm:
+      description: 자식 품목 품명
+      type: string
+      format: varchar(50)
+
+c_item_type_uuid:
+  type: object
+  properties: 
+    c_item_type_uuid:
+      description: 자식 품목 품목유형UUID
+      type: string
+      format: uuid
+
+c_item_type_cd:
+  type: object
+  properties: 
+    c_item_type_cd:
+      description: 자식 품목 품목유형코드
+      type: string
+      format: varchar(20)
+
+c_item_type_nm:
+  type: object
+  properties: 
+    c_item_type_nm:
+      description: 자식 품목 품목유형명
+      type: string
+      format: varchar(50)
+
+c_prod_type_uuid:
+  type: object
+  properties: 
+    c_prod_type_uuid:
+      description: 자식 품목 제품유형UUID
+      type: string
+      format: uuid
+
+c_prod_type_cd:
+  type: object
+  properties: 
+    c_prod_type_cd:
+      description: 자식 품목 제품유형코드
+      type: string
+      format: varchar(20)
+
+c_prod_type_nm:
+  type: object
+  properties: 
+    c_prod_type_nm:
+      description: 자식 품목 제품유형명
+      type: string
+      format: varchar(50)
+
+c_model_uuid:
+  type: object
+  properties: 
+    c_model_uuid:
+      description: 자식 품목 모델UUID
+      type: string
+      format: uuid
+
+c_model_cd:
+  type: object
+  properties: 
+    c_model_cd:
+      description: 자식 품목 모델코드
+      type: string
+      format: varchar(20)
+
+c_model_nm:
+  type: object
+  properties: 
+    c_model_nm:
+      description: 자식 품목 모델명
+      type: string
+      format: varchar(50)
+
+c_rev: 
+  type: object
+  properties: 
+    c_rev:
+      description: 자식 품목 리비전
+      type: string
+      format: varchar(10)
+
+c_prod_std: 
+  type: object
+  properties: 
+    c_prod_std:
+      description: 자식 품목 규격
+      type: string
+      format: varchar(250)
+
+c_unit_uuid:
+  type: object
+  properties: 
+    c_unit_uuid:
+      description: 자식 품목 단위UUID
+      type: string
+      format: uuid
+
+c_unit_cd:
+  type: object
+  properties: 
+    c_unit_cd:
+      description: 자식 품목 단위코드
+      type: string
+      format: varchar(20)
+
+c_unit_nm:
+  type: object
+  properties: 
+    c_unit_nm:
+      description: 자식 품목 단위명
+      type: string
+      format: varchar(50)

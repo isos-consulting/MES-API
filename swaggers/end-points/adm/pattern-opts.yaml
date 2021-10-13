@@ -1,0 +1,44 @@
+get:
+  description: |
+    번호자동발행 옵션 데이터 목록을 조회합니다.
+  summary: 번호자동발행 옵션 데이터 조회
+  tags:
+    - 번호자동발행 옵션(PatternOpt)
+
+  responses:
+    200:
+      description: Read OK
+      content:
+        application/json:
+          schema: 
+            allOf:
+              - $ref: ../../schemas/common/default-response.schema.yaml
+              - type: object
+                properties:
+                  datas:
+                    description: Enable
+                    type: object
+                    properties:
+                      value:
+                        description: Enable
+                        type: object
+                        properties:
+                          count: 
+                            description: 영향받은 데이터의 개수
+                            type: number
+                            format: int32
+                            minimum: 0
+                      raws:
+                        description: 번호자동발행 옵션 데이터 목록
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/pattern_opt_cd
+                            - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/pattern_opt_nm
+                            - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/table_nm
+                            - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/auto_fg
+                            - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/col_nm
+                            - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/pattern
+                            - $ref: ../../schemas/common/timestamp.schema.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

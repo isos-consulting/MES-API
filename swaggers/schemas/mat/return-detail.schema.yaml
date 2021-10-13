@@ -1,0 +1,276 @@
+# MAT_RETURN_DETAIL_TB
+
+# Columns
+return_detail_id: 
+  type: object
+  properties: 
+    return_detail_id:
+      description: 자재반출상세ID
+      type: number
+      format: int4
+      
+return_id: 
+  type: object
+  properties: 
+    return_id:
+      description: 자재반출ID
+      type: number
+      format: int4
+      
+seq: 
+  type: object
+  properties: 
+    seq:
+      description: 입하 순번
+      type: number
+      format: int4
+
+factory_id: 
+  type: object
+  properties: 
+    factory_id:
+      description: 공장ID
+      type: number
+      format: int4
+
+prod_id: 
+  type: object
+  properties: 
+    prod_id:
+      description: 품목ID
+      type: number
+      format: int4
+
+unit_id: 
+  type: object
+  properties: 
+    unit_id:
+      description: 단위ID
+      type: number
+      format: int4
+
+lot_no: 
+  type: object
+  properties: 
+    lot_no:
+      description: LOT NO
+      type: string
+      format: varchar(25)
+
+qty: 
+  type: object
+  properties: 
+    qty:
+      description: 수량
+      type: number
+      format: numeric(19, 6)
+
+convert_value: 
+  type: object
+  properties: 
+    convert_value:
+      description: 단위변환 값(계산 값)
+      type: number
+      format: numeric(19, 6)
+
+price: 
+  type: object
+  properties: 
+    price:
+      description: 금액
+      type: number
+      format: numeric(19, 6)
+
+money_unit_id: 
+  type: object
+  properties: 
+    money_unit_id:
+      description: 화폐 단위ID
+      type: number
+      format: int4
+      
+exchange: 
+  type: object
+  properties: 
+    exchange:
+      description: 환율
+      type: string
+      format: numeric(19, 6)
+
+total_price: 
+  type: object
+  properties: 
+    total_price:
+      description: 합계 금액
+      type: number
+      format: numeric(19, 6)
+
+receive_detail_id: 
+  type: object
+  properties: 
+    receive_detail_id:
+      description: 자재입하상세ID
+      type: number
+      format: int4
+
+from_store_id: 
+  type: object
+  properties: 
+    from_store_id:
+      description: 출고 창고ID
+      type: number
+      format: int4
+
+from_location_id: 
+  type: object
+  properties: 
+    from_location_id:
+      description: 출고 위치ID
+      type: number
+      format: int4
+
+remark: 
+  type: object
+  properties: 
+    remark:
+      description: 비고
+      type: string
+      format: varchar(250)
+
+barcode: 
+  type: object
+  properties: 
+    barcode:
+      description: 바코드
+      type: string
+      format: varchar(100)
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 자재반출상세UUID
+      type: string
+      format: uuid
+
+# Uuids
+return_detail_uuid:
+  type: object
+  properties: 
+    return_detail_uuid:
+      description: 자재반출상세UUID
+      type: string
+      format: uuid
+
+return_uuid:
+  type: object
+  properties: 
+    return_uuid:
+      description: 자재반출UUID
+      type: string
+      format: uuid
+
+factory_uuid:
+  type: object
+  properties: 
+    factory_uuid:
+      description: 공장UUID
+      type: string
+      format: uuid
+
+prod_uuid:
+  type: object
+  properties: 
+    prod_uuid:
+      description: 품목UUID
+      type: string
+      format: uuid
+
+unit_uuid:
+  type: object
+  properties: 
+    unit_uuid:
+      description: 단위UUID
+      type: string
+      format: uuid
+
+price_unit_uuid:
+  type: object
+  properties: 
+    price_unit_uuid:
+      description: 협력사 단위UUID
+      type: string
+      format: uuid
+
+money_unit_uuid:
+  type: object
+  properties: 
+    money_unit_uuid:
+      description: 화폐 단위UUID
+      type: string
+      format: uuid
+
+receive_detail_uuid:
+  type: object
+  properties: 
+    receive_detail_uuid:
+      description: 자재입하상세UUID
+      type: string
+      format: uuid
+
+from_store_uuid:
+  type: object
+  properties: 
+    from_store_uuid:
+      description: 출고 창고UUID
+      type: string
+      format: uuid
+
+from_location_uuid:
+  type: object
+  properties: 
+    from_location_uuid:
+      description: 출고 위치UUID
+      type: string
+      format: uuid
+
+# Others
+stmt_no_sub: 
+  type: object
+  properties: 
+    stmt_no_sub:
+      description: 상세전표번호
+      type: string
+      format: varchar
+
+receive_qty: 
+  type: object
+  properties: 
+    receive_qty:
+      description: 입하 수량
+      type: number
+      format: numeric(19, 6)
+
+return_qty: 
+  type: object
+  properties: 
+    return_qty:
+      description: 반출 수량
+      type: number
+      format: numeric(19, 6)
+
+price_unit_cd: 
+  type: object
+  properties: 
+    price_unit_cd:
+      description: 협력사 단위코드
+      type: string
+      format: varchar(20)
+
+price_unit_nm: 
+  type: object
+  properties: 
+    price_unit_nm:
+      description: 협력사 단위명
+      type: string
+      format: varchar(50)

@@ -1,0 +1,43 @@
+# STD_ITEM_TYPE_TB
+
+# Columns
+item_type_id: 
+  type: object
+  properties: 
+    item_type_id:
+      description: 품목 유형ID
+      type: number
+      format: int4
+
+item_type_cd: 
+  type: object
+  properties: 
+    item_type_cd:
+      description: 품목 유형코드
+      type: string
+      format: varchar(20)
+
+item_type_nm: 
+  type: object
+  properties: 
+    item_type_nm:
+      description: 품목 유형명
+      type: string
+      format: varchar(50)
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 품목 유형UUID
+      type: string
+      format: uuid
+
+# Uuids
+item_type_uuid:
+  type: object
+  properties: 
+    item_type_uuid:
+      description: 품목 유형UUID
+      type: string
+      format: uuid

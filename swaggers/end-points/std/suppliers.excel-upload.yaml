@@ -1,0 +1,37 @@
+post:
+  description: |
+    공급처 데이터를 대량으로 생성 및 수정합니다. <br/>
+    uuid를 기준으로 데이터를 생성 및 수정합니다. <br/>
+    uuid가 없는 항목은 생성, 있는 항목은 수정을 진행합니다. <br/>
+    Excel Upload에 사용합니다.
+  summary: 공급처 대량 데이터 입력 (Excel Upload)
+  tags:
+    - 공급처(Supplier)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - supplier_cd
+            - supplier_nm
+            - partner_cd
+            - use_fg
+          allOf:
+            - $ref: ../../schemas/std/supplier.schema.yaml#/uuid
+            - $ref: ../../schemas/std/supplier.schema.yaml#/supplier_cd
+            - $ref: ../../schemas/std/supplier.schema.yaml#/supplier_nm
+            - $ref: ../../schemas/std/partner.schema.yaml#/partner_cd
+            - $ref: ../../schemas/std/supplier.schema.yaml#/manager
+            - $ref: ../../schemas/std/supplier.schema.yaml#/email
+            - $ref: ../../schemas/std/supplier.schema.yaml#/tel
+            - $ref: ../../schemas/std/supplier.schema.yaml#/fax
+            - $ref: ../../schemas/std/supplier.schema.yaml#/post
+            - $ref: ../../schemas/std/supplier.schema.yaml#/addr
+            - $ref: ../../schemas/std/supplier.schema.yaml#/addr_detail
+            - $ref: ../../schemas/std/supplier.schema.yaml#/use_fg
+            - $ref: ../../schemas/std/supplier.schema.yaml#/remark
+  responses:
+    201:
+      $ref: ../../responses/common/succeed-create.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

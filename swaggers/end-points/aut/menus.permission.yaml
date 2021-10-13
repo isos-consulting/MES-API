@@ -1,0 +1,71 @@
+get:
+  description: |
+    사용자의 권한에 따라 메뉴리스트를 조회합니다.
+  summary: 권한에 따른 메뉴 데이터 조회
+  tags:
+    - 메뉴(Menu)
+  responses:
+    200:
+      description: Read OK
+      content:
+        application/json:
+          schema: 
+            allOf:
+              - $ref: ../../schemas/common/default-response.schema.yaml
+              - type: object
+                properties:
+                  datas:
+                    description: Enable
+                    type: object
+                    properties:
+                      value:
+                        description: Enable
+                        type: object
+                        properties:
+                          count: 
+                            description: 영향받은 데이터의 개수
+                            type: number
+                            format: int32
+                            minimum: 0
+                      raws:
+                        description: 메뉴 데이터 목록
+                        type: array
+                        items:
+                          type: object
+                          allOf:
+                            - $ref: ../../schemas/aut/menu.schema.yaml#/lv
+                            - $ref: ../../schemas/aut/menu.schema.yaml#/menu_type
+                            - $ref: ../../schemas/aut/menu.schema.yaml#/first_menu_uuid
+                            - $ref: ../../schemas/aut/menu.schema.yaml#/menu_uuid
+                            - $ref: ../../schemas/aut/menu.schema.yaml#/menu_uri
+                            - $ref: ../../schemas/aut/menu.schema.yaml#/menu_nm
+                            - $ref: ../../schemas/aut/menu.schema.yaml#/component_nm
+                            - $ref: ../../schemas/aut/menu.schema.yaml#/icon
+                            - $ref: ../../schemas/aut/menu-type.schema.yaml#/create_fg
+                            - $ref: ../../schemas/aut/menu-type.schema.yaml#/read_fg
+                            - $ref: ../../schemas/aut/menu-type.schema.yaml#/update_fg
+                            - $ref: ../../schemas/aut/menu-type.schema.yaml#/delete_fg
+                            - $ref: ../../schemas/common/timestamp.schema.yaml
+                          properties:
+                            sub_menu:
+                              description: 하위 메뉴 Data
+                              type: array
+                              items:
+                                type: object
+                                allOf:
+                                  - $ref: ../../schemas/aut/menu.schema.yaml#/lv
+                                  - $ref: ../../schemas/aut/menu.schema.yaml#/menu_type
+                                  - $ref: ../../schemas/aut/menu.schema.yaml#/first_menu_uuid
+                                  - $ref: ../../schemas/aut/menu.schema.yaml#/menu_uuid
+                                  - $ref: ../../schemas/aut/menu.schema.yaml#/menu_uri
+                                  - $ref: ../../schemas/aut/menu.schema.yaml#/menu_nm
+                                  - $ref: ../../schemas/aut/menu.schema.yaml#/component_nm
+                                  - $ref: ../../schemas/aut/menu.schema.yaml#/icon
+                                  - $ref: ../../schemas/aut/menu-type.schema.yaml#/create_fg
+                                  - $ref: ../../schemas/aut/menu-type.schema.yaml#/read_fg
+                                  - $ref: ../../schemas/aut/menu-type.schema.yaml#/update_fg
+                                  - $ref: ../../schemas/aut/menu-type.schema.yaml#/delete_fg
+                                  - $ref: ../../schemas/common/timestamp.schema.yaml
+                        
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

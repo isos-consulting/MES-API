@@ -1,0 +1,23 @@
+put:
+  description: |
+    사용자의 비밀번호를 수정합니다..
+  summary: 사용자 비밀번호 수정
+  tags:
+    - 사용자(User)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - uuid
+            - pwd
+            - pwd_fg
+          allOf:
+            - $ref: ../../schemas/aut/user.schema.yaml#/uuid
+            - $ref: ../../schemas/aut/user.schema.yaml#/pwd
+            - $ref: ../../schemas/aut/user.schema.yaml#/pwd_fg
+  responses:
+    201:
+      $ref: ../../responses/common/succeed-update.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

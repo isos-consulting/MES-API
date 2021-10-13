@@ -1,0 +1,57 @@
+get:
+  description: |
+    하나의 창고 데이터를 조회합니다.
+  summary: 창고 데이터 단일 조회
+  tags:
+    - 창고(Store)
+  parameters:
+    - name: uuid
+      in: path
+      description: 창고의 UUID 를 입력합니다.
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+  responses:
+    200:
+      description: Read OK
+      content:
+        application/json:
+          schema: 
+            allOf:
+              - $ref: ../../schemas/common/default-response.schema.yaml
+              - type: object
+                properties:
+                  datas:
+                    description: Enable
+                    type: object
+                    properties:
+                      value:
+                        description: Enable
+                        type: object
+                        properties:
+                          count: 
+                            description: 영향받은 데이터의 개수
+                            type: number
+                            format: int32
+                            minimum: 0
+                      raws:
+                        description: 창고 데이터 목록
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: ../../schemas/std/store.schema.yaml#/store_uuid
+                            - $ref: ../../schemas/std/store.schema.yaml#/factory_uuid
+                            - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
+                            - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
+                            - $ref: ../../schemas/std/store.schema.yaml#/store_cd
+                            - $ref: ../../schemas/std/store.schema.yaml#/store_nm
+                            - $ref: ../../schemas/std/store.schema.yaml#/reject_store_fg
+                            - $ref: ../../schemas/std/store.schema.yaml#/return_store_fg
+                            - $ref: ../../schemas/std/store.schema.yaml#/outgo_store_fg
+                            - $ref: ../../schemas/std/store.schema.yaml#/final_insp_store_fg
+                            - $ref: ../../schemas/std/store.schema.yaml#/available_store_fg
+                            - $ref: ../../schemas/common/timestamp.schema.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

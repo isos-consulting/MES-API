@@ -1,0 +1,59 @@
+# STD_INSP_METHOD_TB
+
+# Columns
+insp_method_id: 
+  type: object
+  properties: 
+    insp_method_id:
+      description: 검사방법ID
+      type: number
+      format: int4
+
+factory_id: 
+  type: object
+  properties: 
+    factory_id:
+      description: 공장ID
+      type: number
+      format: int4
+      
+insp_method_cd: 
+  type: object
+  properties: 
+    insp_method_cd:
+      description: 검사방법코드
+      type: string
+      format: varchar(20)
+
+insp_method_nm: 
+  type: object
+  properties: 
+    insp_method_nm:
+      description: 검사방법명
+      type: string
+      format: varchar(50)
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 검사방법UUID
+      type: string
+      format: uuid
+
+# Uuids
+insp_method_uuid:
+  type: object
+  properties: 
+    insp_method_uuid:
+      description: 검사방법UUID
+      type: string
+      format: uuid
+
+factory_uuid:
+  type: object
+  properties: 
+    factory_uuid:
+      description: 공장UUID
+      type: string
+      format: uuid

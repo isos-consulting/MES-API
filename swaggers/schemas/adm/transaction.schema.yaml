@@ -1,0 +1,34 @@
+# ADM_COMPANY_OPT_VW
+
+# Columns
+tran_id: 
+  type: object
+  properties: 
+    tran_id:
+      description: 수불유형ID
+      type: number
+      format: int4
+
+tran_cd: 
+  type: object
+  properties: 
+    tran_cd:
+      description: 수불유형코드
+      type: string
+      format: varchar(20)
+
+tran_nm: 
+  type: object
+  properties: 
+    tran_nm:
+      description: 수불유형명
+      type: string
+      format: varchar(50)
+
+remark: 
+  type: object
+  properties: 
+    remark:
+      description: 비고
+      type: string
+      format: varchar(250)

@@ -1,0 +1,387 @@
+---
+# Response 메세지 정의 (정상응답, 에러)
+#   -> 정상응답 중에서 각 HTTP METHOD 에 해당하는 코드 정리
+#   -> 에러 코드도 일반적으로 사용하는 것을 제외하고 우리만 사용하는 코드 정의
+#      EX) DB 에러 (종류에 따라 라던지), 토큰 Not Found 에러 등등
+# response, schemas, examples 어느 범위 까지 모듈로 빼서 사용할지?
+#   -> Error 쪽은 빼서 사용하는게 맞는데 나머지는 어떻게 하는게 좋을지?
+# 하나의 API 요청은 Response Schema도 하나여야 하는 개념인 것 같은데 어떻게 생각하시는지?
+# sub tag 기능이 없음 (유료버전 Swagger Hub 에는 있는데 무리인 것 같음 너무 비쌈)
+#   -> View 이름을 앞에 붙이고 기능을 뒤에 쓰는 방식으로 해서 구분 짓는 방식 생각 중
+# 코드 재사용 관련 기능으로 상속(inherit) / 콤보박스 처럼 조건 거는 기능(discriminate) 알아봐야 함
+# SECURITY 부분은 아직 알아보지 못했음 추후에 더 알아봐야 함
+
+# 일단 비슷한 API 요청이 여러개인 경우 path parameter로 받고 API 명세에는 구분해서 넣는 방식으로 (나중에 합치고)
+
+openapi: '3.0.2'
+info:
+  title: MES API Document
+  version: '1.0.0'
+  license:
+    name: 'MIT'
+    url: 'https://spdx.org/licenses/MIT.html'
+  contact:
+    name: 'KISOS'
+    url: 'https://www.kisos.net'
+    email: 'kisos@kisos.net'
+servers:
+  - url: https://isos.iptime.org:13221
+    description: MES TEST SERVER
+
+components:
+  securitySchemes:
+    api_key:
+      type: apiKey
+      name: api_key
+      in: header
+    petstore_auth:
+      type: oauth2
+      flows: 
+        implicit:
+          authorizationUrl: http://example.org/api/oauth/dialog
+          scopes:
+            write:pets: modify pets in your account
+            read:pets: read your pets
+
+paths:
+  # ✅ BOM
+  /std/boms/trees:
+    $ref: ../end-points/std/boms.trees.yaml
+  /std/bom/{uuid}:
+    $ref: ../end-points/std/bom.{uuid}.yaml
+  /std/boms:
+    $ref: ../end-points/std/boms.yaml
+
+  # ✅ PartnerType (거래처유형)
+  /std/partner-types/excel-upload:
+    $ref: ../end-points/std/partner-types.excel-upload.yaml
+  /std/partner-type/{uuid}:
+    $ref: ../end-points/std/partner-type.{uuid}.yaml
+  /std/partner-types:
+    $ref: ../end-points/std/partner-types.yaml
+
+  # ✅ Partner (거래처)
+  /std/partners/excel-upload:
+    $ref: ../end-points/std/partners.excel-upload.yaml
+  /std/partner/{uuid}:
+    $ref: ../end-points/std/partner.{uuid}.yaml
+  /std/partners:
+    $ref: ../end-points/std/partners.yaml
+
+  # ✅ PartnerProd (거래처별 품목)
+  /std/partner-prods/excel-upload:
+    $ref: ../end-points/std/partner-prods.excel-upload.yaml
+  /std/partner-prod/{uuid}:
+    $ref: ../end-points/std/partner-prod.{uuid}.yaml
+  /std/partner-prods:
+    $ref: ../end-points/std/partner-prods.yaml
+
+  # ✅ InspTool (검사구)
+  /std/insp-tools/excel-upload:
+    $ref: ../end-points/std/insp-tools.excel-upload.yaml
+  /std/insp-tool/{uuid}:
+    $ref: ../end-points/std/insp-tool.{uuid}.yaml
+  /std/insp-tools:
+    $ref: ../end-points/std/insp-tools.yaml
+
+  # ✅ InspMethod (검사방법)
+  /std/insp-methods/excel-upload:
+    $ref: ../end-points/std/insp-methods.excel-upload.yaml
+  /std/insp-method/{uuid}:
+    $ref: ../end-points/std/insp-method.{uuid}.yaml
+  /std/insp-methods:
+    $ref: ../end-points/std/insp-methods.yaml
+
+  # ✅ InspItemType (검사항목유형)
+  /std/insp-item-types/excel-upload:
+    $ref: ../end-points/std/insp-item-types.excel-upload.yaml
+  /std/insp-item-type/{uuid}:
+    $ref: ../end-points/std/insp-item-type.{uuid}.yaml
+  /std/insp-item-types:
+    $ref: ../end-points/std/insp-item-types.yaml
+
+  # ✅ InspItem (검사항목)
+  /std/insp-items/excel-upload:
+    $ref: ../end-points/std/insp-items.excel-upload.yaml
+  /std/insp-item/{uuid}:
+    $ref: ../end-points/std/insp-item.{uuid}.yaml
+  /std/insp-items:
+    $ref: ../end-points/std/insp-items.yaml
+
+  # ✅ CustomerPrice (고객사단가)
+  /std/customer-prices/excel-upload:
+    $ref: ../end-points/std/customer-prices.excel-upload.yaml
+  /std/customer-price/{uuid}:
+    $ref: ../end-points/std/customer-price.{uuid}.yaml
+  /std/customer-prices:
+    $ref: ../end-points/std/customer-prices.yaml
+
+  # ✅ Supplier (공급처)
+  /std/suppliers/excel-upload:
+    $ref: ../end-points/std/suppliers.excel-upload.yaml
+  /std/supplier/{uuid}:
+    $ref: ../end-points/std/supplier.{uuid}.yaml
+  /std/suppliers:
+    $ref: ../end-points/std/suppliers.yaml
+
+  # ✅ Factory (공장)
+  /std/factories/excel-upload:
+    $ref: ../end-points/std/factories.excel-upload.yaml
+  /std/factories/sign-in:
+    $ref: ../end-points/std/factories.sign-in.yaml
+  /std/factory/{uuid}:
+    $ref: ../end-points/std/factory.{uuid}.yaml
+  /std/factories:
+    $ref: ../end-points/std/factories.yaml
+
+  # ✅ Proc (공정)
+  /std/procs/excel-upload:
+    $ref: ../end-points/std/procs.excel-upload.yaml
+  /std/proc/{uuid}:
+    $ref: ../end-points/std/proc.{uuid}.yaml
+  /std/procs:
+    $ref: ../end-points/std/procs.yaml
+
+  # ✅ ProcReject (공정별 부적합)
+  /std/proc-rejects/excel-upload:
+    $ref: ../end-points/std/proc-rejects.excel-upload.yaml
+  /std/proc-reject/{uuid}:
+    $ref: ../end-points/std/proc-reject.{uuid}.yaml
+  /std/proc-rejects:
+    $ref: ../end-points/std/proc-rejects.yaml
+
+  # ✅ Delivery (납품처)
+  /std/deliveries/excel-upload:
+    $ref: ../end-points/std/deliveries.excel-upload.yaml
+  /std/delivery/{uuid}:
+    $ref: ../end-points/std/delivery.{uuid}.yaml
+  /std/deliveries:
+    $ref: ../end-points/std/deliveries.yaml
+
+  # ✅ PriceType (단가유형)
+  /std/price-types/excel-upload:
+    $ref: ../end-points/std/price-types.excel-upload.yaml
+  /std/price-type/{uuid}:
+    $ref: ../end-points/std/price-type.{uuid}.yaml
+  /std/price-types:
+    $ref: ../end-points/std/price-types.yaml
+
+  # ✅ Unit (단위)
+  /std/units/excel-upload:
+    $ref: ../end-points/std/units.excel-upload.yaml
+  /std/unit/{uuid}:
+    $ref: ../end-points/std/unit.{uuid}.yaml
+  /std/units:
+    $ref: ../end-points/std/units.yaml
+
+  # ✅ UnitConvert (단위변환)
+  /std/unit-converts/excel-upload:
+    $ref: ../end-points/std/unit-converts.excel-upload.yaml
+  /std/unit-convert/{uuid}:
+    $ref: ../end-points/std/unit-convert.{uuid}.yaml
+  /std/unit-converts:
+    $ref: ../end-points/std/unit-converts.yaml
+
+  # ✅ Routing (라우팅)
+  /std/routings/actived-prod:
+    $ref: ../end-points/std/routings.actived-prod.yaml
+  /std/routing/{uuid}:
+    $ref: ../end-points/std/routing.{uuid}.yaml
+  /std/routings:
+    $ref: ../end-points/std/routings.yaml
+
+  # ✅ Model (모델)
+  /std/models/excel-upload:
+    $ref: ../end-points/std/models.excel-upload.yaml
+  /std/model/{uuid}:
+    $ref: ../end-points/std/model.{uuid}.yaml
+  /std/models:
+    $ref: ../end-points/std/models.yaml
+
+  # ✅ Dept (부서)
+  /std/depts/excel-upload:
+    $ref: ../end-points/std/depts.excel-upload.yaml
+  /std/dept/{uuid}:
+    $ref: ../end-points/std/dept.{uuid}.yaml
+  /std/depts:
+    $ref: ../end-points/std/depts.yaml
+
+  # ✅ RejectType (부적합유형)
+  /std/reject-types/excel-upload:
+    $ref: ../end-points/std/reject-types.excel-upload.yaml
+  /std/reject-type/{uuid}:
+    $ref: ../end-points/std/reject-type.{uuid}.yaml
+  /std/reject-types:
+    $ref: ../end-points/std/reject-types.yaml
+
+  # ✅ Reject (부적합)
+  /std/rejects/excel-upload:
+    $ref: ../end-points/std/rejects.excel-upload.yaml
+  /std/reject/{uuid}:
+    $ref: ../end-points/std/reject.{uuid}.yaml
+  /std/rejects:
+    $ref: ../end-points/std/rejects.yaml
+
+  # ✅ DowntimeType (비가동유형)
+  /std/downtime-types/excel-upload:
+    $ref: ../end-points/std/downtime-types.excel-upload.yaml
+  /std/downtime-type/{uuid}:
+    $ref: ../end-points/std/downtime-type.{uuid}.yaml
+  /std/downtime-types:
+    $ref: ../end-points/std/downtime-types.yaml
+
+  # ✅ Downtime (비가동)
+  /std/downtimes/excel-upload:
+    $ref: ../end-points/std/downtimes.excel-upload.yaml
+  /std/downtimes/{uuid}:
+    $ref: ../end-points/std/downtime.{uuid}.yaml
+  /std/downtimes:
+    $ref: ../end-points/std/downtimes.yaml
+
+  # ✅ Emp (사원)
+  /std/emps/excel-upload:
+    $ref: ../end-points/std/emps.excel-upload.yaml
+  /std/emp/{uuid}:
+    $ref: ../end-points/std/emp.{uuid}.yaml
+  /std/emps:
+    $ref: ../end-points/std/emps.yaml
+
+  # ✅ RoutingResource (생산자원)
+  /std/routing-resource/{uuid}:
+    $ref: ../end-points/std/routing-resource.{uuid}.yaml
+  /std/routing-resources:
+    $ref: ../end-points/std/routing-resources.yaml
+
+  # ✅ EquipType (설비유형)
+  /std/equip-types/excel-upload:
+    $ref: ../end-points/std/equip-types.excel-upload.yaml
+  /std/equip-type/{uuid}:
+    $ref: ../end-points/std/equip-type.{uuid}.yaml
+  /std/equip-types:
+    $ref: ../end-points/std/equip-types.yaml
+
+  # ✅ Equip (설비)
+  /std/equips/excel-upload:
+    $ref: ../end-points/std/equips.excel-upload.yaml
+  /std/equip/{uuid}:
+    $ref: ../end-points/std/equip.{uuid}.yaml
+  /std/equips:
+    $ref: ../end-points/std/equips.yaml
+
+  # ✅ Location (위치)
+  /std/locations/excel-upload:
+    $ref: ../end-points/std/locations.excel-upload.yaml
+  /std/location/{uuid}:
+    $ref: ../end-points/std/location.{uuid}.yaml
+  /std/locations:
+    $ref: ../end-points/std/locations.yaml
+
+  # ✅ Shift (작업교대)
+  /std/shifts/excel-upload:
+    $ref: ../end-points/std/shifts.excel-upload.yaml
+  /std/shift/{uuid}:
+    $ref: ../end-points/std/shift.{uuid}.yaml
+  /std/shifts:
+    $ref: ../end-points/std/shifts.yaml
+
+  # ✅ Worker (작업자)
+  /std/workers/excel-upload:
+    $ref: ../end-points/std/workers.excel-upload.yaml
+  /std/worker/{uuid}:
+    $ref: ../end-points/std/worker.{uuid}.yaml
+  /std/workers:
+    $ref: ../end-points/std/workers.yaml
+
+  # ✅ Workings (작업장)
+  /std/workingses/excel-upload:
+    $ref: ../end-points/std/workingses.excel-upload.yaml
+  /std/workings/{uuid}:
+    $ref: ../end-points/std/workings.{uuid}.yaml
+  /std/workingses:
+    $ref: ../end-points/std/workingses.yaml
+
+  # ✅ WorkerGroup (작업조)
+  /std/worker-groups/excel-upload:
+    $ref: ../end-points/std/worker-groups.excel-upload.yaml
+  /std/worker-group/{uuid}:
+    $ref: ../end-points/std/worker-group.{uuid}.yaml
+  /std/worker-groups:
+    $ref: ../end-points/std/worker-groups.yaml
+
+  # ✅ WorkerGroupWorker (작업조-작업자)
+  /std/worker-group-workers/excel-upload:
+    $ref: ../end-points/std/worker-group-workers.excel-upload.yaml
+  /std/worker-group-worker/{uuid}:
+    $ref: ../end-points/std/worker-group-worker.{uuid}.yaml
+  /std/worker-group-workers:
+    $ref: ../end-points/std/worker-group-workers.yaml
+
+  # ✅ ProdType (제품유형)
+  /std/prod-types/excel-upload:
+    $ref: ../end-points/std/prod-types.excel-upload.yaml
+  /std/prod-type/{uuid}:
+    $ref: ../end-points/std/prod-type.{uuid}.yaml
+  /std/prod-types:
+    $ref: ../end-points/std/prod-types.yaml
+
+  # ✅ Grade (직급)
+  /std/grades/excel-upload:
+    $ref: ../end-points/std/grades.excel-upload.yaml
+  /std/grade/{uuid}:
+    $ref: ../end-points/std/grade.{uuid}.yaml
+  /std/grades:
+    $ref: ../end-points/std/grades.yaml
+    
+  # ✅ Store (창고)
+  /std/stores/excel-upload:
+    $ref: ../end-points/std/stores.excel-upload.yaml
+  /std/store/{uuid}:
+    $ref: ../end-points/std/store.{uuid}.yaml
+  /std/stores:
+    $ref: ../end-points/std/stores.yaml
+
+  # ✅ RoutingWorkings (품목별 작업장)
+  /std/routing-workings/{uuid}:
+    $ref: ../end-points/std/routing-workings.{uuid}.yaml
+  /std/routing-workingses:
+    $ref: ../end-points/std/routing-workingses.yaml
+
+  # ✅ ItemType (품목유형)
+  /std/item-types/excel-upload:
+    $ref: ../end-points/std/item-types.excel-upload.yaml
+  /std/item-type/{uuid}:
+    $ref: ../end-points/std/item-type.{uuid}.yaml
+  /std/item-types:
+    $ref: ../end-points/std/item-types.yaml
+
+  # ✅ Prod (품목)
+  /std/prods/excel-upload:
+    $ref: ../end-points/std/prods.excel-upload.yaml
+  /std/prod/{uuid}:
+    $ref: ../end-points/std/prod.{uuid}.yaml
+  /std/prods:
+    $ref: ../end-points/std/prods.yaml
+
+  # ✅ VendorPrice (협력사단가)
+  /std/vendor-prices/excel-upload:
+    $ref: ../end-points/std/vendor-prices.excel-upload.yaml
+  /std/vendor-price/{uuid}:
+    $ref: ../end-points/std/vendor-price.{uuid}.yaml
+  /std/vendor-prices:
+    $ref: ../end-points/std/vendor-prices.yaml
+
+  # ✅ MoneyUnit (화폐단위)
+  /std/money-units/excel-upload:
+    $ref: ../end-points/std/money-units.excel-upload.yaml
+  /std/money-unit/{uuid}:
+    $ref: ../end-points/std/money-unit.{uuid}.yaml
+  /std/money-units:
+    $ref: ../end-points/std/money-units.yaml
+
+  # ✅ Company (회사)
+  /std/companies/excel-upload:
+    $ref: ../end-points/std/companies.excel-upload.yaml
+  /std/company/{uuid}:
+    $ref: ../end-points/std/company.{uuid}.yaml
+  /std/companies:
+    $ref: ../end-points/std/companies.yaml

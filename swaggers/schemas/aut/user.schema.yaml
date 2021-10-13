@@ -1,0 +1,91 @@
+# AUT_USER_TB
+
+# Columns
+uid: 
+  type: object
+  properties: 
+    uid:
+      description: 사용자ID
+      type: number
+      format: int4
+
+id: 
+  type: object
+  properties: 
+    id:
+      description: 사용자 로그인ID
+      type: string
+      format: varchar(20)
+
+group_id: 
+  type: object
+  properties: 
+    group_id:
+      description: 권한그룹ID
+      type: number
+      format: int4
+
+user_nm: 
+  type: object
+  properties: 
+    user_nm:
+      description: 성명
+      type: string
+      format: varchar(50)
+
+pwd: 
+  type: object
+  properties: 
+    pwd:
+      description: 비밀번호
+      type: string
+      format: varchar(100)
+
+email: 
+  type: object
+  properties: 
+    email:
+      description: 이메일
+      type: string
+      format: varchar(50)
+
+pwd_fg: 
+  type: object
+  properties: 
+    pwd_fg:
+      description: 패스워드 변경여부([true] 변경 필요, [false] 해당 없음)
+      type: boolean
+      format: boolean
+
+admin_fg: 
+  type: object
+  properties: 
+    admin_fg:
+      description: 관리자 유무([true] 관리자, [false] 일반)
+      type: boolean
+      format: boolean
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 사용자UUID
+      type: string
+      format: uuid
+
+# Uuids
+user_uuid:
+  type: object
+  properties: 
+    user_uuid:
+      description: 사용자UUID
+      type: string
+      format: uuid
+
+group_uuid:
+  type: object
+  properties: 
+    group_uuid:
+      description: 권한그룹UUID
+      type: string
+      format: uuid
