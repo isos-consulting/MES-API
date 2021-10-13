@@ -1,8 +1,8 @@
 version: 0.0
 os: linux
 files:
-  - source: www.js
-    destination: /dist/bin/
+  - source: /dist
+    destination: /home/centos/iso-server
 # hooks:
 #   BeforeInstall:
 #     - location: install_dependencies.sh
