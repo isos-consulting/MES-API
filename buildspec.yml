@@ -1,0 +1,18 @@
+version: 0.2
+
+phases:
+  install:
+    commands:
+      - yarn install
+  pre_build:
+    commands:
+      # - yarn run lint
+  build:
+    commands:
+      # - yarn test
+  post_build:
+    commands:
+      - echo Build completed
+artifacts:
+  files:
+    - '**/*'
