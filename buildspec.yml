@@ -3,7 +3,7 @@ version: 0.2
 phases:
   install:
     commands:
-      - npm install
+      # - sudo npm install
   pre_build:
     commands:
       # - yarn run lint
@@ -12,7 +12,7 @@ phases:
       # - yarn test
   post_build:
     commands:
-      - echo Build completed
+      # - sudo rm -rf node_modules
 artifacts:
   files:
     - '**/*'
