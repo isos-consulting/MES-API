@@ -1,2 +1,2 @@
 #!/bin/bash 
-sudo pm2 kill
+pm2 kill

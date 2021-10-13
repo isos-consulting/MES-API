@@ -1,3 +1,3 @@
 #!/bin/bash 
-sudo cd /home/centos/iso-server
-sudo pm2 start --name iso-server yarn -- start
+cd /home/centos/iso-server
+pm2 start --name iso-server yarn -- start

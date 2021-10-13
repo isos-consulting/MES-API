@@ -1,3 +1,3 @@
 #!/bin/bash 
-sudo cd /home/centos/iso-server
-sudo yarn install
+cd /home/centos/iso-server
+yarn install
