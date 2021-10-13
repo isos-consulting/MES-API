@@ -3,19 +3,19 @@ os: linux
 files:
   - source: www.js
     destination: /dist/bin/
-hooks:
-  BeforeInstall:
-    - location: install_dependencies.sh
-      timeout: 300
-      runas: root
-  ApplicationStart:
-    - location: start_server.sh
-      timeout: 300
-  ApplicationStop:
-    - location: stop_server.sh
-      timeout: 300
-      runas: root
-  ValidateService:
-    - location: validate_server.sh
-      timeout: 300
-      runas: root
+# hooks:
+#   BeforeInstall:
+#     - location: install_dependencies.sh
+#       timeout: 300
+#       runas: root
+#   ApplicationStart:
+#     - location: start_server.sh
+#       timeout: 300
+#   ApplicationStop:
+#     - location: stop_server.sh
+#       timeout: 300
+#       runas: root
+#   ValidateService:
+#     - location: validate_server.sh
+#       timeout: 300
+#       runas: root
