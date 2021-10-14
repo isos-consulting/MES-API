@@ -2,12 +2,8 @@ version: 0.0
 os: linux
 files:
   - source: /
-    destination: /home/centos/iso-server
+    destination: /var/iso-server
 hooks:
-#   BeforeInstall:
-#     - location: install_dependencies.sh
-#       timeout: 300
-#       runas: root
   ApplicationStop:
     - location: application-stop.sh
       timeout: 300
@@ -24,7 +20,3 @@ hooks:
     - location: application-start.sh
       timeout: 300
       runas: root
-#   ValidateService:
-#     - location: validate_server.sh
-#       timeout: 300
-#       runas: root
