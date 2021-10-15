@@ -4,6 +4,14 @@ files:
   - source: /
     destination: /var/iso-server
 hooks:
+  ApplicationStop: 
+    - location: application-stop.sh
+      timeout: 300
+      runas: root
+  BeforeInstall:
+    - location: before-install.sh
+      timeout: 300
+      runas: root    
   AfterInstall:
     - location: after-install.sh
       timeout: 300
