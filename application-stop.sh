@@ -1,3 +1,2 @@
 #!/bin/bash 
-source /etc/bashrc
-pm2 kill
+/root/node_modules/.bin/pm2 kill
