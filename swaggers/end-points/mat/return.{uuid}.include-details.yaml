@@ -123,11 +123,11 @@ get:
                                   - $ref: ../../schemas/mat/return-detail.schema.yaml#/exchange
                                   - $ref: ../../schemas/mat/return-detail.schema.yaml#/total_price
                                   - $ref: ../../schemas/mat/return-detail.schema.yaml#/from_store_uuid
-                                  - $ref: ../../schemas/std/store.schema.yaml#/store_cd
-                                  - $ref: ../../schemas/std/store.schema.yaml#/store_nm
+                                  - $ref: ../../schemas/std/store.schema.yaml#/from_store_cd
+                                  - $ref: ../../schemas/std/store.schema.yaml#/from_store_nm
                                   - $ref: ../../schemas/mat/return-detail.schema.yaml#/from_location_uuid
-                                  - $ref: ../../schemas/std/location.schema.yaml#/location_cd
-                                  - $ref: ../../schemas/std/location.schema.yaml#/location_nm
+                                  - $ref: ../../schemas/std/location.schema.yaml#/from_location_cd
+                                  - $ref: ../../schemas/std/location.schema.yaml#/from_location_nm
                                   - $ref: ../../schemas/mat/return-detail.schema.yaml#/remark
                                   - $ref: ../../schemas/mat/return-detail.schema.yaml#/barcode
                                   - $ref: ../../schemas/common/timestamp.schema.yaml

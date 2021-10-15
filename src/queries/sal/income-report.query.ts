@@ -1,6 +1,6 @@
 const readIncomeReport = (
   params: {
-    sub_total_type?: 'store' | 'prod' | 'date' | 'none',
+    sort_type?: 'store' | 'prod' | 'date',
     start_date?: string,
     end_date?: string,
     factory_uuid?: string,
@@ -10,7 +10,6 @@ const readIncomeReport = (
   
   const createIncomeTempTable = `
     CREATE TEMP TABLE temp_income(
-      sort int, 
       income_id int, 
       factory_id int, 
       reg_date timestamptz, 
@@ -38,7 +37,6 @@ const readIncomeReport = (
   const insertDataToTempTable = `
     INSERT INTO temp_income
     SELECT 
-      1, 
       s_i.income_id, 
       s_i.factory_id, 
       s_i.reg_date, 
@@ -59,64 +57,16 @@ const readIncomeReport = (
     ${searchQuery};
   `;
 
-  let insertTotalToTempTable: string;
   let reportOrderBy: string;
-  switch (params.sub_total_type) {
-    case 'store':
-      insertTotalToTempTable = `
-        INSERT INTO temp_income(sort, from_store_id, qty)
-        SELECT 
-          CASE WHEN t_i.from_store_id IS NOT NULL THEN 2 ELSE 3 END,
-          t_i.from_store_id, sum(t_i.qty)
-        FROM temp_income t_i
-        GROUP BY ROLLUP (t_i.from_store_id);
-      `;
-
-      reportOrderBy = `ORDER BY t_i.from_store_id, t_i.sort;`;
-      break;
-    case 'prod':
-      insertTotalToTempTable = `
-        INSERT INTO temp_income(sort, prod_id, qty)
-        SELECT 
-          CASE WHEN t_i.prod_id IS NOT NULL THEN 2 ELSE 3 END,
-          t_i.prod_id, sum(t_i.qty)
-        FROM temp_income t_i
-        GROUP BY ROLLUP (t_i.prod_id);
-      `;
-
-      reportOrderBy = `ORDER BY t_i.prod_id, t_i.sort;`;
-      break;
-    case 'date':
-      insertTotalToTempTable = `
-        INSERT INTO temp_income(sort, reg_date, qty)
-        SELECT 
-          CASE WHEN t_i.reg_date IS NOT NULL THEN 2 ELSE 3 END,
-          t_i.reg_date, sum(t_i.qty)
-        FROM temp_income t_i
-        GROUP BY ROLLUP (t_i.reg_date);
-      `;
-
-      reportOrderBy = `ORDER BY t_i.reg_date, t_i.sort;`;
-      break;
-    case 'none':
-      insertTotalToTempTable = `
-        INSERT INTO temp_income(sort, qty)
-        SELECT 3, sum(t_i.qty)
-        FROM temp_income t_i;
-      `;
-
-      reportOrderBy = `ORDER BY t_i.income_id, t_i.sort;`;
-      break;
-    default: 
-      insertTotalToTempTable = '';
-      reportOrderBy = '';
-      break;
+  switch (params.sort_type) {
+    case 'store': reportOrderBy = `ORDER BY t_i.from_store_id`; break;
+    case 'prod': reportOrderBy = `ORDER BY t_i.prod_id`; break;
+    case 'date': reportOrderBy = `ORDER BY t_i.reg_date`; break;
+    default: reportOrderBy = ''; break;
   }
 
   const readReport = `
     SELECT
-      CASE WHEN sort = 2 THEN 'sub-total'
-        WHEN sort = 3 THEN 'total' ELSE 'data' END as row_type,
       s_i.uuid as income_uuid,
       s_f.uuid as factory_uuid,
       s_f.factory_cd,
@@ -172,7 +122,7 @@ const readIncomeReport = (
     LEFT JOIN std_location_tb f_sl ON f_sl.location_id = t_i.from_location_id
     LEFT JOIN std_store_tb t_ss ON t_ss.store_id = t_i.to_store_id
     LEFT JOIN std_location_tb t_sl ON t_sl.location_id = t_i.to_location_id
-    ${reportOrderBy}
+    ${reportOrderBy};
   `;
 
   const dropTempTable = `
@@ -185,9 +135,6 @@ const readIncomeReport = (
 
     -- 📌 임시테이블에 제품입고현황 기초데이터 입력
     ${insertDataToTempTable}
-
-    -- 📌 SubTotal 유형에 따라 합계를 계산하여 데이터 입력
-    ${insertTotalToTempTable}
 
     -- 📌 제품입고현황 조회
     ${readReport}

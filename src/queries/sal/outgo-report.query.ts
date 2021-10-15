@@ -1,6 +1,6 @@
 const readOutgoReport = (
   params: {
-    sub_total_type?: 'partner' | 'prod' | 'date' | 'none',
+    sort_type?: 'partner' | 'prod' | 'date',
     start_date?: string,
     end_date?: string,
     factory_uuid?: string,
@@ -10,7 +10,6 @@ const readOutgoReport = (
   
   const createOutgoTempTable = `
     CREATE TEMP TABLE temp_outgo(
-      sort int, 
       outgo_detail_id int, 
       factory_id int, 
       reg_date timestamptz, 
@@ -45,7 +44,6 @@ const readOutgoReport = (
   const insertDataToTempTable = `
     INSERT INTO temp_outgo
     SELECT 
-      1, 
       s_ogd.outgo_detail_id, 
       s_ogd.factory_id, 
       s_og.reg_date, 
@@ -86,64 +84,16 @@ const readOutgoReport = (
     ${searchQuery};
   `;
 
-  let insertTotalToTempTable: string;
   let reportOrderBy: string;
-  switch (params.sub_total_type) {
-    case 'partner':
-      insertTotalToTempTable = `
-        INSERT INTO temp_outgo(sort, partner_id, order_qty, outgo_order_qty, qty, supply_price, tax, total_price)
-        SELECT 
-          CASE WHEN t_o.partner_id IS NOT NULL THEN 2 ELSE 3 END,
-          t_o.partner_id, sum(t_o.order_qty), sum(t_o.outgo_order_qty), sum(t_o.qty), sum(t_o.supply_price), sum(t_o.tax), sum(t_o.total_price)
-        FROM temp_outgo t_o
-        GROUP BY ROLLUP (t_o.partner_id);
-      `;
-
-      reportOrderBy = `ORDER BY t_o.partner_id, t_o.sort;`;
-      break;
-    case 'prod':
-      insertTotalToTempTable = `
-        INSERT INTO temp_outgo(sort, prod_id, order_qty, outgo_order_qty, qty, supply_price, tax, total_price)
-        SELECT 
-          CASE WHEN t_o.prod_id IS NOT NULL THEN 2 ELSE 3 END,
-          t_o.prod_id, sum(t_o.order_qty), sum(t_o.outgo_order_qty), sum(t_o.qty), sum(t_o.supply_price), sum(t_o.tax), sum(t_o.total_price)
-        FROM temp_outgo t_o
-        GROUP BY ROLLUP (t_o.prod_id);
-      `;
-
-      reportOrderBy = `ORDER BY t_o.prod_id, t_o.sort;`;
-      break;
-    case 'date':
-      insertTotalToTempTable = `
-        INSERT INTO temp_outgo(sort, reg_date, order_qty, outgo_order_qty, qty, supply_price, tax, total_price)
-        SELECT 
-          CASE WHEN t_o.reg_date IS NOT NULL THEN 2 ELSE 3 END,
-          t_o.reg_date, sum(t_o.order_qty), sum(t_o.outgo_order_qty), sum(t_o.qty), sum(t_o.supply_price), sum(t_o.tax), sum(t_o.total_price)
-        FROM temp_outgo t_o
-        GROUP BY ROLLUP (t_o.reg_date);
-      `;
-
-      reportOrderBy = `ORDER BY t_o.reg_date, t_o.sort;`;
-      break;
-    case 'none':
-      insertTotalToTempTable = `
-        INSERT INTO temp_outgo(sort, order_qty, outgo_order_qty, qty, supply_price, tax, total_price)
-        SELECT 3, sum(t_o.order_qty), sum(t_o.outgo_order_qty), sum(t_o.qty), sum(t_o.supply_price), sum(t_o.tax), sum(t_o.total_price)
-        FROM temp_outgo t_o;
-      `;
-
-      reportOrderBy = `ORDER BY t_o.outgo_detail_id, t_o.sort;`;
-      break;
-    default: 
-      insertTotalToTempTable = '';
-      reportOrderBy = '';
-      break;
+  switch (params.sort_type) {
+    case 'partner': reportOrderBy = `ORDER BY t_o.partner_id`; break;
+    case 'prod': reportOrderBy = `ORDER BY t_o.prod_id`; break;
+    case 'date': reportOrderBy = `ORDER BY t_o.reg_date`; break;
+    default: reportOrderBy = ''; break;
   }
 
   const readReport = `
     SELECT
-      CASE WHEN sort = 2 THEN 'sub-total'
-        WHEN sort = 3 THEN 'total' ELSE 'data' END as row_type,
       s_ogd.uuid as outgo_detail_uuid,
       s_f.uuid as factory_uuid,
       s_f.factory_cd,
@@ -206,7 +156,7 @@ const readOutgoReport = (
     LEFT JOIN std_money_unit_tb s_mu ON s_mu.money_unit_id = t_o.money_unit_id
     LEFT JOIN std_store_tb f_ss ON f_ss.store_id = t_o.from_store_id
     LEFT JOIN std_location_tb f_sl ON f_sl.location_id = t_o.from_location_id
-    ${reportOrderBy}
+    ${reportOrderBy};
   `;
 
   const dropTempTable = `
@@ -219,9 +169,6 @@ const readOutgoReport = (
 
     -- 📌 임시테이블에 제품출하현황 기초데이터 입력
     ${insertDataToTempTable}
-
-    -- 📌 SubTotal 유형에 따라 합계를 계산하여 데이터 입력
-    ${insertTotalToTempTable}
 
     -- 📌 제품출하현황 조회
     ${readReport}

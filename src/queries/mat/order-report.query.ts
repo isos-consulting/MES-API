@@ -1,14 +1,14 @@
 const readOrderReport = (
   params: {
-    complete_state?: 'all' | 'complete' | 'incomplete'
-    sort?: 'partner' | 'prod' | 'date' | 'none',
+    complete_state?: 'all' | 'complete' | 'incomplete',
+    sort_type?: 'partner' | 'prod' | 'date',
     start_reg_date?: string,
     end_reg_date?: string,
     start_due_date?: string,
     end_due_date?: string,
     factory_uuid?: string,
   }
-) => {
+) => { 
   let searchQuery: string = '';
   
   const createOrderTempTable = `
@@ -88,11 +88,10 @@ const readOrderReport = (
   `;
 
   let reportOrderBy: string;
-  switch (params.sort) {
+  switch (params.sort_type) {
     case 'partner': reportOrderBy = `ORDER BY t_o.partner_id`; break;
     case 'prod': reportOrderBy = `ORDER BY t_o.prod_id`; break;
     case 'date': reportOrderBy = `ORDER BY t_o.reg_date`; break;
-    case 'none': reportOrderBy = `ORDER BY t_o.order_detail_id`; break;
     default: reportOrderBy = ''; break;
   }
 

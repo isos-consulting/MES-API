@@ -1,6 +1,6 @@
 const readWorkReport = (
   params: {
-    sub_total_type?: 'proc' | 'prod' | 'date' | 'none',
+    sort_type?: 'proc' | 'prod' | 'date',
     start_date?: string,
     end_date?: string,
     factory_uuid?: string,
@@ -8,7 +8,6 @@ const readWorkReport = (
 ) => {
   const createWorkTempTable = `
     CREATE TEMP TABLE temp_work(
-      sort int,
       work_id int,
       order_id int,
       factory_id int,
@@ -36,7 +35,6 @@ const readWorkReport = (
   const insertDataToTempTable = `
     INSERT INTO temp_work
     SELECT 
-      1,
       p_w.work_id,
       p_w.order_id,
       p_w.factory_id,
@@ -68,64 +66,16 @@ const readWorkReport = (
     ${params.start_date && params.end_date ? `AND date(p_w.reg_date) BETWEEN '${params.start_date}' AND '${params.end_date}'` : ''};
   `;
 
-  let insertTotalToTempTable: string;
   let reportOrderBy: string;
-  switch (params.sub_total_type) {
-    case 'proc':
-      insertTotalToTempTable = `
-        INSERT INTO temp_work(sort, proc_id, order_qty, total_qty, qty, reject_qty)
-        SELECT 
-          CASE WHEN t_w.proc_id IS NOT NULL THEN 2 ELSE 3 END,
-          t_w.proc_id, sum(t_w.order_qty), sum(t_w.total_qty), sum(t_w.qty), sum(t_w.reject_qty)
-        FROM temp_work t_w
-        GROUP BY ROLLUP (t_w.proc_id);
-      `;
-
-      reportOrderBy = `ORDER BY t_w.proc_id, t_w.sort;`;
-      break;
-    case 'prod':
-      insertTotalToTempTable = `
-        INSERT INTO temp_work(sort, prod_id, order_qty, total_qty, qty, reject_qty)
-        SELECT 
-          CASE WHEN t_w.prod_id IS NOT NULL THEN 2 ELSE 3 END,
-          t_w.prod_id, sum(t_w.order_qty), sum(t_w.total_qty), sum(t_w.qty), sum(t_w.reject_qty)
-        FROM temp_work t_w
-        GROUP BY ROLLUP (t_w.prod_id);
-      `;
-
-      reportOrderBy = `ORDER BY t_w.prod_id, t_w.sort;`;
-      break;
-    case 'date':
-      insertTotalToTempTable = `
-        INSERT INTO temp_work(sort, reg_date, order_qty, total_qty, qty, reject_qty)
-        SELECT 
-          CASE WHEN t_w.reg_date IS NOT NULL THEN 2 ELSE 3 END,
-          t_w.reg_date, sum(t_w.order_qty), sum(t_w.total_qty), sum(t_w.qty), sum(t_w.reject_qty)
-        FROM temp_work t_w
-        GROUP BY ROLLUP (t_w.reg_date);
-      `;
-
-      reportOrderBy = `ORDER BY t_w.reg_date, t_w.sort;`;
-      break;
-    case 'none':
-      insertTotalToTempTable = `
-        INSERT INTO temp_work(sort, order_qty, total_qty, qty, reject_qty)
-        SELECT 3, sum(t_w.order_qty), sum(t_w.total_qty), sum(t_w.qty), sum(t_w.reject_qty)
-        FROM temp_work t_w;
-      `;
-
-      reportOrderBy = `ORDER BY t_w.work_id, t_w.sort;`;
-      break;
-    default: 
-      insertTotalToTempTable = '';
-      reportOrderBy = '';
-      break;
+  switch (params.sort_type) {
+    case 'proc': reportOrderBy = `ORDER BY t_w.proc_id`; break;
+    case 'prod': reportOrderBy = `ORDER BY t_w.prod_id`; break;
+    case 'date': reportOrderBy = `ORDER BY t_w.reg_date`; break;
+    default: reportOrderBy = ''; break;
   }
 
   const readReport = `
     SELECT
-      CASE WHEN sort = 2 THEN 'sub-total'
-        WHEN sort = 3 THEN 'total' ELSE 'data' END as row_type,
       p_w.uuid as work_uuid,
       p_o.uuid as order_uuid,
       s_f.uuid as factory_uuid,
@@ -195,7 +145,7 @@ const readWorkReport = (
     LEFT JOIN std_shift_tb s_s ON s_s.shift_id = t_w.shift_id
     LEFT JOIN std_store_tb t_ss ON t_ss.store_id = t_w.to_store_id
     LEFT JOIN std_location_tb t_ls ON t_ls.location_id = t_w.to_location_id
-    ${reportOrderBy}
+    ${reportOrderBy};
   `;
 
   const dropTempTable = `
@@ -208,9 +158,6 @@ const readWorkReport = (
 
     -- 📌 임시테이블에 실적현황 기초데이터 입력
     ${insertDataToTempTable}
-
-    -- 📌 SubTotal 유형에 따라 합계를 계산하여 데이터 입력
-    ${insertTotalToTempTable}
 
     -- 📌 실적현황 조회
     ${readReport}

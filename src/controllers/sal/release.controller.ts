@@ -14,7 +14,6 @@ import testErrorHandlingHelper from '../../utils/testErrorHandlingHelper';
 import BaseCtl from '../base.controller';
 import SalOrderDetailRepo from '../../repositories/sal/order-detail.repository';
 import SalOutgoOrderDetailRepo from '../../repositories/sal/outgo-order-detail.repository';
-import convertToReportRaws from '../../utils/convertToReportRaws';
 
 class SalReleaseCtl extends BaseCtl {
   // ✅ Inherited Functions Variable
@@ -142,11 +141,10 @@ class SalReleaseCtl extends BaseCtl {
     try {
       const params = Object.assign(req.query, req.params);
 
-      const subTotalType = params.sub_total_type as string;
-      if (![ 'store', 'prod', 'date', 'none' ].includes(subTotalType)) { throw new Error('잘못된 sub_total_type(소계 유형) 입력') }
+      const sort_type = params.sort_type as string;
+      if (![ 'store', 'prod', 'date' ].includes(sort_type)) { throw new Error('잘못된 sort_type(정렬) 입력') }
 
       this.result = await this.repo.readReport(params);
-      this.result.raws = convertToReportRaws(this.result.raws);
       
       return response(res, this.result.raws, { count: this.result.count });
     } catch (e) {

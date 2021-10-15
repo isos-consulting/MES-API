@@ -1,6 +1,6 @@
 const readWorkDowntimeReport = (
   params: {
-    sub_total_type?: 'proc' | 'equip' | 'downtime' | 'none',
+    sort_type?: 'proc' | 'equip' | 'downtime',
     work_start_date?: string,
     work_end_date?: string,
     downtime_start_date?: string,
@@ -10,7 +10,6 @@ const readWorkDowntimeReport = (
 ) => {
   const createDowntimeTempTable = `
     CREATE TEMP TABLE temp_downtime(
-      sort int,
       work_downtime_id int,
       factory_id int,
       work_id int,
@@ -38,7 +37,6 @@ const readWorkDowntimeReport = (
   const insertDataToTempTable = `
     INSERT INTO temp_downtime
     SELECT 
-      1,
       p_wd.work_downtime_id,
       p_wd.factory_id,
       p_w.work_id,
@@ -71,64 +69,16 @@ const readWorkDowntimeReport = (
     ${params.downtime_start_date && params.downtime_end_date ? `AND date(p_wd.reg_date) BETWEEN '${params.downtime_start_date}' AND '${params.downtime_end_date}'` : ''};
   `;
 
-  let insertTotalToTempTable: string;
   let reportOrderBy: string;
-  switch (params.sub_total_type) {
-    case 'proc':
-      insertTotalToTempTable = `
-          INSERT INTO temp_downtime(sort, proc_id, downtime)
-          SELECT 
-            CASE WHEN t_d.proc_id IS NOT NULL THEN 2 ELSE 3 END,
-            t_d.proc_id, sum(t_d.downtime)
-          FROM temp_downtime t_d
-          GROUP BY ROLLUP (t_d.proc_id);
-      `;
-
-      reportOrderBy = `ORDER BY t_d.proc_id, t_d.sort;`;
-      break;
-    case 'equip':
-      insertTotalToTempTable = `
-        INSERT INTO temp_downtime(sort, equip_id, downtime)
-        SELECT 
-          CASE WHEN t_d.equip_id IS NOT NULL THEN 2 ELSE 3 END,
-          t_d.equip_id, sum(t_d.downtime)
-        FROM temp_downtime t_d
-        GROUP BY ROLLUP (t_d.equip_id);
-      `;
-
-      reportOrderBy = `ORDER BY t_d.equip_id, t_d.sort;`;
-      break;
-    case 'downtime':
-      insertTotalToTempTable = `
-        INSERT INTO temp_downtime(sort, downtime_id, downtime)
-        SELECT 
-          CASE WHEN t_d.downtime_id IS NOT NULL THEN 2 ELSE 3 END,
-          t_d.downtime_id, sum(t_d.downtime)
-        FROM temp_downtime t_d
-        GROUP BY ROLLUP (t_d.downtime_id);
-      `;
-
-      reportOrderBy = `ORDER BY t_d.downtime, t_d.sort;`;
-      break;
-    case 'none':
-      insertTotalToTempTable = `
-        INSERT INTO temp_downtime(sort, downtime)
-        SELECT 3, sum(t_d.downtime)
-        FROM temp_downtime t_d;
-      `;
-
-      reportOrderBy = `ORDER BY t_d.work_downtime_id, t_d.sort;`;
-      break;
-    default: 
-      insertTotalToTempTable = '';
-      reportOrderBy = '';
-      break;
+  switch (params.sort_type) {
+    case 'proc': reportOrderBy = `ORDER BY t_d.proc_id`; break;
+    case 'equip': reportOrderBy = `ORDER BY t_d.equip_id`; break;
+    case 'downtime': reportOrderBy = `ORDER BY t_d.downtime`; break;
+    default: reportOrderBy = ''; break;
   }
 
   const readReport = `
     SELECT
-      CASE WHEN sort = 2 THEN 'sub-total'
-        WHEN sort = 3 THEN 'total' ELSE 'data' END as row_type,
       p_wd.uuid as work_downtime_uuid,
       p_w.uuid as work_uuid,
       s_f.uuid as factory_uuid,
@@ -197,7 +147,7 @@ const readWorkDowntimeReport = (
     LEFT JOIN std_unit_tb s_u ON s_u.unit_id = s_p.unit_id
     LEFT JOIN std_downtime_tb s_d ON s_d.downtime_id = t_d.downtime_id
     LEFT JOIN std_downtime_type_tb s_dt ON s_dt.downtime_type_id = s_d.downtime_type_id
-    ${reportOrderBy}
+    ${reportOrderBy};
   `;
 
   const dropTempTable = `
@@ -210,9 +160,6 @@ const readWorkDowntimeReport = (
 
     -- 📌 임시테이블에 비가동현황 기초데이터 입력
     ${insertDataToTempTable}
-
-    -- 📌 SubTotal 유형에 따라 합계를 계산하여 데이터 입력
-    ${insertTotalToTempTable}
 
     -- 📌 비가동현황 조회
     ${readReport}

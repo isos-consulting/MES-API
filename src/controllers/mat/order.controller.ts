@@ -32,7 +32,7 @@ class MatOrderCtl extends BaseCtl {
 
   // ✅ 조회조건 Types
   completeStates: string[];
-  subTotalTypes: string[];
+  sort_type: string[];
 
   //#region ✅ Constructor
   constructor() {
@@ -94,7 +94,7 @@ class MatOrderCtl extends BaseCtl {
 
     // ✅ 조회조건 Types Setting
     this.completeStates = [ 'all', 'complete', 'incomplete' ];
-    this.subTotalTypes = [ 'partner', 'prod', 'date', 'none' ];
+    this.sort_type = [ 'partner', 'prod', 'date' ];
   };
   //#endregion
 
@@ -213,7 +213,7 @@ class MatOrderCtl extends BaseCtl {
       const params = Object.assign(req.query, req.params);
 			console.log(req.params)
       if (!this.completeStates.includes(params.complete_state)) { throw new Error('잘못된 complete_state(완료 여부) 입력') }
-      if (!this.subTotalTypes.includes(params.sort)) { throw new Error('잘못된 sort(정열) 입력') }
+      if (!this.sort_type.includes(params.sort_type)) { throw new Error('잘못된 sort_type(정렬) 입력') }
 
       this.result = await this.repo.readReport(params);
       

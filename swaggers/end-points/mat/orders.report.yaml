@@ -1,10 +1,10 @@
 get:
   description: |
-    자재발주현황을 조회합니다. 
+    자재발주현황을 조회합니다.
   summary: 자재발주현황 데이터 조회
   tags:
     - 자재발주(Order)
-  parameters:    
+  parameters:
     - name: factory_uuid
       in: query
       description: 공장의 UUID를 입력하여 공장에 따라 자재발주현황 데이터를 조회합니다. [전체 조회시 입력하지 않습니다.]
@@ -24,15 +24,14 @@ get:
         type: string
         format: string
 
-    - name: sub_total_type
+    - name: sort_type
       in: query
       required: true
       description: |
-        발주현황의 소계를 구매완료여부에 따라 조회합니다.<br/>
-        [partner] 거래처 단위 소계 조회 <br/>
-        [prod] 품목 단위 소계 조회 <br/>
-        [date] 발주일자 단위 소계 조회 <br/>
-        [none] 소계 미조회 <br/>
+        발주현황을 기준에 따라 정렬하여 조회합니다.<br/>
+        [partner] 거래처 기준 정렬 조회 <br/>
+        [prod] 품목 기준 정렬 조회 <br/>
+        [date] 발주일자 기준 정렬 조회 <br/>
       schema:
         type: string
         format: string
@@ -45,7 +44,7 @@ get:
       schema:
         type: string
         format: date
-        
+
     - name: end_reg_date
       in: query
       description: |
@@ -63,7 +62,7 @@ get:
       schema:
         type: string
         format: date
-        
+
     - name: end_due_date
       in: query
       description: |
@@ -78,7 +77,7 @@ get:
       description: Read OK
       content:
         application/json:
-          schema: 
+          schema:
             allOf:
               - $ref: ../../schemas/common/default-response.schema.yaml
               - type: object
@@ -91,7 +90,7 @@ get:
                         description: Enable
                         type: object
                         properties:
-                          count: 
+                          count:
                             description: 영향받은 데이터의 개수
                             type: number
                             format: int32
@@ -100,148 +99,46 @@ get:
                         description: 자재발주현황 데이터 조회
                         type: array
                         items:
-                          type: object
-                          properties:
-                            datas:
-                              description: Report Raw Data
-                              type: array
-                              items:
-                                type: object
-                                allOf:        
-                                  - $ref: ../../schemas/mat/order.schema.yaml#/row_type
-                                  - $ref: ../../schemas/mat/order-detail.schema.yaml#/order_detail_uuid
-                                  - $ref: ../../schemas/mat/order.schema.yaml#/factory_uuid
-                                  - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
-                                  - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
-                                  - $ref: ../../schemas/mat/order.schema.yaml#/partner_uuid
-                                  - $ref: ../../schemas/std/partner.schema.yaml#/partner_cd
-                                  - $ref: ../../schemas/std/partner.schema.yaml#/partner_nm
-                                  - $ref: ../../schemas/mat/order.schema.yaml#/reg_date
-                                  - $ref: ../../schemas/mat/order-detail.schema.yaml#/prod_uuid
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/prod_no
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/prod_nm
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/item_type_uuid
-                                  - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_cd
-                                  - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_nm
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/prod_type_uuid
-                                  - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_cd
-                                  - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_nm
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/model_uuid
-                                  - $ref: ../../schemas/std/model.schema.yaml#/model_cd
-                                  - $ref: ../../schemas/std/model.schema.yaml#/model_nm
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/rev
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/prod_std
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/unit_uuid
-                                  - $ref: ../../schemas/std/unit.schema.yaml#/unit_cd
-                                  - $ref: ../../schemas/std/unit.schema.yaml#/unit_nm
-                                  - $ref: ../../schemas/mat/order-detail.schema.yaml#/due_date
-                                  - $ref: ../../schemas/mat/order-detail.schema.yaml#/qty
-                                  - $ref: ../../schemas/mat/order-detail.schema.yaml#/price
-                                  - $ref: ../../schemas/mat/order-detail.schema.yaml#/money_unit_uuid
-                                  - $ref: ../../schemas/std/money-unit.schema.yaml#/money_unit_cd
-                                  - $ref: ../../schemas/std/money-unit.schema.yaml#/money_unit_nm
-                                  - $ref: ../../schemas/mat/order-detail.schema.yaml#/exchange
-                                  - $ref: ../../schemas/mat/order.schema.yaml#/supply_price
-                                  - $ref: ../../schemas/mat/order.schema.yaml#/tax
-                                  - $ref: ../../schemas/mat/order.schema.yaml#/total_price
-                                  - $ref: ../../schemas/mat/order.schema.yaml#/receive_qty
-                                  - $ref: ../../schemas/mat/order.schema.yaml#/balance
-                                  - $ref: ../../schemas/mat/order.schema.yaml#/complete_state
-                                  - $ref: ../../schemas/mat/order.schema.yaml#/remark
-                                  - $ref: ../../schemas/common/timestamp.schema.yaml
-
-                            subTotals:
-                              description: Report SubTotal Data
-                              type: array
-                              items:
-                                type: object
-                                allOf:        
-                                  - $ref: ../../schemas/mat/order.schema.yaml#/row_type
-                                  - $ref: ../../schemas/mat/order-detail.schema.yaml#/order_detail_uuid
-                                  - $ref: ../../schemas/mat/order.schema.yaml#/factory_uuid
-                                  - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
-                                  - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
-                                  - $ref: ../../schemas/mat/order.schema.yaml#/partner_uuid
-                                  - $ref: ../../schemas/std/partner.schema.yaml#/partner_cd
-                                  - $ref: ../../schemas/std/partner.schema.yaml#/partner_nm
-                                  - $ref: ../../schemas/mat/order.schema.yaml#/reg_date
-                                  - $ref: ../../schemas/mat/order-detail.schema.yaml#/prod_uuid
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/prod_no
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/prod_nm
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/item_type_uuid
-                                  - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_cd
-                                  - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_nm
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/prod_type_uuid
-                                  - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_cd
-                                  - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_nm
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/model_uuid
-                                  - $ref: ../../schemas/std/model.schema.yaml#/model_cd
-                                  - $ref: ../../schemas/std/model.schema.yaml#/model_nm
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/rev
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/prod_std
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/unit_uuid
-                                  - $ref: ../../schemas/std/unit.schema.yaml#/unit_cd
-                                  - $ref: ../../schemas/std/unit.schema.yaml#/unit_nm
-                                  - $ref: ../../schemas/mat/order-detail.schema.yaml#/due_date
-                                  - $ref: ../../schemas/mat/order-detail.schema.yaml#/qty
-                                  - $ref: ../../schemas/mat/order-detail.schema.yaml#/price
-                                  - $ref: ../../schemas/mat/order-detail.schema.yaml#/money_unit_uuid
-                                  - $ref: ../../schemas/std/money-unit.schema.yaml#/money_unit_cd
-                                  - $ref: ../../schemas/std/money-unit.schema.yaml#/money_unit_nm
-                                  - $ref: ../../schemas/mat/order-detail.schema.yaml#/exchange
-                                  - $ref: ../../schemas/mat/order.schema.yaml#/supply_price
-                                  - $ref: ../../schemas/mat/order.schema.yaml#/tax
-                                  - $ref: ../../schemas/mat/order.schema.yaml#/total_price
-                                  - $ref: ../../schemas/mat/order.schema.yaml#/receive_qty
-                                  - $ref: ../../schemas/mat/order.schema.yaml#/balance
-                                  - $ref: ../../schemas/mat/order.schema.yaml#/complete_state
-                                  - $ref: ../../schemas/mat/order.schema.yaml#/remark
-                                  - $ref: ../../schemas/common/timestamp.schema.yaml
-
-                            total:
-                              description: Report Total Data
-                              type: object
-                              allOf:
-                                - $ref: ../../schemas/mat/order.schema.yaml#/row_type
-                                - $ref: ../../schemas/mat/order-detail.schema.yaml#/order_detail_uuid
-                                - $ref: ../../schemas/mat/order.schema.yaml#/factory_uuid
-                                - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
-                                - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
-                                - $ref: ../../schemas/mat/order.schema.yaml#/partner_uuid
-                                - $ref: ../../schemas/std/partner.schema.yaml#/partner_cd
-                                - $ref: ../../schemas/std/partner.schema.yaml#/partner_nm
-                                - $ref: ../../schemas/mat/order.schema.yaml#/reg_date
-                                - $ref: ../../schemas/mat/order-detail.schema.yaml#/prod_uuid
-                                - $ref: ../../schemas/std/prod.schema.yaml#/prod_no
-                                - $ref: ../../schemas/std/prod.schema.yaml#/prod_nm
-                                - $ref: ../../schemas/std/prod.schema.yaml#/item_type_uuid
-                                - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_cd
-                                - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_nm
-                                - $ref: ../../schemas/std/prod.schema.yaml#/prod_type_uuid
-                                - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_cd
-                                - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_nm
-                                - $ref: ../../schemas/std/prod.schema.yaml#/model_uuid
-                                - $ref: ../../schemas/std/model.schema.yaml#/model_cd
-                                - $ref: ../../schemas/std/model.schema.yaml#/model_nm
-                                - $ref: ../../schemas/std/prod.schema.yaml#/rev
-                                - $ref: ../../schemas/std/prod.schema.yaml#/prod_std
-                                - $ref: ../../schemas/std/prod.schema.yaml#/unit_uuid
-                                - $ref: ../../schemas/std/unit.schema.yaml#/unit_cd
-                                - $ref: ../../schemas/std/unit.schema.yaml#/unit_nm
-                                - $ref: ../../schemas/mat/order-detail.schema.yaml#/due_date
-                                - $ref: ../../schemas/mat/order-detail.schema.yaml#/qty
-                                - $ref: ../../schemas/mat/order-detail.schema.yaml#/price
-                                - $ref: ../../schemas/mat/order-detail.schema.yaml#/money_unit_uuid
-                                - $ref: ../../schemas/std/money-unit.schema.yaml#/money_unit_cd
-                                - $ref: ../../schemas/std/money-unit.schema.yaml#/money_unit_nm
-                                - $ref: ../../schemas/mat/order-detail.schema.yaml#/exchange
-                                - $ref: ../../schemas/mat/order.schema.yaml#/supply_price
-                                - $ref: ../../schemas/mat/order.schema.yaml#/tax
-                                - $ref: ../../schemas/mat/order.schema.yaml#/total_price
-                                - $ref: ../../schemas/mat/order.schema.yaml#/receive_qty
-                                - $ref: ../../schemas/mat/order.schema.yaml#/balance
-                                - $ref: ../../schemas/mat/order.schema.yaml#/complete_state
-                                - $ref: ../../schemas/mat/order.schema.yaml#/remark
-                                - $ref: ../../schemas/common/timestamp.schema.yaml
+                          allOf:
+                            - $ref: ../../schemas/mat/order-detail.schema.yaml#/order_detail_uuid
+                            - $ref: ../../schemas/mat/order.schema.yaml#/factory_uuid
+                            - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
+                            - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
+                            - $ref: ../../schemas/mat/order.schema.yaml#/partner_uuid
+                            - $ref: ../../schemas/std/partner.schema.yaml#/partner_cd
+                            - $ref: ../../schemas/std/partner.schema.yaml#/partner_nm
+                            - $ref: ../../schemas/mat/order.schema.yaml#/reg_date
+                            - $ref: ../../schemas/mat/order-detail.schema.yaml#/prod_uuid
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_no
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/item_type_uuid
+                            - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_cd
+                            - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_type_uuid
+                            - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_cd
+                            - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/model_uuid
+                            - $ref: ../../schemas/std/model.schema.yaml#/model_cd
+                            - $ref: ../../schemas/std/model.schema.yaml#/model_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/rev
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_std
+                            - $ref: ../../schemas/std/prod.schema.yaml#/unit_uuid
+                            - $ref: ../../schemas/std/unit.schema.yaml#/unit_cd
+                            - $ref: ../../schemas/std/unit.schema.yaml#/unit_nm
+                            - $ref: ../../schemas/mat/order-detail.schema.yaml#/due_date
+                            - $ref: ../../schemas/mat/order-detail.schema.yaml#/qty
+                            - $ref: ../../schemas/mat/order-detail.schema.yaml#/price
+                            - $ref: ../../schemas/mat/order-detail.schema.yaml#/money_unit_uuid
+                            - $ref: ../../schemas/std/money-unit.schema.yaml#/money_unit_cd
+                            - $ref: ../../schemas/std/money-unit.schema.yaml#/money_unit_nm
+                            - $ref: ../../schemas/mat/order-detail.schema.yaml#/exchange
+                            - $ref: ../../schemas/mat/order.schema.yaml#/supply_price
+                            - $ref: ../../schemas/mat/order.schema.yaml#/tax
+                            - $ref: ../../schemas/mat/order.schema.yaml#/total_price
+                            - $ref: ../../schemas/mat/order.schema.yaml#/receive_qty
+                            - $ref: ../../schemas/mat/order.schema.yaml#/balance
+                            - $ref: ../../schemas/mat/order.schema.yaml#/complete_state
+                            - $ref: ../../schemas/mat/order.schema.yaml#/remark
+                            - $ref: ../../schemas/common/timestamp.schema.yaml
     500:
       $ref: ../../responses/common/general-error.response.yaml

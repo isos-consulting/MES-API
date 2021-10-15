@@ -240,7 +240,7 @@ class StdVendorPriceCtl extends BaseCtl {
   rearrangeDate = async (_datas: any[], tran: Transaction) => {
     // 저장 된 값 중 partner_id, prod_id 를 추출하여 중복 제거 후
     // 수정 된 거래처, 품목의 적용일자, 적용종료일자를 재정렬한다.
-    const partnerProdArr: any[] = [];
+    const partnerProdArr = [];
     for (const data of _datas) {
       if (!data.partner_id || !data.prod_id) { throw new Error("단가 적용일자 재정렬 중 Error 가 발생하였습니다.(Data 입력 형식이 잘못 되었습니다.)"); }
 

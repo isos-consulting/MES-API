@@ -1,6 +1,6 @@
 const readReleaseReport = (
   params: {
-    sub_total_type?: 'partner' | 'prod' | 'date' | 'none',
+    sort_type?: 'partner' | 'prod' | 'date',
     start_reg_date?: string,
     end_reg_date?: string,
     start_due_date?: string,
@@ -12,7 +12,6 @@ const readReleaseReport = (
   
   const createReleaseTempTable = `
     CREATE TEMP TABLE temp_release(
-      sort int, 
       release_detail_id int, 
       factory_id int, 
       reg_date timestamptz, 
@@ -47,7 +46,6 @@ const readReleaseReport = (
   const insertDataToTempTable = `
     INSERT INTO temp_release
     SELECT 
-      1, 
       o_rd.release_detail_id, 
       o_rd.factory_id, 
       o_r.reg_date, 
@@ -76,64 +74,16 @@ const readReleaseReport = (
     ${searchQuery};
   `;
 
-  let insertTotalToTempTable: string;
   let reportOrderBy: string;
-  switch (params.sub_total_type) {
-    case 'partner':
-      insertTotalToTempTable = `
-        INSERT INTO temp_release(sort, partner_id, order_qty, qty, supply_price, tax, total_price)
-        SELECT 
-          CASE WHEN t_r.partner_id IS NOT NULL THEN 2 ELSE 3 END,
-          t_r.partner_id, sum(t_r.order_qty), sum(t_r.qty), sum(t_r.supply_price), sum(t_r.tax), sum(t_r.total_price)
-        FROM temp_release t_r
-        GROUP BY ROLLUP (t_r.partner_id);
-      `;
-
-      reportOrderBy = `ORDER BY t_r.partner_id, t_r.sort;`;
-      break;
-    case 'prod':
-      insertTotalToTempTable = `
-        INSERT INTO temp_release(sort, prod_id, order_qty, qty, supply_price, tax, total_price)
-        SELECT 
-          CASE WHEN t_r.prod_id IS NOT NULL THEN 2 ELSE 3 END,
-          t_r.prod_id, sum(t_r.order_qty), sum(t_r.qty), sum(t_r.supply_price), sum(t_r.tax), sum(t_r.total_price)
-        FROM temp_release t_r
-        GROUP BY ROLLUP (t_r.prod_id);
-      `;
-
-      reportOrderBy = `ORDER BY t_r.prod_id, t_r.sort;`;
-      break;
-    case 'date':
-      insertTotalToTempTable = `
-        INSERT INTO temp_release(sort, reg_date, order_qty, qty, supply_price, tax, total_price)
-        SELECT 
-          CASE WHEN t_r.reg_date IS NOT NULL THEN 2 ELSE 3 END,
-          t_r.reg_date, sum(t_r.order_qty), sum(t_r.qty), sum(t_r.supply_price), sum(t_r.tax), sum(t_r.total_price)
-        FROM temp_release t_r
-        GROUP BY ROLLUP (t_r.reg_date);
-      `;
-
-      reportOrderBy = `ORDER BY t_r.reg_date, t_r.sort;`;
-      break;
-    case 'none':
-      insertTotalToTempTable = `
-        INSERT INTO temp_release(sort, order_qty, qty, supply_price, tax, total_price)
-        SELECT 3, sum(t_r.order_qty), sum(t_r.qty), sum(t_r.supply_price), sum(t_r.tax), sum(t_r.total_price)
-        FROM temp_release t_r;
-      `;
-
-      reportOrderBy = `ORDER BY t_r.release_detail_id, t_r.sort;`;
-      break;
-    default: 
-      insertTotalToTempTable = '';
-      reportOrderBy = '';
-      break;
+  switch (params.sort_type) {
+    case 'partner': reportOrderBy = `ORDER BY t_r.partner_id`; break;
+    case 'prod': reportOrderBy = `ORDER BY t_r.prod_id`; break;
+    case 'date': reportOrderBy = `ORDER BY t_r.reg_date`; break;
+    default: reportOrderBy = ''; break;
   }
 
   const readReport = `
     SELECT
-      CASE WHEN sort = 2 THEN 'sub-total'
-        WHEN sort = 3 THEN 'total' ELSE 'data' END as row_type,
       o_rd.uuid as release_detail_uuid,
       s_f.uuid as factory_uuid,
       s_f.factory_cd,
@@ -195,7 +145,7 @@ const readReleaseReport = (
     LEFT JOIN std_money_unit_tb s_mu ON s_mu.money_unit_id = t_r.money_unit_id
     LEFT JOIN std_store_tb f_ss ON f_ss.store_id = t_r.from_store_id
     LEFT JOIN std_location_tb f_sl ON f_sl.location_id = t_r.from_location_id
-    ${reportOrderBy}
+    ${reportOrderBy};
   `;
 
   const dropTempTable = `
@@ -208,9 +158,6 @@ const readReleaseReport = (
 
     -- 📌 임시테이블에 외주출고현황 기초데이터 입력
     ${insertDataToTempTable}
-
-    -- 📌 SubTotal 유형에 따라 합계를 계산하여 데이터 입력
-    ${insertTotalToTempTable}
 
     -- 📌 외주출고현황 조회
     ${readReport}

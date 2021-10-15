@@ -1,16 +1,15 @@
 const readReturnReport = (
   params: {
-    sub_total_type?: 'store' | 'prod' | 'date' | 'none',
+    sort_type?: 'store' | 'prod' | 'date',
     start_date?: string,
     end_date?: string,
     factory_uuid?: string,
   }
 ) => {
   let searchQuery: string = '';
-  
+
   const createReturnTempTable = `
     CREATE TEMP TABLE temp_return(
-      sort int, 
       return_id int, 
       factory_id int, 
       reg_date timestamptz, 
@@ -38,7 +37,6 @@ const readReturnReport = (
   const insertDataToTempTable = `
     INSERT INTO temp_return
     SELECT 
-      1, 
       p_r.return_id, 
       p_r.factory_id, 
       p_r.reg_date, 
@@ -59,64 +57,16 @@ const readReturnReport = (
     ${searchQuery};
   `;
 
-  let insertTotalToTempTable: string;
   let reportOrderBy: string;
-  switch (params.sub_total_type) {
-    case 'store':
-      insertTotalToTempTable = `
-        INSERT INTO temp_return(sort, from_store_id, qty)
-        SELECT 
-          CASE WHEN t_r.from_store_id IS NOT NULL THEN 2 ELSE 3 END,
-          t_r.from_store_id, sum(t_r.qty)
-        FROM temp_return t_r
-        GROUP BY ROLLUP (t_r.from_store_id);
-      `;
-
-      reportOrderBy = `ORDER BY t_r.from_store_id, t_r.sort;`;
-      break;
-    case 'prod':
-      insertTotalToTempTable = `
-        INSERT INTO temp_return(sort, prod_id, qty)
-        SELECT 
-          CASE WHEN t_r.prod_id IS NOT NULL THEN 2 ELSE 3 END,
-          t_r.prod_id, sum(t_r.qty)
-        FROM temp_return t_r
-        GROUP BY ROLLUP (t_r.prod_id);
-      `;
-
-      reportOrderBy = `ORDER BY t_r.prod_id, t_r.sort;`;
-      break;
-    case 'date':
-      insertTotalToTempTable = `
-        INSERT INTO temp_return(sort, reg_date, qty)
-        SELECT 
-          CASE WHEN t_r.reg_date IS NOT NULL THEN 2 ELSE 3 END,
-          t_r.reg_date, sum(t_r.qty)
-        FROM temp_return t_r
-        GROUP BY ROLLUP (t_r.reg_date);
-      `;
-
-      reportOrderBy = `ORDER BY t_r.reg_date, t_r.sort;`;
-      break;
-    case 'none':
-      insertTotalToTempTable = `
-        INSERT INTO temp_return(sort, qty)
-        SELECT 3, sum(t_r.qty)
-        FROM temp_return t_r;
-      `;
-
-      reportOrderBy = `ORDER BY t_r.return_id, t_r.sort;`;
-      break;
-    default: 
-      insertTotalToTempTable = '';
-      reportOrderBy = '';
-      break;
+  switch (params.sort_type) {
+    case 'store': reportOrderBy = `ORDER BY t_r.from_store_id`; break;
+    case 'prod': reportOrderBy = `ORDER BY t_r.prod_id`; break;
+    case 'date': reportOrderBy = `ORDER BY t_r.reg_date`; break;
+    default: reportOrderBy = ''; break;
   }
 
   const readReport = `
     SELECT
-      CASE WHEN sort = 2 THEN 'sub-total'
-        WHEN sort = 3 THEN 'total' ELSE 'data' END as row_type,
       p_r.uuid as return_uuid,
       s_f.uuid as factory_uuid,
       s_f.factory_cd,
@@ -172,7 +122,7 @@ const readReturnReport = (
     LEFT JOIN std_location_tb f_sl ON f_sl.location_id = t_r.from_location_id
     LEFT JOIN std_store_tb t_ss ON t_ss.store_id = t_r.to_store_id
     LEFT JOIN std_location_tb t_sl ON t_sl.location_id = t_r.to_location_id
-    ${reportOrderBy}
+    ${reportOrderBy};
   `;
 
   const dropTempTable = `
@@ -185,9 +135,6 @@ const readReturnReport = (
 
     -- 📌 임시테이블에 자재반납현황 기초데이터 입력
     ${insertDataToTempTable}
-
-    -- 📌 SubTotal 유형에 따라 합계를 계산하여 데이터 입력
-    ${insertTotalToTempTable}
 
     -- 📌 자재반납현황 조회
     ${readReport}

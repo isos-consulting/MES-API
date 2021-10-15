@@ -1,0 +1,39 @@
+std_prod_tb: 입고창고 JOIN
+bom 재귀
+
+
+uuid 없는 테이블 
+
+inv_store
+ -> location_id not null
+ -> pk column id(serial) 로 설정
+ -> tran_type_id => tran_type_cd 로 변경
+ -> unique key tran_id, inout_fg, tran_type_cd
+
+mat_receive_detail
+ -> carry_fg, carray_fg 로 오타
+
+구매계획 없음
+
+mat_return_detail
+ -> stmt_no_sub??
+ -> 여기는 unit_qty 없어도 되는?
+ -> from_store_id null??
+
+
+receive 이상이상
+
+release 에 demand 없음
+ -> 생산쪽에 있음 생산만들고 JOIN 해야 함
+
+
+창고 데이터 에서 업데이트 할 수 있는 항목 헷갈림
+순번 바뀔 수 있어야 함?
+from 입고 창고 바뀌면 안되고 다시등록이 맞는건지?
+바코드는 정확히 어떤 역할을 하는지?
+
+자재 입하에 단위수량 수정 가능하도록
+
+❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗ 해야 할 일 ❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗
+1. 자재입하 수입검사 완료여부 인터락 걸어야 함
+2. 자재입하 마감 인터락 걸어야 함

@@ -1,6 +1,6 @@
 const readWorkRejectReport = (
   params: {
-    sub_total_type?: 'proc' | 'prod' | 'reject' | 'none',
+    sort_type?: 'proc' | 'prod' | 'reject',
     start_date?: string,
     end_date?: string,
     factory_uuid?: string,
@@ -8,7 +8,6 @@ const readWorkRejectReport = (
 ) => {
   const createWorkRejectTempTable = `
     CREATE TEMP TABLE temp_reject(
-      sort int,
       work_reject_id int,
       factory_id int,
       work_id int,
@@ -35,7 +34,6 @@ const readWorkRejectReport = (
   const insertDataToTempTable = `
     INSERT INTO temp_reject
     SELECT 
-      1,
       p_wr.work_reject_id,
       p_wr.factory_id,
       p_w.work_id,
@@ -66,64 +64,16 @@ const readWorkRejectReport = (
     ${params.start_date && params.end_date ? `AND date(p_w.reg_date) BETWEEN '${params.start_date}' AND '${params.end_date}'` : ''};
   `;
 
-  let insertTotalToTempTable: string;
   let reportOrderBy: string;
-  switch (params.sub_total_type) {
-    case 'proc':
-      insertTotalToTempTable = `
-        INSERT INTO temp_reject(sort, reject_proc_id, reject_detail_qty)
-        SELECT 
-          CASE WHEN t_r.reject_proc_id IS NOT NULL THEN 2 ELSE 3 END,
-          t_r.reject_proc_id, sum(t_r.reject_detail_qty)
-        FROM temp_reject t_r
-        GROUP BY ROLLUP (t_r.reject_proc_id);
-      `;
-
-      reportOrderBy = `ORDER BY t_r.reject_proc_id, t_r.sort;`;
-      break;
-    case 'prod':
-      insertTotalToTempTable = `
-        INSERT INTO temp_reject(sort, prod_id, reject_detail_qty)
-        SELECT 
-          CASE WHEN t_r.prod_id IS NOT NULL THEN 2 ELSE 3 END,
-          t_r.prod_id, sum(t_r.reject_detail_qty)
-        FROM temp_reject t_r
-        GROUP BY ROLLUP (t_r.prod_id);
-      `;
-
-      reportOrderBy = `ORDER BY t_r.prod_id, t_r.sort;`;
-      break;
-    case 'reject':
-      insertTotalToTempTable = `
-        INSERT INTO temp_reject(sort, reject_id, reject_detail_qty)
-        SELECT 
-          CASE WHEN t_r.reject_id IS NOT NULL THEN 2 ELSE 3 END,
-          t_r.reject_id, sum(t_r.reject_detail_qty)
-        FROM temp_reject t_r
-        GROUP BY ROLLUP (t_r.reject_id);
-      `;
-
-      reportOrderBy = `ORDER BY t_r.reg_date, t_r.sort;`;
-      break;
-    case 'none':
-      insertTotalToTempTable = `
-        INSERT INTO temp_reject(sort, reject_detail_qty)
-        SELECT 3, sum(t_r.reject_detail_qty)
-        FROM temp_reject t_r;
-      `;
-
-      reportOrderBy = `ORDER BY t_r.work_reject_id, t_r.sort;`;
-      break;
-    default: 
-      insertTotalToTempTable = '';
-      reportOrderBy = '';
-      break;
+  switch (params.sort_type) {
+    case 'proc': reportOrderBy = `ORDER BY t_r.reject_proc_id`; break;
+    case 'prod': reportOrderBy = `ORDER BY t_r.prod_id`; break;
+    case 'reject': reportOrderBy = `ORDER BY t_r.reg_date`; break;
+    default: reportOrderBy = ''; break;
   }
 
   const readReport = `
     SELECT
-      CASE WHEN sort = 2 THEN 'sub-total'
-        WHEN sort = 3 THEN 'total' ELSE 'data' END as row_type,
       p_wr.uuid as work_reject_uuid,
       p_w.uuid as work_uuid,
       s_f.uuid as factory_uuid,
@@ -194,7 +144,7 @@ const readWorkRejectReport = (
     LEFT JOIN std_reject_tb s_r ON s_r.reject_id = t_r.reject_id
     LEFT JOIN std_reject_type_tb s_rt ON s_rt.reject_type_id = s_r.reject_type_id 
     LEFT JOIN std_proc_tb s_pcr ON s_pcr.proc_id = t_r.reject_proc_id
-    ${reportOrderBy}
+    ${reportOrderBy};
   `;
 
   const dropTempTable = `
@@ -207,9 +157,6 @@ const readWorkRejectReport = (
 
     -- 📌 임시테이블에 부적합현황 기초데이터 입력
     ${insertDataToTempTable}
-
-    -- 📌 SubTotal 유형에 따라 합계를 계산하여 데이터 입력
-    ${insertTotalToTempTable}
 
     -- 📌 부적합현황 조회
     ${readReport}

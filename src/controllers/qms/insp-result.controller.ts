@@ -1109,9 +1109,9 @@ class QmsInspResultCtl extends BaseCtl {
   // 📒 Fn[deleteReceiveInsp]: Receive Inspection(수입검사) 데이터 삭제
   public deleteReceiveInsp = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      req.body = await this.getBodyIncludedId(req.body);
+			req.body = checkArray(req.body); 
+			req.body = await this.getFkId(req.body, [...this.fkIdInfos]);
       this.result = { raws: [], count: 0 };
-
       await sequelize.transaction(async(tran) => { 
         for await (const data of req.body) {
           // 📌 수입검사 성적서 Delete Flow
@@ -1121,13 +1121,12 @@ class QmsInspResultCtl extends BaseCtl {
           // ✅ 4. 검사성적서상세정보 삭제
           // ✅ 5. 검사성적서 삭제
 
-          const header: QmsInspResult = unsealArray((await this.repo.readRawByUuid(data.header[0].uuid)).raws);
+          const header: QmsInspResult = unsealArray((await this.repo.readRawByUuid(data.uuid)).raws);
           const receiveDetailId = header.insp_reference_id;
           const storeBody: any[] = [];
-
           let incomeIds: any[] = [];
-          // 📌 자재 또는 외주 입고 내역 및 수불 내역을 삭제 목록에 추가
-          switch (data.header[0].insp_detail_type_cd) {
+          // 📌 자재 또는 외주 입고 내역 및 수불 내역을 삭제req.body = checkArray(req.body); 목록에 추가
+          switch (data.insp_detail_type_cd) {
             case 'MAT_RECEIVE': 
               incomeIds = await this.matIncomeRepo.readIncomeIdsToReceiveDetailIds([receiveDetailId]);
               if (incomeIds[0]) storeBody.push({ tran_id: incomeIds[0], inout_fg: true, tran_cd: getTranTypeCd('MAT_INCOME') });
@@ -1140,7 +1139,7 @@ class QmsInspResultCtl extends BaseCtl {
           }
           // 📌 수입검사 부적합 수불 내역을 삭제 목록에 추가
           // storeBody.push(...getStoreBody([header], 'TO', 'insp_result_id', getTranTypeCd('QMS_RECEIVE_INSP_REJECT')));
-          storeBody.push({ tran_id: data.header[0].insp_result_id, inout_fg: true, tran_cd: getTranTypeCd('QMS_RECEIVE_INSP_REJECT') });
+          storeBody.push({ tran_id: data.insp_result_id, inout_fg: true, tran_cd: getTranTypeCd('QMS_RECEIVE_INSP_REJECT') });
 
           // ✅ 수불 내역 삭제
           const storeResult = await this.storeRepo.deleteToTransaction(storeBody, req.user?.uid as number, tran);
@@ -1164,7 +1163,7 @@ class QmsInspResultCtl extends BaseCtl {
           const detailInfosResult = await this.detailInfoRepo.deleteByResultIds([header.insp_result_id], req.user?.uid as number, tran);
 
           // ✅ 검사성적서 삭제
-          const headerResult = await this.repo.delete(data.header, req.user?.uid as number, tran);
+          const headerResult = await this.repo.delete([data], req.user?.uid as number, tran);
 
           this.result.raws.push({
             result: {
@@ -1189,30 +1188,24 @@ class QmsInspResultCtl extends BaseCtl {
   // 📒 Fn[deleteProcInsp]: Proc Inspection(공정검사) 데이터 삭제
   public deleteProcInsp = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      req.body = await this.getBodyIncludedId(req.body);
+      req.body = checkArray(req.body);
       this.result = { raws: [], count: 0 };
-
       await sequelize.transaction(async(tran) => { 
         for await (const data of req.body) {
           // 📌 공정검사 성적서 Delete Flow
           // ✅ 1. 검사성적서상세값 삭제
           // ✅ 2. 검사성적서상세정보 삭제
           // ✅ 3. 검사성적서 삭제
-
-          const header: QmsInspResult = unsealArray((await this.repo.readRawByUuid(data.header.uuid)).raws);
-
+          const header: QmsInspResult = unsealArray((await this.repo.readRawByUuid(data.uuid)).raws);
           // 📌 검사 성적서 상세 값을 삭제하기 위하여 검사 성적서 상세정보 Id 조회
           const detailInfos = await this.detailInfoRepo.readByResultId(header.insp_result_id);
           const detailInfoIds = detailInfos.raws.map((raw: any) => { return raw.insp_result_detail_info_id });
-
           // ✅ 검사성적서상세값 삭제
           const detailValuesResult = await this.detailValueRepo.deleteByInfoIds(detailInfoIds, req.user?.uid as number, tran);
-
           // ✅ 검사성적서상세정보 삭제
           const detailInfosResult = await this.detailInfoRepo.deleteByResultIds([header.insp_result_id], req.user?.uid as number, tran);
-
-          // ✅ 검사성적서 삭제
-          const headerResult = await this.repo.delete(data.header, req.user?.uid as number, tran);
+          // ✅ 검사성적서 삭제	
+          const headerResult = await this.repo.delete([data], req.user?.uid as number, tran);
 
           this.result.raws.push({
             result: {
@@ -1235,7 +1228,9 @@ class QmsInspResultCtl extends BaseCtl {
   // 📒 Fn[deleteFinalInsp]: Final Inspection(최종검사) 데이터 삭제
   public deleteFinalInsp = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      req.body = await this.getBodyIncludedId(req.body);
+			req.body = checkArray(req.body); 
+			req.body = await this.getFkId(req.body, [...this.fkIdInfos]);
+
       this.result = { raws: [], count: 0 };
 
       await sequelize.transaction(async(tran) => { 
@@ -1246,14 +1241,14 @@ class QmsInspResultCtl extends BaseCtl {
           // ✅ 3. 검사성적서상세정보 삭제
           // ✅ 4. 검사성적서 삭제
 
-          const header: QmsInspResult = unsealArray((await this.repo.readRawByUuid(data.header[0].uuid)).raws);
+          const header: QmsInspResult = unsealArray((await this.repo.readRawByUuid(data.uuid)).raws);
           const storeBody: any[] = [];
 
           // 📌 최종검사 입출고 및 부적합 수불 내역을 삭제 목록에 추가
-          storeBody.push({ tran_id: data.header[0].insp_result_id, inout_fg: true, tran_cd: getTranTypeCd('QMS_FINAL_INSP_INCOME') });
-          storeBody.push({ tran_id: data.header[0].insp_result_id, inout_fg: false, tran_cd: getTranTypeCd('QMS_FINAL_INSP_INCOME') });
-          storeBody.push({ tran_id: data.header[0].insp_result_id, inout_fg: true, tran_cd: getTranTypeCd('QMS_FINAL_INSP_REJECT') });
-          storeBody.push({ tran_id: data.header[0].insp_result_id, inout_fg: false, tran_cd: getTranTypeCd('QMS_FINAL_INSP_REJECT') });
+          storeBody.push({ tran_id: data.insp_result_id, inout_fg: true, tran_cd: getTranTypeCd('QMS_FINAL_INSP_INCOME') });
+          storeBody.push({ tran_id: data.insp_result_id, inout_fg: false, tran_cd: getTranTypeCd('QMS_FINAL_INSP_INCOME') });
+          storeBody.push({ tran_id: data.insp_result_id, inout_fg: true, tran_cd: getTranTypeCd('QMS_FINAL_INSP_REJECT') });
+          storeBody.push({ tran_id: data.insp_result_id, inout_fg: false, tran_cd: getTranTypeCd('QMS_FINAL_INSP_REJECT') });
           // storeBody.push(...getStoreBody(data.header, 'FROM', 'insp_result_id', getTranTypeCd('QMS_FINAL_INSP_INCOME')));
           // storeBody.push(...getStoreBody(data.header, 'TO', 'insp_result_id', getTranTypeCd('QMS_FINAL_INSP_INCOME')));
           // storeBody.push(...getStoreBody(data.header, 'FROM', 'insp_result_id', getTranTypeCd('QMS_FINAL_INSP_REJECT')));
@@ -1273,7 +1268,7 @@ class QmsInspResultCtl extends BaseCtl {
           const detailInfosResult = await this.detailInfoRepo.deleteByResultIds([header.insp_result_id], req.user?.uid as number, tran);
 
           // ✅ 검사성적서 삭제
-          const headerResult = await this.repo.delete(data.header, req.user?.uid as number, tran);
+          const headerResult = await this.repo.delete([data], req.user?.uid as number, tran);
 
           this.result.raws.push({
             result: {
@@ -1387,7 +1382,6 @@ class QmsInspResultCtl extends BaseCtl {
   getBodyIncludedId = async (_body: any) => {
     const resultBody: any[] = [];
     _body = checkArray(_body);
-
     for await (const data of _body) {
       if (data.header) { 
         data.header = checkArray(data.header); 

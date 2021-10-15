@@ -32,7 +32,6 @@ class AdmLogRepo {
   
       await this.repo.bulkCreate(logDatas, { transaction });
     } catch (error) {
-      console.log(error);
       throw new Error(`${_tableName} ${_type} Log 작성 중 Error 발생`);
     }
   }

@@ -9,7 +9,6 @@ import StdMoneyUnitRepo from '../../repositories/std/money-unit.repository';
 import StdPartnerRepo from '../../repositories/std/partner.repository';
 import StdProdRepo from '../../repositories/std/prod.repository';
 import checkArray from '../../utils/checkArray';
-import convertToReportRaws from '../../utils/convertToReportRaws';
 import isDateFormat from '../../utils/isDateFormat';
 import response from '../../utils/response';
 import testErrorHandlingHelper from '../../utils/testErrorHandlingHelper';
@@ -184,12 +183,11 @@ class SalOrderCtl extends BaseCtl {
       const params = Object.assign(req.query, req.params);
 
       const completeState = params.complete_state as string;
-      const subTotalType = params.sub_total_type as string;
+      const sort_type = params.sort_type as string;
       if (![ 'all', 'complete', 'incomplete' ].includes(completeState)) { throw new Error('잘못된 complete_state(완료 여부) 입력') }
-      if (![ 'partner', 'prod', 'date', 'none' ].includes(subTotalType)) { throw new Error('잘못된 sub_total_type(소계 유형) 입력') }
+      if (![ 'partner', 'prod', 'date' ].includes(sort_type)) { throw new Error('잘못된 sort_type(정렬) 입력') }
 
       this.result = await this.repo.readReport(params);
-      this.result.raws = convertToReportRaws(this.result.raws);
       
       return response(res, this.result.raws, { count: this.result.count });
     } catch (e) {

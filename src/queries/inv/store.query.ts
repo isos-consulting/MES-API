@@ -174,7 +174,7 @@ const readStocks = (
         FROM std_vendor_price_tb s_vp
         JOIN std_prod_tb s_p ON s_p.prod_id = s_vp.prod_id AND s_p.mat_order_fg = TRUE 
         JOIN std_partner_tb s_pa ON s_pa.partner_id = s_vp.partner_id
-        LEFT JOIN temp_store t_s ON t_s.prod_id = s_vp.prod_id 
+        JOIN temp_store t_s ON t_s.prod_id = s_vp.prod_id 
         WHERE '${params.reg_date}' BETWEEN s_vp.start_date AND s_vp.end_date 
         ${searchQuery};
       `;
@@ -199,7 +199,7 @@ const readStocks = (
         FROM std_customer_price_tb s_cp
         JOIN std_prod_tb s_p ON s_p.prod_id = s_cp.prod_id AND s_p.sal_order_fg = TRUE 
         JOIN std_partner_tb s_pa ON s_pa.partner_id = s_cp.partner_id
-        LEFT JOIN temp_store t_s ON t_s.prod_id = s_cp.prod_id 
+        JOIN temp_store t_s ON t_s.prod_id = s_cp.prod_id 
         WHERE '${params.reg_date}' BETWEEN s_cp.start_date AND s_cp.end_date 
         ${searchQuery};
       `;

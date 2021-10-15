@@ -1,6 +1,6 @@
 get:
   description: |
-    최종검사 성적서 데이터 목록을 조회합니다. 
+    최종검사 성적서 데이터 목록을 조회합니다.
   summary: 최종검사 성적서 데이터 조회
   tags:
     - 최종검사 성적서(FinalInsp)
@@ -39,7 +39,7 @@ get:
       description: Read OK
       content:
         application/json:
-          schema: 
+          schema:
             allOf:
               - $ref: ../../schemas/common/default-response.schema.yaml
               - type: object
@@ -52,7 +52,7 @@ get:
                         description: Enable
                         type: object
                         properties:
-                          count: 
+                          count:
                             description: 영향받은 데이터의 개수
                             type: number
                             format: int32
@@ -189,7 +189,7 @@ post:
                   - insp_detail_uuid
                   - insp_result_fg
                 type: object
-                allOf:        
+                allOf:
                   - $ref: ../../schemas/qms/insp-result-detail-info.schema.yaml#/factory_uuid
                   - $ref: ../../schemas/qms/insp-result-detail-info.schema.yaml#/insp_detail_uuid
                   - $ref: ../../schemas/qms/insp-result-detail-info.schema.yaml#/insp_result_fg
@@ -204,7 +204,7 @@ post:
                         - insp_result_fg
                         - insp_value
                       type: object
-                      allOf:        
+                      allOf:
                         - $ref: ../../schemas/qms/insp-result-detail-value.schema.yaml#/sample_no
                         - $ref: ../../schemas/qms/insp-result-detail-value.schema.yaml#/insp_result_fg
                         - $ref: ../../schemas/qms/insp-result-detail-value.schema.yaml#/insp_value
@@ -263,7 +263,7 @@ put:
                   - uuid
                   - insp_result_fg
                 type: object
-                allOf:        
+                allOf:
                   - $ref: ../../schemas/qms/insp-result-detail-info.schema.yaml#/uuid
                   - $ref: ../../schemas/qms/insp-result-detail-info.schema.yaml#/insp_result_fg
                   - $ref: ../../schemas/qms/insp-result-detail-info.schema.yaml#/remark
@@ -277,7 +277,7 @@ put:
                         - insp_result_fg
                         - insp_value
                       type: object
-                      allOf:        
+                      allOf:
                         - $ref: ../../schemas/qms/insp-result-detail-value.schema.yaml#/uuid
                         - $ref: ../../schemas/qms/insp-result-detail-value.schema.yaml#/delete_fg
                         - $ref: ../../schemas/qms/insp-result-detail-value.schema.yaml#/sample_no
@@ -300,16 +300,10 @@ delete:
       application/json:
         schema:
           required:
-            - header
+            - uuid
           type: object
-          properties:
-            header:
-              description: Header Data
-              type: object
-              required:
-                - uuid
-              allOf:
-                - $ref: ../../schemas/qms/insp-result.schema.yaml#/uuid
+          allOf:
+            - $ref: ../../schemas/qms/insp-result.schema.yaml#/uuid
   responses:
     200:
       $ref: ../../responses/common/succeed-delete.response.yaml

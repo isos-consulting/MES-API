@@ -20,7 +20,6 @@ import StdLocationRepo from '../../repositories/std/location.repository';
 import StdStoreRepo from '../../repositories/std/store.repository';
 import getTranTypeCd from '../../utils/getTranTypeCd';
 import getStoreBody from '../../utils/getStoreBody';
-import convertToReportRaws from '../../utils/convertToReportRaws';
 import ApiResult from '../../interfaces/common/api-result.interface';
 import unsealArray from '../../utils/unsealArray';
 import AdmPatternHistoryCtl from '../adm/pattern-history.controller';
@@ -45,8 +44,8 @@ class MatReceiveCtl extends BaseCtl {
   headerFkIdInfos: getFkIdInfo[];
   detailsFkIdInfos: getFkIdInfo[];
 
-  // ✅ 조회조건 Types
-  subTotalTypes: string[];
+  // ✅ 정렬조건 Types
+  sort_type: string[];
 
   //#region ✅ Constructor
   constructor() {
@@ -155,8 +154,8 @@ class MatReceiveCtl extends BaseCtl {
       }
     ];
 
-    // ✅ 조회조건 Types Setting
-    this.subTotalTypes = [ 'partner', 'prod', 'date', 'none' ];
+    // ✅ 정렬조건 Types Setting
+    this.sort_type = [ 'partner', 'prod', 'date' ];
   };
   //#endregion
 
@@ -286,10 +285,9 @@ class MatReceiveCtl extends BaseCtl {
   public readReport = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       const params = Object.assign(req.query, req.params);
-      if (!this.subTotalTypes.includes(params.sub_total_type)) { throw new Error('잘못된 sub_total_type(소계 유형) 입력') }
+      if (!this.sort_type.includes(params.sort_type)) { throw new Error('잘못된 sort_type(정렬) 입력') }
 
       this.result = await this.repo.readReport(params);
-      this.result.raws = convertToReportRaws(this.result.raws);
       
       return response(res, this.result.raws, { count: this.result.count });
     } catch (e) {

@@ -19,7 +19,6 @@ import getTranTypeCd from '../../utils/getTranTypeCd';
 import getStoreBody from '../../utils/getStoreBody';
 import MatOrderDetailRepo from '../../repositories/mat/order-detail.repository';
 import OutIncomeRepo from '../../repositories/out/income.repository';
-import convertToReportRaws from '../../utils/convertToReportRaws';
 import ApiResult from '../../interfaces/common/api-result.interface';
 import unsealArray from '../../utils/unsealArray';
 import AdmPatternHistoryCtl from '../adm/pattern-history.controller';
@@ -194,11 +193,10 @@ class OutReceiveCtl extends BaseCtl {
     try {
       const params = Object.assign(req.query, req.params);
 
-      const subTotalType = params.sub_total_type as string;
-      if (![ 'partner', 'prod', 'date', 'none' ].includes(subTotalType)) { throw new Error('잘못된 sub_total_type(소계 유형) 입력') }
+      const sort_type = params.sort_type as string;
+      if (![ 'partner', 'prod', 'date' ].includes(sort_type)) { throw new Error('잘못된 sort_type(정렬) 입력') }
 
       this.result = await this.repo.readReport(params);
-      this.result.raws = convertToReportRaws(this.result.raws);
       
       return response(res, this.result.raws, { count: this.result.count });
     } catch (e) {

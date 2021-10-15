@@ -117,7 +117,6 @@ get:
                             - $ref: ../../schemas/std/reject.schema.yaml#/reject_cd
                             - $ref: ../../schemas/std/reject.schema.yaml#/reject_nm
                             - $ref: ../../schemas/inv/store.schema.yaml#/lot_no
-                            - $ref: ../../schemas/inv/store.schema.yaml#/qty
                             - $ref: ../../schemas/inv/store.schema.yaml#/store_uuid
                             - $ref: ../../schemas/std/store.schema.yaml#/store_cd
                             - $ref: ../../schemas/std/store.schema.yaml#/store_nm

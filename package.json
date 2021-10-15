@@ -70,7 +70,7 @@
     "uuid": "^8.3.2"
   },
   "scripts": {
-    "api-docs-all": "yarn api-docs-aut && yarn api-docs-adm && yarn api-docs-std && yarn api-docs-mat && yarn api-docs-sal && yarn api-docs-inv && yarn api-docs-prd && yarn api-docs-out && yarn api-docs-qms",
+    "api-docs-all": "tsc && yarn api-docs-aut && yarn api-docs-adm && yarn api-docs-std && yarn api-docs-mat && yarn api-docs-sal && yarn api-docs-inv && yarn api-docs-prd && yarn api-docs-out && yarn api-docs-qms",
     "api-docs-aut": "swagger-cli bundle swaggers/sources/aut.swagger.source.yaml --outfile swaggers/builds/aut.swagger.build.yaml --type yaml",
     "api-docs-adm": "swagger-cli bundle swaggers/sources/adm.swagger.source.yaml --outfile swaggers/builds/adm.swagger.build.yaml --type yaml",
     "api-docs-std": "swagger-cli bundle swaggers/sources/std.swagger.source.yaml --outfile swaggers/builds/std.swagger.build.yaml --type yaml",
@@ -85,7 +85,8 @@
     "migration-undo-all": "node dist/migrations/drop-all-tables.js",
     "prereset-data": "tsc",
     "reset-data": "yarn migration-undo-all && yarn migration-all",
-    "prestart": "yarn tsc && node dist/caches/refresh-all-cache.js",
+    "prestart1": "yarn api-docs-all && yarn migration-all && yarn refresh-all-cache",
+    "prestart": "node dist/caches/refresh-all-cache.js",
     "start": "tsc-watch --onSuccess \"node dist/bin/www.js\"",
     "pretest": "tsc && yarn reset-data && yarn refresh-all-cache",
     "test": "./node_modules/.bin/jest tests --detectOpenHandles --forceExit --coverage"

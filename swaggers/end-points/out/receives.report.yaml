@@ -1,10 +1,10 @@
 get:
   description: |
-    외주입하현황을 조회합니다. 
+    외주입하현황을 조회합니다.
   summary: 외주입하현황 데이터 조회
   tags:
     - 외주입하(Receive)
-  parameters:    
+  parameters:
     - name: factory_uuid
       in: query
       description: 공장의 UUID를 입력하여 공장에 따라 외주입하현황 데이터를 조회합니다. [전체 조회시 입력하지 않습니다.]
@@ -12,14 +12,14 @@ get:
         type: string
         format: uuid
 
-    - name: sub_total_type
+    - name: sort_type
       in: query
       required: true
       description: |
-        입하현황의 소계를 구매완료여부에 따라 조회합니다.<br/>
-        [partner] 거래처 단위 소계 조회 <br/>
-        [prod] 품목 단위 소계 조회 <br/>
-        [date] 입하일자 단위 소계 조회 <br/>
+        입하현황을 기준에 따라 정렬하여 조회합니다.<br/>
+        [partner] 거래처 기준 정렬 조회 <br/>
+        [prod] 품목 기준 정렬 조회 <br/>
+        [date] 입하일자 기준 정렬 조회 <br/>
         [none] 소계 미조회 <br/>
       schema:
         type: string
@@ -33,7 +33,7 @@ get:
       schema:
         type: string
         format: date
-        
+
     - name: end_reg_date
       in: query
       description: |
@@ -51,7 +51,7 @@ get:
       schema:
         type: string
         format: date
-        
+
     - name: end_due_date
       in: query
       description: |
@@ -66,7 +66,7 @@ get:
       description: Read OK
       content:
         application/json:
-          schema: 
+          schema:
             allOf:
               - $ref: ../../schemas/common/default-response.schema.yaml
               - type: object
@@ -79,7 +79,7 @@ get:
                         description: Enable
                         type: object
                         properties:
-                          count: 
+                          count:
                             description: 영향받은 데이터의 개수
                             type: number
                             format: int32
@@ -88,157 +88,49 @@ get:
                         description: 외주입하현황 데이터 조회
                         type: array
                         items:
-                          type: object
-                          properties:
-                            datas:
-                              description: Report Raw Data
-                              type: array
-                              items:
-                                type: object
-                                allOf:        
-                                  - $ref: ../../schemas/out/receive.schema.yaml#/row_type
-                                  - $ref: ../../schemas/out/receive-detail.schema.yaml#/receive_detail_uuid
-                                  - $ref: ../../schemas/out/receive.schema.yaml#/factory_uuid
-                                  - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
-                                  - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
-                                  - $ref: ../../schemas/out/receive.schema.yaml#/partner_uuid
-                                  - $ref: ../../schemas/std/partner.schema.yaml#/partner_cd
-                                  - $ref: ../../schemas/std/partner.schema.yaml#/partner_nm
-                                  - $ref: ../../schemas/out/receive.schema.yaml#/reg_date
-                                  - $ref: ../../schemas/out/receive-detail.schema.yaml#/prod_uuid
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/prod_no
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/prod_nm
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/item_type_uuid
-                                  - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_cd
-                                  - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_nm
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/prod_type_uuid
-                                  - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_cd
-                                  - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_nm
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/model_uuid
-                                  - $ref: ../../schemas/std/model.schema.yaml#/model_cd
-                                  - $ref: ../../schemas/std/model.schema.yaml#/model_nm
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/rev
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/prod_std
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/unit_uuid
-                                  - $ref: ../../schemas/std/unit.schema.yaml#/unit_cd
-                                  - $ref: ../../schemas/std/unit.schema.yaml#/unit_nm
-                                  - $ref: ../../schemas/out/receive.schema.yaml#/order_qty
-                                  - $ref: ../../schemas/out/receive-detail.schema.yaml#/lot_no
-                                  - $ref: ../../schemas/out/receive-detail.schema.yaml#/manufactured_lot_no
-                                  - $ref: ../../schemas/out/receive-detail.schema.yaml#/qty
-                                  - $ref: ../../schemas/out/receive-detail.schema.yaml#/price
-                                  - $ref: ../../schemas/out/receive-detail.schema.yaml#/money_unit_uuid
-                                  - $ref: ../../schemas/std/money-unit.schema.yaml#/money_unit_cd
-                                  - $ref: ../../schemas/std/money-unit.schema.yaml#/money_unit_nm
-                                  - $ref: ../../schemas/out/receive-detail.schema.yaml#/exchange
-                                  - $ref: ../../schemas/out/receive.schema.yaml#/supply_price
-                                  - $ref: ../../schemas/out/receive.schema.yaml#/tax
-                                  - $ref: ../../schemas/out/receive.schema.yaml#/total_price
-                                  - $ref: ../../schemas/out/receive.schema.yaml#/income_qty
-                                  - $ref: ../../schemas/out/receive.schema.yaml#/insp_state
-                                  - $ref: ../../schemas/out/receive.schema.yaml#/insp_result_state
-                                  - $ref: ../../schemas/out/receive.schema.yaml#/reject_qty
-                                  - $ref: ../../schemas/out/receive.schema.yaml#/remark
-                                  - $ref: ../../schemas/common/timestamp.schema.yaml
-
-                            subTotals:
-                              description: Report SubTotal Data
-                              type: array
-                              items:
-                                type: object
-                                allOf:        
-                                  - $ref: ../../schemas/out/receive.schema.yaml#/row_type
-                                  - $ref: ../../schemas/out/receive-detail.schema.yaml#/receive_detail_uuid
-                                  - $ref: ../../schemas/out/receive.schema.yaml#/factory_uuid
-                                  - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
-                                  - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
-                                  - $ref: ../../schemas/out/receive.schema.yaml#/partner_uuid
-                                  - $ref: ../../schemas/std/partner.schema.yaml#/partner_cd
-                                  - $ref: ../../schemas/std/partner.schema.yaml#/partner_nm
-                                  - $ref: ../../schemas/out/receive.schema.yaml#/reg_date
-                                  - $ref: ../../schemas/out/receive-detail.schema.yaml#/prod_uuid
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/prod_no
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/prod_nm
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/item_type_uuid
-                                  - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_cd
-                                  - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_nm
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/prod_type_uuid
-                                  - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_cd
-                                  - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_nm
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/model_uuid
-                                  - $ref: ../../schemas/std/model.schema.yaml#/model_cd
-                                  - $ref: ../../schemas/std/model.schema.yaml#/model_nm
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/rev
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/prod_std
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/unit_uuid
-                                  - $ref: ../../schemas/std/unit.schema.yaml#/unit_cd
-                                  - $ref: ../../schemas/std/unit.schema.yaml#/unit_nm
-                                  - $ref: ../../schemas/out/receive.schema.yaml#/order_qty
-                                  - $ref: ../../schemas/out/receive-detail.schema.yaml#/lot_no
-                                  - $ref: ../../schemas/out/receive-detail.schema.yaml#/manufactured_lot_no
-                                  - $ref: ../../schemas/out/receive-detail.schema.yaml#/qty
-                                  - $ref: ../../schemas/out/receive-detail.schema.yaml#/price
-                                  - $ref: ../../schemas/out/receive-detail.schema.yaml#/money_unit_uuid
-                                  - $ref: ../../schemas/std/money-unit.schema.yaml#/money_unit_cd
-                                  - $ref: ../../schemas/std/money-unit.schema.yaml#/money_unit_nm
-                                  - $ref: ../../schemas/out/receive-detail.schema.yaml#/exchange
-                                  - $ref: ../../schemas/out/receive.schema.yaml#/supply_price
-                                  - $ref: ../../schemas/out/receive.schema.yaml#/tax
-                                  - $ref: ../../schemas/out/receive.schema.yaml#/total_price
-                                  - $ref: ../../schemas/out/receive.schema.yaml#/income_qty
-                                  - $ref: ../../schemas/out/receive.schema.yaml#/insp_state
-                                  - $ref: ../../schemas/out/receive.schema.yaml#/insp_result_state
-                                  - $ref: ../../schemas/out/receive.schema.yaml#/reject_qty
-                                  - $ref: ../../schemas/out/receive.schema.yaml#/remark
-                                  - $ref: ../../schemas/common/timestamp.schema.yaml
-
-                            total:
-                              description: Report Total Data
-                              type: object
-                              allOf:
-                                - $ref: ../../schemas/out/receive.schema.yaml#/row_type
-                                - $ref: ../../schemas/out/receive-detail.schema.yaml#/receive_detail_uuid
-                                - $ref: ../../schemas/out/receive.schema.yaml#/factory_uuid
-                                - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
-                                - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
-                                - $ref: ../../schemas/out/receive.schema.yaml#/partner_uuid
-                                - $ref: ../../schemas/std/partner.schema.yaml#/partner_cd
-                                - $ref: ../../schemas/std/partner.schema.yaml#/partner_nm
-                                - $ref: ../../schemas/out/receive.schema.yaml#/reg_date
-                                - $ref: ../../schemas/out/receive-detail.schema.yaml#/prod_uuid
-                                - $ref: ../../schemas/std/prod.schema.yaml#/prod_no
-                                - $ref: ../../schemas/std/prod.schema.yaml#/prod_nm
-                                - $ref: ../../schemas/std/prod.schema.yaml#/item_type_uuid
-                                - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_cd
-                                - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_nm
-                                - $ref: ../../schemas/std/prod.schema.yaml#/prod_type_uuid
-                                - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_cd
-                                - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_nm
-                                - $ref: ../../schemas/std/prod.schema.yaml#/model_uuid
-                                - $ref: ../../schemas/std/model.schema.yaml#/model_cd
-                                - $ref: ../../schemas/std/model.schema.yaml#/model_nm
-                                - $ref: ../../schemas/std/prod.schema.yaml#/rev
-                                - $ref: ../../schemas/std/prod.schema.yaml#/prod_std
-                                - $ref: ../../schemas/std/prod.schema.yaml#/unit_uuid
-                                - $ref: ../../schemas/std/unit.schema.yaml#/unit_cd
-                                - $ref: ../../schemas/std/unit.schema.yaml#/unit_nm
-                                - $ref: ../../schemas/out/receive.schema.yaml#/order_qty
-                                - $ref: ../../schemas/out/receive-detail.schema.yaml#/lot_no
-                                - $ref: ../../schemas/out/receive-detail.schema.yaml#/manufactured_lot_no
-                                - $ref: ../../schemas/out/receive-detail.schema.yaml#/qty
-                                - $ref: ../../schemas/out/receive-detail.schema.yaml#/price
-                                - $ref: ../../schemas/out/receive-detail.schema.yaml#/money_unit_uuid
-                                - $ref: ../../schemas/std/money-unit.schema.yaml#/money_unit_cd
-                                - $ref: ../../schemas/std/money-unit.schema.yaml#/money_unit_nm
-                                - $ref: ../../schemas/out/receive-detail.schema.yaml#/exchange
-                                - $ref: ../../schemas/out/receive.schema.yaml#/supply_price
-                                - $ref: ../../schemas/out/receive.schema.yaml#/tax
-                                - $ref: ../../schemas/out/receive.schema.yaml#/total_price
-                                - $ref: ../../schemas/out/receive.schema.yaml#/income_qty
-                                - $ref: ../../schemas/out/receive.schema.yaml#/insp_state
-                                - $ref: ../../schemas/out/receive.schema.yaml#/insp_result_state
-                                - $ref: ../../schemas/out/receive.schema.yaml#/reject_qty
-                                - $ref: ../../schemas/out/receive.schema.yaml#/remark
-                                - $ref: ../../schemas/common/timestamp.schema.yaml
+                          allOf:
+                            - $ref: ../../schemas/out/receive-detail.schema.yaml#/receive_detail_uuid
+                            - $ref: ../../schemas/out/receive.schema.yaml#/factory_uuid
+                            - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
+                            - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
+                            - $ref: ../../schemas/out/receive.schema.yaml#/partner_uuid
+                            - $ref: ../../schemas/std/partner.schema.yaml#/partner_cd
+                            - $ref: ../../schemas/std/partner.schema.yaml#/partner_nm
+                            - $ref: ../../schemas/out/receive.schema.yaml#/reg_date
+                            - $ref: ../../schemas/out/receive-detail.schema.yaml#/prod_uuid
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_no
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/item_type_uuid
+                            - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_cd
+                            - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_type_uuid
+                            - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_cd
+                            - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/model_uuid
+                            - $ref: ../../schemas/std/model.schema.yaml#/model_cd
+                            - $ref: ../../schemas/std/model.schema.yaml#/model_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/rev
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_std
+                            - $ref: ../../schemas/std/prod.schema.yaml#/unit_uuid
+                            - $ref: ../../schemas/std/unit.schema.yaml#/unit_cd
+                            - $ref: ../../schemas/std/unit.schema.yaml#/unit_nm
+                            - $ref: ../../schemas/out/receive.schema.yaml#/order_qty
+                            - $ref: ../../schemas/out/receive-detail.schema.yaml#/lot_no
+                            - $ref: ../../schemas/out/receive-detail.schema.yaml#/manufactured_lot_no
+                            - $ref: ../../schemas/out/receive-detail.schema.yaml#/qty
+                            - $ref: ../../schemas/out/receive-detail.schema.yaml#/price
+                            - $ref: ../../schemas/out/receive-detail.schema.yaml#/money_unit_uuid
+                            - $ref: ../../schemas/std/money-unit.schema.yaml#/money_unit_cd
+                            - $ref: ../../schemas/std/money-unit.schema.yaml#/money_unit_nm
+                            - $ref: ../../schemas/out/receive-detail.schema.yaml#/exchange
+                            - $ref: ../../schemas/out/receive.schema.yaml#/supply_price
+                            - $ref: ../../schemas/out/receive.schema.yaml#/tax
+                            - $ref: ../../schemas/out/receive.schema.yaml#/total_price
+                            - $ref: ../../schemas/out/receive.schema.yaml#/income_qty
+                            - $ref: ../../schemas/out/receive.schema.yaml#/insp_state
+                            - $ref: ../../schemas/out/receive.schema.yaml#/insp_result_state
+                            - $ref: ../../schemas/out/receive.schema.yaml#/reject_qty
+                            - $ref: ../../schemas/out/receive.schema.yaml#/remark
+                            - $ref: ../../schemas/common/timestamp.schema.yaml
     500:
       $ref: ../../responses/common/general-error.response.yaml

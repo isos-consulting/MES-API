@@ -1,10 +1,10 @@
 get:
   description: |
-    비가동현황을 조회합니다. 
+    비가동현황을 조회합니다.
   summary: 비가동현황 데이터 조회
   tags:
     - 실적-비가동(WorkDowntime)
-  parameters:    
+  parameters:
     - name: factory_uuid
       in: query
       description: 공장의 UUID를 입력하여 공장에 따라 생산실적의 비가동현황 데이터를 조회합니다. [전체 조회시 입력하지 않습니다.]
@@ -12,15 +12,14 @@ get:
         type: string
         format: uuid
 
-    - name: sub_total_type
+    - name: sort_type
       in: query
       required: true
       description: |
-        비가동현황의 소계를 유형에 따라 조회합니다.<br/>
-        [proc] 공정 단위 소계 조회 <br/>
-        [equip] 설비 단위 소계 조회 <br/>
-        [downtime] 비가동항목 단위 소계 조회 <br/>
-        [none] 소계 미조회 <br/>
+        비가동현황을 기준에 따라 정렬하여 조회합니다.<br/>
+        [proc] 공정 기준 정렬 조회 <br/>
+        [equip] 설비 기준 정렬 조회 <br/>
+        [downtime] 비가동항목 기준 정렬 조회 <br/>
       schema:
         type: string
         format: string
@@ -33,7 +32,7 @@ get:
       schema:
         type: string
         format: date
-        
+
     - name: work_end_date
       in: query
       description: |
@@ -51,7 +50,7 @@ get:
       schema:
         type: string
         format: date
-        
+
     - name: downtime_end_date
       in: query
       description: |
@@ -66,7 +65,7 @@ get:
       description: Read OK
       content:
         application/json:
-          schema: 
+          schema:
             allOf:
               - $ref: ../../schemas/common/default-response.schema.yaml
               - type: object
@@ -79,7 +78,7 @@ get:
                         description: Enable
                         type: object
                         properties:
-                          count: 
+                          count:
                             description: 영향받은 데이터의 개수
                             type: number
                             format: int32
@@ -88,175 +87,55 @@ get:
                         description: 생산실적의 비가동현황 데이터 조회
                         type: array
                         items:
-                          type: object
-                          properties:
-                            datas:
-                              description: Report Raw Data
-                              type: array
-                              items:
-                                type: object
-                                allOf:        
-                                  - $ref: ../../schemas/prd/work-downtime.schema.yaml#/row_type
-                                  - $ref: ../../schemas/prd/work-downtime.schema.yaml#/work_downtime_uuid
-                                  - $ref: ../../schemas/prd/work-downtime.schema.yaml#/work_uuid
-                                  - $ref: ../../schemas/prd/work-downtime.schema.yaml#/factory_uuid
-                                  - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
-                                  - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
-                                  - $ref: ../../schemas/prd/work.schema.yaml#/reg_date
-                                  - $ref: ../../schemas/prd/work-downtime.schema.yaml#/proc_uuid
-                                  - $ref: ../../schemas/std/proc.schema.yaml#/proc_cd
-                                  - $ref: ../../schemas/std/proc.schema.yaml#/proc_nm
-                                  - $ref: ../../schemas/prd/work.schema.yaml#/workings_uuid
-                                  - $ref: ../../schemas/std/workings.schema.yaml#/workings_cd
-                                  - $ref: ../../schemas/std/workings.schema.yaml#/workings_nm
-                                  - $ref: ../../schemas/prd/work.schema.yaml#/equip_uuid
-                                  - $ref: ../../schemas/std/equip.schema.yaml#/equip_cd
-                                  - $ref: ../../schemas/std/equip.schema.yaml#/equip_nm
-                                  - $ref: ../../schemas/prd/work.schema.yaml#/prod_uuid
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/prod_no
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/prod_nm
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/item_type_uuid
-                                  - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_cd
-                                  - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_nm
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/prod_type_uuid
-                                  - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_cd
-                                  - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_nm
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/model_uuid
-                                  - $ref: ../../schemas/std/model.schema.yaml#/model_cd
-                                  - $ref: ../../schemas/std/model.schema.yaml#/model_nm
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/rev
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/prod_std
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/unit_uuid
-                                  - $ref: ../../schemas/std/unit.schema.yaml#/unit_cd
-                                  - $ref: ../../schemas/std/unit.schema.yaml#/unit_nm
-                                  - $ref: ../../schemas/prd/work.schema.yaml#/lot_no
-                                  - $ref: ../../schemas/prd/work.schema.yaml#/total_qty
-                                  - $ref: ../../schemas/prd/work.schema.yaml#/qty
-                                  - $ref: ../../schemas/prd/work.schema.yaml#/reject_qty
-                                  - $ref: ../../schemas/prd/work-downtime.schema.yaml#/work_start_date
-                                  - $ref: ../../schemas/prd/work-downtime.schema.yaml#/work_end_date
-                                  - $ref: ../../schemas/std/downtime.schema.yaml#/downtime_type_uuid
-                                  - $ref: ../../schemas/std/downtime-type.schema.yaml#/downtime_type_cd
-                                  - $ref: ../../schemas/std/downtime-type.schema.yaml#/downtime_type_nm
-                                  - $ref: ../../schemas/prd/work-downtime.schema.yaml#/downtime_uuid
-                                  - $ref: ../../schemas/std/downtime.schema.yaml#/downtime_cd
-                                  - $ref: ../../schemas/std/downtime.schema.yaml#/downtime_nm
-                                  - $ref: ../../schemas/prd/work-downtime.schema.yaml#/downtime_start_date
-                                  - $ref: ../../schemas/prd/work-downtime.schema.yaml#/downtime_end_date
-                                  - $ref: ../../schemas/prd/work-downtime.schema.yaml#/downtime
-                                  - $ref: ../../schemas/prd/work-downtime.schema.yaml#/remark
-                                  - $ref: ../../schemas/common/timestamp.schema.yaml
-
-                            subTotals:
-                              description: Report SubTotal Data
-                              type: array
-                              items:
-                                type: object
-                                allOf:        
-                                  - $ref: ../../schemas/prd/work-downtime.schema.yaml#/row_type
-                                  - $ref: ../../schemas/prd/work-downtime.schema.yaml#/work_downtime_uuid
-                                  - $ref: ../../schemas/prd/work-downtime.schema.yaml#/work_uuid
-                                  - $ref: ../../schemas/prd/work-downtime.schema.yaml#/factory_uuid
-                                  - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
-                                  - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
-                                  - $ref: ../../schemas/prd/work.schema.yaml#/reg_date
-                                  - $ref: ../../schemas/prd/work-downtime.schema.yaml#/proc_uuid
-                                  - $ref: ../../schemas/std/proc.schema.yaml#/proc_cd
-                                  - $ref: ../../schemas/std/proc.schema.yaml#/proc_nm
-                                  - $ref: ../../schemas/prd/work.schema.yaml#/workings_uuid
-                                  - $ref: ../../schemas/std/workings.schema.yaml#/workings_cd
-                                  - $ref: ../../schemas/std/workings.schema.yaml#/workings_nm
-                                  - $ref: ../../schemas/prd/work.schema.yaml#/equip_uuid
-                                  - $ref: ../../schemas/std/equip.schema.yaml#/equip_cd
-                                  - $ref: ../../schemas/std/equip.schema.yaml#/equip_nm
-                                  - $ref: ../../schemas/prd/work.schema.yaml#/prod_uuid
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/prod_no
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/prod_nm
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/item_type_uuid
-                                  - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_cd
-                                  - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_nm
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/prod_type_uuid
-                                  - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_cd
-                                  - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_nm
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/model_uuid
-                                  - $ref: ../../schemas/std/model.schema.yaml#/model_cd
-                                  - $ref: ../../schemas/std/model.schema.yaml#/model_nm
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/rev
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/prod_std
-                                  - $ref: ../../schemas/std/prod.schema.yaml#/unit_uuid
-                                  - $ref: ../../schemas/std/unit.schema.yaml#/unit_cd
-                                  - $ref: ../../schemas/std/unit.schema.yaml#/unit_nm
-                                  - $ref: ../../schemas/prd/work.schema.yaml#/lot_no
-                                  - $ref: ../../schemas/prd/work.schema.yaml#/total_qty
-                                  - $ref: ../../schemas/prd/work.schema.yaml#/qty
-                                  - $ref: ../../schemas/prd/work.schema.yaml#/reject_qty
-                                  - $ref: ../../schemas/prd/work-downtime.schema.yaml#/work_start_date
-                                  - $ref: ../../schemas/prd/work-downtime.schema.yaml#/work_end_date
-                                  - $ref: ../../schemas/std/downtime.schema.yaml#/downtime_type_uuid
-                                  - $ref: ../../schemas/std/downtime-type.schema.yaml#/downtime_type_cd
-                                  - $ref: ../../schemas/std/downtime-type.schema.yaml#/downtime_type_nm
-                                  - $ref: ../../schemas/prd/work-downtime.schema.yaml#/downtime_uuid
-                                  - $ref: ../../schemas/std/downtime.schema.yaml#/downtime_cd
-                                  - $ref: ../../schemas/std/downtime.schema.yaml#/downtime_nm
-                                  - $ref: ../../schemas/prd/work-downtime.schema.yaml#/downtime_start_date
-                                  - $ref: ../../schemas/prd/work-downtime.schema.yaml#/downtime_end_date
-                                  - $ref: ../../schemas/prd/work-downtime.schema.yaml#/downtime
-                                  - $ref: ../../schemas/prd/work-downtime.schema.yaml#/remark
-                                  - $ref: ../../schemas/common/timestamp.schema.yaml
-
-                            total:
-                              description: Report Total Data
-                              type: object
-                              allOf:
-                                - $ref: ../../schemas/prd/work-downtime.schema.yaml#/row_type
-                                - $ref: ../../schemas/prd/work-downtime.schema.yaml#/work_downtime_uuid
-                                - $ref: ../../schemas/prd/work-downtime.schema.yaml#/work_uuid
-                                - $ref: ../../schemas/prd/work-downtime.schema.yaml#/factory_uuid
-                                - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
-                                - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
-                                - $ref: ../../schemas/prd/work.schema.yaml#/reg_date
-                                - $ref: ../../schemas/prd/work-downtime.schema.yaml#/proc_uuid
-                                - $ref: ../../schemas/std/proc.schema.yaml#/proc_cd
-                                - $ref: ../../schemas/std/proc.schema.yaml#/proc_nm
-                                - $ref: ../../schemas/prd/work.schema.yaml#/workings_uuid
-                                - $ref: ../../schemas/std/workings.schema.yaml#/workings_cd
-                                - $ref: ../../schemas/std/workings.schema.yaml#/workings_nm
-                                - $ref: ../../schemas/prd/work.schema.yaml#/equip_uuid
-                                - $ref: ../../schemas/std/equip.schema.yaml#/equip_cd
-                                - $ref: ../../schemas/std/equip.schema.yaml#/equip_nm
-                                - $ref: ../../schemas/prd/work.schema.yaml#/prod_uuid
-                                - $ref: ../../schemas/std/prod.schema.yaml#/prod_no
-                                - $ref: ../../schemas/std/prod.schema.yaml#/prod_nm
-                                - $ref: ../../schemas/std/prod.schema.yaml#/item_type_uuid
-                                - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_cd
-                                - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_nm
-                                - $ref: ../../schemas/std/prod.schema.yaml#/prod_type_uuid
-                                - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_cd
-                                - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_nm
-                                - $ref: ../../schemas/std/prod.schema.yaml#/model_uuid
-                                - $ref: ../../schemas/std/model.schema.yaml#/model_cd
-                                - $ref: ../../schemas/std/model.schema.yaml#/model_nm
-                                - $ref: ../../schemas/std/prod.schema.yaml#/rev
-                                - $ref: ../../schemas/std/prod.schema.yaml#/prod_std
-                                - $ref: ../../schemas/std/prod.schema.yaml#/unit_uuid
-                                - $ref: ../../schemas/std/unit.schema.yaml#/unit_cd
-                                - $ref: ../../schemas/std/unit.schema.yaml#/unit_nm
-                                - $ref: ../../schemas/prd/work.schema.yaml#/lot_no
-                                - $ref: ../../schemas/prd/work.schema.yaml#/total_qty
-                                - $ref: ../../schemas/prd/work.schema.yaml#/qty
-                                - $ref: ../../schemas/prd/work.schema.yaml#/reject_qty
-                                - $ref: ../../schemas/prd/work-downtime.schema.yaml#/work_start_date
-                                - $ref: ../../schemas/prd/work-downtime.schema.yaml#/work_end_date
-                                - $ref: ../../schemas/std/downtime.schema.yaml#/downtime_type_uuid
-                                - $ref: ../../schemas/std/downtime-type.schema.yaml#/downtime_type_cd
-                                - $ref: ../../schemas/std/downtime-type.schema.yaml#/downtime_type_nm
-                                - $ref: ../../schemas/prd/work-downtime.schema.yaml#/downtime_uuid
-                                - $ref: ../../schemas/std/downtime.schema.yaml#/downtime_cd
-                                - $ref: ../../schemas/std/downtime.schema.yaml#/downtime_nm
-                                - $ref: ../../schemas/prd/work-downtime.schema.yaml#/downtime_start_date
-                                - $ref: ../../schemas/prd/work-downtime.schema.yaml#/downtime_end_date
-                                - $ref: ../../schemas/prd/work-downtime.schema.yaml#/downtime
-                                - $ref: ../../schemas/prd/work-downtime.schema.yaml#/remark
-                                - $ref: ../../schemas/common/timestamp.schema.yaml
+                          allOf:
+                            - $ref: ../../schemas/prd/work-downtime.schema.yaml#/work_downtime_uuid
+                            - $ref: ../../schemas/prd/work-downtime.schema.yaml#/work_uuid
+                            - $ref: ../../schemas/prd/work-downtime.schema.yaml#/factory_uuid
+                            - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
+                            - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
+                            - $ref: ../../schemas/prd/work.schema.yaml#/reg_date
+                            - $ref: ../../schemas/prd/work-downtime.schema.yaml#/proc_uuid
+                            - $ref: ../../schemas/std/proc.schema.yaml#/proc_cd
+                            - $ref: ../../schemas/std/proc.schema.yaml#/proc_nm
+                            - $ref: ../../schemas/prd/work.schema.yaml#/workings_uuid
+                            - $ref: ../../schemas/std/workings.schema.yaml#/workings_cd
+                            - $ref: ../../schemas/std/workings.schema.yaml#/workings_nm
+                            - $ref: ../../schemas/prd/work.schema.yaml#/equip_uuid
+                            - $ref: ../../schemas/std/equip.schema.yaml#/equip_cd
+                            - $ref: ../../schemas/std/equip.schema.yaml#/equip_nm
+                            - $ref: ../../schemas/prd/work.schema.yaml#/prod_uuid
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_no
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/item_type_uuid
+                            - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_cd
+                            - $ref: ../../schemas/std/item-type.schema.yaml#/item_type_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_type_uuid
+                            - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_cd
+                            - $ref: ../../schemas/std/prod-type.schema.yaml#/prod_type_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/model_uuid
+                            - $ref: ../../schemas/std/model.schema.yaml#/model_cd
+                            - $ref: ../../schemas/std/model.schema.yaml#/model_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/rev
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prod_std
+                            - $ref: ../../schemas/std/prod.schema.yaml#/unit_uuid
+                            - $ref: ../../schemas/std/unit.schema.yaml#/unit_cd
+                            - $ref: ../../schemas/std/unit.schema.yaml#/unit_nm
+                            - $ref: ../../schemas/prd/work.schema.yaml#/lot_no
+                            - $ref: ../../schemas/prd/work.schema.yaml#/total_qty
+                            - $ref: ../../schemas/prd/work.schema.yaml#/qty
+                            - $ref: ../../schemas/prd/work.schema.yaml#/reject_qty
+                            - $ref: ../../schemas/prd/work-downtime.schema.yaml#/work_start_date
+                            - $ref: ../../schemas/prd/work-downtime.schema.yaml#/work_end_date
+                            - $ref: ../../schemas/std/downtime.schema.yaml#/downtime_type_uuid
+                            - $ref: ../../schemas/std/downtime-type.schema.yaml#/downtime_type_cd
+                            - $ref: ../../schemas/std/downtime-type.schema.yaml#/downtime_type_nm
+                            - $ref: ../../schemas/prd/work-downtime.schema.yaml#/downtime_uuid
+                            - $ref: ../../schemas/std/downtime.schema.yaml#/downtime_cd
+                            - $ref: ../../schemas/std/downtime.schema.yaml#/downtime_nm
+                            - $ref: ../../schemas/prd/work-downtime.schema.yaml#/downtime_start_date
+                            - $ref: ../../schemas/prd/work-downtime.schema.yaml#/downtime_end_date
+                            - $ref: ../../schemas/prd/work-downtime.schema.yaml#/downtime
+                            - $ref: ../../schemas/prd/work-downtime.schema.yaml#/remark
+                            - $ref: ../../schemas/common/timestamp.schema.yaml
   500:
-      $ref: ../../responses/common/general-error.response.yaml
+    $ref: ../../responses/common/general-error.response.yaml

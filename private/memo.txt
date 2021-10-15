@@ -1,0 +1,13 @@
+Interlock 걸어야 할 것
+
+적용일자 구간이 하나만 있을 것
+after 가 before 보다 항상 클 것
+** 적용해야 할 테이블
+  - vendor-price
+  - customer-price
+  - emp
+  - shift
+
+단가 등록하면 start_date 만 받고 알아서 end_date 바뀌도록 해야 함
+
+BOM Read 아직 안만들었음
