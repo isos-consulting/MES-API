@@ -437,10 +437,10 @@ class QmsInspCtl extends BaseCtl {
   // 📒 Fn[updateApply]: 품목별 기준서 적용여부 수정 / 폼목별로 1개의 기준서만 적용되어야 함
   public updateApply = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      req.body = { uuid: '80e88e3b-0c3c-4ad1-ae44-38de907013e0' }
       req.body = checkArray(req.body);
       this.result = { raws: [], count: 0 };
-      const updateInspBody: any[] = [];
+      let wholeInspBody: any[] = [];
+      let applyInspBody: any[] = [];
 
       // 📌 품목, 기준서 유형별 전체 기준서 조회 및 적용해야 할 기준서의 uuid를 가지고 있는 Body 생성
       for await (const data of req.body) {
@@ -460,7 +460,7 @@ class QmsInspCtl extends BaseCtl {
         });
 
         // 📌 해당 품목의 모든 기준서를 비 활성화 상태로 만들기 위한 Body 생성
-        const wholeInspBody = read.raws.map((raw: any) => {
+        wholeInspBody = read.raws.map((raw: any) => {
           return {
             uuid: raw.insp_uuid,
             apply_fg: false,
@@ -468,30 +468,26 @@ class QmsInspCtl extends BaseCtl {
           };
         });
 
-        const applyInspBody = [{
+        applyInspBody = [{
           uuid: data.uuid,
           apply_fg: true,
           apply_date: data.apply_date ? data.apply_date : moment(moment.now()).toString()
         }];
-
-        updateInspBody.push({ wholeInspBody, applyInspBody });
       }
 
       await sequelize.transaction(async(tran) => { 
-        for await (const data of updateInspBody) {
-          // 📌 수정할 품목의 모든 기준서를 미적용 상태로 수정
-          const wholeInspResult = await this.repo.updateApply(data.wholeInspBody, req.user?.uid as number, tran);
+        // 📌 수정할 품목의 모든 기준서를 미적용 상태로 수정
+        const wholeInspResult = await this.repo.updateApply(wholeInspBody, req.user?.uid as number, tran);
 
-          // 📌 선택된 기준서만 적용 상태로 변경
-          const ApplyInspResult = await this.repo.updateApply(data.applyInspBody, req.user?.uid as number, tran);
+        // 📌 선택된 기준서만 적용 상태로 변경
+        const ApplyInspResult = await this.repo.updateApply(applyInspBody, req.user?.uid as number, tran);
 
-          this.result.raws.push({
-            wholeInsp: wholeInspResult.raws,
-            applyInsp: ApplyInspResult.raws
-          });
+        this.result.raws.push({
+          wholeInsp: wholeInspResult.raws,
+          applyInsp: ApplyInspResult.raws
+        });
 
-          this.result.count += wholeInspResult.count + ApplyInspResult.count;
-        }
+        this.result.count += wholeInspResult.count + ApplyInspResult.count;
       });
       
       return response(res, this.result.raws, { count: this.result.count }, '', 201);
