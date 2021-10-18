@@ -91,8 +91,8 @@ paths:
     $ref: ../end-points/mat/order-details.yaml
 
   # ✅ Receive (자재입하)
-  /mat/receive/lot-tracking:
-    $ref: ../end-points/mat/receive.lot.tracking.yaml
+  /mat/receives/lot-tracking:
+    $ref: ../end-points/mat/receives.lot-tracking.yaml
   /mat/receives/report:
     $ref: ../end-points/mat/receives.report.yaml
   /mat/receive/{uuid}:

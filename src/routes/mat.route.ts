@@ -62,7 +62,7 @@ router.route('/order-details').get(orderDetail.read);
 
 //#region ✅ Receive (자재입하)
 const receive = new MatReceiveCtl();
-router.route('/receive/lot-tracking').get(receive.readLotTracking);
+router.route('/receives/lot-tracking').get(receive.readLotTracking);
 router.route('/receives/report').get(receive.readReport);
 router.route('/receive/:uuid').get(receive.read);
 router.route('/receive/:uuid/include-details').get(receive.readIncludeDetails);

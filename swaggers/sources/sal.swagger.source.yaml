@@ -117,8 +117,8 @@ paths:
     $ref: ../end-points/sal/outgo-order-details.yaml
 
   # ✅ Outgo (제품출하)
-  /sal/outgo/report:
-    $ref: ../end-points/sal/outgo.lot.tracking.yaml
+  /sal/outgos/lot-tracking:
+    $ref: ../end-points/sal/outgos.lot-tracking.yaml
   /sal/outgos/report:
     $ref: ../end-points/sal/outgos.report.yaml
   /sal/outgo/{uuid}:

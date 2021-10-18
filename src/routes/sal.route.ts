@@ -95,7 +95,7 @@ router.route('/outgo-order-details').get(outgoOrderDetail.read);
 
 //#region ✅ Outgo (제품출하)
 const outgo = new SalOutgoCtl();
-router.route('/outgo/lot-tracking').get(outgo.readLotTracking);
+router.route('/outgos/lot-tracking').get(outgo.readLotTracking);
 router.route('/outgos/report').get(outgo.readReport);
 router.route('/outgo/:uuid').get(outgo.read);
 router.route('/outgo/:uuid/include-details').get(outgo.readIncludeDetails);
