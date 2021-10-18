@@ -78,7 +78,7 @@ const readLotReverseReport = (
 			s_equip.equip_cd,
 			s_equip.equip_nm,
 			s_p.prod_no as input_prod_no,
-			s_p.prod_nm as input_pord_nm,
+			s_p.prod_nm as input_prod_nm,
 			s_it.item_type_cd as input_item_type_cd,
 			s_it.item_type_nm as input_item_type_nm,
 			t_l.lot_no as input_lot_no,

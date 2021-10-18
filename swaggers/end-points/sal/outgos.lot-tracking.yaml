@@ -77,6 +77,6 @@ get:
                             - $ref: ../../schemas/mat/receive.schema.yaml#/receive_date
                             - $ref: ../../schemas/mat/receive.schema.yaml#/receive_qty
                             - $ref: ../../schemas/mat/receive.schema.yaml#/sortby
-                            - $ref: ../../schemas/mat/receive.schema.yaml#/level
+                            - $ref: ../../schemas/mat/receive.schema.yaml#/lv
     500:
       $ref: ../../responses/common/general-error.response.yaml

@@ -77,7 +77,7 @@ get:
                             - $ref: ../../schemas/sal/outgo.schema.yaml#/outgo_date
                             - $ref: ../../schemas/sal/outgo.schema.yaml#/outgo_qty
                             - $ref: ../../schemas/mat/receive.schema.yaml#/sortby
-                            - $ref: ../../schemas/mat/receive.schema.yaml#/level
+                            - $ref: ../../schemas/mat/receive.schema.yaml#/lv
 
     500:
       $ref: ../../responses/common/general-error.response.yaml

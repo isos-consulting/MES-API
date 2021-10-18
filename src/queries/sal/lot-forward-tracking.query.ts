@@ -77,7 +77,7 @@ const readLotForwardReport = (
 			s_equip.equip_cd,
 			s_equip.equip_nm,
 			s_p.prod_no as work_prod_no,
-			s_p.prod_nm as work_prod_no,
+			s_p.prod_nm as work_prod_nm,
 			s_it.item_type_cd as work_item_type_cd ,
 			s_it.item_type_nm as work_item_type_nm ,
 			t_l.lot_no as work_lot_no,

@@ -247,14 +247,14 @@ sortby:
   type: object
   properties:
     sortby:
-      description: sortby
+      description: 정렬
       type: string
       format: varchar
 
-level:
+lv:
   type: object
   properties:
-    level:
-      description: level
+    lv:
+      description: 레벨
       type: string
       format: varchar
