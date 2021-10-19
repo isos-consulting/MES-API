@@ -74,8 +74,8 @@ class StdPartnerRepo {
       if (params.partner_fg != null) {
         whereOptions = {
           [Op.and] : [
-            { vendor_fg: params.partner_fg == 1 ? true : false },
-            { customer_fg: params.partner_fg == 2 ? true : false }
+            { vendor_fg: params.partner_fg == 1 ? true : {[Op.ne]: null}},
+            { customer_fg: params.partner_fg == 2 ? true : {[Op.ne]: null}}
           ]
         }
       }
