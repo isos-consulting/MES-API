@@ -174,9 +174,9 @@ class BaseCtl {
     * @param body Request Body
     */
   getFkId = async(body: any, info?: getFkIdInfo[]) => {
-    if (!info) { return body; }
-
     body = checkArray(body);
+    if (!info) { return body; }
+    
     const helpers: Map<string, getFkIdHelper> = new Map<string, getFkIdHelper>();
 
     // 📌 fk uuid => id 로 변환하기 위한 정보 초기값 Setting

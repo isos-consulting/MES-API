@@ -12,6 +12,7 @@ const readWorkRejectReport = (
       factory_id int,
       work_id int,
       reg_date timestamptz,
+      work_routing_id int,
       proc_id int,
       workings_id int,
       equip_id int,
@@ -38,9 +39,10 @@ const readWorkRejectReport = (
       p_wr.factory_id,
       p_w.work_id,
       p_w.reg_date,
-      p_w.proc_id,
-      p_w.workings_id,
-      p_w.equip_id,
+      p_wr.work_routing_id,
+      p_wrt.proc_id,
+      p_wrt.workings_id,
+      p_wrt.equip_id,
       p_w.prod_id,
       p_w.lot_no,
       COALESCE(p_w.qty, 0)+ COALESCE(p_w.reject_qty, 0),
@@ -57,6 +59,7 @@ const readWorkRejectReport = (
     FROM prd_work_reject_tb p_wr
     JOIN std_factory_tb s_f ON s_f.factory_id = p_wr.factory_id
     JOIN prd_work_tb p_w ON p_w.work_id = p_wr.work_id
+    JOIN prd_work_routing_tb p_wrt ON p_wrt.work_routing_id = p_wr.work_routing_id
     LEFT JOIN aut_user_tb a_uc ON a_uc.uid = p_wr.created_uid
     LEFT JOIN aut_user_tb a_uu ON a_uu.uid = p_wr.updated_uid
     WHERE p_w.complete_fg = TRUE

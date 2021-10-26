@@ -2,7 +2,7 @@ export default interface IPrdWorkReject {
   work_reject_id?: number,
   factory_id?: number,
   work_id?: number,
-  proc_id?: number | null,
+  work_routing_id?: number | null,
   reject_id?: number,
   qty?: number,
   to_store_id?: number,

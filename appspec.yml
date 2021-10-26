@@ -5,18 +5,18 @@ files:
     destination: /var/iso-server
 hooks:
   ApplicationStop: 
-    - location: application-stop.sh
+    - location: ./shells/application-stop.sh
       timeout: 300
       runas: root
   BeforeInstall:
-    - location: before-install.sh
+    - location: ./shells/before-install.sh
       timeout: 300
       runas: root    
   AfterInstall:
-    - location: after-install.sh
+    - location: ./shells/after-install.sh
       timeout: 300
       runas: root
   ApplicationStart:
-    - location: application-start.sh
+    - location: ./shells/application-start.sh
       timeout: 300
       runas: root

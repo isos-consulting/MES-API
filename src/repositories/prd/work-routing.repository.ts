@@ -197,17 +197,17 @@ class PrdWorkRoutingRepo {
 
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
-
       for await (let workRouting of body) {
+        console.log(workRouting.work_routing_id);
         const result = await this.repo.update(
           {
-            workings_id: workRouting.workings_id != null ? workRouting.workings_id : null,
-            equip_id: workRouting.equip_id != null ? workRouting.equip_id : null,
-            qty: workRouting.qty != null ? workRouting.qty : null,
-            start_date: workRouting.start_date != null ? workRouting.start_date : null,
-            end_date: workRouting.end_date != null ? workRouting.end_date : null,
-            work_time: workRouting.work_time != null ? workRouting.work_time : null,
-            remark: workRouting.remark != null ? workRouting.remark : null,
+            workings_id: workRouting.workings_id ?? workRouting.workings_id,
+            equip_id: workRouting.equip_id ?? workRouting.equip_id,
+            qty: workRouting.qty ?? workRouting.qty,
+            start_date: workRouting.start_date ?? workRouting.start_date,
+            end_date: workRouting.end_date ?? workRouting.end_date,
+            work_time: workRouting.work_time ?? workRouting.work_time,
+            remark: workRouting.remark ?? workRouting.remark,
             updated_uid: uid,
           } as any,
           { 

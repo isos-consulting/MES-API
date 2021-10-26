@@ -1,4 +1,6 @@
 import express = require('express');
+import IPrdWork from '../../interfaces/prd/work.interface';
+import sequelize from '../../models';
 import PrdWorkRoutingRepo from '../../repositories/prd/work-routing.repository';
 import PrdWorkRepo from '../../repositories/prd/work.repository';
 import StdEquipRepo from '../../repositories/std/equip.repository';
@@ -6,6 +8,8 @@ import StdFactoryRepo from '../../repositories/std/factory.repository';
 import StdProcRepo from '../../repositories/std/proc.repository';
 import StdWorkingsRepo from '../../repositories/std/workings.repository';
 import getSubtractTwoDates from '../../utils/getSubtractTwoDates';
+import response from '../../utils/response';
+import testErrorHandlingHelper from '../../utils/testErrorHandlingHelper';
 import BaseCtl from '../base.controller';
 
 class PrdWorkRoutingCtl extends BaseCtl {
@@ -78,8 +82,38 @@ class PrdWorkRoutingCtl extends BaseCtl {
   //#region 🟡 Update Functions
 
   // 📒 Fn[update] (✅ Inheritance): Default Update Function
-  // public update = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-  // }
+  public update = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      req.body = await this.getFkId(req.body, this.fkIdInfos);
+      await this.beforeUpdate(req);
+      
+      this.result = { raws: [], count: 0 };
+      await sequelize.transaction(async(tran) => { 
+        for await (const data of req.body) {
+          const workRoutingResult = await this.repo.update([data], req.user?.uid as number, tran); 
+
+          //📌 work_uuid 기준으로 prd_work update params 셋팅
+          const workParams: IPrdWork = {
+            uuid: data.work_uuid,
+            qty: data.qty,
+            start_date: data.start_date,
+            end_date: data.end_date
+          };
+
+          //📌 prd_work 업데이트
+          const workResult = await this.workRepo.update([workParams], req.user?.uid as number, tran); 
+          this.result.raws.push({
+            work_routing: workRoutingResult.raws,
+            work: workResult.raws,
+          });
+        }
+      });
+
+      return response(res, this.result.raws, { count: this.result.count }, '', 201);
+    } catch (e) {
+      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+    }
+  }
 
   //#endregion
 

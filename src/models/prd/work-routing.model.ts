@@ -164,7 +164,7 @@ export default class PrdWorkRouting extends Model<IPrdWorkRouting> {
   stdWorkings: StdWorkings;
 
   @BelongsTo(() => StdEquip, { foreignKey: 'equip_id', targetKey: 'equip_id', onDelete: 'restrict', onUpdate: 'cascade' })
-  stdEquip: StdProc;
+  stdEquip: StdEquip;
 
   // HasMany
   //#endregion
