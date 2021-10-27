@@ -71,7 +71,7 @@ export default class StdSupplier extends Model<IStdSupplier> {
 
   @Column({
     comment: '우편번호',
-    type: DataType.STRING(6),
+    type: DataType.STRING(7),
   })
   post: string;
 
