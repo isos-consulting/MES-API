@@ -25,11 +25,11 @@ work_id:
       type: number
       format: int4
 
-proc_id: 
+work_routing_id: 
   type: object
   properties: 
-    proc_id:
-      description: 공정ID
+    work_routing_id:
+      description: 공정순서ID
       type: number
       format: int4
 
@@ -106,11 +106,11 @@ work_uuid:
       type: string
       format: uuid
 
-proc_uuid:
+work_routing_uuid:
   type: object
   properties: 
-    proc_uuid:
-      description: 공정UUID
+    work_routing_uuid:
+      description: 공정순서UUID
       type: string
       format: uuid
 

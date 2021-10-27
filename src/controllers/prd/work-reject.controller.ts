@@ -1,10 +1,10 @@
 import express = require('express');
 import sequelize from '../../models';
 import PrdWorkRejectRepo from '../../repositories/prd/work-reject.repository';
+import PrdWorkRoutingRepo from '../../repositories/prd/work-routing.repository';
 import PrdWorkRepo from '../../repositories/prd/work.repository';
 import StdFactoryRepo from '../../repositories/std/factory.repository';
 import StdLocationRepo from '../../repositories/std/location.repository';
-import StdProcRepo from '../../repositories/std/proc.repository';
 import StdRejectRepo from '../../repositories/std/reject.repository';
 import StdStoreRepo from '../../repositories/std/store.repository';
 import response from '../../utils/response';
@@ -40,10 +40,10 @@ class PrdWorkRejectCtl extends BaseCtl {
         uuidName: 'work_uuid'
       },
       {
-        key: 'proc',
-        repo: new StdProcRepo(),
-        idName: 'proc_id',
-        uuidName: 'proc_uuid'
+        key: 'workRouting',
+        repo: new PrdWorkRoutingRepo(),
+        idName: 'work_routing_id',
+        uuidName: 'work_routing_uuid'
       },
       {
         key: 'reject',

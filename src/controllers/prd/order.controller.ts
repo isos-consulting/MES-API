@@ -183,7 +183,8 @@ class PrdOrderCtl extends BaseCtl {
           // 📌 지시별 하위 공정순서 정보 초기 데이터 생성
           const routingParams = {
             factory_id : order.factory_id,
-            prod_id: order.prod_id
+            prod_id: order.prod_id,
+            equip_id: order.equip_id
           }
           const routingRead = await this.stdRoutingRepo.readOptionallyMove(routingParams);
           const routingBody = routingRead.raws.map((raw: any) => {
@@ -192,7 +193,8 @@ class PrdOrderCtl extends BaseCtl {
               order_id: order.order_id,
               proc_id: raw.proc_id,
               proc_no: raw.proc_no,
-              workings_id: order.workings_id
+              workings_id: order.workings_id,
+              equip_id: raw.equip_id
             }
           });
           const routingResult = await this.routingRepo.create(routingBody, req.user?.uid as number, tran);

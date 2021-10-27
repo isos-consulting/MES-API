@@ -1,6 +1,7 @@
 import express = require('express');
 import ApiResult from '../../interfaces/common/api-result.interface';
 import IInvStore from '../../interfaces/inv/store.interface';
+import IPrdWorkRouting from '../../interfaces/prd/work-routing.interface';
 import sequelize from '../../models';
 import InvStoreRepo from '../../repositories/inv/store.repository';
 import PrdOrderInputRepo from '../../repositories/prd/order-input.repository';
@@ -241,8 +242,54 @@ class PrdWorkCtl extends BaseCtl {
   //#region 🟡 Update Functions
 
   // 📒 Fn[update] (✅ Inheritance): Default Update Function
-  // public update = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-  // }
+  public update = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      req.body = await this.getFkId(req.body, this.fkIdInfos);
+      await this.beforeUpdate(req);
+
+      this.result = { raws: [], count: 0 };
+      await sequelize.transaction(async(tran) => { 
+        for await (const data of req.body) {
+          const workResult = await this.repo.update([data], req.user?.uid as number, tran); 
+
+          //📌 해당 작업의 라우팅 정보 가져오기
+          const routingParams = { factory_uuid : data.factory_uuid, work_uuid : data.uuid }
+          const workRouting = await this.routingRepo.read(routingParams);
+          
+          //📌 라우팅 정보 중 마지막 공정의 uuid 가져오기
+          let maxProcNo = 0;
+          let workRoutingUuid;
+          workRouting.raws.forEach(routing => {
+            if (maxProcNo < routing.proc_no) {
+              maxProcNo = routing.proc_no;
+              workRoutingUuid = routing.work_routing_uuid;
+            } 
+          });
+
+          //📌 가져온 routing_uuid 기준으로 prd_work_routing update params 셋팅
+          const workRoutingBody: IPrdWorkRouting = {
+            uuid : workRoutingUuid,
+            qty :  data.qty,
+            start_date : data.start_date,
+            end_date : data.end_date
+          };
+
+          //📌 prd_work_routing 업데이트
+          const workRoutingResult = await this.routingRepo.update([workRoutingBody], req.user?.uid as number, tran);
+          
+          this.result.raws.push({
+            work: workResult.raws,
+            work_routing: workRoutingResult.raws,
+          });
+        }
+        
+      });
+
+      return response(res, this.result.raws, { count: this.result.count }, '', 201);
+    } catch (e) {
+      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+    }
+  }
 
   // 📒 Fn[updateComplete]: 생산실적 완료처리
   public updateComplete = async (req: express.Request, res: express.Response, next: express.NextFunction) => {

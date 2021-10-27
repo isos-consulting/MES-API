@@ -3,7 +3,7 @@ import IPrdWorkReject from '../../interfaces/prd/work-reject.interface';
 import AutUser from '../aut/user.model';
 import StdFactory from '../std/factory.model';
 import StdLocation from '../std/location.model';
-import StdProc from '../std/proc.model';
+import PrdWorkRouting from '../prd/work-routing.model'
 import StdReject from '../std/reject.model';
 import StdStore from '../std/store.model';
 import PrdWork from './work.model';
@@ -43,12 +43,12 @@ export default class PrdWorkReject extends Model<IPrdWorkReject> {
   })
   work_id: number;
 
-  @ForeignKey(() => StdProc)
+  @ForeignKey(() => PrdWorkRouting)
   @Column({
-    comment: '공정ID',
+    comment: '공정순서ID',
     type: DataType.INTEGER,
   })
-  proc_id: number;
+  work_routing_id: number;
 
   @Unique('prd_work_reject_tb_work_id_reject_id_un')
   @ForeignKey(() => StdReject)
@@ -141,8 +141,8 @@ export default class PrdWorkReject extends Model<IPrdWorkReject> {
   @BelongsTo(() => PrdWork, { foreignKey: 'work_id', targetKey: 'work_id', onDelete: 'restrict', onUpdate: 'cascade' })
   prdWork: PrdWork;
   
-  @BelongsTo(() => StdProc, { foreignKey: 'proc_id', targetKey: 'proc_id', onDelete: 'restrict', onUpdate: 'cascade' })
-  stdProc: StdProc;
+  @BelongsTo(() => PrdWorkRouting, { foreignKey: 'work_routing_id', targetKey: 'work_routing_id', onDelete: 'restrict', onUpdate: 'cascade' })
+  prdWorkRouting: PrdWorkRouting;
 
   @BelongsTo(() => StdReject, { foreignKey: 'reject_id', targetKey: 'reject_id', onDelete: 'restrict', onUpdate: 'cascade' })
   stdReject: StdReject;
