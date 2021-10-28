@@ -31,6 +31,13 @@ export default class QmsInspResultDetailValue extends Model<IQmsInspResultDetail
   })
   factory_id: number;
 
+  @ForeignKey(() => QmsInspResult)
+  @Column({
+    comment: '검사 성적서ID',
+    type: DataType.INTEGER
+  })
+  insp_result_id: number;
+
   @ForeignKey(() => QmsInspResultDetailInfo)
   @Column({
     comment: '검사 성적서 상세ID',

@@ -25,6 +25,14 @@ work_id:
       type: number
       format: int4
 
+work_routing_id: 
+  type: object
+  properties: 
+    work_routing_id:
+      description: 공정순서ID
+      type: number
+      format: int4
+
 proc_id: 
   type: object
   properties: 
@@ -111,6 +119,14 @@ work_uuid:
   properties: 
     work_uuid:
       description: 생산실적UUID
+      type: string
+      format: uuid
+
+work_routing_uuid:
+  type: object
+  properties: 
+    work_routing_uuid:
+      description: 공정순서UUID
       type: string
       format: uuid
 

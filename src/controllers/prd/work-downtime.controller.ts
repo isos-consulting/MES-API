@@ -1,6 +1,7 @@
 import express = require('express');
 import sequelize from '../../models';
 import PrdWorkDowntimeRepo from '../../repositories/prd/work-downtime.repository';
+import PrdWorkRoutingRepo from '../../repositories/prd/work-routing.repository';
 import PrdWorkRepo from '../../repositories/prd/work.repository';
 import StdDowntimeRepo from '../../repositories/std/downtime.repository';
 import StdEquipRepo from '../../repositories/std/equip.repository';
@@ -39,6 +40,12 @@ class PrdWorkDowntimeCtl extends BaseCtl {
         repo: new PrdWorkRepo(),
         idName: 'work_id',
         uuidName: 'work_uuid'
+      },
+      {
+        key: 'workRouting',
+        repo: new PrdWorkRoutingRepo(),
+        idName: 'work_routing_id',
+        uuidName: 'work_routing_uuid'
       },
       {
         key: 'proc',

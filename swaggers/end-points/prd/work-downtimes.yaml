@@ -111,6 +111,7 @@ post:
           allOf:
             - $ref: ../../schemas/prd/work-downtime.schema.yaml#/factory_uuid
             - $ref: ../../schemas/prd/work-downtime.schema.yaml#/work_uuid
+            - $ref: ../../schemas/prd/work-downtime.schema.yaml#/work_downtime_uuid
             - $ref: ../../schemas/prd/work-downtime.schema.yaml#/proc_uuid
             - $ref: ../../schemas/prd/work-downtime.schema.yaml#/equip_uuid
             - $ref: ../../schemas/prd/work-downtime.schema.yaml#/downtime_uuid

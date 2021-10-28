@@ -5,7 +5,7 @@ import BaseMigration from '../base-migration';
 const seedDatas: IPrdWorkReject[] = [
 ];
 
-const baseMigration = new BaseMigration('PrdWorkReject', 'work_reject_id', seedDatas);
+const baseMigration = new BaseMigration('PrdWorkReject', 'work_reject_id', process.env.DB_RESET_TYPE === 'test' ? seedDatas : []);
 const migration = baseMigration.migration;
 const migrationUndo = baseMigration.migrationUndo;
 

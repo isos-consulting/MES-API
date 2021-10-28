@@ -78,12 +78,26 @@ export default class StdStore extends Model<IStdStore> {
   final_insp_store_fg: boolean;
 
   @Column({
+    comment: '외주 창고 여부',
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  outsourcing_store_fg: boolean;
+
+  @Column({
     comment: '가용재고 창고 여부',
     type: DataType.BOOLEAN,
     allowNull: false,
     defaultValue: false,
   })
   available_store_fg: boolean;
+
+  @Column({
+    comment: '창고 위치 유형(사내/사외)',
+    type: DataType.STRING(10),
+  })
+  position_type: string;
 
   @CreatedAt
   @Column({

@@ -35,7 +35,9 @@ class StdStoreRepo {
           return_store_fg: store.return_store_fg,
           outgo_store_fg: store.outgo_store_fg,
           final_insp_store_fg: store.final_insp_store_fg,
+          outsourcing_store_fg: store.outsourcing_store_fg,
           available_store_fg: store.available_store_fg,
+          position_type: store.position_type,
           created_uid: uid,
           updated_uid: uid,
         }
@@ -79,7 +81,9 @@ class StdStoreRepo {
           'return_store_fg',
           'outgo_store_fg',
           'final_insp_store_fg',
+          'outsourcing_store_fg',
           'available_store_fg',
+          'position_type',
           'created_at',
           [ Sequelize.col('createUser.user_nm'), 'created_nm' ],
           'updated_at',
@@ -115,7 +119,9 @@ class StdStoreRepo {
           'return_store_fg',
           'outgo_store_fg',
           'final_insp_store_fg',
+          'outsourcing_store_fg',
           'available_store_fg',
+          'position_type',
           'created_at',
           [ Sequelize.col('createUser.user_nm'), 'created_nm' ],
           'updated_at',
@@ -177,7 +183,9 @@ class StdStoreRepo {
             return_store_fg: store.return_store_fg != null ? store.return_store_fg : null,
             outgo_store_fg: store.outgo_store_fg != null ? store.outgo_store_fg : null,
             final_insp_store_fg: store.final_insp_store_fg != null ? store.final_insp_store_fg : null,
+            outsourcing_store_fg: store.outsourcing_store_fg != null ? store.outsourcing_store_fg : null,
             available_store_fg: store.available_store_fg != null ? store.available_store_fg : null,
+            position_type: store.position_type != null ? store.position_type : null,
             updated_uid: uid,
           } as any,
           { 
@@ -219,7 +227,9 @@ class StdStoreRepo {
             return_store_fg: store.return_store_fg,
             outgo_store_fg: store.outgo_store_fg,
             final_insp_store_fg: store.final_insp_store_fg,
+            outsourcing_store_fg: store.outsourcing_store_fg,
             available_store_fg: store.available_store_fg,
+            position_type: store.position_type,
             updated_uid: uid,
           },
           { 
@@ -306,6 +316,11 @@ class StdStoreRepo {
       // 📌 최종검사 창고 조회
       case 'finalInsp':
         whereOptions = { final_insp_store_fg: true };
+        break;
+
+      // 📌 외주 창고 조회
+      case 'outsourcing':
+        whereOptions = { outsourcing_store_fg: true };
         break;
 
       default:

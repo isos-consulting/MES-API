@@ -23,56 +23,6 @@ const seedDatas: IAutMenuType[] = [
 		created_uid: 1,
 		updated_uid: 1
 	},
-	{
-		menu_type_id: 3,
-		menu_type_nm: 'CreateOnly',
-		create_fg: true,
-		read_fg: true,
-		update_fg: false,
-		delete_fg: false,
-		created_uid: 1,
-		updated_uid: 1
-	},
-	{
-		menu_type_id: 4,
-		menu_type_nm: 'UpdateOnly',
-		create_fg: false,
-		read_fg: true,
-		update_fg: true,
-		delete_fg: false,
-		created_uid: 1,
-		updated_uid: 1
-	},
-	{
-		menu_type_id: 5,
-		menu_type_nm: 'DeleteOnly',
-		create_fg: false,
-		read_fg: true,
-		update_fg: false,
-		delete_fg: true,
-		created_uid: 1,
-		updated_uid: 1
-	},
-	{
-		menu_type_id: 6,
-		menu_type_nm: 'UpdateDelete',
-		create_fg: false,
-		read_fg: true,
-		update_fg: true,
-		delete_fg: true,
-		created_uid: 1,
-		updated_uid: 1
-	},
-	{
-		menu_type_id: 7,
-		menu_type_nm: 'Level',
-		create_fg: false,
-		read_fg: false,
-		update_fg: false,
-		delete_fg: false,
-		created_uid: 1,
-		updated_uid: 1
-	}
 ];
 
 const baseMigration = new BaseMigration('AutMenuType', 'menu_type_id', seedDatas);

@@ -118,6 +118,7 @@ class PrdWorkRepo {
   public readByOrderIds = async(orderIds?: number[]) => {
     try {
       const result = await this.repo.findAll({
+        include: [{ model: sequelize.models.PrdOrder, attributes: [], required: true }],
         attributes: [
           'factory_id',
           'reg_date',

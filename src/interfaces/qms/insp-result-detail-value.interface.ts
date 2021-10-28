@@ -1,6 +1,7 @@
 export default interface IQmsInspResultDetailValue {
   insp_result_detail_value_id?: number,
   factory_id?: number,
+  insp_result_id?: number | null,
   insp_result_detail_info_id?: number,
   sample_no?: number,
   insp_value?: number,
