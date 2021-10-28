@@ -3,6 +3,7 @@ import IInvStore from '../../interfaces/inv/store.interface';
 import AutUser from '../aut/user.model';
 import StdFactory from '../std/factory.model';
 import StdLocation from '../std/location.model';
+import StdPartner from '../std/partner.model';
 import StdProd from '../std/prod.model';
 import StdReject from '../std/reject.model';
 import StdStore from '../std/store.model';
@@ -84,6 +85,13 @@ export default class InvStore extends Model<IInvStore> {
   })
   reject_id: number;
 
+	@ForeignKey(() => StdPartner)
+  @Column({
+    comment: '거래처ID',
+    type: DataType.INTEGER,
+  })
+  partner_id: number;
+
   @Column({
     comment: 'LOT NO',
     type: DataType.STRING(25),
@@ -149,6 +157,7 @@ export default class InvStore extends Model<IInvStore> {
   // BelongTo
   @BelongsTo(() => AutUser, { as: 'createUser', foreignKey: 'created_uid', targetKey: 'uid', onDelete: 'restrict', onUpdate: 'cascade' })
   createUser: AutUser;
+
   @BelongsTo(() => AutUser, { as: 'updateUser', foreignKey: 'updated_uid', targetKey: 'uid', onDelete: 'restrict', onUpdate: 'cascade' })
   updateUser: AutUser;
 
@@ -166,6 +175,9 @@ export default class InvStore extends Model<IInvStore> {
 
   @BelongsTo(() => StdReject, { foreignKey: 'reject_id', targetKey: 'reject_id', onDelete: 'restrict', onUpdate: 'cascade' })
   stdReject: StdReject;
+
+	@BelongsTo(() => StdPartner, { foreignKey: 'partner_id', targetKey: 'partner_id', onDelete: 'restrict', onUpdate: 'cascade' })
+  stdPartner: StdPartner;
 
   // HasMany
   //#endregion

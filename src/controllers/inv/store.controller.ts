@@ -5,6 +5,7 @@ import StdFactoryRepo from '../../repositories/std/factory.repository';
 import StdLocationRepo from '../../repositories/std/location.repository';
 import StdProdRepo from '../../repositories/std/prod.repository';
 import StdRejectRepo from '../../repositories/std/reject.repository';
+import StdPartnerRepo from '../../repositories/std/partner.repository';
 import StdStoreRepo from '../../repositories/std/store.repository';
 import getTranTypeCd from '../../utils/getTranTypeCd';
 import getTranTypeCdByApiParams from '../../utils/getTranTypeCdByApiParams';
@@ -64,6 +65,12 @@ class InvStoreCtl extends BaseCtl {
         idName: 'reject_id',
         uuidName: 'reject_uuid'
       },
+			{
+        key: 'partner',
+        repo: new StdPartnerRepo(),
+        idName: 'partner_id',
+        uuidName: 'partner_uuid'
+      },
     ];
 
     // ✅ 조회조건 Types Setting
@@ -108,6 +115,7 @@ class InvStoreCtl extends BaseCtl {
             store_uuid: data.store_uuid,
             location_uuid: data.location_uuid,
             reject_uuid: data.reject_uuid,
+						partner_uuid: data.partner_uuid,
             reg_date: data.reg_date,
             stock_type: 'all',
             grouped_type: 'all',

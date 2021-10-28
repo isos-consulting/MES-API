@@ -131,6 +131,21 @@ export default class OutReleaseDetail extends Model<IOutReleaseDetail> {
   })
   from_location_id: number;
 
+	@ForeignKey(() => StdStore)
+  @Column({
+    comment: '입고 창고ID',
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  to_store_id: number;
+
+  @ForeignKey(() => StdLocation)
+  @Column({
+    comment: '입고 위치ID',
+    type: DataType.INTEGER,
+  })
+  to_location_id: number;
+
   @Column({
     comment: '비고',
     type: DataType.STRING(250),
@@ -206,11 +221,17 @@ export default class OutReleaseDetail extends Model<IOutReleaseDetail> {
   @BelongsTo(() => MatOrderDetail, { foreignKey: 'order_detail_id', targetKey: 'order_detail_id', onDelete: 'restrict', onUpdate: 'cascade' })
   matOrderDetail: MatOrderDetail;
   
-  @BelongsTo(() => StdStore, { foreignKey: 'from_store_id', targetKey: 'store_id', onDelete: 'restrict', onUpdate: 'cascade' })
-  stdStore: StdStore;
+  @BelongsTo(() => StdStore, { as: 'fromStore',foreignKey: 'from_store_id', targetKey: 'store_id', onDelete: 'restrict', onUpdate: 'cascade' })
+  fromstdStore: StdStore;
 
-  @BelongsTo(() => StdLocation, { foreignKey: 'from_location_id', targetKey: 'location_id', onDelete: 'restrict', onUpdate: 'cascade' })
-  stdLocation: StdLocation;
+  @BelongsTo(() => StdLocation, { as: 'fromLocation',foreignKey: 'from_location_id', targetKey: 'location_id', onDelete: 'restrict', onUpdate: 'cascade' })
+  fromstdLocation: StdLocation;
+
+	@BelongsTo(() => StdStore, { as: 'toStore',foreignKey: 'to_store_id', targetKey: 'store_id', onDelete: 'restrict', onUpdate: 'cascade' })
+  tostdStore: StdStore;
+
+  @BelongsTo(() => StdLocation, { as: 'toLocation',foreignKey: 'to_location_id', targetKey: 'location_id', onDelete: 'restrict', onUpdate: 'cascade' })
+  tostdLocation: StdLocation;
 
   // HasMany
   //#endregion

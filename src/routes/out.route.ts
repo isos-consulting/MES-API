@@ -4,6 +4,7 @@ import OutReceiveDetailCtl from '../controllers/out/receive-detail.controller';
 import OutReceiveCtl from '../controllers/out/receive.controller';
 import OutReleaseDetailCtl from '../controllers/out/release-detail.controller';
 import OutReleaseCtl from '../controllers/out/release.controller';
+import OutWorkInputCtl from '../controllers/out/work-input.controller';
 
 const router = express.Router();
 
@@ -44,5 +45,16 @@ const releaseDetail = new OutReleaseDetailCtl();
 router.route('/release-detail/:uuid').get(releaseDetail.read);
 router.route('/release-details').get(releaseDetail.read);
 //#endregion
+
+//#region ✅ WokrInput (외주투입)
+const workInput = new OutWorkInputCtl();
+router.route('/work-input/:uuid').get(workInput.read);
+router.route('/work-inputs').get(workInput.read);
+router.route('/work-inputs').post(workInput.create);
+router.route('/work-inputs').put(workInput.update);
+router.route('/work-inputs').patch(workInput.patch);
+router.route('/work-inputs').delete(workInput.delete);
+//#endregion
+
 
 export default router;

@@ -1,0 +1,308 @@
+# OUT_WORK_INPUT_TB
+
+# Columns
+work_input_id:
+  type: object
+  properties:
+    release_detail_id:
+      description: 외주투입ID
+      type: number
+      format: int4
+
+receive_detail_id:
+  type: object
+  properties:
+    receive_detail_id:
+      description: 외주입고상세ID
+      type: number
+      format: int4
+
+factory_id:
+  type: object
+  properties:
+    factory_id:
+      description: 공장ID
+      type: number
+      format: int4
+
+prod_id:
+  type: object
+  properties:
+    prod_id:
+      description: 품목ID
+      type: number
+      format: int4
+
+lot_no:
+  type: object
+  properties:
+    lot_no:
+      description: LOT NO
+      type: string
+      format: varchar(25)
+
+qty:
+  type: object
+  properties:
+    qty:
+      description: 수량
+      type: number
+      format: numeric(19, 6)
+
+c_usage:
+  type: object
+  properties:
+    c_usage:
+      description: 소요량
+      type: number
+      format: numeric(19, 6)
+
+unit_id:
+  type: object
+  properties:
+    unit_id:
+      description: 단위ID
+      type: number
+      format: int4
+
+from_store_id:
+  type: object
+  properties:
+    from_store_id:
+      description: 출고 창고ID
+      type: number
+      format: int4
+
+from_location_id:
+  type: object
+  properties:
+    from_location_id:
+      description: 출고 위치ID
+      type: number
+      format: int4
+
+# Uuids
+work_input_uuid:
+  type: object
+  properties:
+    work_input_uuid:
+      description: 외주투입UUID
+      type: string
+      format: uuid
+
+receive_detail_uuid:
+  type: object
+  properties:
+    receive_detail_uuid:
+      description: 외주입고상세UUID
+      type: string
+      format: uuid
+
+factory_uuid:
+  type: object
+  properties:
+    factory_uuid:
+      description: 공장UUID
+      type: string
+      format: uuid
+
+prod_uuid:
+  type: object
+  properties:
+    prod_uuid:
+      description: 품목UUID
+      type: string
+      format: uuid
+
+item_type_uuid:
+  type: object
+  properties:
+    item_type_uuid:
+      description: 폼목유형UUID
+      type: string
+      format: uuid
+
+prod_type_uuid:
+  type: object
+  properties:
+    prod_type_uuid:
+      description: 제품유형UUID
+      type: string
+      format: uuid
+
+model_uuid:
+  type: object
+  properties:
+    model_uuid:
+      description: 모델UUID
+      type: string
+      format: uuid
+
+unit_uuid:
+  type: object
+  properties:
+    unit_uuid:
+      description: 단위UUID
+      type: string
+      format: uuid
+
+from_store_uuid:
+  type: object
+  properties:
+    from_store_uuid:
+      description: 출고 창고UUID
+      type: string
+      format: uuid
+
+from_location_uuid:
+  type: object
+  properties:
+    from_location_uuid:
+      description: 출고 위치UUID
+      type: string
+      format: uuid
+
+# Others
+factory_cd:
+  type: object
+  properties:
+    factory_cd:
+      description: 공장코드
+      type: string
+      format: varchar(20)
+
+factory_nm:
+  type: object
+  properties:
+    factory_nm:
+      description: 공장명
+      type: string
+      format: varchar(50)
+
+prod_no:
+  type: object
+  properties:
+    prod_no:
+      description: 품번
+      type: string
+      format: varchar(50)
+
+prod_nm:
+  type: object
+  properties:
+    prod_nm:
+      description: 품명
+      type: string
+      format: varchar(50)
+
+item_type_cd:
+  type: object
+  properties:
+    item_type_cd:
+      description: 품목유형코드
+      type: string
+      format: varchar(20)
+
+item_type_nm:
+  type: object
+  properties:
+    item_type_nm:
+      description: 품목유형명
+      type: string
+      format: varchar(50)
+
+prod_type_cd:
+  type: object
+  properties:
+    prod_type_cd:
+      description: 제품유형코드
+      type: string
+      format: varchar(20)
+
+prod_type_nm:
+  type: object
+  properties:
+    prod_type_nm:
+      description: 제품유형명
+      type: string
+      format: varchar(50)
+
+model_cd:
+  type: object
+  properties:
+    model_cd:
+      description: 모델코드
+      type: string
+      format: varchar(20)
+
+model_nm:
+  type: object
+  properties:
+    model_nm:
+      description: 모델명
+      type: string
+      format: varchar(50)
+
+rev:
+  type: object
+  properties:
+    rev:
+      description: 리비전
+      type: string
+      format: varchar(10)
+
+prod_std:
+  type: object
+  properties:
+    p_prod_std:
+      description: 규격
+      type: string
+      format: varchar(250)
+
+unit_cd:
+  type: object
+  properties:
+    unit_cd:
+      description: 단위코드
+      type: string
+      format: varchar(20)
+
+unit_nm:
+  type: object
+  properties:
+    unit_nm:
+      description: 단위명
+      type: string
+      format: varchar(50)
+
+from_store_cd:
+  type: object
+  properties:
+    from_store_cd:
+      description: 출고 창고 코드
+      type: string
+      format: varchar(20)
+
+from_store_nm:
+  type: object
+  properties:
+    from_store_nm:
+      description: 출고 창고명
+      type: string
+      format: varchar(50)
+
+from_location_cd:
+  type: object
+  properties:
+    from_location_cd:
+      description: 출고 위치 코드
+      type: string
+      format: varchar(20)
+
+from_location_nm:
+  type: object
+  properties:
+    from_location_nm:
+      description: 출고 위치명
+      type: string
+      format: varchar(50)

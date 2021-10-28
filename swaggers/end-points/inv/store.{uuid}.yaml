@@ -18,7 +18,7 @@ get:
       description: Read OK
       content:
         application/json:
-          schema: 
+          schema:
             allOf:
               - $ref: ../../schemas/common/default-response.schema.yaml
               - type: object
@@ -31,7 +31,7 @@ get:
                         description: Enable
                         type: object
                         properties:
-                          count: 
+                          count:
                             description: 영향받은 데이터의 개수
                             type: number
                             format: int32
@@ -66,6 +66,9 @@ get:
                             - $ref: ../../schemas/inv/store.schema.yaml#/reject_uuid
                             - $ref: ../../schemas/std/reject.schema.yaml#/reject_cd
                             - $ref: ../../schemas/std/reject.schema.yaml#/reject_nm
+                            - $ref: ../../schemas/inv/store.schema.yaml#/partner_uuid
+                            - $ref: ../../schemas/std/partner.schema.yaml#/partner_cd
+                            - $ref: ../../schemas/std/partner.schema.yaml#/partner_nm
                             - $ref: ../../schemas/inv/store.schema.yaml#/lot_no
                             - $ref: ../../schemas/inv/store.schema.yaml#/qty
                             - $ref: ../../schemas/inv/store.schema.yaml#/inout_state

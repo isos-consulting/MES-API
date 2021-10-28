@@ -8,6 +8,7 @@ export default interface IInvStore {
   location_id?: number | null,
   prod_id?: number,
   reject_id?: number | null,
+	partner_id?: number| null,
   lot_no?: string,
   qty?: number,
   remark?: string | null,
@@ -17,4 +18,5 @@ export default interface IInvStore {
   updated_uid?: number,
   uuid?: string,
   tenant_uuid?: string
+	
 }

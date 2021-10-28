@@ -1,10 +1,10 @@
 get:
   description: |
-    외주출고 상세 목록을 조회합니다. 
+    외주출고 상세 목록을 조회합니다.
   summary: 외주출고 상세 데이터 조회
   tags:
     - 외주출고상세(ReleaseDetail)
-  parameters:    
+  parameters:
     - name: factory_uuid
       in: query
       description: |
@@ -32,7 +32,7 @@ get:
       schema:
         type: string
         format: date
-        
+
     - name: end_date
       in: query
       description: |
@@ -48,7 +48,7 @@ get:
       description: Read OK
       content:
         application/json:
-          schema: 
+          schema:
             allOf:
               - $ref: ../../schemas/common/default-response.schema.yaml
               - type: object
@@ -61,7 +61,7 @@ get:
                         description: Enable
                         type: object
                         properties:
-                          count: 
+                          count:
                             description: 영향받은 데이터의 개수
                             type: number
                             format: int32
@@ -71,7 +71,7 @@ get:
                         type: array
                         items:
                           type: object
-                          allOf:        
+                          allOf:
                             - $ref: ../../schemas/out/release-detail.schema.yaml#/release_detail_uuid
                             - $ref: ../../schemas/out/release-detail.schema.yaml#/release_uuid
                             - $ref: ../../schemas/out/release-detail.schema.yaml#/seq
@@ -109,11 +109,17 @@ get:
                             - $ref: ../../schemas/out/release-detail.schema.yaml#/total_price
                             - $ref: ../../schemas/out/release-detail.schema.yaml#/unit_qty
                             - $ref: ../../schemas/out/release-detail.schema.yaml#/from_store_uuid
-                            - $ref: ../../schemas/std/store.schema.yaml#/store_cd
-                            - $ref: ../../schemas/std/store.schema.yaml#/store_nm
+                            - $ref: ../../schemas/out/release-detail.schema.yaml#/from_store_cd
+                            - $ref: ../../schemas/out/release-detail.schema.yaml#/from_store_nm
                             - $ref: ../../schemas/out/release-detail.schema.yaml#/from_location_uuid
-                            - $ref: ../../schemas/std/location.schema.yaml#/location_cd
-                            - $ref: ../../schemas/std/location.schema.yaml#/location_nm
+                            - $ref: ../../schemas/out/release-detail.schema.yaml#/from_location_cd
+                            - $ref: ../../schemas/out/release-detail.schema.yaml#/from_location_nm
+                            - $ref: ../../schemas/out/release-detail.schema.yaml#/to_store_uuid
+                            - $ref: ../../schemas/out/release-detail.schema.yaml#/to_store_cd
+                            - $ref: ../../schemas/out/release-detail.schema.yaml#/to_store_nm
+                            - $ref: ../../schemas/out/release-detail.schema.yaml#/to_location_uuid
+                            - $ref: ../../schemas/out/release-detail.schema.yaml#/to_location_cd
+                            - $ref: ../../schemas/out/release-detail.schema.yaml#/to_location_nm
                             - $ref: ../../schemas/out/release-detail.schema.yaml#/remark
                             - $ref: ../../schemas/out/release-detail.schema.yaml#/barcode
                             - $ref: ../../schemas/common/timestamp.schema.yaml

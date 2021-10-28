@@ -14,6 +14,8 @@ export default interface IOutReleaseDetail {
   order_detail_id?: number | null,
   from_store_id?: number,
   from_location_id?: number | null,
+	to_store_id?: number | null,
+  to_location_id?: number | null,
   remark?: string | null,
   barcode?: string | null,
   created_at?: Date,

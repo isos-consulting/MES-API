@@ -13,17 +13,17 @@
 
 # 일단 비슷한 API 요청이 여러개인 경우 path parameter로 받고 API 명세에는 구분해서 넣는 방식으로 (나중에 합치고)
 
-openapi: '3.0.2'
+openapi: "3.0.2"
 info:
   title: MES API Document
-  version: '1.0.0'
+  version: "1.0.0"
   license:
-    name: 'MIT'
-    url: 'https://spdx.org/licenses/MIT.html'
+    name: "MIT"
+    url: "https://spdx.org/licenses/MIT.html"
   contact:
-    name: 'KISOS'
-    url: 'https://www.kisos.net'
-    email: 'kisos@kisos.net'
+    name: "KISOS"
+    url: "https://www.kisos.net"
+    email: "kisos@kisos.net"
 servers:
   - url: https://isos.iptime.org:13221
     description: MES TEST SERVER
@@ -36,7 +36,7 @@ components:
       in: header
     petstore_auth:
       type: oauth2
-      flows: 
+      flows:
         implicit:
           authorizationUrl: http://example.org/api/oauth/dialog
           scopes:
@@ -79,3 +79,9 @@ paths:
     $ref: ../end-points/out/release-detail.{uuid}.yaml
   /out/release-details:
     $ref: ../end-points/out/release-details.yaml
+
+  # ✅ WorkInput (외주투입)
+  /out/work-input/{uuid}:
+    $ref: ../end-points/out/work-input.{uuid}.yaml
+  /out/work-inputs:
+    $ref: ../end-points/out/work-inputs.yaml

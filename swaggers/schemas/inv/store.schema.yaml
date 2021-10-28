@@ -1,97 +1,105 @@
 # INV_STORE_TB
 
 # Columns
-tran_id: 
+tran_id:
   type: object
-  properties: 
+  properties:
     tran_id:
       description: 전표ID
       type: number
       format: int4
 
-inout_fg: 
+inout_fg:
   type: object
-  properties: 
+  properties:
     inout_fg:
       description: 입출고 구분 ([true] IN, [false] OUT)
       type: boolean
       format: boolean
 
-tran_cd: 
+tran_cd:
   type: object
-  properties: 
+  properties:
     tran_cd:
       description: 입출고 타입 코드
       type: string
       format: varchar(20)
 
-factory_id: 
+factory_id:
   type: object
-  properties: 
+  properties:
     factory_id:
       description: 공장ID
       type: number
       format: int4
 
-reg_date: 
+reg_date:
   type: object
-  properties: 
+  properties:
     reg_date:
       description: 수불 일시
       type: string
       format: date-time
 
-store_id: 
+store_id:
   type: object
-  properties: 
+  properties:
     store_id:
       description: 창고ID
       type: number
       format: int4
 
-location_id: 
+location_id:
   type: object
-  properties: 
+  properties:
     location_id:
       description: 위치ID
       type: number
       format: int4
 
-prod_id: 
+prod_id:
   type: object
-  properties: 
+  properties:
     prod_id:
       description: 품목ID
       type: number
       format: int4
 
-reject_id: 
+reject_id:
   type: object
-  properties: 
+  properties:
     reject_id:
       description: 부적합ID
       type: number
       format: int4
 
-lot_no: 
+partner_id:
   type: object
-  properties: 
+  properties:
+    partner_id:
+      description: 거래처ID
+      type: number
+      format: int4
+
+lot_no:
+  type: object
+  properties:
     lot_no:
       description: LOT NO
       type: string
       format: varchar(25)
 
-qty: 
+qty:
   type: object
-  properties: 
+  properties:
     qty:
       description: 수량
       type: number
       format: numeric(19, 6)
-      
-remark: 
+
+remark:
   type: object
-  properties: 
+  properties:
     remark:
       description: 비고
       type: string
@@ -99,7 +107,7 @@ remark:
 
 uuid:
   type: object
-  properties: 
+  properties:
     uuid:
       description: 재고수불UUID
       type: string
@@ -108,7 +116,7 @@ uuid:
 # Uuids
 tran_uuid:
   type: object
-  properties: 
+  properties:
     tran_uuid:
       description: 재고수불UUID
       type: string
@@ -116,7 +124,7 @@ tran_uuid:
 
 inv_store_uuid:
   type: object
-  properties: 
+  properties:
     inv_store_uuid:
       description: 재고수불UUID
       type: string
@@ -124,7 +132,7 @@ inv_store_uuid:
 
 factory_uuid:
   type: object
-  properties: 
+  properties:
     factory_uuid:
       description: 공장UUID
       type: string
@@ -132,7 +140,7 @@ factory_uuid:
 
 store_uuid:
   type: object
-  properties: 
+  properties:
     store_uuid:
       description: 창고UUID
       type: string
@@ -140,7 +148,7 @@ store_uuid:
 
 location_uuid:
   type: object
-  properties: 
+  properties:
     location_uuid:
       description: 위치UUID
       type: string
@@ -148,7 +156,7 @@ location_uuid:
 
 prod_uuid:
   type: object
-  properties: 
+  properties:
     prod_uuid:
       description: 품목UUID
       type: string
@@ -156,80 +164,88 @@ prod_uuid:
 
 reject_uuid:
   type: object
-  properties: 
+  properties:
     reject_uuid:
       description: 부적합UUID
+      type: string
+      format: uuid
+
+partner_uuid:
+  type: object
+  properties:
+    partner_uuid:
+      description: 거래처UUID
       type: string
       format: uuid
 
 # Others
 inout_state:
   type: object
-  properties: 
+  properties:
     inout_state:
       description: 입출고 유형(입고 / 출고)
       type: string
       format: string
 
-stock: 
+stock:
   type: object
-  properties: 
+  properties:
     stock:
       description: 재고수량
       type: number
       format: numeric(19, 6)
 
-basic_stock: 
+basic_stock:
   type: object
-  properties: 
+  properties:
     basic_stock:
       description: 기초재고 수량
       type: number
       format: numeric(19, 6)
 
-in_qty: 
+in_qty:
   type: object
-  properties: 
+  properties:
     in_qty:
       description: 입고 수량
       type: number
       format: numeric(19, 6)
 
-out_qty: 
+out_qty:
   type: object
-  properties: 
+  properties:
     out_qty:
       description: 출고 수량
       type: number
       format: numeric(19, 6)
 
-update_qty: 
+update_qty:
   type: object
-  properties: 
+  properties:
     update_qty:
       description: 변경 수량
       type: number
       format: numeric(19, 6)
 
-final_stock: 
+final_stock:
   type: object
-  properties: 
+  properties:
     final_stock:
       description: 기말재고 수량
       type: number
       format: numeric(19, 6)
 
-tran_type_cd_in_qty: 
+tran_type_cd_in_qty:
   type: object
-  properties: 
+  properties:
     tran_type_cd_in_qty:
       description: 수불 유형별 입고 수량(tran_type_cd 자리에는 실제 유형 코드가 입력되어있음)
       type: number
       format: numeric(19, 6)
 
-tran_type_cd_out_qty: 
+tran_type_cd_out_qty:
   type: object
-  properties: 
+  properties:
     tran_type_cd_out_qty:
       description: 수불 유형별 출고 수량(tran_type_cd 자리에는 실제 유형 코드가 입력되어있음)
       type: number

@@ -1,0 +1,17 @@
+export default interface IOutWorkInput {
+  work_input_id?: number,
+  factory_id?: number,
+  receive_detail_id?: number,
+	prod_id?: number,
+	lot_no?: string,
+	qty?: number,
+	c_usage?: number,
+	unit_id?: number,
+	from_store_id?: number,
+	from_location_id?: number | null,
+  created_at?: Date,
+  created_uid?: number,
+  updated_at?: Date,
+  updated_uid?: number,
+  uuid?: string,
+}
