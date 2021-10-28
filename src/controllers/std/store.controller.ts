@@ -118,7 +118,7 @@ class StdStoreCtl extends BaseCtl {
   beforeRead = async(req: express.Request) => {
     if (req.params.uuid) { return; }
 
-    if (![ 'all', 'available', 'reject', 'return', 'outgo', 'finalInsp' ].includes(req.query.store_type as string)) { throw new Error('잘못된 store_type(창고조회유형) 입력') }
+    if (![ 'all', 'available', 'reject', 'return', 'outgo', 'finalInsp', 'outsourcing' ].includes(req.query.store_type as string)) { throw new Error('잘못된 store_type(창고조회유형) 입력') }
   }
 
   // 📒 Fn[afterRead] (✅ Inheritance): Read DB Tasking 이 실행된 후 호출되는 Function

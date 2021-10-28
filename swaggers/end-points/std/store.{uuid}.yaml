@@ -51,7 +51,9 @@ get:
                             - $ref: ../../schemas/std/store.schema.yaml#/return_store_fg
                             - $ref: ../../schemas/std/store.schema.yaml#/outgo_store_fg
                             - $ref: ../../schemas/std/store.schema.yaml#/final_insp_store_fg
+                            - $ref: ../../schemas/std/store.schema.yaml#/outsourcing_store_fg
                             - $ref: ../../schemas/std/store.schema.yaml#/available_store_fg
+                            - $ref: ../../schemas/std/store.schema.yaml#/position_type
                             - $ref: ../../schemas/common/timestamp.schema.yaml
     500:
       $ref: ../../responses/common/general-error.response.yaml

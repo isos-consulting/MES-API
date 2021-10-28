@@ -28,6 +28,7 @@ repo: Repository<QmsInspResultDetailValue>;
       const inspDetailValue = body.map((inspDetailValue) => {
         return {
           factory_id: inspDetailValue.factory_id,
+          insp_result_id: inspDetailValue.insp_result_id,
           insp_result_detail_info_id: inspDetailValue.insp_result_detail_info_id,
           sample_no: inspDetailValue.sample_no,
           insp_result_fg: inspDetailValue.insp_result_fg,

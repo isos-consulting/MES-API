@@ -30,6 +30,7 @@ class PrdWorkDowntimeRepo {
         return {
           factory_id: workDowntime.factory_id,
           work_id: workDowntime.work_id,
+          work_routing_id: workDowntime.work_routing_id,
           proc_id: workDowntime.proc_id,
           equip_id: workDowntime.equip_id,
           downtime_id: workDowntime.downtime_id,

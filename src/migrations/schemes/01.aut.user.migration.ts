@@ -1,6 +1,5 @@
 import IAutUser from '../../interfaces/aut/user.interface';
 import BaseMigration from '../base-migration';
-// import * as bcrypt from 'bcrypt'
 
 // Seed Datas
 let seedDatas: IAutUser[] = [
