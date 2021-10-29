@@ -238,12 +238,12 @@ class OutWorkInputRepo {
       for await (let workInput of body) {
         const result = await this.repo.update(
           {
-						receive_detail_id: workInput.receive_detail_id,
-						prod_id: workInput.prod_id,
-						lot_no: workInput.lot_no,
-						qty: workInput.qty ,
-						c_usage: workInput.c_usage,
-						from_store_id: workInput.from_store_id,
+						receive_detail_id: workInput.receive_detail_id ?? null,
+						prod_id: workInput.prod_id ?? null,
+						lot_no: workInput.lot_no ?? null,
+						qty: workInput.qty ?? null,
+						c_usage: workInput.c_usage ?? null,
+						from_store_id: workInput.from_store_id ?? null,
             from_location_id: workInput.from_location_id != null ? workInput.from_location_id : null,
             updated_uid: uid,
           } as any,
@@ -285,7 +285,7 @@ class OutWorkInputRepo {
 						qty: workInput.qty ,
 						c_usage: workInput.c_usage,
 						from_store_id: workInput.from_store_id,
-            from_location_id: workInput.from_location_id != null ? workInput.from_location_id : null,
+            from_location_id: workInput.from_location_id,
             updated_uid: uid,
           },
           { 

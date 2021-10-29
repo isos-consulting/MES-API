@@ -17,7 +17,7 @@ import OutReceiveDetail from './receive-detail.model';
 })
 export default class OutWorkInput extends Model<IOutWorkInput> {
   @Column({
-    comment: '외주출고 상세ID',
+    comment: '외주투입ID',
     primaryKey: true,
     autoIncrement: true,
     autoIncrementIdentity: true,
@@ -127,7 +127,7 @@ export default class OutWorkInput extends Model<IOutWorkInput> {
   updated_uid: number;
 
   @Column({
-    comment: 'UUID',
+    comment: '외주투입UUID',
     type: DataType.UUID,
     allowNull: false,
     defaultValue: Sequelize.fn('gen_random_uuid')

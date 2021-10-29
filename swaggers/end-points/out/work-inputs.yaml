@@ -37,8 +37,8 @@ get:
                             - $ref: ../../schemas/out/work-input.schema.yaml#/work_input_uuid
                             - $ref: ../../schemas/out/work-input.schema.yaml#/receive_detail_uuid
                             - $ref: ../../schemas/out/work-input.schema.yaml#/factory_uuid
-                            - $ref: ../../schemas/out/work-input.schema.yaml#/factory_cd
-                            - $ref: ../../schemas/out/work-input.schema.yaml#/factory_nm
+                            - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
+                            - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
                             - $ref: ../../schemas/out/work-input.schema.yaml#/prod_uuid
                             - $ref: ../../schemas/out/work-input.schema.yaml#/prod_no
                             - $ref: ../../schemas/out/work-input.schema.yaml#/prod_nm
