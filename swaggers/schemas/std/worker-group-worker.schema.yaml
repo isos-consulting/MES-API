@@ -36,7 +36,7 @@ worker_id:
 remark: 
   type: object
   properties: 
-    worker_id:
+    remark:
       description: 비고
       type: string
       format: varchar(250)

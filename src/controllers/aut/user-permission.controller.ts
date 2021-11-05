@@ -1,4 +1,5 @@
 import express = require('express');
+import sequelize from '../../models';
 import AutMenuRepo from '../../repositories/aut/menu.repository';
 import AutPermissionRepo from '../../repositories/aut/permission.repository';
 import AutUserPermissionRepo from '../../repositories/aut/user-permission.repository';
@@ -60,7 +61,7 @@ class AutUserPermissionCtl extends BaseCtl {
   public read = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       const params = Object.assign(req.query, req.params);
-      if (!isUuid(params.group_uuid)) { throw new Error('잘못된 user_uuid(사용자UUID) 입력') };
+      if (!isUuid(params.user_uuid)) { throw new Error('잘못된 user_uuid(사용자UUID) 입력') };
       this.result = await this.repo.read(params);
 
       // 💥 TreeView 형태 데이터 가공 로직 추가
@@ -76,8 +77,32 @@ class AutUserPermissionCtl extends BaseCtl {
   //#region 🟡 Update Functions
 
   // 📒 Fn[update] (✅ Inheritance): Default Update Function
-  // public update = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-  // }
+  public update = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      req.body = await this.getFkId(req.body, this.fkIdInfos);
+
+      // 📌 신규 데이터, 수정 할 데이터 구분
+      const createBody: any[] = [];
+      const updateBody: any[] = [];
+      req.body.forEach((data: any) => {
+        if (data.uuid) { updateBody.push(data); }
+        else { createBody.push(data); }
+      });
+
+      await sequelize.transaction(async(tran) => { 
+        // 📌 데이터 생성 및 수정
+        const createResult = await this.repo.create(createBody, req.user?.uid as number, tran); 
+        const updateResult = await this.repo.update(updateBody, req.user?.uid as number, tran); 
+
+        this.result.raws = createResult.raws.concat(updateResult.raws);
+        this.result.count = createResult.count + updateResult.count;
+      });
+
+      return response(res, this.result.raws, { count: this.result.count }, '', 201);
+    } catch (e) {
+      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+    }
+  }
 
   //#endregion
 
@@ -124,22 +149,6 @@ class AutUserPermissionCtl extends BaseCtl {
 
   // 📒 Fn[afterRead] (✅ Inheritance): Read DB Tasking 이 실행된 후 호출되는 Function
   // afterRead = async(req: express.Request, result: ApiResult<any>) => {}
-
-  //#endregion
-
-  //#region 🟡 Update Hooks
-
-  // 📒 Fn[beforeUpdate] (✅ Inheritance): Update Transaction 이 실행되기 전 호출되는 Function
-  // beforeUpdate = async(req: express.Request) => {}
-
-  // 📒 Fn[beforeTranUpdate] (✅ Inheritance): Update Transaction 내부에서 DB Tasking 이 실행되기 전 호출되는 Function
-  // beforeTranUpdate = async(req: express.Request, tran: Transaction) => {}
-
-  // 📒 Fn[afterTranUpdate] (✅ Inheritance): Update Transaction 내부에서 DB Tasking 이 실행된 후 호출되는 Function
-  // afterTranUpdate = async(req: express.Request, result: ApiResult<any>, tran: Transaction) => {}
-
-  // 📒 Fn[afterUpdate] (✅ Inheritance): Update Transaction 이 실행된 후 호출되는 Function
-  // afterUpdate = async(req: express.Request, result: ApiResult<any>) => {}
 
   //#endregion
 

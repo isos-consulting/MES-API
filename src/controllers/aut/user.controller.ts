@@ -1,8 +1,8 @@
 import * as express from 'express';
 import * as bcrypt from 'bcrypt'
 import * as createHttpError from 'http-errors'
-import * as jwt from 'jsonwebtoken';
 import response from '../../utils/response';
+import responseNew from '../../utils/response_new';
 import AutUserRepo from '../../repositories/aut/user.repository';
 import encrypt from '../../utils/encrypt';
 import decrypt from '../../utils/decrypt';
@@ -14,6 +14,8 @@ import BaseCtl from '../base.controller';
 import AutGroupRepo from '../../repositories/aut/group.repository';
 import ApiResult from '../../interfaces/common/api-result.interface';
 import sequelize from '../../models';
+import { refresh, sign } from '../../utils/jwt-util';
+import { userSuccessState } from '../../states/user.state';
 
 class AutUserCtl extends BaseCtl {
   // ✅ Inherited Functions Variable
@@ -213,14 +215,35 @@ class AutUserCtl extends BaseCtl {
       // id, pwd Property 삭제 후 Front 로 전달
       let result = new UserWrapper(user).toWeb() as any;
 
+      const accessToken = sign(user);
+      const refreshToken = await refresh(user.uid);
+      result = {
+        ...result, 
+        access_token: accessToken,
+        refresh_token: refreshToken
+      }
+
       // jwt payload 에 담길 내용
-      const payload = result;
-      const token = jwt.sign(payload, process.env.JWT_SECRET as string, {
-        expiresIn: process.env.JWT_EXPIRESIN
-      })
+      // const payload = result;
+      // const token = jwt.sign(payload, process.env.JWT_SECRET as string, {
+      //   audience: 'front',
+      //   header: { abc: 'abc' },
+      //   issuer: 'cyj',
+      //   jwtid: 'what is this',
+      //   keyid: 'whats that',
+      //   subject: 'this is a token',
+      //   expiresIn: process.env.JWT_EXPIRESIN
+      // })
+      // console.log(process.env.JWT_SECRET)
+      // console.log(token)
     
-      result.token = token;
-      return response(res, result);
+      // result.token = token;
+      // return response(res, result);
+      return responseNew(
+        res, 
+        { raws: [result], status: 201 },
+        { state_tag: 'user', type: 'SUCCESS', state_no: userSuccessState.SIGNIN }
+      );
     } catch (e) {
       return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }

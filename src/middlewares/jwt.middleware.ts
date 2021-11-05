@@ -1,48 +1,61 @@
 import * as express from 'express';
-import * as jwt from 'jsonwebtoken';
 import AutUserRepo from '../repositories/aut/user.repository';
-import response from '../utils/response';
-import UserWrapper from '../wrappers/aut/user.wrapper';
+import { errorState } from '../states/common.state';
+import { verify } from '../utils/jwt-util';
+import response from '../utils/response_new';
 
 export default async(req: express.Request, res: express.Response, next: express.NextFunction) => {
   try {
     // 로그인 및 사용자 정보 조회,등록,수정 및 Swagger Document의 경우 Token값을 검사하지 않고 API통신 진행
-    if(req.path.indexOf('sign-in') !== -1 || req.path.indexOf('api-docs') !== -1 || req.path.indexOf('swagger') !== -1) {
-      next();
+    if(req.path.indexOf('sign-in') !== -1 || req.path.indexOf('api-docs') !== -1 || req.path.indexOf('swagger') !== -1 || req.path.indexOf('favicon') !== -1) {
+      return next();
     } else {
       req.user = undefined;
       if (!req.headers.authorization) {
-        throw next(response(res, [], {}, '토큰 정보가 없습니다.', 404));
-      }
-      else {
-        let uuid: string = "";
-        jwt.verify(
-          req.headers.authorization,
-          process.env.JWT_SECRET as string,
-          (err: jwt.VerifyErrors, payload: any) => {
-            if (err) {
-              throw next(response(res, [], {}, '토큰 정보가 유효하지 않습니다.', 404));
-            }
-  
-            uuid = payload.uuid;
-          })
-        
-        let user = await new AutUserRepo().readAuth(uuid);
-        
-        if (!user) {
-          throw next(response(res, [], {}, '사용자를 찾을 수 없습니다.', 404));
+        // 📌 Token이 없는 경우 Error Return
+        return response(
+          res, 
+          { raws: [], value: {}, status: 400, message: '토큰 정보가 없습니다.' },
+          { state_tag: 'authentication', type: 'ERROR', state_no: errorState.NO_TOKEN }
+        );
+      } else {
+        // 📌 Authrization이 Bearer 형태가 아닌경우 Error Return
+        if (!req.headers.authorization.startsWith("Bearer ")){
+          return response(
+            res, 
+            { raws: [], value: {}, status: 400, message: '잘못된 토큰정보가 입력되었습니다.' },
+            { state_tag: 'authentication', type: 'ERROR', state_no: errorState.INVALID_TOKEN }
+          );
         }
 
-        // id, pwd 삭제
-        let result = new UserWrapper(user).toWeb() as any;
-  
-        // 받아온 유저 정보를 request에 생성
-        req.user = result as any;
-        
-        next();
+        const token = req.headers.authorization.substring(7, req.headers.authorization.length);
+        const result = verify(token);
+        if (result.ok) {
+          const readUser = await new AutUserRepo().readAuth(result.uuid) as any;
+          let user = readUser;
+          // 📌 Token이 유효한데 사용자가 없을 경우 Error Return
+          if (!user) {
+            return response(
+              res, 
+              { raws: [], value: {}, status: 401, message: '토큰정보의 사용자를 찾을 수 없습니다.' },
+              { state_tag: 'authentication', type: 'ERROR', state_no: errorState.NOT_FOUND_USER }
+            );
+          }
+
+          // 📌 정상 Token일 경우 Request에 User 정보를 담아 다음 Middleware로 이동
+          req.user = { uid: user.uid, uuid: user.uuid, user_nm: user.user_nm, email: user.email };
+          return next();
+        } else {
+          // 📌 Token이 유효하지 않은 경우 (만료된 경우) Error Return
+          return response(
+            res, 
+            { raws: [], value: {}, status: 401, message: 'ACCESS 토큰 정보가 만료되었습니다.' },
+            { state_tag: 'authentication', type: 'ERROR', state_no: errorState.EXPIRED_ACCESS_TOKEN }
+          );
+        }
       }
     }
   } catch (e) {
-    next(e);
+    return next(e);
   }
 }

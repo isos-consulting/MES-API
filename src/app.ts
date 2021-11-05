@@ -9,6 +9,7 @@ import * as cors from 'cors';
 import jwtMiddleware from './middlewares/jwt.middleware';
 import routers from './routes';
 import response from './utils/response';
+import { refreshToken } from './utils/refreshToken';
 
 // Import Environment
 dotenv.config();
@@ -19,9 +20,10 @@ declare global {
   namespace Express {
     interface Request {
       user: {
+        uuid: string,
         uid: number,
-        id: string,
-        pwd: string,
+        user_nm: string,
+        email: string
       } | undefined
     }
   }
@@ -34,8 +36,6 @@ const accessLogStream = rfs.createStream('access.log', {
   path: path.join(__dirname, 'log')
 });
 
-app.use('/health-check', (req: express.Request, res: express.Response, next: express.NextFunction) => { return response(res, [], {}, '', 200); });
-
 // Create Log (IP, User, Date, Method, Uri, Status, Response Length, Referrer, Agent, ResponseTime, TotalTime)
 app.use(logger(':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent" ":response-time" ":total-time"', { stream: accessLogStream }));
 app.use(logger('dev'));
@@ -44,6 +44,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 
 app.use(cors());
+app.use('/health-check', (req: express.Request, res: express.Response, next: express.NextFunction) => { return response(res, [], {}, '', 200); });
+app.use('/refresh-token', refreshToken)
 app.use(jwtMiddleware);
 
 // Cross Origin Resource Sharping 의 약자

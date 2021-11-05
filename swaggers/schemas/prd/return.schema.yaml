@@ -22,7 +22,7 @@ reg_date:
   properties: 
     reg_date:
       description: 자재반납 일시
-      type: date
+      type: string
       format: date-time
 
 prod_id: 
