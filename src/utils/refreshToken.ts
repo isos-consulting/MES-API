@@ -1,5 +1,6 @@
 import express = require('express');
 import * as  jwt from 'jsonwebtoken';
+import AutUserRepo from '../repositories/aut/user.repository';
 import { errorState, successState } from '../states/common.state';
 import { refreshVerify, sign, verify } from './jwt-util';
 import response from './response_new';
@@ -24,9 +25,11 @@ const refreshToken = async (req: express.Request, res: express.Response) => {
 
     // access token 디코딩하여 user의 정보를 가져옵니다.
     const decoded: any = jwt.decode(authToken);
-	
-    // 디코딩 결과가 없으면 권한이 없음을 응답.
-    if (decoded === null) {
+
+    const readUser = await new AutUserRepo().readAuth(decoded.uuid) as any;
+    let user = readUser;
+    // 📌 Token이 유효한데 사용자가 없을 경우 Error Return
+    if (!user) {
       return response(
         res, 
         { raws: [], value: {}, status: 401, message: '토큰정보의 사용자를 찾을 수 없습니다.' },

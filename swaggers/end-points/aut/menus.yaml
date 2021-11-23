@@ -56,40 +56,11 @@ get:
     500:
       $ref: ../../responses/common/general-error.response.yaml
 
-post:
-  description: |
-    메뉴 데이터를 생성합니다.
-  summary: 메뉴 데이터 생성
-  tags:
-    - 메뉴(Menu)
-  requestBody:
-    content:
-      application/json:
-        schema:
-          required:
-            - menu_nm
-            - parent_uuid
-            - sortby
-            - use_fg
-          allOf:
-            - $ref: ../../schemas/aut/menu.schema.yaml#/menu_type_uuid
-            - $ref: ../../schemas/aut/menu.schema.yaml#/menu_nm
-            - $ref: ../../schemas/aut/menu.schema.yaml#/menu_uri
-            - $ref: ../../schemas/aut/menu.schema.yaml#/component_nm
-            - $ref: ../../schemas/aut/menu.schema.yaml#/icon
-            - $ref: ../../schemas/aut/menu.schema.yaml#/parent_uuid
-            - $ref: ../../schemas/aut/menu.schema.yaml#/sortby
-            - $ref: ../../schemas/aut/menu.schema.yaml#/use_fg
-  responses:
-    201:
-      $ref: ../../responses/common/succeed-create.response.yaml
-    500:
-      $ref: ../../responses/common/general-error.response.yaml
-
 put:
   description: |
-    메뉴 데이터를 행(Row) 단위로 수정합니다.
-  summary: 메뉴 데이터 수정
+    메뉴 데이터를 생성 및 수정합니다. <br/>
+    uuid 데이터를 입력하지 않을경우 데이터를 생성, 입력할 경우 수정합니다. <br/>
+  summary: 메뉴 데이터 생성 및 수정
   tags:
     - 메뉴(Menu)
   requestBody:
@@ -99,7 +70,6 @@ put:
           required:
             - uuid
             - menu_nm
-            - parent_uuid
             - sortby
             - use_fg
           allOf:
@@ -109,36 +79,6 @@ put:
             - $ref: ../../schemas/aut/menu.schema.yaml#/menu_uri
             - $ref: ../../schemas/aut/menu.schema.yaml#/component_nm
             - $ref: ../../schemas/aut/menu.schema.yaml#/icon
-            - $ref: ../../schemas/aut/menu.schema.yaml#/parent_uuid
-            - $ref: ../../schemas/aut/menu.schema.yaml#/sortby
-            - $ref: ../../schemas/aut/menu.schema.yaml#/use_fg
-  responses:
-    201:
-      $ref: ../../responses/common/succeed-update.response.yaml
-    500:
-      $ref: ../../responses/common/general-error.response.yaml
-
-patch:
-  description: |
-    메뉴 데이터를 개별 항목 단위로 수정합니다.
-  summary: 메뉴 데이터 수정
-  tags:
-    - 메뉴(Menu)
-  requestBody:
-    content:
-      application/json:
-        schema:
-          required:
-            - uuid
-          allOf:
-            - $ref: ../../schemas/aut/menu.schema.yaml#/uuid
-            - $ref: ../../schemas/aut/menu.schema.yaml#/menu_type_uuid
-            - $ref: ../../schemas/aut/menu.schema.yaml#/menu_nm
-            - $ref: ../../schemas/aut/menu.schema.yaml#/menu_uri
-            - $ref: ../../schemas/aut/menu.schema.yaml#/component_nm
-            - $ref: ../../schemas/aut/menu.schema.yaml#/icon
-            - $ref: ../../schemas/aut/menu.schema.yaml#/parent_uuid
-            - $ref: ../../schemas/aut/menu.schema.yaml#/sortby
             - $ref: ../../schemas/aut/menu.schema.yaml#/use_fg
   responses:
     201:

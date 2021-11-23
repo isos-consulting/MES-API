@@ -7,6 +7,7 @@ export default interface IAutUser {
   email?: string,
   pwd_fg?: boolean,
   admin_fg?: boolean,
+  super_admin_fg?: boolean,
   created_at?: Date,
   created_uid?: number,
   updated_at?: Date,

@@ -315,8 +315,6 @@ class SalReturnCtl extends BaseCtl {
             headerResult = await this.updateTotal(data.header[0].return_id, data.header[0].uuid, req.user?.uid as number, tran);
           }
 
-          console.log(4);
-
           this.result.raws.push({
             return: {
               header: headerResult.raws,

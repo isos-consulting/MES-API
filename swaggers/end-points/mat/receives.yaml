@@ -128,7 +128,6 @@ post:
                   - insp_fg
                   - carry_fg
                   - to_store_uuid
-                  - to_location_uuid
                 type: object
                 allOf:        
                   - $ref: ../../schemas/mat/receive-detail.schema.yaml#/receive_uuid

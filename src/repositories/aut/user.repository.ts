@@ -73,6 +73,7 @@ class AutUserRepo {
           'email', 
           'pwd_fg', 
           'admin_fg', 
+          'super_admin_fg', 
           'created_at', 
           [ Sequelize.col('createUser.user_nm'), 'created_nm' ],
           'updated_at',
@@ -102,6 +103,7 @@ class AutUserRepo {
           'email', 
           'pwd_fg', 
           'admin_fg', 
+          'super_admin_fg', 
           'created_at', 
           [ Sequelize.col('createUser.user_nm'), 'created_nm' ], 
           'updated_at', 
@@ -139,7 +141,7 @@ class AutUserRepo {
       let user = await this.cache.read(uuid);
       if (!user) {
         user = await this.repo.findOne({
-          attributes: [ 'uid', 'uuid', 'group_id', 'id', 'user_nm', 'pwd', 'email', 'pwd_fg', 'admin_fg' ],
+          attributes: [ 'uid', 'uuid', 'group_id', 'id', 'user_nm', 'pwd', 'email', 'pwd_fg', 'admin_fg', 'super_admin_fg' ],
           where: { uuid }
         });
         await this.cache.create(user);
@@ -156,7 +158,7 @@ class AutUserRepo {
       let user = await this.cache.readById(id);
       if (!user) {
         user = await this.repo.findOne({
-          attributes: [ 'uid', 'uuid', 'group_id', 'id', 'user_nm', 'pwd', 'email', 'pwd_fg', 'admin_fg' ],
+          attributes: [ 'uid', 'uuid', 'group_id', 'id', 'user_nm', 'pwd', 'email', 'pwd_fg', 'admin_fg', 'super_admin_fg' ],
           where: { id }
         });
         await this.cache.create(user);

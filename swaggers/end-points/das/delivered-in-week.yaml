@@ -1,0 +1,44 @@
+get:
+  description: |
+    금일 포함 일주일내 납기기준 출하현황을 조회합니다.
+  summary: 출하현황 조회
+  tags:
+    - 대시보드(Dashboard)
+
+  responses:
+    200:
+      description: Read OK
+      content:
+        application/json:
+          schema: 
+            allOf:
+              - $ref: ../../schemas/common/default-response.schema.yaml
+              - type: object
+                properties:
+                  datas:
+                    description: Enable
+                    type: object
+                    properties:
+                      value:
+                        description: Disable
+                        type: object
+                      raws:
+                        description: 출하현황 데이터
+                        type: array
+                        items:
+                          type: object
+                          properties: 
+                            date:
+                              description: 납기일자
+                              type: string
+                              format: date-time
+                            total:
+                              description: 총 납기예정 수주 건수
+                              type: number
+                              format: int4
+                            value:
+                              description: 납기 완료된 수주 건수
+                              type: number
+                              format: int4
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

@@ -144,12 +144,12 @@ class SalOutgoOrderCtl extends BaseCtl {
   public readIncludeDetails = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       const params = Object.assign(req.query, req.params);
-      params.order_uuid = params.uuid;
+      params.outgo_order_uuid = params.uuid;
 
       const completeState = params.complete_state as string;
       if (![ 'all', 'complete', 'incomplete' ].includes(completeState)) { throw new Error('잘못된 complete_state(완료 여부) 입력') }
 
-      const headerResult = await this.repo.readByUuid(params.order_uuid);
+      const headerResult = await this.repo.readByUuid(params.outgo_order_uuid);
       const detailsResult = await this.detailRepo.read(params);
 
       this.result.raws = [{ header: unsealArray(headerResult.raws), details: detailsResult.raws }];
@@ -165,7 +165,7 @@ class SalOutgoOrderCtl extends BaseCtl {
   public readDetails = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       const params = Object.assign(req.query, req.params);
-      params.order_uuid = params.uuid;
+      params.outgo_order_uuid = params.uuid;
 
       const completeState = params.complete_state as string;
       if (![ 'all', 'complete', 'incomplete' ].includes(completeState)) { throw new Error('잘못된 complete_state(완료 여부) 입력') }

@@ -128,11 +128,11 @@ get:
                             - $ref: ../../schemas/std/prod.schema.yaml#/inv_unit_qty
                             - $ref: ../../schemas/std/prod.schema.yaml#/inv_safe_qty
                             - $ref: ../../schemas/std/prod.schema.yaml#/inv_to_store_uuid
-                            - $ref: ../../schemas/std/store.schema.yaml#/store_cd
-                            - $ref: ../../schemas/std/store.schema.yaml#/store_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/inv_to_store_cd
+                            - $ref: ../../schemas/std/prod.schema.yaml#/inv_to_store_nm
                             - $ref: ../../schemas/std/prod.schema.yaml#/inv_to_location_uuid
-                            - $ref: ../../schemas/std/location.schema.yaml#/location_cd
-                            - $ref: ../../schemas/std/location.schema.yaml#/location_nm
+                            - $ref: ../../schemas/std/prod.schema.yaml#/inv_to_location_cd
+                            - $ref: ../../schemas/std/prod.schema.yaml#/inv_to_location_nm
                             - $ref: ../../schemas/std/prod.schema.yaml#/qms_receive_insp_fg
                             - $ref: ../../schemas/std/prod.schema.yaml#/qms_proc_insp_fg
                             - $ref: ../../schemas/std/prod.schema.yaml#/qms_final_insp_fg

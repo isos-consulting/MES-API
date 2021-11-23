@@ -106,6 +106,82 @@ class SalOrderDetailRepo {
     return convertReadResult(result);
   };
 
+  // 📒 Fn[readDeliveredWithinPeriod]: 기간 내 납기 완료 및 미완료 건수 Read Function
+  public readDeliveredWithinPeriod = async(startDate: string, endDate: string) => {
+    const result = await sequelize.query(`
+      SELECT * INTO temp_order_detail_tb
+      FROM sal_order_detail_tb s_od
+      WHERE DATE(due_date) BETWEEN '${startDate}' AND '${endDate}';
+      
+      CREATE INDEX idx_temp_order_detail_tb_order_detail_id ON temp_order_detail_tb(order_detail_id);
+      
+      SELECT 
+        CURRENT_DATE + i AS date,
+        COALESCE(total, 0) AS total,
+        COALESCE(delivered, 0) AS delivered
+      FROM GENERATE_SERIES(DATE '${startDate}'- CURRENT_DATE, DATE '${endDate}' - CURRENT_DATE) i
+      LEFT JOIN (
+        SELECT 
+          a.due_date,
+          SUM(COALESCE(a.total, 0)) AS total,
+          SUM(COALESCE(a.delivered, 0)) AS delivered
+        FROM (
+          SELECT 
+            a.due_date,
+            count(*) AS total,
+            CASE WHEN a.complete = TRUE THEN count(a.complete) END AS delivered
+          FROM (	SELECT 
+                DATE(due_date) AS due_date,
+                CASE WHEN complete_fg = TRUE OR s_od.qty - COALESCE(s_ogd.qty, 0) <= 0 THEN TRUE 
+                ELSE FALSE END AS complete
+              FROM temp_order_detail_tb s_od
+              LEFT JOIN (
+                SELECT
+                  s_ogd.order_detail_id,
+                  SUM(s_ogd.qty) AS qty
+                FROM sal_outgo_detail_tb s_ogd
+                GROUP BY order_detail_id
+              ) s_ogd ON s_ogd.order_detail_id = s_od.order_detail_id) a
+          GROUP BY a.due_date, a.complete
+        ) a
+        GROUP BY a.due_date
+      ) a ON CURRENT_DATE + i = a.due_date
+      ORDER BY CURRENT_DATE + i;
+      
+      DROP TABLE temp_order_detail_tb;
+    `);
+
+    return convertReadResult(result[0]);
+  };
+
+  // 📒 Fn[readCountOfDelayedOrder]: 납기 지연된 수주 Read Function
+  public readCountOfDelayedOrder = async(date: string) => {
+    const result = await sequelize.query(`
+      SELECT * INTO temp_order_detail_tb
+      FROM sal_order_detail_tb s_od
+      WHERE DATE(due_date) < '${date}'
+      AND complete_fg = FALSE;
+      
+      CREATE INDEX idx_temp_order_detail_tb_order_detail_id ON temp_order_detail_tb(order_detail_id);
+      
+      SELECT 
+        COUNT(*) as count
+      FROM temp_order_detail_tb s_od
+      LEFT JOIN (
+        SELECT
+          s_ogd.order_detail_id,
+          SUM(s_ogd.qty) AS qty
+        FROM sal_outgo_detail_tb s_ogd
+        GROUP BY order_detail_id
+      ) s_ogd ON s_ogd.order_detail_id = s_od.order_detail_id
+      WHERE (s_od.qty - COALESCE(s_ogd.qty, 0)) > 0;
+      
+      DROP TABLE temp_order_detail_tb;
+    `);
+
+    return convertReadResult(result[0]);
+  };
+
   //#endregion
 
   //#region 🟡 Update Functions

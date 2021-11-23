@@ -1,0 +1,44 @@
+get:
+  description: |
+    수주 납기일대비 미납현황을 조회합니다.
+  summary: 미납현황 조회
+  tags:
+    - 대시보드(Dashboard)
+
+  responses:
+    200:
+      description: Read OK
+      content:
+        application/json:
+          schema: 
+            allOf:
+              - $ref: ../../schemas/common/default-response.schema.yaml
+              - type: object
+                properties:
+                  datas:
+                    description: Enable
+                    type: object
+                    properties:
+                      value:
+                        description: Disable
+                        type: object
+                      raws:
+                        description: 미납현황 데이터
+                        type: array
+                        items:
+                          type: object
+                          properties: 
+                            id:
+                              description: Data ID (납기지연[delayed])
+                              type: string
+                              format: varchar
+                            label:
+                              description: Component Label명 (납기지연)
+                              type: string
+                              format: varchar
+                            value:
+                              description: Data Value (건수)
+                              type: number
+                              format: numeric
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

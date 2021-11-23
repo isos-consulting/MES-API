@@ -1,0 +1,44 @@
+get:
+  description: |
+    금일 설비의 가동현황을 조회합니다.
+  summary: 가동율 조회
+  tags:
+    - 대시보드(Dashboard)
+
+  responses:
+    200:
+      description: Read OK
+      content:
+        application/json:
+          schema: 
+            allOf:
+              - $ref: ../../schemas/common/default-response.schema.yaml
+              - type: object
+                properties:
+                  datas:
+                    description: Enable
+                    type: object
+                    properties:
+                      value:
+                        description: Disable
+                        type: object
+                      raws:
+                        description: 가동현황 데이터
+                        type: array
+                        items:
+                          type: object
+                          properties: 
+                            id:
+                              description: Data ID (가동율[operating_rate], 비가동[downtime])
+                              type: string
+                              format: varchar
+                            label:
+                              description: Component Label명 (가동율, 비가동)
+                              type: string
+                              format: varchar
+                            value:
+                              description: Data Value (비율)
+                              type: number
+                              format: numeric
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

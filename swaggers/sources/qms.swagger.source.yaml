@@ -55,10 +55,10 @@ paths:
     $ref: ../end-points/qms/insp.{uuid}.details.yaml
   /qms/insp/{uuid}/include-details:
     $ref: ../end-points/qms/insp.{uuid}.include-details.yaml
-  /qms/receive/insp/include-details:
-    $ref: ../end-points/qms/receive.insp.include-details.yaml
-  /qms/proc/insp/include-details:
-    $ref: ../end-points/qms/proc.insp.include-details.yaml
+  /qms/insp/receive/include-details:
+    $ref: ../end-points/qms/insp.receive.include-details.yaml
+  /qms/insp/proc/include-details:
+    $ref: ../end-points/qms/insp.proc.include-details.yaml
   /qms/insps:
     $ref: ../end-points/qms/insps.yaml
 
@@ -69,8 +69,8 @@ paths:
     $ref: ../end-points/qms/insp-details.yaml
 
   # ✅ ProcDetail (공정검사 성적서)
-  /qms/proc/insp-results/max-seq:
-    $ref: ../end-points/qms/proc.insp-results.max-seq.yaml
+  /qms/proc/insp-result/max-seq:
+    $ref: ../end-points/qms/proc.insp-result.max-seq.yaml
   /qms/proc/insp-results/report:
     $ref: ../end-points/qms/proc.insp-results.report.yaml
   /qms/proc/insp-result/{uuid}/include-details:

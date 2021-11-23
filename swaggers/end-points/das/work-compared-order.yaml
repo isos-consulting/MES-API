@@ -1,0 +1,44 @@
+get:
+  description: |
+    금일 작업지시대비 생산실적의 완료현황을 조회합니다.
+  summary: 생산실적 조회
+  tags:
+    - 대시보드(Dashboard)
+
+  responses:
+    200:
+      description: Read OK
+      content:
+        application/json:
+          schema: 
+            allOf:
+              - $ref: ../../schemas/common/default-response.schema.yaml
+              - type: object
+                properties:
+                  datas:
+                    description: Enable
+                    type: object
+                    properties:
+                      value:
+                        description: Disable
+                        type: object
+                      raws:
+                        description: 생산실적 데이터
+                        type: array
+                        items:
+                          type: object
+                          properties: 
+                            id:
+                              description: Data ID (완료[completed], 미완료[incompleted])
+                              type: string
+                              format: varchar
+                            label:
+                              description: Component Label명 (완료, 미완료)
+                              type: string
+                              format: varchar
+                            value:
+                              description: Data Value (비율)
+                              type: number
+                              format: numeric
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

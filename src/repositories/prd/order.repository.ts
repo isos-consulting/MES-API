@@ -102,6 +102,28 @@ class PrdOrderRepo {
     return convertReadResult(result);
   };
 
+  // 📒 Fn[readWorkComparedOrder]: 지시대비실적 Read Fuction
+  public readWorkComparedOrder = async(params?: any) => {
+    try {
+      const result = await sequelize.query(`
+        SELECT
+          AVG(COALESCE(p_w.qty, 0) / p_o.qty) AS rate
+        FROM prd_order_tb p_o
+        LEFT JOIN (
+          SELECT p_w.order_id, sum(p_w.qty) AS qty
+          FROM prd_work_tb p_w
+          GROUP BY order_id
+        ) p_w ON p_w.order_id = p_o.order_id
+        WHERE DATE(p_o.reg_date) = '2021-10-01';
+        --WHERE DATE(p_o.reg_date) = '${params.reg_date}';
+      `);
+
+      return convertReadResult(result[0]);
+    } catch (error) {
+      throw error;
+    }
+  };
+
   //#endregion
 
   //#region 🟡 Update Functions

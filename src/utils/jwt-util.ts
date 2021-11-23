@@ -17,7 +17,7 @@ const sign = (user: IUser) => {
   // secret으로 sign하여 발급하고 return
   return jwt.sign(payload, secret, {
     algorithm: 'HS256',
-    expiresIn: '10s',
+    expiresIn: '30m',
     subject: 'iso-was-access-token',
     issuer: 'isos',
     audience: 'iso-client-user'
@@ -50,7 +50,7 @@ const refresh = async (uid: number) => {
   // refresh token은 payload 없이 발급
   const token = jwt.sign({}, secret, { 
     algorithm: 'HS256',
-    expiresIn: '20s',
+    expiresIn: '14d',
     subject: 'iso-was-refresh-token',
     issuer: 'isos',
     audience: 'iso-client-user'

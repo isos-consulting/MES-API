@@ -74,11 +74,11 @@ get:
                             - $ref: ../../schemas/std/unit.schema.yaml#/unit_cd
                             - $ref: ../../schemas/std/unit.schema.yaml#/unit_nm
                             - $ref: ../../schemas/std/bom.schema.yaml#/from_store_uuid
-                            - $ref: ../../schemas/std/store.schema.yaml#/store_cd
-                            - $ref: ../../schemas/std/store.schema.yaml#/store_nm
+                            - $ref: ../../schemas/std/store.schema.yaml#/from_store_cd
+                            - $ref: ../../schemas/std/store.schema.yaml#/from_store_nm
                             - $ref: ../../schemas/std/bom.schema.yaml#/from_location_uuid
-                            - $ref: ../../schemas/std/location.schema.yaml#/location_cd
-                            - $ref: ../../schemas/std/location.schema.yaml#/location_nm
+                            - $ref: ../../schemas/std/location.schema.yaml#/from_location_cd
+                            - $ref: ../../schemas/std/location.schema.yaml#/from_location_nm
                             - $ref: ../../schemas/std/bom.schema.yaml#/remark
     500:
       $ref: ../../responses/common/general-error.response.yaml

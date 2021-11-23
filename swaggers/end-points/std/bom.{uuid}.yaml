@@ -82,11 +82,11 @@ get:
                             - $ref: ../../schemas/std/bom.schema.yaml#/c_usage
                             - $ref: ../../schemas/std/bom.schema.yaml#/sortby
                             - $ref: ../../schemas/std/bom.schema.yaml#/from_store_uuid
-                            - $ref: ../../schemas/std/store.schema.yaml#/store_cd
-                            - $ref: ../../schemas/std/store.schema.yaml#/store_nm
+                            - $ref: ../../schemas/std/store.schema.yaml#/from_store_cd
+                            - $ref: ../../schemas/std/store.schema.yaml#/from_store_nm
                             - $ref: ../../schemas/std/bom.schema.yaml#/from_location_uuid
-                            - $ref: ../../schemas/std/location.schema.yaml#/location_cd
-                            - $ref: ../../schemas/std/location.schema.yaml#/location_nm
+                            - $ref: ../../schemas/std/location.schema.yaml#/from_location_cd
+                            - $ref: ../../schemas/std/location.schema.yaml#/from_location_nm
                             - $ref: ../../schemas/std/bom.schema.yaml#/remark
                             - $ref: ../../schemas/common/timestamp.schema.yaml
     500:

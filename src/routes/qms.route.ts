@@ -33,7 +33,7 @@ router.route('/insp-details').get(inspDetail.read);
 //#region ✅ receiveInspResult (검사성적서)
 const inspResult = new QmsInspResultCtl();
 // 📌 공정검사
-router.route('/proc/insp-results/max-seq').get(inspResult.readMaxSeqInProcInsp);
+router.route('/proc/insp-result/max-seq').get(inspResult.readMaxSeqInProcInsp);
 router.route('/proc/insp-results/report').get(inspResult.readProcDetailsByWork);
 router.route('/proc/insp-results').get(inspResult.readProc);
 router.route('/proc/insp-result/:uuid/include-details').get(inspResult.readProcIncludeDetails);

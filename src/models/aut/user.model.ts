@@ -78,6 +78,14 @@ export default class AutUser extends Model<IAutUser> {
   })
   admin_fg: boolean;
 
+  @Column({
+    comment: 'ISOS 관리자 유무(0: 일반, 1: 관리자)',
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  super_admin_fg: boolean;
+
   @CreatedAt
   @Column({
     comment: '데이터 생성 일시',

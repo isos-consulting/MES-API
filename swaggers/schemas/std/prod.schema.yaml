@@ -379,6 +379,14 @@ inv_to_store_cd:
       type: string
       format: varchar(20)
 
+inv_to_store_nm: 
+  type: object
+  properties: 
+    inv_to_store_nm:
+      description: 입고 창고명
+      type: string
+      format: varchar(50)
+
 inv_to_location_cd: 
   type: object
   properties: 
@@ -386,6 +394,14 @@ inv_to_location_cd:
       description: 입고 위치코드
       type: string
       format: varchar(20)
+
+inv_to_location_nm: 
+  type: object
+  properties: 
+    inv_to_location_nm:
+      description: 입고 위치명
+      type: string
+      format: varchar(50)
 
 factory_cd: 
   type: object

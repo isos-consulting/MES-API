@@ -1150,6 +1150,12 @@ repo: Repository<QmsInspResult>;
     return convertReadResult(result);
   };
 
+  // 📒 Fn[readByRegDate]: RegDate를 통하여 Raw Data Read Function
+  public readByRegDate = async(date: string) => {
+    const result = await this.repo.findAll({ where: { reg_date: date } });
+    return convertReadResult(result);
+  };
+
   //#endregion
 
   //#region 🟡 Update Functions

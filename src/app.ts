@@ -1,14 +1,13 @@
 import * as dotenv from 'dotenv';
 import * as createError from 'http-errors';
 import * as express from 'express';
-import * as logger from 'morgan';
-import * as rfs from 'rotating-file-stream';
-import * as path from 'path';
 import * as cookieParser from 'cookie-parser';
 import * as cors from 'cors';
 import jwtMiddleware from './middlewares/jwt.middleware';
 import routers from './routes';
 import response from './utils/response';
+import morgan = require('morgan');
+import { stream } from './configs/winston';
 import { refreshToken } from './utils/refreshToken';
 
 // Import Environment
@@ -30,23 +29,9 @@ declare global {
 };
 const app: express.Application = express();
 
-// create a rotating write stream
-const accessLogStream = rfs.createStream('access.log', {
-  interval: '1d', // rotate daily
-  path: path.join(__dirname, 'log')
-});
-
-// Create Log (IP, User, Date, Method, Uri, Status, Response Length, Referrer, Agent, ResponseTime, TotalTime)
-app.use(logger(':remote-addr - :remote-user [:date[clf]] ":method :url HTTP/:http-version" :status :res[content-length] ":referrer" ":user-agent" ":response-time" ":total-time"', { stream: accessLogStream }));
-app.use(logger('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
-
-app.use(cors());
-app.use('/health-check', (req: express.Request, res: express.Response, next: express.NextFunction) => { return response(res, [], {}, '', 200); });
-app.use('/refresh-token', refreshToken)
-app.use(jwtMiddleware);
 
 // Cross Origin Resource Sharping 의 약자
 // 서로 다른 도메인 또는 포트에서 자원을 요청 할 때 보안목적으로 차단 되는 경우
@@ -55,6 +40,15 @@ app.use(jwtMiddleware);
 //   credentitals: true // true로 하면 설정한 내용을 response 헤더에 추가 해줍니다.
 // }
 // app.use(cors(corsOptions));
+app.use(cors());
+app.use('/health-check', (req: express.Request, res: express.Response, next: express.NextFunction) => { return response(res, [], {}, '', 200); });
+
+// Create Log (IP, User, Date, Method, Uri, Status, Response Length, Referrer, Agent, ResponseTime, TotalTime)
+app.use(morgan('combined', { stream }));
+app.use(morgan('dev'));
+
+app.use('/refresh-token', refreshToken)
+app.use(jwtMiddleware);
 app.use('/', routers);
 
 // catch 404 and forward to error handler

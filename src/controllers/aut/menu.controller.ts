@@ -1,6 +1,7 @@
 import express = require('express');
 import { Transaction } from 'sequelize';
 import ApiResult from '../../interfaces/common/api-result.interface';
+import sequelize from '../../models';
 import AutMenuTypeRepo from '../../repositories/aut/menu-type.repository';
 import AutMenuRepo from '../../repositories/aut/menu.repository';
 import refreshMaterializedView from '../../utils/refreshMaterializedView';
@@ -41,14 +42,6 @@ class AutMenuCtl extends BaseCtl {
   //#endregion
 
   //#region ✅ CRUD Functions
-
-  //#region 🟢 Create Functions
-
-  // 📒 Fn[create] (✅ Inheritance): Default Create Function
-  // public create = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-  // }
-
-  //#endregion
 
   //#region 🔵 Read Functions
 
@@ -102,16 +95,70 @@ class AutMenuCtl extends BaseCtl {
   //#region 🟡 Update Functions
 
   // 📒 Fn[update] (✅ Inheritance): Default Update Function
-  // public update = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-  // }
+  public update = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      req.body = await this.getFkId(req.body, this.fkIdInfos);
 
-  //#endregion
+      // 📌 입력한 데이터 순서대로 메뉴 정렬
+      let firstMenuId = 0;
+      let secondMenuId = 0;
 
-  //#region 🟠 Patch Functions
+      let firstLevelIndex = 1;
+      let secondLevelIndex = 1;
+      let thirdLevelIndex = 1;
+      let currentLevel = 1;
+      req.body = req.body.map((data: any) => {
+        switch (data.lv) {
+          case 1:
+            firstMenuId = data.menu_id;
+            data.parent_id = 0;
 
-  // 📒 Fn[patch] (✅ Inheritance): Default Patch Function
-  // public patch = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-  // }
+            currentLevel = 1;
+            data.sortby = firstLevelIndex++;
+            break;
+          case 2:
+            data.parent_id = firstMenuId;
+            secondMenuId = data.menu_id;
+
+            if (currentLevel === 1) { secondLevelIndex = 1; }
+            currentLevel = 2;
+            data.sortby = secondLevelIndex++;
+            break;
+          case 3:
+            data.parent_id = secondMenuId;
+
+            if (currentLevel !== 3) { thirdLevelIndex = 1; }
+            currentLevel = 3;
+            data.sortby = thirdLevelIndex++;
+            break;
+        }
+        return data;
+      });
+
+      // 📌 신규 데이터, 수정 할 데이터 구분
+      const createBody: any[] = [];
+      const updateBody: any[] = [];
+      req.body.forEach((data: any) => {
+        if (data.uuid) { updateBody.push(data); }
+        else { createBody.push(data); }
+      });
+
+      await sequelize.transaction(async(tran) => { 
+        // 📌 데이터 생성 및 수정
+        const createResult = await this.repo.create(createBody, req.user?.uid as number, tran); 
+        const updateResult = await this.repo.update(updateBody, req.user?.uid as number, tran); 
+
+        this.result.raws = [...createResult.raws, ...updateResult.raws];
+        this.result.count = createResult.count + updateResult.count;
+
+        await refreshMaterializedView(this.treeViewName, tran);
+      });
+
+      return response(res, this.result.raws, { count: this.result.count }, '', 201);
+    } catch (e) {
+      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+    }
+  }
 
   //#endregion
 
@@ -126,60 +173,6 @@ class AutMenuCtl extends BaseCtl {
   //#endregion
 
   //#region ✅ Inherited Hooks
-
-  //#region 🟢 Create Hooks
-
-  // 📒 Fn[beforeCreate] (✅ Inheritance): Create Transaction 이 실행되기 전 호출되는 Function
-  // beforeCreate = async(req: express.Request) => {}
-
-  // 📒 Fn[beforeTranCreate] (✅ Inheritance): Create Transaction 내부에서 DB Tasking 이 실행되기 전 호출되는 Function
-  // beforeTranCreate = async(req: express.Request, tran: Transaction) => {}
-
-  // 📒 Fn[afterTranCreate] (✅ Inheritance): Create Transaction 내부에서 DB Tasking 이 실행된 후 호출되는 Function
-  afterTranCreate = async(req: express.Request, result: ApiResult<any>, tran: Transaction) => {
-    await refreshMaterializedView(this.treeViewName, tran);
-  }
-
-  // 📒 Fn[afterCreate] (✅ Inheritance): Create Transaction 이 실행된 후 호출되는 Function
-  // afterCreate = async(req: express.Request, result: ApiResult<any>) => {}
-
-  //#endregion
-
-  //#region 🟡 Update Hooks
-
-  // 📒 Fn[beforeUpdate] (✅ Inheritance): Update Transaction 이 실행되기 전 호출되는 Function
-  // beforeUpdate = async(req: express.Request) => {}
-
-  // 📒 Fn[beforeTranUpdate] (✅ Inheritance): Update Transaction 내부에서 DB Tasking 이 실행되기 전 호출되는 Function
-  // beforeTranUpdate = async(req: express.Request, tran: Transaction) => {}
-
-  // 📒 Fn[afterTranUpdate] (✅ Inheritance): Update Transaction 내부에서 DB Tasking 이 실행된 후 호출되는 Function
-  afterTranUpdate = async(req: express.Request, result: ApiResult<any>, tran: Transaction) => {
-    await refreshMaterializedView(this.treeViewName, tran);
-  }
-
-  // 📒 Fn[afterUpdate] (✅ Inheritance): Update Transaction 이 실행된 후 호출되는 Function
-  // afterUpdate = async(req: express.Request, result: ApiResult<any>) => {}
-
-  //#endregion
-
-  //#region 🟠 Patch Hooks
-
-  // 📒 Fn[beforePatch] (✅ Inheritance): Patch Transaction 이 실행되기 전 호출되는 Function
-  // beforePatch = async(req: express.Request) => {}
-
-  // 📒 Fn[beforeTranPatch] (✅ Inheritance): Patch Transaction 내부에서 DB Tasking 이 실행되기 전 호출되는 Function
-  // beforeTranPatch = async(req: express.Request, tran: Transaction) => {}
-
-  // 📒 Fn[afterTranPatch] (✅ Inheritance): Patch Transaction 내부에서 DB Tasking 이 실행된 후 호출되는 Function
-  afterTranPatch = async(req: express.Request, result: ApiResult<any>, tran: Transaction) => {
-    await refreshMaterializedView(this.treeViewName, tran);
-  }
-
-  // 📒 Fn[afterPatch] (✅ Inheritance): Patch Transaction 이 실행된 후 호출되는 Function
-  // afterPatch = async(req: express.Request, result: ApiResult<any>) => {}
-
-  //#endregion
 
   //#region 🔴 Delete Hooks
 

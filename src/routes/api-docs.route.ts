@@ -3,6 +3,16 @@ import * as redoc from 'redoc-express';
 
 const router = express.Router();
 
+//#region ✅ Adm (Admin: 관리자)
+router.route('/adm.swagger.yaml').get((req, res) => {
+  res.sendFile('adm.swagger.build.yaml', { root: './swaggers/builds' });
+});
+router.route('/adm').get(redoc.default({
+  title: 'API Docs - Adm(관리자)',
+  specUrl: 'adm.swagger.yaml'
+}));
+//#endregion
+
 //#region ✅ Aut (Authorization: 권한/인증)
 router.route('/aut.swagger.yaml').get((req, res) => {
   res.sendFile('aut.swagger.build.yaml', { root: './swaggers/builds' });
@@ -13,13 +23,13 @@ router.route('/aut').get(redoc.default({
 }));
 //#endregion
 
-//#region ✅ Adm (Admin: 관리자)
-router.route('/adm.swagger.yaml').get((req, res) => {
-  res.sendFile('adm.swagger.build.yaml', { root: './swaggers/builds' });
+//#region ✅ Das (Dashboard: 대시보드)
+router.route('/das.swagger.yaml').get((req, res) => {
+  res.sendFile('das.swagger.build.yaml', { root: './swaggers/builds' });
 });
-router.route('/adm').get(redoc.default({
-  title: 'API Docs - Adm(관리자)',
-  specUrl: 'adm.swagger.yaml'
+router.route('/das').get(redoc.default({
+  title: 'API Docs - Das(대시보드)',
+  specUrl: 'das.swagger.yaml'
 }));
 //#endregion
 

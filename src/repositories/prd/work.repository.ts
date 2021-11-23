@@ -188,6 +188,70 @@ class PrdWorkRepo {
     }
   };
 
+  // 📒 Fn[readOperatingRate]: 설비 가동율 Read Function
+  public readOperatingRate = async(date: string) => {
+    // 생산 가동율
+
+    // -- 표준 계산식
+    // 조업시간 - 계획정지 - 비계획정지
+    // -------------------------
+    //   조업시간 - 계획정지
+      
+      
+    // -- 임시 계산식????
+    //   실적 시간 - 비가동
+    // ------------------------4
+
+    // 일자 넘어가는거 (2일 이상) 어떻게 처리할지 생각해야 함
+    // 비가동 시작은 있고 종료가 없는경우는 now로 처리
+
+    const result = await sequelize.query(`
+      SELECT * INTO temp_work_tb
+      FROM prd_work_tb s_od;
+      --WHERE DATE(reg_date) = '${date}';
+      
+      CREATE INDEX idx_temp_work_tb_work_id ON temp_work_tb(work_id);
+      
+      SELECT p_wd.* INTO temp_downtime_tb
+      FROM prd_work_downtime_tb p_wd
+      JOIN temp_work_tb p_w ON p_w.work_id = p_wd.work_id;
+      
+      CREATE INDEX idx_temp_downtime_tb_work_id ON temp_downtime_tb(downtime_id);
+      
+      
+      SELECT 
+        AVG((work_time - downtime) / work_time) AS rate
+      FROM (
+        SELECT 
+          DATE_PART('day', CASE WHEN complete_fg = TRUE THEN end_date ELSE NOW() END - start_date) * 2 +
+          DATE_PART('hour', CASE WHEN complete_fg = TRUE THEN end_date ELSE NOW() END - start_date) * 60 +
+          DATE_PART('minute', CASE WHEN complete_fg = TRUE THEN end_date ELSE NOW() END - start_date) AS work_time,
+          p_wd.downtime
+        FROM prd_work_tb p_w
+        LEFT JOIN (
+          SELECT 
+            work_id,
+            SUM( 
+              CASE WHEN end_date IS NULL THEN 0
+              ELSE
+                DATE_PART('day', end_date - start_date) * 24 +
+                DATE_PART('hour', end_date - start_date) * 60 +
+                DATE_PART('minute', end_date - start_date)
+              END 
+            ) AS downtime
+          FROM prd_work_downtime_tb
+          GROUP BY work_id
+        ) p_wd ON p_wd.work_id = p_w.work_id 
+      ) a;
+      
+      
+      DROP TABLE temp_work_tb;
+      DROP TABLE temp_downtime_tb;
+    `);
+
+    return convertReadResult(result[0]);
+  };
+
   //#endregion
 
   //#region 🟡 Update Functions

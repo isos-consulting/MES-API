@@ -50,11 +50,11 @@ const readBomTrees = (factoryUuid?: string, prodId?: number) => {
       s_u.unit_cd,
       s_u.unit_nm,
       s_s.uuid as from_store_uuid,
-      s_s.store_cd,
-      s_s.store_nm,
+      s_s.store_cd as from_store_cd,
+      s_s.store_nm as from_store_nm,
       s_l.uuid as from_location_uuid,
-      s_l.location_cd,
-      s_l.location_nm,
+      s_l.location_cd as from_location_cd,
+      s_l.location_nm as from_location_nm,
       t_b.remark		
     FROM temp_bom_tree_vw t_vb
     JOIN std_prod_tb s_p_main ON s_p_main.prod_id = t_vb.main_prod_id

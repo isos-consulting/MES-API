@@ -98,11 +98,11 @@ get:
                             - $ref: ../../schemas/std/reject.schema.yaml#/reject_cd
                             - $ref: ../../schemas/std/reject.schema.yaml#/reject_nm
                             - $ref: ../../schemas/sal/return-detail.schema.yaml#/to_store_uuid
-                            - $ref: ../../schemas/std/store.schema.yaml#/store_cd
-                            - $ref: ../../schemas/std/store.schema.yaml#/store_nm
+                            - $ref: ../../schemas/std/store.schema.yaml#/to_store_cd
+                            - $ref: ../../schemas/std/store.schema.yaml#/to_store_nm
                             - $ref: ../../schemas/sal/return-detail.schema.yaml#/to_location_uuid
-                            - $ref: ../../schemas/std/location.schema.yaml#/location_cd
-                            - $ref: ../../schemas/std/location.schema.yaml#/location_nm
+                            - $ref: ../../schemas/std/location.schema.yaml#/to_location_cd
+                            - $ref: ../../schemas/std/location.schema.yaml#/to_location_nm
                             - $ref: ../../schemas/sal/return-detail.schema.yaml#/remark
                             - $ref: ../../schemas/sal/return-detail.schema.yaml#/barcode
                             - $ref: ../../schemas/common/timestamp.schema.yaml
