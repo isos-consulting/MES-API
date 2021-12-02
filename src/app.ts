@@ -9,6 +9,7 @@ import response from './utils/response';
 import morgan = require('morgan');
 import { stream } from './configs/winston';
 import { refreshToken } from './utils/refreshToken';
+import tenantMiddleware from './middlewares/tenant.middleware';
 
 // Import Environment
 dotenv.config();
@@ -18,6 +19,9 @@ declare global {
   // add user information in express request
   namespace Express {
     interface Request {
+      tenant: {
+        uuid: string
+      }
       user: {
         uuid: string,
         uid: number,
@@ -28,6 +32,8 @@ declare global {
   }
 };
 const app: express.Application = express();
+
+console.log(process.env.NODE_ENV);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -47,6 +53,7 @@ app.use('/health-check', (req: express.Request, res: express.Response, next: exp
 app.use(morgan('combined', { stream }));
 app.use(morgan('dev'));
 
+app.use(tenantMiddleware);
 app.use('/refresh-token', refreshToken)
 app.use(jwtMiddleware);
 app.use('/', routers);

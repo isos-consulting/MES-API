@@ -469,7 +469,7 @@ class PrdWorkCtl extends BaseCtl {
             detailInfosResult.count += tempDetailInfosResult.count;
 
             // ✅ 검사성적서 삭제
-            const tempHeaderResult = await this.repo.delete(data.header, req.user?.uid as number, tran);
+            const tempHeaderResult = await this.inspResultRepo.delete([inspResult], req.user?.uid as number, tran);
             inspHeaderResult.raws = [ ...inspHeaderResult.raws, ...tempHeaderResult.raws ];
             inspHeaderResult.count += tempHeaderResult.count;
           }

@@ -2,9 +2,10 @@ import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repos
 import StdFactory from '../../models/std/factory.model';
 import IStdFactory from '../../interfaces/std/factory.interface';
 import sequelize from '../../models';
+import { Sequelize } from 'sequelize-typescript';
 import convertBulkResult from '../../utils/convertBulkResult';
 import convertResult from '../../utils/convertResult';
-import { Op, Sequelize, Transaction } from 'sequelize';
+import { Op, Transaction } from 'sequelize';
 import { UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
@@ -14,8 +15,8 @@ class StdFactoryRepo {
   repo: Repository<StdFactory>;
 
   //#region ✅ Constructor
-  constructor() {
-    this.repo = sequelize.getRepository(StdFactory);
+  constructor(sequelizeTemp: Sequelize = sequelize) {
+    this.repo = sequelizeTemp.getRepository(StdFactory);
   }
   //#endregion
 

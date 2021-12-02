@@ -25,6 +25,12 @@ class AutMenuCtl extends BaseCtl {
     // ✅ CUD 연산이 실행되기 전 Fk Table 의 uuid 로 id 를 검색하여 request body 에 삽입하기 위하여 정보 Setting
     this.fkIdInfos = [
       {
+        key: 'menu',
+        repo: new AutMenuRepo(),
+        idName: 'menu_id',
+        uuidName: 'uuid'
+      },
+      {
         key: 'menuType',
         repo: new AutMenuTypeRepo(),
         idName: 'menu_type_id',
@@ -99,54 +105,63 @@ class AutMenuCtl extends BaseCtl {
     try {
       req.body = await this.getFkId(req.body, this.fkIdInfos);
 
-      // 📌 입력한 데이터 순서대로 메뉴 정렬
-      let firstMenuId = 0;
-      let secondMenuId = 0;
-
-      let firstLevelIndex = 1;
-      let secondLevelIndex = 1;
-      let thirdLevelIndex = 1;
-      let currentLevel = 1;
-      req.body = req.body.map((data: any) => {
-        switch (data.lv) {
-          case 1:
-            firstMenuId = data.menu_id;
-            data.parent_id = 0;
-
-            currentLevel = 1;
-            data.sortby = firstLevelIndex++;
-            break;
-          case 2:
-            data.parent_id = firstMenuId;
-            secondMenuId = data.menu_id;
-
-            if (currentLevel === 1) { secondLevelIndex = 1; }
-            currentLevel = 2;
-            data.sortby = secondLevelIndex++;
-            break;
-          case 3:
-            data.parent_id = secondMenuId;
-
-            if (currentLevel !== 3) { thirdLevelIndex = 1; }
-            currentLevel = 3;
-            data.sortby = thirdLevelIndex++;
-            break;
-        }
-        return data;
-      });
-
-      // 📌 신규 데이터, 수정 할 데이터 구분
-      const createBody: any[] = [];
-      const updateBody: any[] = [];
-      req.body.forEach((data: any) => {
-        if (data.uuid) { updateBody.push(data); }
-        else { createBody.push(data); }
+      // 📌 생성할 데이터 구분
+      let createBody: any[] = [];
+      req.body.forEach((data: any) => { 
+        if (data.uuid) return;
+        data.parent_id = 0;
+        data.sortby = 1;
+        createBody = [ ...createBody, data ]; 
       });
 
       await sequelize.transaction(async(tran) => { 
-        // 📌 데이터 생성 및 수정
-        const createResult = await this.repo.create(createBody, req.user?.uid as number, tran); 
-        const updateResult = await this.repo.update(updateBody, req.user?.uid as number, tran); 
+        // 📌 데이터 생성
+        const createResult = await this.repo.create(createBody, req.user?.uid as number, tran);
+
+        // 📌 입력한 데이터 순서대로 메뉴 정렬
+        let firstMenuId = 0;
+        let secondMenuId = 0;
+
+        let firstLevelIndex = 1;
+        let secondLevelIndex = 1;
+        let thirdLevelIndex = 1;
+        let currentLevel = 1;
+        req.body = req.body.map((data: any) => {
+          if (!data.uuid) {
+            const created = createResult.raws.find(x => x.menu_uri == data.menu_uri);
+            data.menu_id = created.menu_id;
+            data.uuid = created.uuid;
+          }
+
+          switch (data.lv) {
+            case 1:
+              firstMenuId = data.menu_id;
+              data.parent_id = 0;
+
+              currentLevel = 1;
+              data.sortby = firstLevelIndex++;
+              break;
+            case 2:
+              data.parent_id = firstMenuId;
+              secondMenuId = data.menu_id;
+
+              if (currentLevel === 1) { secondLevelIndex = 1; }
+              currentLevel = 2;
+              data.sortby = secondLevelIndex++;
+              break;
+            case 3:
+              data.parent_id = secondMenuId;
+
+              if (currentLevel !== 3) { thirdLevelIndex = 1; }
+              currentLevel = 3;
+              data.sortby = thirdLevelIndex++;
+              break;
+          }
+          return data;
+        });
+
+        // 📌 데이터 수정
+        const updateResult = await this.repo.update(req.body, req.user?.uid as number, tran); 
 
         this.result.raws = [...createResult.raws, ...updateResult.raws];
         this.result.count = createResult.count + updateResult.count;

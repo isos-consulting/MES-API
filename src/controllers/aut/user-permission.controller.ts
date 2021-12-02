@@ -38,7 +38,7 @@ class AutUserPermissionCtl extends BaseCtl {
       {
         key: 'permission',
         repo: new AutPermissionRepo(),
-        idName: 'permission',
+        idName: 'permission_id',
         uuidName: 'permission_uuid'
       }
     ];

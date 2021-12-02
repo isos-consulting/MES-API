@@ -1,5 +1,6 @@
 import * as express from 'express';
 import StdFactoryRepo from '../../repositories/std/factory.repository';
+import { sequelizes } from '../../utils/getSequelize';
 import response from '../../utils/response';
 import testErrorHandlingHelper from '../../utils/testErrorHandlingHelper';
 import BaseCtl from '../base.controller';
@@ -47,7 +48,9 @@ class StdFactoryCtl extends BaseCtl {
   // 📒 Fn[readForSignIn]: 로그인 화면에서 Token 인증 없이 Factory 기본정보 조회 
   public readForSignIn = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      this.result = await this.repo.readForSignIn();
+      console.log('옴?')
+      this.result = await new StdFactoryRepo(sequelizes[req.tenant.uuid]).readForSignIn();
+      // this.result = await this.repo.readForSignIn();
       return response(res, this.result.raws, { count: this.result.count });
     } catch (e) {
       return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);

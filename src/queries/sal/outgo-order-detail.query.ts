@@ -58,6 +58,7 @@ const readOrderDetails = (
       s_od.qty as order_qty,
       s_ood.qty,
       CASE WHEN (s_ood.qty - COALESCE(s_ogd.qty,0)) < 0 THEN 0 ELSE s_ood.qty - COALESCE(s_ogd.qty,0) END AS balance,
+      s_ood.complete_fg,
       CASE WHEN s_ood.complete_fg = FALSE AND ((s_ood.qty - COALESCE(s_ogd.qty,0)) > 0) THEN '미완료' ELSE '완료' END as complete_state,
       s_ood.remark,
       s_ood.created_at,
