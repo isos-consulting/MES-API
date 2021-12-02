@@ -51,7 +51,11 @@ router.route('/demand-types').get(demandType.read);
 
 //#region ✅ PatternOpt (자동번호발행 옵션)
 const patternOpt = new AdmPatternOptCtl();
-router.route('/pattern-opts').get(patternOpt.read);
+router.route('/pattern-opt/:uuid').get(patternOpt.read);
+router.route('/pattern-opts').get(patternOpt.create);
+router.route('/pattern-opts').post(patternOpt.update);
+router.route('/pattern-opts').patch(patternOpt.patch);
+router.route('/pattern-opts').delete(patternOpt.delete);
 //#endregion
 
 //#region ✅ ReworkType (재작업 유형)

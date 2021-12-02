@@ -3,9 +3,9 @@ import IAdmPatternOpt from '../../interfaces/adm/pattern-opt.interface';
 import AutUser from '../aut/user.model';
 
 @Table({
-  tableName: 'ADM_PATTERN_OPT_VW',
+  tableName: 'ADM_PATTERN_OPT_TB',
   modelName: 'AdmPatternOpt',
-  comment: '자동번호발행 옵션정보 뷰',
+  comment: '자동번호발행 옵션정보 테이브',
   timestamps: true,
   underscored: true,
 })
@@ -99,11 +99,20 @@ export default class AdmPatternOpt extends Model<IAdmPatternOpt> {
   })
   updated_uid: number;
 
+	@Unique('adm_pattern_opt_tb_uuid_un')
+  @Column({
+    comment: '자동번호발행 옵션UUID',
+    type: DataType.UUID,
+    allowNull: false,
+    defaultValue: Sequelize.fn('gen_random_uuid')
+  })
+  uuid: string;
+
   //#region ✅ Define Association
   // BelongTo
-  @BelongsTo(() => AutUser, { as: 'createUser', foreignKey: 'created_uid', targetKey: 'uid', constraints: false })
+  @BelongsTo(() => AutUser, { as: 'createUser', foreignKey: 'created_uid', targetKey: 'uid', onDelete: 'restrict', onUpdate: 'cascade' })
   createUser: AutUser;
-  @BelongsTo(() => AutUser, { as: 'updateUser', foreignKey: 'updated_uid', targetKey: 'uid', constraints: false })
+  @BelongsTo(() => AutUser, { as: 'updateUser', foreignKey: 'updated_uid', targetKey: 'uid', onDelete: 'restrict', onUpdate: 'cascade' })
   updateUser: AutUser;
 
   // HasMany
