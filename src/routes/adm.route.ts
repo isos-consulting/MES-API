@@ -86,7 +86,12 @@ router.route('/file-mgmts').delete(fileMgmt.delete);
 
 //#region ✅ CompanyOpt (회사 옵션)
 const companyOpt = new AdmCompanyOptCtl();
+router.route('/company-opt/:uuid').get(companyOpt.read);
 router.route('/company-opts').get(companyOpt.read);
+router.route('/company-opts').post(companyOpt.create);
+router.route('/company-opts').put(companyOpt.update);
+router.route('/company-opts').patch(companyOpt.patch);
+router.route('/company-opts').delete(companyOpt.delete);
 //#endregion
 
 export default router;

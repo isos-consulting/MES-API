@@ -3,9 +3,9 @@ import IAdmCompanyOpt from '../../interfaces/adm/company-opt.interface';
 import AutUser from '../aut/user.model';
 
 @Table({
-  tableName: 'ADM_COMPANY_OPT_VW',
+  tableName: 'ADM_COMPANY_OPT_TB',
   modelName: 'AdmCompanyOpt',
-  comment: '회사 옵션정보 뷰',
+  comment: '회사 옵션 정보 테이블',
   timestamps: true,
   underscored: true,
 })
@@ -15,6 +15,8 @@ export default class AdmCompanyOpt extends Model<IAdmCompanyOpt> {
     type: DataType.INTEGER,
     allowNull: false,
     primaryKey: true,
+		autoIncrement: true,
+    autoIncrementIdentity: true,
   })
   company_opt_id: number;
 
@@ -38,14 +40,14 @@ export default class AdmCompanyOpt extends Model<IAdmCompanyOpt> {
     type: DataType.STRING,
     allowNull: false,
   })
-  value: string;
+  val: string;
 
   @Column({
     comment: '옵션 값(추가)',
     type: DataType.STRING,
     allowNull: false,
   })
-  opt_value: string;
+  val_opt: string;
 
   @Column({
     comment: '비고',
@@ -92,11 +94,20 @@ export default class AdmCompanyOpt extends Model<IAdmCompanyOpt> {
   })
   updated_uid: number;
 
+	@Unique('adm_company_opt_tb_uuid_un')
+  @Column({
+    comment: '회사 옵션UUID',
+    type: DataType.UUID,
+    allowNull: false,
+    defaultValue: Sequelize.fn('gen_random_uuid')
+  })
+  uuid: string;
+
   //#region ✅ Define Association
   // BelongTo
-  @BelongsTo(() => AutUser, { as: 'createUser', foreignKey: 'created_uid', targetKey: 'uid', constraints: false })
+  @BelongsTo(() => AutUser, { as: 'createUser', foreignKey: 'created_uid', targetKey: 'uid', onDelete: 'restrict', onUpdate: 'cascade' })
   createUser: AutUser;
-  @BelongsTo(() => AutUser, { as: 'updateUser', foreignKey: 'updated_uid', targetKey: 'uid', constraints: false })
+  @BelongsTo(() => AutUser, { as: 'updateUser', foreignKey: 'updated_uid', targetKey: 'uid', onDelete: 'restrict', onUpdate: 'cascade' })
   updateUser: AutUser;
 
   // HasMany

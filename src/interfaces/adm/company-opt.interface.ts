@@ -1,7 +1,7 @@
 export default interface IAdmCompanyOpt {
-  compnay_opt_id?: number,
-  compnay_opt_cd?: string,
-  compnay_opt_nm?: string,
+  company_opt_id?: number,
+  company_opt_cd?: string,
+  company_opt_nm?: string,
   remark?: string,
   val?: string,
   val_opt?: string,
@@ -10,5 +10,5 @@ export default interface IAdmCompanyOpt {
   created_uid?: number,
   updated_at?: Date,
   updated_uid?: number,
-  tenant_uuid?: string
+	uuid?: string
 }

@@ -21,7 +21,6 @@ class AdmInspDetailTypeRepo {
 
   //#region ✅ CRUD Functions
 
-
 	// 📒 Fn[create]: Default Create Function
 	public create = async(body: IAdmInspDetailType[], uid: number, transaction?: Transaction) => {
 		try {
@@ -47,6 +46,7 @@ class AdmInspDetailTypeRepo {
 			throw error;
 		}
 	};
+	//#endregion
 
   //#region 🔵 Read Functions
   
