@@ -14,14 +14,14 @@ class AdmInspDetailTypeCtl extends BaseCtl {
     super(new AdmInspDetailTypeRepo());
 
     // ✅ CUD 연산이 실행되기 전 Fk Table 의 uuid 로 id 를 검색하여 request body 에 삽입하기 위하여 정보 Setting
-    // this.fkIdInfos = [
-    //   {
-    //     key: 'table',
-    //     repo: new TableRepo(),
-    //     idName: 'table_id',
-    //     uuidName: 'table_uuid'
-    //   }
-    // ];
+    this.fkIdInfos = [
+      {
+        key: 'insp_detail_type',
+        repo: new AdmInspDetailTypeRepo(),
+        idName: 'insp_detail_type_id',
+        uuidName: 'insp_detail_type_uuid'
+      }
+    ];
   };
   //#endregion
 

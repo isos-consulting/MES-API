@@ -15,6 +15,8 @@ export default class AdmPatternOpt extends Model<IAdmPatternOpt> {
     type: DataType.INTEGER,
     allowNull: false,
     primaryKey: true,
+		autoIncrement: true,
+    autoIncrementIdentity: true,
   })
   pattern_opt_id: number;
 

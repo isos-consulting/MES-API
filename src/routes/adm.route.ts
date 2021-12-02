@@ -36,7 +36,12 @@ router.route('/prd-plan-types').get(prdPlanType.read);
 
 //#region ✅ InspDetailType (세부검사 유형)
 const inspDetailType = new AdmInspDetailTypeCtl();
+router.route('/insp-detail-type/:uuid').get(inspDetailType.read);
 router.route('/insp-detail-types').get(inspDetailType.read);
+router.route('/insp-detail-types').post(inspDetailType.create);
+router.route('/insp-detail-types').put(inspDetailType.update);
+router.route('/insp-detail-types').patch(inspDetailType.patch);
+router.route('/insp-detail-types').delete(inspDetailType.delete);
 //#endregion
 
 //#region ✅ Transaction (수불 유형)
@@ -52,8 +57,9 @@ router.route('/demand-types').get(demandType.read);
 //#region ✅ PatternOpt (자동번호발행 옵션)
 const patternOpt = new AdmPatternOptCtl();
 router.route('/pattern-opt/:uuid').get(patternOpt.read);
-router.route('/pattern-opts').get(patternOpt.create);
-router.route('/pattern-opts').post(patternOpt.update);
+router.route('/pattern-opts').get(patternOpt.read);
+router.route('/pattern-opts').post(patternOpt.create);
+router.route('/pattern-opts').put(patternOpt.update);
 router.route('/pattern-opts').patch(patternOpt.patch);
 router.route('/pattern-opts').delete(patternOpt.delete);
 //#endregion
