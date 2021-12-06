@@ -14,14 +14,14 @@ class AdmBomTypeCtl extends BaseCtl {
     super(new AdmBomTypeRepo());
 
     // ✅ CUD 연산이 실행되기 전 Fk Table 의 uuid 로 id 를 검색하여 request body 에 삽입하기 위하여 정보 Setting
-    // this.fkIdInfos = [
-    //   {
-    //     key: 'table',
-    //     repo: new TableRepo(),
-    //     idName: 'table_id',
-    //     uuidName: 'table_uuid'
-    //   }
-    // ];
+    this.fkIdInfos = [
+      {
+        key: 'adm_bom_type_tb',
+        repo: new AdmBomTypeRepo(),
+        idName: 'bom_type_id',
+        uuidName: 'bom_type_uuid'
+      }
+    ];
   };
   //#endregion
 

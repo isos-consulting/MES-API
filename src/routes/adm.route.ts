@@ -16,7 +16,12 @@ const router = express.Router();
 
 //#region ✅ BomType (BOM 구성 유형)
 const bomType = new AdmBomTypeCtl();
+router.route('/bom-type/:uuid').get(bomType.read);
 router.route('/bom-types').get(bomType.read);
+router.route('/bom-types').post(bomType.create);
+router.route('/bom-types').put(bomType.update);
+router.route('/bom-types').patch(bomType.patch);
+router.route('/bom-types').delete(bomType.delete);
 //#endregion
 
 //#region ✅ InspType (검사 유형)
