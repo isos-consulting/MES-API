@@ -2,7 +2,7 @@ version: 0.0
 os: linux
 files:
   - source: /
-    destination: /var/iso-server
+    destination: /var/iso-server-development
 hooks:
   ApplicationStop: 
     - location: ./shells/application-stop.sh
