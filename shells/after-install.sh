@@ -1,4 +1,5 @@
 #!/bin/bash 
-cd /var/iso-server
+cd /var/${DEPLOYMENT_GROUP_NAME}
 yarn install
-yarn api-docs-all
+yarn add tsc
+yarn api-docs

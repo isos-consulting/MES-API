@@ -1,2 +1,2 @@
 #!/bin/bash 
-rm -rf /var/iso-server
+rm -rf /var/${DEPLOYMENT_GROUP_NAME}
