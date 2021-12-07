@@ -1,6 +1,7 @@
 import moment = require('moment');
 import IOutIncome from '../../interfaces/out/income.interface';
 import BaseMigration from '../base-migration';
+import config from '../../configs/config';
 
 // Seed Datas
 let seedDatas: IOutIncome[] = [
@@ -102,7 +103,7 @@ let seedDatas: IOutIncome[] = [
 	}
 ]
 
-const baseMigration = new BaseMigration('OutIncome', 'income_id', process.env.DB_RESET_TYPE === 'test' ? seedDatas : []);
+const baseMigration = new BaseMigration('OutIncome', 'income_id', config.db.reset_type === 'test' ? seedDatas : []);
 const migration = baseMigration.migration;
 const migrationUndo = baseMigration.migrationUndo;
 

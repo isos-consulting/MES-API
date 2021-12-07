@@ -1,20 +1,25 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
-import sequelize from '../../models';
+import { Sequelize } from 'sequelize-typescript';
 import convertBulkResult from '../../utils/convertBulkResult';
 import convertResult from '../../utils/convertResult';
-import { Op, Sequelize, Transaction, UniqueConstraintError } from 'sequelize';
+import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
+import { getSequelize } from '../../utils/getSequelize';
 import PrdWorkWorker from '../../models/prd/work-worker.model';
 import IPrdWorkWorker from '../../interfaces/prd/work-worker.interface';
 
 class PrdWorkWorkerRepo {
   repo: Repository<PrdWorkWorker>;
+  sequelize: Sequelize;
+  tenant: string;
 
   //#region ✅ Constructor
-  constructor() {
-    this.repo = sequelize.getRepository(PrdWorkWorker);
+  constructor(tenant: string) {
+    this.tenant = tenant;
+    this.sequelize = getSequelize(tenant);
+    this.repo = this.sequelize.getRepository(PrdWorkWorker);
   }
   //#endregion
 
@@ -57,20 +62,20 @@ class PrdWorkWorkerRepo {
       const result = await this.repo.findAll({ 
         include: [
           { 
-            model: sequelize.models.StdFactory, 
+            model: this.sequelize.models.StdFactory, 
             attributes: [], 
             required: true,
             where: params.factory_uuid ? { uuid: params.factory_uuid } : {}
           },
           { 
-            model: sequelize.models.PrdWork,
+            model: this.sequelize.models.PrdWork,
             attributes: [], 
             required: true,
             where: params.work_uuid ? { uuid: params.work_uuid } : {}
           },
-          { model: sequelize.models.StdWorker, attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.StdWorker, attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('prdWorkWorker.uuid'), 'work_worker_uuid' ],
@@ -104,11 +109,11 @@ class PrdWorkWorkerRepo {
     try {
       const result = await this.repo.findOne({ 
         include: [
-          { model: sequelize.models.StdFactory, attributes: [], required: true },
-          { model: sequelize.models.PrdWork, attributes: [], required: true },
-          { model: sequelize.models.StdWorker, attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.StdFactory, attributes: [], required: true },
+          { model: this.sequelize.models.PrdWork, attributes: [], required: true },
+          { model: this.sequelize.models.StdWorker, attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('prdWorkWorker.uuid'), 'work_worker_uuid' ],
@@ -180,7 +185,7 @@ class PrdWorkWorkerRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.PrdWorkWorker.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.PrdWorkWorker.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -219,7 +224,7 @@ class PrdWorkWorkerRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.PrdWorkWorker.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.PrdWorkWorker.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -242,7 +247,7 @@ class PrdWorkWorkerRepo {
         count += await this.repo.destroy({ where: { uuid: workWorker.uuid }, transaction});
       };
 
-      await new AdmLogRepo().create('delete', sequelize.models.PrdWorkWorker.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.PrdWorkWorker.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
     } catch (error) {
       throw error;
@@ -258,7 +263,7 @@ class PrdWorkWorkerRepo {
 
       count += await this.repo.destroy({ where: { work_id: workId }, transaction});
 
-      await new AdmLogRepo().create('delete', sequelize.models.PrdWorkWorker.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.PrdWorkWorker.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
     } catch (error) {
       throw error;

@@ -1,5 +1,6 @@
 import IStdEquip from '../../interfaces/std/equip.interface';
 import BaseMigration from '../base-migration';
+import config from '../../configs/config';
 
 // Seed Datas
 let seedDatas: IStdEquip[] = [
@@ -65,7 +66,7 @@ let seedDatas: IStdEquip[] = [
 	}
 ]
 
-const baseMigration = new BaseMigration('StdEquip', 'equip_id', process.env.DB_RESET_TYPE === 'test' ? seedDatas : []);
+const baseMigration = new BaseMigration('StdEquip', 'equip_id', config.db.reset_type === 'test' ? seedDatas : []);
 const migration = baseMigration.migration;
 const migrationUndo = baseMigration.migrationUndo;
 

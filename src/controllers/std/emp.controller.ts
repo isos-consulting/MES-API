@@ -7,34 +7,28 @@ import unsealArray from '../../utils/unsealArray';
 import BaseCtl from '../base.controller';
 
 class StdEmpCtl extends BaseCtl {
-  // ✅ Inherited Functions Variable
-  // result: ApiResult<any>;
-
-  // ✅ 부모 Controller (BaseController) 의 repository 변수가 any 로 생성 되어있기 때문에 자식 Controller(this) 에서 Type 지정
-  repo: StdEmpRepo;
-
   //#region ✅ Constructor
   constructor() {
     // ✅ 부모 Controller (Base Controller) 의 CRUD Function 과 상속 받는 자식 Controller(this) 의 Repository 를 연결하기 위하여 생성자에서 Repository 생성
-    super(new StdEmpRepo());
+    super(StdEmpRepo);
 
     // ✅ CUD 연산이 실행되기 전 Fk Table 의 uuid 로 id 를 검색하여 request body 에 삽입하기 위하여 정보 Setting
     this.fkIdInfos = [
       {
         key: 'user',
-        repo: new AutUserRepo(),
+        TRepo: AutUserRepo,
         idName: 'uid',
         uuidName: 'user_uuid'
       },
       {
         key: 'dept',
-        repo: new StdDeptRepo(),
+        TRepo: StdDeptRepo,
         idName: 'dept_id',
         uuidName: 'dept_uuid'
       },
       {
         key: 'grade',
-        repo: new StdGradeRepo(),
+        TRepo: StdGradeRepo,
         idName: 'grade_id',
         uuidName: 'grade_uuid'
       },
@@ -93,10 +87,10 @@ class StdEmpCtl extends BaseCtl {
   // }
 
   // 📒 Fn[convertUniqueToFk] (✅ Inheritance): Excel Upload 전 Unique Key => Fk 변환 Function(Hook)
-  public convertUniqueToFk = async (body: any[]) => {
-    const userRepo = new AutUserRepo();
-    const deptRepo = new StdDeptRepo();
-    const gradeRepo = new StdGradeRepo();
+  public convertUniqueToFk = async (body: any[], tenant: string) => {
+    const userRepo = new AutUserRepo(tenant);
+    const deptRepo = new StdDeptRepo(tenant);
+    const gradeRepo = new StdGradeRepo(tenant);
 
     for await (const raw of body) {
       const user = await userRepo.readRawByUnique({ id: raw.id });

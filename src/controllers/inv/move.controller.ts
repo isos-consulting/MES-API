@@ -1,12 +1,12 @@
 import express = require('express');
 import ApiResult from '../../interfaces/common/api-result.interface';
-import sequelize from '../../models';
 import InvMoveRepo from '../../repositories/inv/move.repository';
 import InvStoreRepo from '../../repositories/inv/store.repository';
 import StdFactoryRepo from '../../repositories/std/factory.repository';
 import StdLocationRepo from '../../repositories/std/location.repository';
 import StdProdRepo from '../../repositories/std/prod.repository';
 import StdStoreRepo from '../../repositories/std/store.repository';
+import { getSequelize } from '../../utils/getSequelize';
 import getStoreBody from '../../utils/getStoreBody';
 import getTranTypeCd from '../../utils/getTranTypeCd';
 import isDateFormat from '../../utils/isDateFormat';
@@ -14,71 +14,64 @@ import isUuid from '../../utils/isUuid';
 import response from '../../utils/response';
 import testErrorHandlingHelper from '../../utils/testErrorHandlingHelper';
 import BaseCtl from '../base.controller';
+import config from '../../configs/config';
 
 class InvMoveCtl extends BaseCtl {
-  // ✅ Inherited Functions Variable
-  // result: ApiResult<any>;
-
-  // ✅ 부모 Controller (BaseController) 의 repository 변수가 any 로 생성 되어있기 때문에 자식 Controller(this) 에서 Type 지정
-  repo: InvMoveRepo;
-  storeRepo: InvStoreRepo;
-
   //#region ✅ Constructor
   constructor() {
     // ✅ 부모 Controller (Base Controller) 의 CRUD Function 과 상속 받는 자식 Controller(this) 의 Repository 를 연결하기 위하여 생성자에서 Repository 생성
-    super(new InvMoveRepo());
-    this.storeRepo = new InvStoreRepo();
+    super(InvMoveRepo);
 
     // ✅ CUD 연산이 실행되기 전 Fk Table 의 uuid 로 id 를 검색하여 request body 에 삽입하기 위하여 정보 Setting
     this.fkIdInfos = [
       {
         key: 'factory',
-        repo: new StdFactoryRepo(),
+        TRepo: StdFactoryRepo,
         idName: 'factory_id',
         uuidName: 'factory_uuid'
       },
       {
         key: 'uuid',
-        repo: new InvMoveRepo(),
+        TRepo: InvMoveRepo,
         idName: 'move_id',
         uuidName: 'uuid'
       },
       {
         key: 'move',
-        repo: new InvMoveRepo(),
+        TRepo: InvMoveRepo,
         idName: 'move_id',
         uuidName: 'move_uuid'
       },
       {
         key: 'prod',
-        repo: new StdProdRepo(),
+        TRepo: StdProdRepo,
         idName: 'prod_id',
         uuidName: 'prod_uuid'
       },
       {
         key: 'fromStore',
-        repo: new StdStoreRepo(),
+        TRepo: StdStoreRepo,
         idName: 'store_id',
         idAlias: 'from_store_id',
         uuidName: 'from_store_uuid'
       },
       {
         key: 'fromLocation',
-        repo: new StdLocationRepo(),
+        TRepo: StdLocationRepo,
         idName: 'location_id',
         idAlias: 'from_location_id',
         uuidName: 'from_location_uuid'
       },
       {
         key: 'toStore',
-        repo: new StdStoreRepo(),
+        TRepo: StdStoreRepo,
         idName: 'store_id',
         idAlias: 'to_store_id',
         uuidName: 'to_store_uuid'
       },
       {
         key: 'toLocation',
-        repo: new StdLocationRepo(),
+        TRepo: StdLocationRepo,
         idName: 'location_id',
         idAlias: 'to_location_id',
         uuidName: 'to_location_uuid'
@@ -95,28 +88,32 @@ class InvMoveCtl extends BaseCtl {
   public create = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       req.body = await this.getFkId(req.body, this.fkIdInfos);
-      this.result = { raws: [], count: 0 };
+      
+      const sequelize = getSequelize(req.tenant.uuid);
+      const repo = new InvMoveRepo(req.tenant.uuid);
+      const storeRepo = new InvStoreRepo(req.tenant.uuid);
+      let result: ApiResult<any> = { count: 0, raws: [] };
 
-      let moveResult: ApiResult<any> = { raws: [], count: 0 };
-      let storeResult: ApiResult<any> = { raws: [], count: 0 };
+      let moveResult: ApiResult<any> = { count: 0, raws: [] };
+      let storeResult: ApiResult<any> = { count: 0, raws: [] };
 
       await sequelize.transaction(async(tran) => {
         // 📌 재고 이동 내역 생성
-        moveResult = await this.repo.create(req.body, req.user?.uid as number, tran);
+        moveResult = await repo.create(req.body, req.user?.uid as number, tran);
 
         // 📌 입출고 창고 수불 내역 생성
         const fromStoreBody = getStoreBody(moveResult.raws, 'FROM', 'move_id', getTranTypeCd('INV_MOVE'));
         const toStoreBody = getStoreBody(moveResult.raws, 'TO', 'move_id', getTranTypeCd('INV_MOVE'));
         const storeBody = [...fromStoreBody, ...toStoreBody];
-        storeResult = await this.storeRepo.create(storeBody, req.user?.uid as number, tran);
+        storeResult = await storeRepo.create(storeBody, req.user?.uid as number, tran);
       });
 
-      this.result.raws.push({ move: moveResult.raws, store: storeResult.raws });
-      this.result.count += moveResult.count + storeResult.count;
+      result.raws.push({ move: moveResult.raws, store: storeResult.raws });
+      result.count += moveResult.count + storeResult.count;
       
-      return response(res, this.result.raws, { count: this.result.count }, '', 201);
+      return response(res, result.raws, { count: result.count }, '', 201);
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   };
   //#endregion
@@ -135,28 +132,32 @@ class InvMoveCtl extends BaseCtl {
   public update = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       req.body = await this.getFkId(req.body, this.fkIdInfos);
-      this.result = { raws: [], count: 0 };
+      
+      const sequelize = getSequelize(req.tenant.uuid);
+      const repo = new InvMoveRepo(req.tenant.uuid);
+      const storeRepo = new InvStoreRepo(req.tenant.uuid);
+      let result: ApiResult<any> = { count: 0, raws: [] };
 
       let moveResult: ApiResult<any> = { raws: [], count: 0 };
       let storeResult: ApiResult<any> = { raws: [], count: 0 };
 
       await sequelize.transaction(async(tran) => {
         // 📌 재고 이동 내역 수정
-        moveResult = await this.repo.update(req.body, req.user?.uid as number, tran);
+        moveResult = await repo.update(req.body, req.user?.uid as number, tran);
 
         // 📌 입출고 창고 수불 내역 수정
         const fromStoreBody = getStoreBody(moveResult.raws, 'FROM', 'move_id', getTranTypeCd('INV_MOVE'));
         const toStoreBody = getStoreBody(moveResult.raws, 'TO', 'move_id', getTranTypeCd('INV_MOVE'));
         const storeBody = [...fromStoreBody, ...toStoreBody];
-        storeResult = await this.storeRepo.updateToTransaction(storeBody, req.user?.uid as number, tran);
+        storeResult = await storeRepo.updateToTransaction(storeBody, req.user?.uid as number, tran);
       });
 
-      this.result.raws.push({ move: moveResult.raws, store: storeResult.raws });
-      this.result.count += moveResult.count + storeResult.count;
+      result.raws.push({ move: moveResult.raws, store: storeResult.raws });
+      result.count += moveResult.count + storeResult.count;
       
-      return response(res, this.result.raws, { count: this.result.count }, '', 201);
+      return response(res, result.raws, { count: result.count }, '', 201);
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   };
 
@@ -168,28 +169,32 @@ class InvMoveCtl extends BaseCtl {
   public patch = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       req.body = await this.getFkId(req.body, this.fkIdInfos);
-      this.result = { raws: [], count: 0 };
+      
+      const sequelize = getSequelize(req.tenant.uuid);
+      const repo = new InvMoveRepo(req.tenant.uuid);
+      const storeRepo = new InvStoreRepo(req.tenant.uuid);
+      let result: ApiResult<any> = { count: 0, raws: [] };
 
       let moveResult: ApiResult<any> = { raws: [], count: 0 };
       let storeResult: ApiResult<any> = { raws: [], count: 0 };
 
       await sequelize.transaction(async(tran) => {
         // 📌 재고 이동 내역 수정
-        moveResult = await this.repo.patch(req.body, req.user?.uid as number, tran);
+        moveResult = await repo.patch(req.body, req.user?.uid as number, tran);
 
         // 📌 입출고 창고 수불 내역 수정
         const fromStoreBody = getStoreBody(moveResult.raws, 'FROM', 'move_id', getTranTypeCd('INV_MOVE'));
         const toStoreBody = getStoreBody(moveResult.raws, 'TO', 'move_id', getTranTypeCd('INV_MOVE'));
         const storeBody = [...fromStoreBody, ...toStoreBody];
-        storeResult = await this.storeRepo.updateToTransaction(storeBody, req.user?.uid as number, tran);
+        storeResult = await storeRepo.updateToTransaction(storeBody, req.user?.uid as number, tran);
       });
 
-      this.result.raws.push({ move: moveResult.raws, store: storeResult.raws });
-      this.result.count += moveResult.count + storeResult.count;
+      result.raws.push({ move: moveResult.raws, store: storeResult.raws });
+      result.count += moveResult.count + storeResult.count;
       
-      return response(res, this.result.raws, { count: this.result.count }, '', 201);
+      return response(res, result.raws, { count: result.count }, '', 201);
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   };
 
@@ -201,7 +206,11 @@ class InvMoveCtl extends BaseCtl {
   public delete = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       req.body = await this.getFkId(req.body, this.fkIdInfos);
-      this.result = { raws: [], count: 0 };
+      
+      const sequelize = getSequelize(req.tenant.uuid);
+      const repo = new InvMoveRepo(req.tenant.uuid);
+      const storeRepo = new InvStoreRepo(req.tenant.uuid);
+      let result: ApiResult<any> = { count: 0, raws: [] };
 
       let moveResult: ApiResult<any> = { raws: [], count: 0 };
       let storeResult: ApiResult<any> = { raws: [], count: 0 };
@@ -212,18 +221,18 @@ class InvMoveCtl extends BaseCtl {
 
       await sequelize.transaction(async(tran) => {
         // 📌 입출고 창고 수불 내역 삭제
-        storeResult = await this.storeRepo.deleteToTransaction(storeBody, req.user?.uid as number, tran);
+        storeResult = await storeRepo.deleteToTransaction(storeBody, req.user?.uid as number, tran);
 
         // 📌 재고 이동 내역 삭제
-        moveResult = await this.repo.delete(req.body, req.user?.uid as number, tran);
+        moveResult = await repo.delete(req.body, req.user?.uid as number, tran);
       });
 
-      this.result.raws.push({ move: moveResult.raws, store: storeResult.raws });
-      this.result.count += moveResult.count + storeResult.count;
+      result.raws.push({ move: moveResult.raws, store: storeResult.raws });
+      result.count += moveResult.count + storeResult.count;
       
-      return response(res, this.result.raws, { count: this.result.count }, '', 200);
+      return response(res, result.raws, { count: result.count }, '', 200);
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   };
 //#endregion

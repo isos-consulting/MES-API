@@ -1,15 +1,20 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
 import AdmLog from '../../models/adm/log.model';
-import sequelize from '../../models';
+import { Sequelize } from 'sequelize-typescript';
 import checkArray from '../../utils/checkArray';
 import { Transaction } from 'sequelize';
+import { getSequelize } from '../../utils/getSequelize';
 
 class AdmLogRepo {
   repo: Repository<AdmLog>;
+  sequelize: Sequelize;
+  tenant: string;
 
   //#region ✅ Constructor
-  constructor() {
-    this.repo = sequelize.getRepository(AdmLog);
+  constructor(tenant: string) {
+    this.tenant = tenant;
+    this.sequelize = getSequelize(tenant);
+    this.repo = this.sequelize.getRepository(AdmLog);
   }
 
   public create = async (_type: 'update' | 'delete', _tableName: string, _datas: any, _uid: number, transaction?: Transaction) => {

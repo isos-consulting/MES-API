@@ -1,13 +1,10 @@
-import { Sequelize, Table, Column, Model, DataType, CreatedAt, UpdatedAt, ForeignKey, BelongsTo, Unique, AfterSave, BeforeSave } from 'sequelize-typescript'
-// import { Sequelize, Table, Column, Model, DataType, CreatedAt, UpdatedAt, ForeignKey, BelongsTo, Unique, AfterSave } from 'sequelize-typescript'
+import { Sequelize, Table, Column, Model, DataType, CreatedAt, UpdatedAt, ForeignKey, BelongsTo, Unique, BeforeSave } from 'sequelize-typescript'
 import IAutUser from '../../interfaces/aut/user.interface';
 import AutGroup from './group.model';
-import AutUserCache from '../../caches/aut/user.cache';
-// import * as bcrypt from 'bcrypt'
 import encrypt from '../../utils/encrypt';
 import decrypt from '../../utils/decrypt';
-import convertReadResult from '../../utils/convertReadResult';
-import sequelizeToQuerying from '../sequelizeToQuerying';
+import config from '../../configs/config';
+import * as bcrypt from 'bcrypt'
 
 @Table({
   tableName: 'AUT_USER_TB',
@@ -141,25 +138,19 @@ export default class AutUser extends Model<IAutUser> {
   //#region hooks
   @BeforeSave
   static hashPassword = async (user: AutUser) => {
-    // const salt = await bcrypt.genSalt(10);
+    const salt = await bcrypt.genSalt(10);
 
     // 개발환경일 경우 postman 에서 비밀번호를 입력하기 위하여 입력된 Password 암호화 진행
-    if (process.env.NODE_ENV === 'development' || 'test') {
-      user.pwd = encrypt(user.pwd, process.env.CRYPTO_SECRET as string);
+    if (config.node_env === 'development' || 'test') {
+      user.pwd = encrypt(user.pwd, config.crypto.secret);
     }
 
-    const convertedPwd = decrypt(user.pwd, process.env.CRYPTO_SECRET as string);
+    const convertedPwd = decrypt(user.pwd, config.crypto.secret);
     // 💥 Postgresql과 Node Express의 Bcrypt 암호화 호환이 안되서 잠시 봉인
-    // user.pwd = await bcrypt.hash(convertedPwd, salt);
+    user.pwd = await bcrypt.hash(convertedPwd, salt);
 
-    const bcryptRead = await sequelizeToQuerying.query(`SELECT crypt('${convertedPwd}', gen_salt('bf', 10)) as encrypted_pwd`);
-    user.pwd = convertReadResult(bcryptRead[0]).raws[0].encrypted_pwd;
-  };
-
-  @AfterSave
-  static addCache = (user: AutUser) => { 
-    if (process.env.NODE_ENV === 'test') { return; }
-    new AutUserCache().create(user);
+    // const bcryptRead = await sequelizeToQuerying.query(`SELECT crypt('${convertedPwd}', gen_salt('bf', 10)) as encrypted_pwd`);
+    // user.pwd = convertReadResult(bcryptRead[0]).raws[0].encrypted_pwd;
   };
   //#endregion
 

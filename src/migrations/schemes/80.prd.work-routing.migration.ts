@@ -1,5 +1,6 @@
 import IPrdWorkRouting from '../../interfaces/prd/work-routing.interface';
 import BaseMigration from '../base-migration';
+import config from '../../configs/config';
 
 // Seed Datas
 const seedDatas: IPrdWorkRouting[] = [
@@ -328,7 +329,7 @@ const seedDatas: IPrdWorkRouting[] = [
 	}
 ];
 
-const baseMigration = new BaseMigration('PrdWorkRouting', 'work_routing_id', process.env.DB_RESET_TYPE === 'test' ? seedDatas : []);
+const baseMigration = new BaseMigration('PrdWorkRouting', 'work_routing_id', config.db.reset_type === 'test' ? seedDatas : []);
 const migration = baseMigration.migration;
 const migrationUndo = baseMigration.migrationUndo;
 

@@ -1,5 +1,6 @@
 import IStdInspMethod from '../../interfaces/std/insp-method.interface';
 import BaseMigration from '../base-migration';
+import config from '../../configs/config';
 
 // Seed Datas
 let seedDatas: IStdInspMethod[] = [
@@ -50,7 +51,7 @@ let seedDatas: IStdInspMethod[] = [
 	}
 ]
 
-const baseMigration = new BaseMigration('StdInspMethod', 'insp_method_id', process.env.DB_RESET_TYPE === 'test' ? seedDatas : []);
+const baseMigration = new BaseMigration('StdInspMethod', 'insp_method_id', config.db.reset_type === 'test' ? seedDatas : []);
 const migration = baseMigration.migration;
 const migrationUndo = baseMigration.migrationUndo;
 

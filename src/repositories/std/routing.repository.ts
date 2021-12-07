@@ -1,22 +1,27 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
 import StdRouting from '../../models/std/routing.model';
 import IStdRouting from '../../interfaces/std/routing.interface';
-import sequelize from '../../models';
+import { Sequelize } from 'sequelize-typescript';
 import convertBulkResult from '../../utils/convertBulkResult';
 import convertResult from '../../utils/convertResult';
-import { Op, Sequelize, Transaction, UniqueConstraintError } from 'sequelize';
+import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
+import { getSequelize } from '../../utils/getSequelize';
 import { readRoutingPrdActive } from '../../queries/std/routing.prd-active.query';
 import { readRoutingMove } from '../../queries/std/routing.move.query';
 
 class StdRoutingRepo {
   repo: Repository<StdRouting>;
+  sequelize: Sequelize;
+  tenant: string;
 
   //#region ✅ Constructor
-  constructor() {
-    this.repo = sequelize.getRepository(StdRouting);
+  constructor(tenant: string) {
+    this.tenant = tenant;
+    this.sequelize = getSequelize(tenant);
+    this.repo = this.sequelize.getRepository(StdRouting);
   }
   //#endregion
 
@@ -60,26 +65,26 @@ class StdRoutingRepo {
       const result = await this.repo.findAll({ 
         include: [
           { 
-            model: sequelize.models.StdFactory, 
+            model: this.sequelize.models.StdFactory, 
             attributes: [], 
             required: true, 
             where: { uuid: params.factory_uuid ? params.factory_uuid : { [Op.ne]: null } }
           },
-          { model: sequelize.models.StdProc, attributes: [], required: true },
+          { model: this.sequelize.models.StdProc, attributes: [], required: true },
           { 
-            model: sequelize.models.StdProd, 
+            model: this.sequelize.models.StdProd, 
             attributes: [], 
             required: true,
             where: { uuid: params.prod_uuid ? params.prod_uuid : { [Op.ne]: null } },
             include: [
-              { model: sequelize.models.StdItemType, attributes: [], required: false },
-              { model: sequelize.models.StdProdType, attributes: [], required: false },
-              { model: sequelize.models.StdModel, attributes: [], required: false },
-              { model: sequelize.models.StdUnit, as: 'stdUnit', attributes: [], required: false },
+              { model: this.sequelize.models.StdItemType, attributes: [], required: false },
+              { model: this.sequelize.models.StdProdType, attributes: [], required: false },
+              { model: this.sequelize.models.StdModel, attributes: [], required: false },
+              { model: this.sequelize.models.StdUnit, as: 'stdUnit', attributes: [], required: false },
             ]
           },
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('stdRouting.uuid'), 'routing_uuid' ],
@@ -129,21 +134,21 @@ class StdRoutingRepo {
     try {
       const result = await this.repo.findOne({ 
         include: [
-          { model: sequelize.models.StdFactory, attributes: [], required: true },
-          { model: sequelize.models.StdProc, attributes: [], required: true },
+          { model: this.sequelize.models.StdFactory, attributes: [], required: true },
+          { model: this.sequelize.models.StdProc, attributes: [], required: true },
           { 
-            model: sequelize.models.StdProd, 
+            model: this.sequelize.models.StdProd, 
             attributes: [], 
             required: true,
             include: [
-              { model: sequelize.models.StdItemType, attributes: [], required: false },
-              { model: sequelize.models.StdProdType, attributes: [], required: false },
-              { model: sequelize.models.StdModel, attributes: [], required: false },
-              { model: sequelize.models.StdUnit, as: 'stdUnit', attributes: [], required: false },
+              { model: this.sequelize.models.StdItemType, attributes: [], required: false },
+              { model: this.sequelize.models.StdProdType, attributes: [], required: false },
+              { model: this.sequelize.models.StdModel, attributes: [], required: false },
+              { model: this.sequelize.models.StdUnit, as: 'stdUnit', attributes: [], required: false },
             ]
           },
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('stdRouting.uuid'), 'routing_uuid' ],
@@ -220,7 +225,7 @@ class StdRoutingRepo {
   // 📒 Fn[readByOptionallyPrdActive]: 품목기준 생산 가능한 마지막 공정의 라우팅 Raw Data Read Function
   public readOptionallyPrdActive = async(params?: any) => {
     try {
-      const result = await sequelize.query(readRoutingPrdActive(params))
+      const result = await this.sequelize.query(readRoutingPrdActive(params))
       return convertReadResult(result[0]);
     } catch (error) {
       throw error;
@@ -230,7 +235,7 @@ class StdRoutingRepo {
   // 📒 Fn[readByOptionallyMove]: 품목기준 마지막 공정을 제외한 공정들의 라우팅 Raw Data Read Function ( 연속공정으로 등록되어 있을 경우 데이터 조회 가능 )
   public readOptionallyMove = async(params?: any) => {
     try {
-      const result = await sequelize.query(readRoutingMove(params));
+      const result = await this.sequelize.query(readRoutingMove(params));
       return convertReadResult(result[0]);
     } catch (error) {
       throw error;
@@ -268,7 +273,7 @@ class StdRoutingRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.StdRouting.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdRouting.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -307,7 +312,7 @@ class StdRoutingRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.StdRouting.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdRouting.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -330,7 +335,7 @@ class StdRoutingRepo {
         count += await this.repo.destroy({ where: { uuid: routing.uuid }, transaction});
       };
 
-      await new AdmLogRepo().create('delete', sequelize.models.StdRouting.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.StdRouting.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
     } catch (error) {
       throw error;

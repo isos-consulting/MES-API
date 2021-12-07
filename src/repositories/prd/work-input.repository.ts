@@ -1,11 +1,12 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
-import sequelize from '../../models';
+import { Sequelize } from 'sequelize-typescript';
 import convertBulkResult from '../../utils/convertBulkResult';
 import convertResult from '../../utils/convertResult';
-import { Op, Sequelize, Transaction, UniqueConstraintError } from 'sequelize';
+import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
+import { getSequelize } from '../../utils/getSequelize';
 import PrdWorkInput from '../../models/prd/work-input.model';
 import IPrdWorkInput from '../../interfaces/prd/work-input.interface';
 import { readWorkInputs } from '../../queries/prd/work-input-ongoing.query';
@@ -13,10 +14,14 @@ import { readWorkInputGroups } from '../../queries/prd/work-input-ongoing-group.
 
 class PrdWorkInputRepo {
   repo: Repository<PrdWorkInput>;
+  sequelize: Sequelize;
+  tenant: string;
 
   //#region ✅ Constructor
-  constructor() {
-    this.repo = sequelize.getRepository(PrdWorkInput);
+  constructor(tenant: string) {
+    this.tenant = tenant;
+    this.sequelize = getSequelize(tenant);
+    this.repo = this.sequelize.getRepository(PrdWorkInput);
   }
   //#endregion
 
@@ -63,39 +68,39 @@ class PrdWorkInputRepo {
       const result = await this.repo.findAll({ 
         include: [
           { 
-            model: sequelize.models.StdFactory, 
+            model: this.sequelize.models.StdFactory, 
             attributes: [], 
             required: true,
             where: params.factory_uuid ? { uuid: params.factory_uuid } : {}
           },
           { 
-            model: sequelize.models.PrdWork,
+            model: this.sequelize.models.PrdWork,
             attributes: [], 
             required: true,
             where: params.work_uuid ? { uuid: params.work_uuid } : {}
           },
           {
-            model: sequelize.models.StdProd, 
+            model: this.sequelize.models.StdProd, 
             attributes: [], 
             required: true,
             include: [
-              { model: sequelize.models.StdItemType, attributes: [], required: false },
-              { model: sequelize.models.StdProdType, attributes: [], required: false },
-              { model: sequelize.models.StdModel, attributes: [], required: false },
-              { model: sequelize.models.StdUnit, as: 'stdUnit', attributes: [], required: false },
+              { model: this.sequelize.models.StdItemType, attributes: [], required: false },
+              { model: this.sequelize.models.StdProdType, attributes: [], required: false },
+              { model: this.sequelize.models.StdModel, attributes: [], required: false },
+              { model: this.sequelize.models.StdUnit, as: 'stdUnit', attributes: [], required: false },
             ]
           },
-          { model: sequelize.models.StdUnit, attributes: [], required: true },
+          { model: this.sequelize.models.StdUnit, attributes: [], required: true },
           { 
-            model: sequelize.models.StdUnitConvert,
+            model: this.sequelize.models.StdUnitConvert,
             attributes: [], 
             required: false,
             where: Sequelize.where(Sequelize.col('stdUnitConvert.to_unit_id'), '=', Sequelize.col('stdUnit.unit_id'))
           },
-          { model: sequelize.models.StdStore, attributes: [], required: false },
-          { model: sequelize.models.StdLocation, attributes: [], required: false },
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.StdStore, attributes: [], required: false },
+          { model: this.sequelize.models.StdLocation, attributes: [], required: false },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('prdWorkInput.uuid'), 'work_input_uuid' ],
@@ -149,30 +154,30 @@ class PrdWorkInputRepo {
     try {
       const result = await this.repo.findOne({ 
         include: [
-          { model: sequelize.models.StdFactory, attributes: [], required: true },
-          { model: sequelize.models.PrdWork, attributes: [], required: true },
+          { model: this.sequelize.models.StdFactory, attributes: [], required: true },
+          { model: this.sequelize.models.PrdWork, attributes: [], required: true },
           {
-            model: sequelize.models.StdProd, 
+            model: this.sequelize.models.StdProd, 
             attributes: [], 
             required: true,
             include: [
-              { model: sequelize.models.StdItemType, attributes: [], required: false },
-              { model: sequelize.models.StdProdType, attributes: [], required: false },
-              { model: sequelize.models.StdModel, attributes: [], required: false },
-              { model: sequelize.models.StdUnit, as: 'stdUnit', attributes: [], required: false },
+              { model: this.sequelize.models.StdItemType, attributes: [], required: false },
+              { model: this.sequelize.models.StdProdType, attributes: [], required: false },
+              { model: this.sequelize.models.StdModel, attributes: [], required: false },
+              { model: this.sequelize.models.StdUnit, as: 'stdUnit', attributes: [], required: false },
             ]
           },
-          { model: sequelize.models.StdUnit, attributes: [], required: true },
+          { model: this.sequelize.models.StdUnit, attributes: [], required: true },
           { 
-            model: sequelize.models.StdUnitConvert,
+            model: this.sequelize.models.StdUnitConvert,
             attributes: [], 
             required: false,
             where: Sequelize.where(Sequelize.col('stdUnitConvert.to_unit_id'), '=', Sequelize.col('stdUnit.unit_id'))
           },
-          { model: sequelize.models.StdStore, attributes: [], required: false },
-          { model: sequelize.models.StdLocation, attributes: [], required: false },
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.StdStore, attributes: [], required: false },
+          { model: this.sequelize.models.StdLocation, attributes: [], required: false },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('prdWorkInput.uuid'), 'work_input_uuid' ],
@@ -242,7 +247,7 @@ class PrdWorkInputRepo {
   // 📒 Fn[readOngoing]: 진행중인 생산실적의 자재 투입데이터 Read Function
   public readOngoing = async(params?: any) => {
     try {
-      const result = await sequelize.query(readWorkInputs(params));
+      const result = await this.sequelize.query(readWorkInputs(params));
       return convertReadResult(result[0]);
     } catch (error) {
       throw error;
@@ -252,7 +257,7 @@ class PrdWorkInputRepo {
   // 📒 Fn[readOngoingGroup]: 진행중인 생산실적의 자재 투입데이터 Read Function
   public readOngoingGroup = async(params?: any) => {
     try {
-      const result = await sequelize.query(readWorkInputGroups(params));
+      const result = await this.sequelize.query(readWorkInputGroups(params));
       return convertReadResult(result[0]);
     } catch (error) {
       throw error;
@@ -303,7 +308,7 @@ class PrdWorkInputRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.PrdWorkInput.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.PrdWorkInput.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -341,7 +346,7 @@ class PrdWorkInputRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.PrdWorkInput.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.PrdWorkInput.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -364,7 +369,7 @@ class PrdWorkInputRepo {
         count += await this.repo.destroy({ where: { uuid: workInput.uuid }, transaction});
       };
 
-      await new AdmLogRepo().create('delete', sequelize.models.PrdWorkInput.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.PrdWorkInput.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
     } catch (error) {
       throw error;
@@ -380,7 +385,7 @@ class PrdWorkInputRepo {
 
       count += await this.repo.destroy({ where: { work_id: workId }, transaction});
 
-      await new AdmLogRepo().create('delete', sequelize.models.PrdWorkInput.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.PrdWorkInput.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
     } catch (error) {
       throw error;
@@ -396,7 +401,7 @@ class PrdWorkInputRepo {
 
       count += await this.repo.destroy({ where: { work_id: workIds }, transaction});
 
-      await new AdmLogRepo().create('delete', sequelize.models.PrdWorkInput.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.PrdWorkInput.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
     } catch (error) {
       throw error;

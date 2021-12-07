@@ -1,5 +1,6 @@
 import IStdBom from '../../interfaces/std/bom.interface';
 import BaseMigration from '../base-migration';
+import config from '../../configs/config';
 
 // Seed Datas
 let seedDatas: IStdBom[] = [
@@ -635,7 +636,7 @@ let seedDatas: IStdBom[] = [
 	}
 ]
 
-const baseMigration = new BaseMigration('StdBom', 'bom_id', process.env.DB_RESET_TYPE === 'test' ? seedDatas : []);
+const baseMigration = new BaseMigration('StdBom', 'bom_id', config.db.reset_type === 'test' ? seedDatas : []);
 const migration = baseMigration.migration;
 const migrationUndo = baseMigration.migrationUndo;
 

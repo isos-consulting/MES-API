@@ -1,21 +1,26 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
 import AutPermission from '../../models/aut/permission.model';
 import IAutPermission from '../../interfaces/aut/permission.interface';
-import sequelize from '../../models';
+import { Sequelize } from 'sequelize-typescript';
 import convertBulkResult from '../../utils/convertBulkResult';
 import convertResult from '../../utils/convertResult';
-import { Op, Sequelize, Transaction } from 'sequelize';
+import { Op, Transaction } from 'sequelize';
 import { UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
+import { getSequelize } from '../../utils/getSequelize';
 
 class AutPermissionRepo {
   repo: Repository<AutPermission>;
+  sequelize: Sequelize;
+  tenant: string;
 
   //#region ✅ Constructor
-  constructor() {
-    this.repo = sequelize.getRepository(AutPermission);
+  constructor(tenant: string) {
+    this.tenant = tenant;
+    this.sequelize = getSequelize(tenant);
+    this.repo = this.sequelize.getRepository(AutPermission);
   }
   //#endregion
 
@@ -56,8 +61,8 @@ class AutPermissionRepo {
     try {
       const result = await this.repo.findAll({ 
         include: [
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true }
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true }
         ],
         attributes: [
           [ Sequelize.col('autPermission.uuid'), 'permission_uuid' ],
@@ -85,8 +90,8 @@ class AutPermissionRepo {
     try {
       const result = await this.repo.findOne({ 
         include: [
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true }
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true }
         ],
         attributes: [
           [ Sequelize.col('autPermission.uuid'), 'permission_uuid' ],
@@ -153,7 +158,7 @@ class AutPermissionRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.AutPermission.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.AutPermission.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -193,7 +198,7 @@ class AutPermissionRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.AutPermission.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.AutPermission.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -216,7 +221,7 @@ class AutPermissionRepo {
         count += await this.repo.destroy({ where: { uuid: permission.uuid }, transaction});
       };
 
-      await new AdmLogRepo().create('delete', sequelize.models.AutPermission.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.AutPermission.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
     } catch (error) {
       throw error;

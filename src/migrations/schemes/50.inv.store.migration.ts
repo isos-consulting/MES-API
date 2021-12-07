@@ -1,6 +1,7 @@
 import moment = require('moment');
 import IInvStore from '../../interfaces/inv/store.interface';
 import BaseMigration from '../base-migration';
+import config from '../../configs/config';
 
 // Seed Datas
 let seedDatas: IInvStore[] = [
@@ -8404,7 +8405,7 @@ let seedDatas: IInvStore[] = [
 	}
 ]
 
-const baseMigration = new BaseMigration('InvStore', undefined, process.env.DB_RESET_TYPE === 'test' ? seedDatas : []);
+const baseMigration = new BaseMigration('InvStore', undefined, config.db.reset_type === 'test' ? seedDatas : []);
 const migration = baseMigration.migration;
 const migrationUndo = baseMigration.migrationUndo;
 

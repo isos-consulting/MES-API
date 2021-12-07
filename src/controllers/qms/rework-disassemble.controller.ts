@@ -1,6 +1,6 @@
 import express = require('express');
+import ApiResult from '../../interfaces/common/api-result.interface';
 import IInvStore from '../../interfaces/inv/store.interface';
-import sequelize from '../../models';
 import InvStoreRepo from '../../repositories/inv/store.repository';
 import QmsReworkDisassembleRepo from '../../repositories/qms/rework-disassemble.repository';
 import QmsReworkRepo from '../../repositories/qms/rework.repository';
@@ -8,75 +8,69 @@ import StdFactoryRepo from '../../repositories/std/factory.repository';
 import StdLocationRepo from '../../repositories/std/location.repository';
 import StdProdRepo from '../../repositories/std/prod.repository';
 import StdStoreRepo from '../../repositories/std/store.repository';
+import { getSequelize } from '../../utils/getSequelize';
 import getStoreBody from '../../utils/getStoreBody';
 import getTranTypeCd from '../../utils/getTranTypeCd';
 import response from '../../utils/response';
 import testErrorHandlingHelper from '../../utils/testErrorHandlingHelper';
 import BaseCtl from '../base.controller';
+import config from '../../configs/config';
 
 class QmsReworkDisassembleCtl extends BaseCtl {
-  // ✅ Inherited Functions Variable
-  // result: ApiResult<any>;
-
-  // ✅ 부모 Controller (BaseController) 의 repository 변수가 any 로 생성 되어있기 때문에 자식 Controller(this) 에서 Type 지정
-  repo: QmsReworkDisassembleRepo;
-  storeRepo: InvStoreRepo;
-
   constructor() {
     // ✅ 부모 Controller (Base Controller) 의 CRUD Function 과 상속 받는 자식 Controller(this) 의 Repository 를 연결하기 위하여 생성자에서 Repository 생성
-    super(new QmsReworkDisassembleRepo());
-    this.storeRepo = new InvStoreRepo();
+    super(QmsReworkDisassembleRepo);
 
     // ✅ CUD 연산이 실행되기 전 Fk Table 의 uuid 로 id 를 검색하여 request body 에 삽입하기 위하여 정보 Setting
     this.fkIdInfos = [
       {
         key: 'uuid',
-        repo: new QmsReworkDisassembleRepo(),
+        TRepo: QmsReworkDisassembleRepo,
         idName: 'rework_disassemble_id',
         uuidName: 'rework_disassemble_uuid'
       },
       {
         key: 'factory',
-        repo: new StdFactoryRepo(),
+        TRepo: StdFactoryRepo,
         idName: 'factory_id',
         uuidName: 'factory_uuid'
       },
       {
         key: 'rework',
-        repo: new QmsReworkRepo(),
+        TRepo: QmsReworkRepo,
         idName: 'rework_id',
         uuidName: 'rework_uuid'
       },
       {
         key: 'prod',
-        repo: new StdProdRepo(),
+        TRepo: StdProdRepo,
         idName: 'prod_id',
         uuidName: 'prod_uuid'
       },
       {
         key: 'incomeStore',
-        repo: new StdStoreRepo(),
+        TRepo: StdStoreRepo,
         idName: 'store_id',
         idAlias: 'income_store_id',
         uuidName: 'income_store_uuid'
       },
       {
         key: 'incomeLocation',
-        repo: new StdLocationRepo(),
+        TRepo: StdLocationRepo,
         idName: 'location_id',
         idAlias: 'income_location_id',
         uuidName: 'income_location_uuid'
       },
       {
         key: 'returnStore',
-        repo: new StdStoreRepo(),
+        TRepo: StdStoreRepo,
         idName: 'store_id',
         idAlias: 'return_store_id',
         uuidName: 'return_store_uuid'
       },
       {
         key: 'returnLocation',
-        repo: new StdLocationRepo(),
+        TRepo: StdLocationRepo,
         idName: 'location_id',
         idAlias: 'return_location_id',
         uuidName: 'return_location_uuid'
@@ -92,11 +86,15 @@ class QmsReworkDisassembleCtl extends BaseCtl {
   public create = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       req.body = await this.getFkId(req.body, this.fkIdInfos);
-      this.result = { raws: [], count: 0 };
+      
+      const sequelize = getSequelize(req.tenant.uuid);
+      const repo = new QmsReworkDisassembleRepo(req.tenant.uuid);
+      const storeRepo = new InvStoreRepo(req.tenant.uuid);
+      let result: ApiResult<any> = { raws: [], count: 0 };
 
       await sequelize.transaction(async (tran) => {
         // 📌 재작업 내역 생성
-        const reworkDisassembleResult = await this.repo.create(req.body, req.user?.uid as number, tran);
+        const reworkDisassembleResult = await repo.create(req.body, req.user?.uid as number, tran);
         let disassembleStoreBody: IInvStore[] = [];
 
         // 📌 분해 후 입고 창고 수불 내역 생성
@@ -105,19 +103,19 @@ class QmsReworkDisassembleCtl extends BaseCtl {
           disassembleStoreBody.push(... getStoreBody(raw, 'TO', 'rework_disassemble_id', getTranTypeCd('QMS_DISASSEMBLE_RETURN')));
         });
 
-        const disassembleStoreResult = await this.storeRepo.create(disassembleStoreBody, req.user?.uid as number, tran);
+        const disassembleStoreResult = await storeRepo.create(disassembleStoreBody, req.user?.uid as number, tran);
 
-        this.result.raws.push({
+        result.raws.push({
           rework: reworkDisassembleResult.raws,
           disassembleStore: disassembleStoreResult.raws,
         });
 
-        this.result.count += reworkDisassembleResult.count + disassembleStoreResult.count;
+        result.count += reworkDisassembleResult.count + disassembleStoreResult.count;
       });
 
-      return response(res, this.result.raws, { count: this.result.count }, '', 201);
+      return response(res, result.raws, { count: result.count }, '', 201);
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   }
 
@@ -153,7 +151,11 @@ class QmsReworkDisassembleCtl extends BaseCtl {
   public delete = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       req.body = await this.getFkId(req.body, this.fkIdInfos);
-      this.result = { raws: [], count: 0 };
+      
+      const sequelize = getSequelize(req.tenant.uuid);
+      const repo = new QmsReworkDisassembleRepo(req.tenant.uuid);
+      const storeRepo = new InvStoreRepo(req.tenant.uuid);
+      let result: ApiResult<any> = { raws: [], count: 0 };
 
       let disassembleStoreBody: IInvStore[] = [];
       
@@ -164,22 +166,22 @@ class QmsReworkDisassembleCtl extends BaseCtl {
 
       await sequelize.transaction(async (tran) => {
         // 📌 분해 후 입고 창고 수불 내역 삭제
-        const disassembleStoreResult = await this.storeRepo.deleteToTransaction(disassembleStoreBody, req.user?.uid as number, tran);
+        const disassembleStoreResult = await storeRepo.deleteToTransaction(disassembleStoreBody, req.user?.uid as number, tran);
 
         // 📌 재작업 분해 출고 내역 삭제
-        const reworkDisassembleResult = await this.repo.delete(req.body, req.user?.uid as number, tran);
+        const reworkDisassembleResult = await repo.delete(req.body, req.user?.uid as number, tran);
 
-        this.result.raws.push({
+        result.raws.push({
           reworkDisassemble: reworkDisassembleResult.raws,
           disassembleStore: disassembleStoreResult.raws,
         });
 
-        this.result.count += reworkDisassembleResult.count + disassembleStoreResult.count;
+        result.count += reworkDisassembleResult.count + disassembleStoreResult.count;
       });
 
-      return response(res, this.result.raws, { count: this.result.count }, '', 200);
+      return response(res, result.raws, { count: result.count }, '', 200);
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   }
 

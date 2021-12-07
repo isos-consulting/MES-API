@@ -1,7 +1,6 @@
 import sequelize from '../../models';
 import convertReadResult from '../../utils/convertReadResult';
 import createAdmView from '../../utils/createAdmView';
-import dropMaterializedView from '../../utils/dropMaterializedView';
 
 const migration = async () => {
 	const read = await sequelize.query('SELECT * FROM adm_std_tb;');
@@ -17,16 +16,16 @@ const migration = async () => {
 };
 
 const migrationUndo = async () => {
-	const read = await sequelize.query('SELECT * FROM adm_std_tb;');
-	for await (const data of convertReadResult(read[0]).raws) {
-    await dropMaterializedView(data.view_nm)
-    .then(() => {
-      console.log(`✅Success Drop View ${data.view_nm}`);
-    })
-    .catch((err) => {
-      console.log(`❗️Error in Drop View ${data.view_nm} : ${err}`);
-    });
-	}
+	// const read = await sequelize.query('SELECT * FROM adm_std_tb;');
+	// for await (const data of convertReadResult(read[0]).raws) {
+  //   await dropMaterializedView(data.view_nm)
+  //   .then(() => {
+  //     console.log(`✅Success Drop View ${data.view_nm}`);
+  //   })
+  //   .catch((err) => {
+  //     console.log(`❗️Error in Drop View ${data.view_nm} : ${err}`);
+  //   });
+	// }
 };
 
 module.exports = { migration, migrationUndo };

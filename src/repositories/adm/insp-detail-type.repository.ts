@@ -1,15 +1,20 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
 import AdmInspDetailType from '../../models/adm/insp-detail-type.model';
-import sequelize from '../../models';
-import { Sequelize, Op } from 'sequelize';
+import { Sequelize } from 'sequelize-typescript';
+import { Op } from 'sequelize';
 import convertReadResult from '../../utils/convertReadResult';
+import { getSequelize } from '../../utils/getSequelize';
 
 class AdmInspDetailTypeRepo {
   repo: Repository<AdmInspDetailType>;
+  sequelize: Sequelize;
+  tenant: string;
 
   //#region ✅ Constructor
-  constructor() {
-    this.repo = sequelize.getRepository(AdmInspDetailType);
+  constructor(tenant: string) {
+    this.tenant = tenant;
+    this.sequelize = getSequelize(tenant);
+    this.repo = this.sequelize.getRepository(AdmInspDetailType);
   }
   //#endregion
 
@@ -22,8 +27,8 @@ class AdmInspDetailTypeRepo {
     try {
       const result = await this.repo.findAll({ 
         include: [
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           'insp_detail_type_cd',

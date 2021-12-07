@@ -1,39 +1,41 @@
 import express = require('express');
-import sequelize from '../../models';
+import ApiResult from '../../interfaces/common/api-result.interface';
 import MatOrderDetailRepo from '../../repositories/mat/order-detail.repository';
 import checkArray from '../../utils/checkArray';
+import { getSequelize } from '../../utils/getSequelize';
 import response from '../../utils/response';
 import testErrorHandlingHelper from '../../utils/testErrorHandlingHelper';
 import BaseCtl from '../base.controller';
+import config from '../../configs/config';
 
 class MatOrderDetailCtl extends BaseCtl {
   // ✅ Inherited Functions Variable
   // result: ApiResult<any>;
 
   // ✅ 부모 Controller (BaseController) 의 repository 변수가 any 로 생성 되어있기 때문에 자식 Controller(this) 에서 Type 지정
-  repo: MatOrderDetailRepo;
+  TRepo: MatOrderDetailRepo;
 
   constructor() {
     // ✅ 부모 Controller (Base Controller) 의 CRUD Function 과 상속 받는 자식 Controller(this) 의 Repository 를 연결하기 위하여 생성자에서 Repository 생성
-    super(new MatOrderDetailRepo());
+    super(MatOrderDetailRepo);
 
     // ✅ CUD 연산이 실행되기 전 Fk Table 의 uuid 로 id 를 검색하여 request body 에 삽입하기 위하여 정보 Setting
-    // this.fkIdInfos = [
+    // fkIdInfos = [
     //   {
     //     key: 'user',
-    //     repo: new AutUserRepo(),
+    //     TRepo: new AutUserRepo(),
     //     idName: 'uid',
     //     uuidName: 'user_uuid'
     //   },
     //   {
     //     key: 'dept',
-    //     repo: new StdDeptRepo(),
+    //     TRepo: new StdDeptRepo(),
     //     idName: 'dept_id',
     //     uuidName: 'dept_uuid'
     //   },
     //   {
     //     key: 'grade',
-    //     repo: new StdGradeRepo(),
+    //     TRepo: new StdGradeRepo(),
     //     idName: 'grade_id',
     //     uuidName: 'grade_uuid'
     //   },
@@ -68,11 +70,16 @@ class MatOrderDetailCtl extends BaseCtl {
   public updateComplete = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       req.body = checkArray(req.body);
-      await sequelize.transaction(async(tran) => { this.result = await this.repo.updateComplete(req.body, req.user?.uid as number, tran); });
+
+      const sequelize = getSequelize(req.tenant.uuid);
+      const repo = new MatOrderDetailRepo(req.tenant.uuid);
+      let result: ApiResult<any> = { count: 0, raws: [] };
+
+      await sequelize.transaction(async(tran) => { result = await repo.updateComplete(req.body, req.user?.uid as number, tran); });
       
-      return response(res, this.result.raws, { count: this.result.count }, '', 201);
+      return response(res, result.raws, { count: result.count }, '', 201);
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   };
 

@@ -1,5 +1,6 @@
 import IStdVendorPrice from '../../interfaces/std/vendor-price.interface';
 import BaseMigration from '../base-migration';
+import config from '../../configs/config';
 
 const seedDatas: IStdVendorPrice[] = [
   {
@@ -956,7 +957,7 @@ const seedDatas: IStdVendorPrice[] = [
   }
 ]
 
-const baseMigration = new BaseMigration('StdVendorPrice', 'vendor_price_id', process.env.DB_RESET_TYPE === 'test' ? seedDatas : []);
+const baseMigration = new BaseMigration('StdVendorPrice', 'vendor_price_id', config.db.reset_type === 'test' ? seedDatas : []);
 const migration = baseMigration.migration;
 const migrationUndo = baseMigration.migrationUndo;
 

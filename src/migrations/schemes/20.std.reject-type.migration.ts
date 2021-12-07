@@ -1,5 +1,6 @@
 import IStdRejectType from '../../interfaces/std/reject-type.interface';
 import BaseMigration from '../base-migration';
+import config from '../../configs/config';
 
 // Seed Datas
 const seedDatas: IStdRejectType[] = [
@@ -32,7 +33,7 @@ const seedDatas: IStdRejectType[] = [
 	}
 ]
 
-const baseMigration = new BaseMigration('StdRejectType', 'reject_type_id', process.env.DB_RESET_TYPE === 'test' ? seedDatas : []);
+const baseMigration = new BaseMigration('StdRejectType', 'reject_type_id', config.db.reset_type === 'test' ? seedDatas : []);
 const migration = baseMigration.migration;
 const migrationUndo = baseMigration.migrationUndo;
 

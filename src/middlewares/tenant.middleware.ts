@@ -1,5 +1,6 @@
 import * as express from 'express';
 import { Sequelize } from 'sequelize-typescript';
+import config from '../configs/config';
 import { sequelizes } from '../utils/getSequelize';
 import { getAsyncInRedis, setAsyncInRedis } from '../utils/redisClient';
 
@@ -21,7 +22,7 @@ const baseDbSetting = {
   models: [__dirname + '/../models/**/*.model.js'],
   quoteIdentifiers: false,
   repositoryMode: true,
-  logging: process.env.NODE_ENV === 'test' ? false : console.log
+  logging: config.node_env === 'test' ? false : console.log
 }
 
 export default async(req: express.Request, res: express.Response, next: express.NextFunction) => {
@@ -30,6 +31,12 @@ export default async(req: express.Request, res: express.Response, next: express.
     if(req.path.indexOf('api-docs') !== -1 || req.path.indexOf('swagger') !== -1 || req.path.indexOf('favicon') !== -1) {
       return next();
     } else {
+      // 📌 Test 환경에서는 Auth Server를 거치지 않고 Environment의 Connection 정보 사용
+      if (config.node_env === 'test') {
+        req.tenant = req.tenant = { uuid: 'test' };
+        return next();
+      }
+
       // Header의 restrict-access-to-tenants속성에서 tenant_uuid Get
       // sequelize[tenant_uuid] 유무 확인
       // -> 있을 경우

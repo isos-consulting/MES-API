@@ -1,15 +1,19 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
 import AdmTransaction from '../../models/adm/transaction.model';
-import sequelize from '../../models';
-import { Sequelize } from 'sequelize';
+import { Sequelize } from 'sequelize-typescript';
 import convertReadResult from '../../utils/convertReadResult';
+import { getSequelize } from '../../utils/getSequelize';
 
 class AdmTransactionRepo {
   repo: Repository<AdmTransaction>;
+  sequelize: Sequelize;
+  tenant: string;
 
   //#region ✅ Constructor
-  constructor() {
-    this.repo = sequelize.getRepository(AdmTransaction);
+  constructor(tenant: string) {
+    this.tenant = tenant;
+    this.sequelize = getSequelize(tenant);
+    this.repo = this.sequelize.getRepository(AdmTransaction);
   }
   //#endregion
 
@@ -22,8 +26,8 @@ class AdmTransactionRepo {
     try {
       const result = await this.repo.findAll({ 
         include: [
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           'tran_cd',

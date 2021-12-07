@@ -1,15 +1,19 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
 import AdmInspHandlingType from '../../models/adm/insp-handling-type.model';
-import sequelize from '../../models';
-import { Sequelize } from 'sequelize';
+import { Sequelize } from 'sequelize-typescript';
 import convertReadResult from '../../utils/convertReadResult';
+import { getSequelize } from '../../utils/getSequelize';
 
 class AdmInspHandlingTypeRepo {
   repo: Repository<AdmInspHandlingType>;
+  sequelize: Sequelize;
+  tenant: string;
 
   //#region ✅ Constructor
-  constructor() {
-    this.repo = sequelize.getRepository(AdmInspHandlingType);
+  constructor(tenant: string) {
+    this.tenant = tenant;
+    this.sequelize = getSequelize(tenant);
+    this.repo = this.sequelize.getRepository(AdmInspHandlingType);
   }
   //#endregion
 
@@ -22,8 +26,8 @@ class AdmInspHandlingTypeRepo {
     try {
       const result = await this.repo.findAll({ 
         include: [
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           'insp_handling_type_cd',

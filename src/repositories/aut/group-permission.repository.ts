@@ -1,24 +1,29 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
 import AutGroupPermission from '../../models/aut/group-permission.model';
 import IAutGroupPermission from '../../interfaces/aut/group-permission.interface';
-import sequelize from '../../models';
+import { Sequelize } from 'sequelize-typescript';
 import convertBulkResult from '../../utils/convertBulkResult';
 import convertResult from '../../utils/convertResult';
-import { Op, Sequelize, Transaction } from 'sequelize';
+import { Op, Transaction } from 'sequelize';
 import { UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
+import { getSequelize } from '../../utils/getSequelize';
 import AutMenuTree from '../../models/aut/menu-tree.model';
 
 class AutGroupPermissionRepo {
   repo: Repository<AutGroupPermission>;
   menuTreeRepo: Repository<AutMenuTree>;
+  sequelize: Sequelize;
+  tenant: string;
 
   //#region ✅ Constructor
-  constructor() {
-    this.repo = sequelize.getRepository(AutGroupPermission);
-    this.menuTreeRepo = sequelize.getRepository(AutMenuTree);
+  constructor(tenant: string) {
+    this.tenant = tenant;
+    this.sequelize = getSequelize(tenant);
+    this.repo = this.sequelize.getRepository(AutGroupPermission);
+    this.menuTreeRepo = this.sequelize.getRepository(AutMenuTree);
   }
   //#endregion
 
@@ -58,29 +63,29 @@ class AutGroupPermissionRepo {
       const result = await this.menuTreeRepo.findAll({ 
         include: [
           { 
-            model: sequelize.models.AutMenu, 
+            model: this.sequelize.models.AutMenu, 
             as: 'autMenu', 
             attributes: [], 
             required: true,
-            include: [{ model: sequelize.models.AutMenuType, attributes: [], required: false }]
+            include: [{ model: this.sequelize.models.AutMenuType, attributes: [], required: false }]
           },
           { 
-            model: sequelize.models.AutGroupPermission, 
+            model: this.sequelize.models.AutGroupPermission, 
             attributes: [], 
             required: false,
             include: [
               { 
-                model: sequelize.models.AutGroup, 
+                model: this.sequelize.models.AutGroup, 
                 attributes: [], 
                 required: true, 
                 where: { uuid: params.group_uuid }
               },
-              { model: sequelize.models.AutPermission, attributes: [], required: false },
-              { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-              { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true }
+              { model: this.sequelize.models.AutPermission, attributes: [], required: false },
+              { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+              { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true }
             ]
           },
-          { model: sequelize.models.AutMenu, as: 'firstMenu', attributes: [], required: true },
+          { model: this.sequelize.models.AutMenu, as: 'firstMenu', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('autMenu.uuid'), 'menu_uuid' ],
@@ -159,7 +164,7 @@ class AutGroupPermissionRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.AutGroupPermission.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.AutGroupPermission.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -195,7 +200,7 @@ class AutGroupPermissionRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.AutGroupPermission.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.AutGroupPermission.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -218,7 +223,7 @@ class AutGroupPermissionRepo {
         count += await this.repo.destroy({ where: { uuid: groupPermission.uuid }, transaction});
       };
 
-      await new AdmLogRepo().create('delete', sequelize.models.AutGroupPermission.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.AutGroupPermission.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
     } catch (error) {
       throw error;

@@ -1,21 +1,26 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
 import AdmFileMgmt from '../../models/adm/file-mgmt.model';
 import IAdmFileMgmt from '../../interfaces/adm/file-mgmt.interface';
-import sequelize from '../../models';
+import { Sequelize } from 'sequelize-typescript';
 import convertBulkResult from '../../utils/convertBulkResult';
 import convertResult from '../../utils/convertResult';
-import { Op, Sequelize, Transaction } from 'sequelize';
+import { Op, Transaction } from 'sequelize';
 import { UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from './log.repository';
 import convertReadResult from '../../utils/convertReadResult';
+import { getSequelize } from '../../utils/getSequelize';
 
 class AdmFileMgmtRepo {
   repo: Repository<AdmFileMgmt>;
+  sequelize: Sequelize;
+  tenant: string;
 
   //#region ✅ Constructor
-  constructor() {
-    this.repo = sequelize.getRepository(AdmFileMgmt);
+  constructor(tenant: string) {
+    this.tenant = tenant;
+    this.sequelize = getSequelize(tenant);
+    this.repo = this.sequelize.getRepository(AdmFileMgmt);
   }
   //#endregion
 
@@ -58,8 +63,8 @@ class AdmFileMgmtRepo {
     try {
       const result = await this.repo.findAll({ 
         include: [
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('admfileMgmt.uuid'), 'file_mgmt_uuid' ],
@@ -94,8 +99,8 @@ class AdmFileMgmtRepo {
     try {
       const result = await this.repo.findOne({ 
         include: [
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('admfileMgmt.uuid'), 'file_mgmt_uuid' ],
@@ -162,7 +167,7 @@ class AdmFileMgmtRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.AdmFileMgmt.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.AdmFileMgmt.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -201,7 +206,7 @@ class AdmFileMgmtRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.AdmFileMgmt.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.AdmFileMgmt.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -224,7 +229,7 @@ class AdmFileMgmtRepo {
         count += await this.repo.destroy({ where: { uuid: file_mgmt.uuid }, transaction});
       };
 
-      await new AdmLogRepo().create('delete', sequelize.models.AdmFileMgmt.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.AdmFileMgmt.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
     } catch (error) {
       throw error;

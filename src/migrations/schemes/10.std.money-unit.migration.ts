@@ -1,5 +1,6 @@
 import IStdMoneyUnit from '../../interfaces/std/money-unit.interface';
 import BaseMigration from '../base-migration';
+import config from '../../configs/config';
 
 // Seed Datas
 let seedDatas: IStdMoneyUnit[] = [
@@ -29,7 +30,7 @@ let seedDatas: IStdMoneyUnit[] = [
 	}
 ]
 
-const baseMigration = new BaseMigration('StdMoneyUnit', 'money_unit_id', process.env.DB_RESET_TYPE === 'test' ? seedDatas : []);
+const baseMigration = new BaseMigration('StdMoneyUnit', 'money_unit_id', config.db.reset_type === 'test' ? seedDatas : []);
 const migration = baseMigration.migration;
 const migrationUndo = baseMigration.migrationUndo;
 

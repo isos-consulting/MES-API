@@ -1,10 +1,13 @@
-import sequelize from "../models";
+import { Sequelize } from "sequelize-typescript";
+import config from "../configs/config";
+import { getSequelize } from "../utils/getSequelize";
 import rearrangeSequence from "../utils/rearrangeSequence";
 
 /**
  * Migration Base Class
  */
 class BaseMigration {
+  sequelize: Sequelize;
   tableName: string;
   modelName: string;
   pkName?: string;
@@ -18,7 +21,8 @@ class BaseMigration {
    * @param _seedDatas Migration 과 동시에 Seed를 이용하여 입력 할 DataSet
    */
   constructor(_modelName: string, _pkName?: string, _seedDatas?: any) {
-    this.model = sequelize.model(_modelName);
+    this.sequelize = getSequelize('test');
+    this.model = this.sequelize.model(_modelName);
     this.tableName = this.model.tableName;
     this.modelName = _modelName;
     this.pkName = _pkName;
@@ -31,14 +35,7 @@ class BaseMigration {
    * @param _tableName 생성할 Table 의 이름
    */
   createTable = async(_modelName: string, _tableName: string) => {
-    if (process.env.DB_RESET_TYPE === 'admin' && this.modelName.indexOf('AdmStd') < 0 ) { return; }
-
-    const options: object = {
-      force: process.env.NODE_ENV === 'test' ? true : false,
-      alter: process.env.NODE_ENV === 'test' ? false : true
-    }
-    
-    await sequelize.models[_modelName].sync(options)
+    await this.sequelize.models[_modelName].sync({ force: true })
     .then(() => {
       console.log(`✅Success Create ${_tableName}`);
     })
@@ -55,10 +52,8 @@ class BaseMigration {
    * @param _datas Seed Data 를 입력 할 Table 의 PK(Seq) 이름
    */
   seedTable = async(_tableName: string, _model: any, _datas: any, _pkName?: string) => {
-    if (process.env.DB_RESET_TYPE === 'admin' && this.modelName.indexOf('AdmStd') < 0 ) { return; }
-
     if (!_datas) { return; }
-    await sequelize.getRepository(_model).bulkCreate(_datas, { individualHooks: true })
+    await this.sequelize.getRepository(_model).bulkCreate(_datas, { individualHooks: true })
     .then(() => {
       console.log(`✅Success Seed ${_tableName}`);
     })
@@ -67,7 +62,7 @@ class BaseMigration {
     });;
 
     if (!_pkName) { return; }
-    await rearrangeSequence(_tableName, _pkName)
+    await rearrangeSequence('test', _tableName, _pkName)
     .then(() => {
       console.log(`✅Success Rearrange Sequence ${_tableName}[${_pkName}]`);
     })
@@ -82,9 +77,9 @@ class BaseMigration {
    * @param _tableName 삭제할 Table 의 이름
    */
   dropTable = async(_modelName: string, _tableName: string) => {
-    if (process.env.DB_RESET_TYPE === 'admin' && this.modelName.indexOf('AdmStd') < 0 ) { return; }
+    if (config.db.reset_type === 'admin' && this.modelName.indexOf('AdmStd') < 0 ) { return; }
 
-    await sequelize.models[_modelName].drop()
+    await this.sequelize.models[_modelName].drop()
       .then(() => {
         console.log(`✅Success Drop ${_tableName}`);
       })
@@ -98,15 +93,13 @@ class BaseMigration {
    */
   public migration = async () => {
     try {
-      if (process.env.DB_RESET_TYPE === 'admin' && this.modelName.indexOf('AdmStd') < 0 ) { return; }
+      if (config.node_env !== 'test') { return; }
 
       await this.createTable(this.modelName, this.tableName);
-      if (process.env.NODE_ENV === 'test') {
-        await this.seedTable(this.tableName, this.modelName, this.seedDatas, this.pkName);
-      }
+      await this.seedTable(this.tableName, this.modelName, this.seedDatas, this.pkName);
 
       if (this.modelName === 'AutUser') {
-        await sequelize.query(`
+        await this.sequelize.query(`
           ALTER TABLE AUT_GROUP_TB 
           ADD CONSTRAINT aut_group_tb_created_uid_fkey 
           FOREIGN KEY (created_uid) 
@@ -128,18 +121,16 @@ class BaseMigration {
    */
   public migrationUndo = async () => {
     try {
-      if (process.env.DB_RESET_TYPE === 'admin' && this.modelName.indexOf('AdmStd') < 0 ) { return; }
+      if (config.node_env !== 'test') { return; }
 
-      if (process.env.NODE_ENV === 'test') {
-        if (this.modelName === 'AutUser') {
-          await sequelize.query(`
-            ALTER TABLE AUT_GROUP_TB 
-            DROP CONSTRAINT IF EXISTS aut_group_tb_created_uid_fkey;
-            
-            ALTER TABLE AUT_GROUP_TB 
-            DROP CONSTRAINT IF EXISTS aut_group_tb_updated_uid_fkey;
-          `);
-        }
+      if (this.modelName === 'AutUser') {
+        await this.sequelize.query(`
+          ALTER TABLE AUT_GROUP_TB 
+          DROP CONSTRAINT IF EXISTS aut_group_tb_created_uid_fkey;
+          
+          ALTER TABLE AUT_GROUP_TB 
+          DROP CONSTRAINT IF EXISTS aut_group_tb_updated_uid_fkey;
+        `);
 
         await this.dropTable(this.modelName, this.tableName);
       }

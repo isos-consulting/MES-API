@@ -1,7 +1,6 @@
 import express = require('express');
 import { Transaction } from 'sequelize/types';
 import ApiResult from '../../interfaces/common/api-result.interface';
-import sequelize from '../../models';
 import InvStoreRepo from '../../repositories/inv/store.repository';
 import MatReceiveDetailRepo from '../../repositories/mat/receive-detail.repository';
 import MatReceiveRepo from '../../repositories/mat/receive.repository';
@@ -16,6 +15,7 @@ import StdStoreRepo from '../../repositories/std/store.repository';
 import StdSupplierRepo from '../../repositories/std/supplier.repository';
 import StdUnitRepo from '../../repositories/std/unit.repository';
 import checkArray from '../../utils/checkArray';
+import { getSequelize } from '../../utils/getSequelize';
 import getStoreBody from '../../utils/getStoreBody';
 import getTranTypeCd from '../../utils/getTranTypeCd';
 import isDateFormat from '../../utils/isDateFormat';
@@ -24,34 +24,25 @@ import testErrorHandlingHelper from '../../utils/testErrorHandlingHelper';
 import unsealArray from '../../utils/unsealArray';
 import AdmPatternHistoryCtl from '../adm/pattern-history.controller';
 import BaseCtl from '../base.controller';
+import config from '../../configs/config';
 
 class MatReturnCtl extends BaseCtl {
-  // ✅ Inherited Functions Variable
-  // result: ApiResult<any>;
-
-  // ✅ 부모 Controller (BaseController) 의 repository 변수가 any 로 생성 되어있기 때문에 자식 Controller(this) 에서 Type 지정
-  repo: MatReturnRepo;
-  detailRepo: MatReturnDetailRepo;
-  storeRepo: InvStoreRepo;
-
   //#region ✅ Constructor
   constructor() {
     // ✅ 부모 Controller (Base Controller) 의 CRUD Function 과 상속 받는 자식 Controller(this) 의 Repository 를 연결하기 위하여 생성자에서 Repository 생성
-    super(new MatReturnRepo());
-    this.detailRepo = new MatReturnDetailRepo();
-    this.storeRepo = new InvStoreRepo();
+    super(MatReturnRepo);
 
     // ✅ CUD 연산이 실행되기 전 Fk Table 의 uuid 로 id 를 검색하여 request body 에 삽입하기 위하여 정보 Setting
     this.fkIdInfos = [
       {
         key: 'factory',
-        repo: new StdFactoryRepo(),
+        TRepo: StdFactoryRepo,
         idName: 'factory_id',
         uuidName: 'factory_uuid'
       },
       {
         key: 'return',
-        repo: new MatReturnRepo(),
+        TRepo: MatReturnRepo,
         idName: 'return_id',
         uuidName: 'return_uuid'
       },
@@ -67,7 +58,12 @@ class MatReturnCtl extends BaseCtl {
   public create = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       req.body = await this.getBodyIncludedId(req.body);
-      this.result = { raws: [], count: 0 };
+      
+      const sequelize = getSequelize(req.tenant.uuid);
+      const repo = new MatReturnRepo(req.tenant.uuid);
+      const detailRepo = new MatReturnDetailRepo(req.tenant.uuid);
+      const storeRepo = new InvStoreRepo(req.tenant.uuid);
+      let result: ApiResult<any> = { count: 0, raws: [] };
 
       // create 할 때는 store 확인하면 되는데
       // update 할 때는 추가로 더 있는지를 확인해야 하는데..
@@ -113,6 +109,7 @@ class MatReturnCtl extends BaseCtl {
             // 📌 전표번호가 수기 입력되지 않고 자동발행 Option일 경우 번호 자동발행
             if (!header.stmt_no) { 
               header.stmt_no = await new AdmPatternHistoryCtl().getPattern({
+                tenant: req.tenant.uuid,
                 factory_id: header.factory_id,
                 table_nm: 'MAT_RETURN_TB',
                 col_nm: 'stmt_no',
@@ -123,7 +120,7 @@ class MatReturnCtl extends BaseCtl {
               });
             }
 
-            headerResult = await this.repo.create(data.header, req.user?.uid as number, tran);
+            headerResult = await repo.create(data.header, req.user?.uid as number, tran);
             returnId = headerResult.raws[0].return_id;
             returnUuid = headerResult.raws[0].uuid;
 
@@ -132,7 +129,7 @@ class MatReturnCtl extends BaseCtl {
             returnId = header.return_id;
 
             // 📌 Max Seq 계산
-            maxSeq = await this.detailRepo.getMaxSeq(returnId, tran) as number;
+            maxSeq = await detailRepo.getMaxSeq(returnId, tran) as number;
           }
 
           data.details = data.details.map((detail: any) => {
@@ -157,13 +154,13 @@ class MatReturnCtl extends BaseCtl {
 
           // for await (const data of interlockBody) {
           //   if (data.lot_no && data.store_id && data.location_id) {
-          //     const abc = await this.storeRepo.readGroupedAll(data, 'return');
+          //     const abc = await storeRepo.readGroupedAll(data, 'return');
           //   }
           // }
 
           // 📌 자재 반출
-          const detailResult = await this.detailRepo.create(data.details, req.user?.uid as number, tran);
-          headerResult = await this.updateTotal(returnId, returnUuid, req.user?.uid as number, tran);
+          const detailResult = await detailRepo.create(data.details, req.user?.uid as number, tran);
+          headerResult = await this.updateTotal(req.tenant.uuid, returnId, returnUuid, req.user?.uid as number, tran);
 
           // 📌 자재 반출 수량에 단위 변환 값(협력사 단가 단위 -> 품목 재고 단위) 적용
           detailResult.raws.map((detail: any) => { 
@@ -173,9 +170,9 @@ class MatReturnCtl extends BaseCtl {
 
           // 📌 창고 수불
           const storeBody = getStoreBody(detailResult.raws, 'FROM', 'return_detail_id', getTranTypeCd('MAT_RETURN'), headerResult.raws[0].reg_date);
-          const storeResult = await this.storeRepo.create(storeBody, req.user?.uid as number, tran);
+          const storeResult = await storeRepo.create(storeBody, req.user?.uid as number, tran);
 
-          this.result.raws.push({
+          result.raws.push({
             return: {
               header: headerResult.raws,
               details: detailResult.raws,
@@ -183,13 +180,13 @@ class MatReturnCtl extends BaseCtl {
             store: storeResult.raws
           });
 
-          this.result.count += headerResult.count + detailResult.count + storeResult.count;
+          result.count += headerResult.count + detailResult.count + storeResult.count;
         }
       });
 
-      return response(res, this.result.raws, { count: this.result.count }, '', 201);
+      return response(res, result.raws, { count: result.count }, '', 201);
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   };
   //#endregion
@@ -203,48 +200,56 @@ class MatReturnCtl extends BaseCtl {
   // 📒 Fn[readIncludeDetails]: 반출 데이터의 Header + Detail 함께 조회
   public readIncludeDetails = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
+      const repo = new MatReturnRepo(req.tenant.uuid);
+      const detailRepo = new MatReturnDetailRepo(req.tenant.uuid);
+      let result: ApiResult<any> = { count: 0, raws: [] };
+
       const params = Object.assign(req.query, req.params);
       params.return_uuid = params.uuid;
 
-      const headerResult = await this.repo.readByUuid(params.return_uuid);
-      const detailsResult = await this.detailRepo.read(params);
+      const headerResult = await repo.readByUuid(params.return_uuid);
+      const detailsResult = await detailRepo.read(params);
 
-      this.result.raws = [{ header: unsealArray(headerResult.raws), details: detailsResult.raws }];
-      this.result.count = headerResult.count + detailsResult.count;
+      result.raws = [{ header: unsealArray(headerResult.raws), details: detailsResult.raws }];
+      result.count = headerResult.count + detailsResult.count;
       
-      return response(res, this.result.raws, { count: this.result.count });
+      return response(res, result.raws, { count: result.count });
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   };
 
   // 📒 Fn[readDetails]: 반출 데이터의 Detail 조회
   public readDetails = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
+      const detailRepo = new MatReturnDetailRepo(req.tenant.uuid);
+
       const params = Object.assign(req.query, req.params);
       params.return_uuid = params.uuid;
 
-      this.result = await this.detailRepo.read(params);
+      const result = await detailRepo.read(params);
       
-      return response(res, this.result.raws, { count: this.result.count });
+      return response(res, result.raws, { count: result.count });
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   };
 
   // 📒 Fn[readReport]: 반출현황 데이터 조회
   public readReport = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
+      const repo = new MatReturnRepo(req.tenant.uuid);
+
       const params = Object.assign(req.query, req.params);
 
       const sort_type = params.sort_type as string;
       if (![ 'partner', 'prod', 'date' ].includes(sort_type)) { throw new Error('잘못된 sort_type(정렬) 입력') }
 
-      this.result = await this.repo.readReport(params);
+      const result = await repo.readReport(params);
       
-      return response(res, this.result.raws, { count: this.result.count });
+      return response(res, result.raws, { count: result.count });
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   };
 
@@ -256,7 +261,12 @@ class MatReturnCtl extends BaseCtl {
   public update = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       req.body = await this.getBodyIncludedId(req.body);
-      this.result = { raws: [], count: 0 };
+      
+      const sequelize = getSequelize(req.tenant.uuid);
+      const repo = new MatReturnRepo(req.tenant.uuid);
+      const detailRepo = new MatReturnDetailRepo(req.tenant.uuid);
+      const storeRepo = new InvStoreRepo(req.tenant.uuid);
+      let result: ApiResult<any> = { count: 0, raws: [] };
 
       await sequelize.transaction(async(tran) => { 
         for await (const data of req.body) {
@@ -266,9 +276,9 @@ class MatReturnCtl extends BaseCtl {
           });
 
           // 📌 반출 데이터 수정
-          await this.repo.update(data.header, req.user?.uid as number, tran);
-          const detailResult = await this.detailRepo.update(data.details, req.user?.uid as number, tran);
-          const headerResult = await this.updateTotal(data.header[0].return_id, data.header[0].uuid, req.user?.uid as number, tran);
+          await repo.update(data.header, req.user?.uid as number, tran);
+          const detailResult = await detailRepo.update(data.details, req.user?.uid as number, tran);
+          const headerResult = await this.updateTotal(req.tenant.uuid, data.header[0].return_id, data.header[0].uuid, req.user?.uid as number, tran);
 
           // 📌 자재 반출 수량에 단위 변환 값(협력사 단가 단위 -> 품목 재고 단위) 적용
           detailResult.raws.map((detail: any) => { 
@@ -278,9 +288,9 @@ class MatReturnCtl extends BaseCtl {
 
           // 📌 수불 데이터 수정
           const storeBody = getStoreBody(detailResult.raws, 'FROM', 'return_detail_id', getTranTypeCd('MAT_RETURN'));
-          const storeResult = await this.storeRepo.updateToTransaction(storeBody, req.user?.uid as number, tran);
+          const storeResult = await storeRepo.updateToTransaction(storeBody, req.user?.uid as number, tran);
 
-          this.result.raws.push({
+          result.raws.push({
             return: {
               header: headerResult.raws,
               details: detailResult.raws,
@@ -288,13 +298,13 @@ class MatReturnCtl extends BaseCtl {
             store: storeResult.raws
           });
 
-          this.result.count += headerResult.count + detailResult.count + storeResult.count;
+          result.count += headerResult.count + detailResult.count + storeResult.count;
         }
       });
       
-      return response(res, this.result.raws, { count: this.result.count }, '', 201);
+      return response(res, result.raws, { count: result.count }, '', 201);
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   };
   
@@ -306,7 +316,12 @@ class MatReturnCtl extends BaseCtl {
   public patch = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       req.body = await this.getBodyIncludedId(req.body);
-      this.result = { raws: [], count: 0 };
+      
+      const sequelize = getSequelize(req.tenant.uuid);
+      const repo = new MatReturnRepo(req.tenant.uuid);
+      const detailRepo = new MatReturnDetailRepo(req.tenant.uuid);
+      const storeRepo = new InvStoreRepo(req.tenant.uuid);
+      let result: ApiResult<any> = { count: 0, raws: [] };
 
       await sequelize.transaction(async(tran) => { 
         for await (const data of req.body) {
@@ -316,9 +331,9 @@ class MatReturnCtl extends BaseCtl {
           });
 
           // 📌 반출 데이터 수정
-          await this.repo.patch(data.header, req.user?.uid as number, tran);
-          const detailResult = await this.detailRepo.patch(data.details, req.user?.uid as number, tran);
-          const headerResult = await this.updateTotal(data.header[0].return_id, data.header[0].uuid, req.user?.uid as number, tran);
+          await repo.patch(data.header, req.user?.uid as number, tran);
+          const detailResult = await detailRepo.patch(data.details, req.user?.uid as number, tran);
+          const headerResult = await this.updateTotal(req.tenant.uuid, data.header[0].return_id, data.header[0].uuid, req.user?.uid as number, tran);
 
           // 📌 자재 반출 수량에 단위 변환 값(협력사 단가 단위 -> 품목 재고 단위) 적용
           detailResult.raws.map((detail: any) => { 
@@ -328,9 +343,9 @@ class MatReturnCtl extends BaseCtl {
 
           // 📌 수불 데이터 수정
           const storeBody = getStoreBody(detailResult.raws, 'FROM', 'return_detail_id', getTranTypeCd('MAT_RETURN'));
-          const storeResult = await this.storeRepo.updateToTransaction(storeBody, req.user?.uid as number, tran);
+          const storeResult = await storeRepo.updateToTransaction(storeBody, req.user?.uid as number, tran);
 
-          this.result.raws.push({
+          result.raws.push({
             return: {
               header: headerResult.raws,
               details: detailResult.raws,
@@ -338,13 +353,13 @@ class MatReturnCtl extends BaseCtl {
             store: storeResult.raws
           });
 
-          this.result.count += headerResult.count + detailResult.count + storeResult.count;
+          result.count += headerResult.count + detailResult.count + storeResult.count;
         }
       });
 
-      return response(res, this.result.raws, { count: this.result.count }, '', 201);
+      return response(res, result.raws, { count: result.count }, '', 201);
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   };
   
@@ -356,7 +371,12 @@ class MatReturnCtl extends BaseCtl {
   public delete = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       req.body = await this.getBodyIncludedId(req.body);
-      this.result = { raws: [], count: 0 };
+      
+      const sequelize = getSequelize(req.tenant.uuid);
+      const repo = new MatReturnRepo(req.tenant.uuid);
+      const detailRepo = new MatReturnDetailRepo(req.tenant.uuid);
+      const storeRepo = new InvStoreRepo(req.tenant.uuid);
+      let result: ApiResult<any> = { count: 0, raws: [] };
 
       await sequelize.transaction(async(tran) => { 
         for await (const data of req.body) {
@@ -369,20 +389,20 @@ class MatReturnCtl extends BaseCtl {
           });
 
           // 📌 수불 내역 삭제
-          const storeResult = await this.storeRepo.deleteToTransaction(deleteBody, req.user?.uid as number, tran);
+          const storeResult = await storeRepo.deleteToTransaction(deleteBody, req.user?.uid as number, tran);
 
           // 📌 반출 내역 삭제
-          const detailResult = await this.detailRepo.delete(data.details, req.user?.uid as number, tran);
-          const count = await this.detailRepo.getCount(data.header[0].return_id, tran);
+          const detailResult = await detailRepo.delete(data.details, req.user?.uid as number, tran);
+          const count = await detailRepo.getCount(data.header[0].return_id, tran);
 
           let headerResult: ApiResult<any>;
           if (count == 0) {
-            headerResult = await this.repo.delete(data.header, req.user?.uid as number, tran);
+            headerResult = await repo.delete(data.header, req.user?.uid as number, tran);
           } else {
-            headerResult = await this.updateTotal(data.header[0].return_id, data.header[0].uuid, req.user?.uid as number, tran);
+            headerResult = await this.updateTotal(req.tenant.uuid, data.header[0].return_id, data.header[0].uuid, req.user?.uid as number, tran);
           }
 
-          this.result.raws.push({
+          result.raws.push({
             return: {
               header: headerResult.raws,
               details: detailResult.raws,
@@ -390,13 +410,13 @@ class MatReturnCtl extends BaseCtl {
             store: storeResult.raws
           });
 
-          this.result.count += headerResult.count + detailResult.count + storeResult.count;
+          result.count += headerResult.count + detailResult.count + storeResult.count;
         }
       });
   
-      return response(res, this.result.raws, { count: this.result.count }, '', 200);
+      return response(res, result.raws, { count: result.count }, '', 200);
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   };
 
@@ -442,25 +462,25 @@ class MatReturnCtl extends BaseCtl {
           [...this.fkIdInfos, 
             {
               key: 'uuid',
-              repo: new MatReturnRepo(),
+              TRepo: MatReturnRepo,
               idName: 'return_id',
               uuidName: 'uuid'
             },
             {
               key: 'partner',
-              repo: new StdPartnerRepo(),
+              TRepo: StdPartnerRepo,
               idName: 'partner_id',
               uuidName: 'partner_uuid'
             },
             {
               key: 'supplier',
-              repo: new StdSupplierRepo(),
+              TRepo: StdSupplierRepo,
               idName: 'supplier_id',
               uuidName: 'supplier_uuid'
             },
             {
               key: 'receive',
-              repo: new MatReceiveRepo(),
+              TRepo: MatReceiveRepo,
               idName: 'receive_id',
               uuidName: 'receive_uuid'
             },
@@ -472,50 +492,50 @@ class MatReturnCtl extends BaseCtl {
         [...this.fkIdInfos, 
           {
             key: 'uuid',
-            repo: new MatReturnDetailRepo(),
+            TRepo: MatReturnDetailRepo,
             idName: 'return_detail_id',
             uuidName: 'uuid'
           },
           {
             key: 'returnDetail',
-            repo: new MatReturnDetailRepo(),
+            TRepo: MatReturnDetailRepo,
             idName: 'return_detail_id',
             uuidName: 'return_detail_uuid'
           },
           {
             key: 'receiveDetail',
-            repo: new MatReceiveDetailRepo(),
+            TRepo: MatReceiveDetailRepo,
             idName: 'receive_detail_id',
             uuidName: 'receive_detail_uuid'
           },
           {
             key: 'prod',
-            repo: new StdProdRepo(),
+            TRepo: StdProdRepo,
             idName: 'prod_id',
             uuidName: 'prod_uuid'
           },
           {
             key: 'unit',
-            repo: new StdUnitRepo(),
+            TRepo: StdUnitRepo,
             idName: 'unit_id',
             uuidName: 'unit_uuid'
           },
           {
             key: 'moneyUnit',
-            repo: new StdMoneyUnitRepo(),
+            TRepo: StdMoneyUnitRepo,
             idName: 'money_unit_id',
             uuidName: 'money_unit_uuid'
           },
           {
             key: 'fromStore',
-            repo: new StdStoreRepo(),
+            TRepo: StdStoreRepo,
             idName: 'store_id',
             idAlias: 'from_store_id',
             uuidName: 'from_store_uuid'
           },
           {
             key: 'fromLocation',
-            repo: new StdLocationRepo(),
+            TRepo: StdLocationRepo,
             idName: 'location_id',
             idAlias: 'from_location_id',
             uuidName: 'from_location_uuid'
@@ -538,12 +558,15 @@ class MatReturnCtl extends BaseCtl {
    * @param _transaction Transaction
    * @returns 합계 금액, 수량이 계산 된 전표 결과
    */
-  updateTotal = async (_id: number, _uuid: string, _uid: number, _transaction?: Transaction) => {
-    const getTotals = await this.detailRepo.getTotals(_id, _transaction);
+  updateTotal = async (tenant: string, _id: number, _uuid: string, _uid: number, _transaction?: Transaction) => {
+    const repo = new MatReturnRepo(tenant);
+    const detailRepo = new MatReturnDetailRepo(tenant);
+
+    const getTotals = await detailRepo.getTotals(_id, _transaction);
     const totalQty = getTotals?.totalQty;
     const totalPrice = getTotals?.totalPrice;
 
-    const result = await this.repo.patch(
+    const result = await repo.patch(
       [{ 
         total_qty: totalQty,
         total_price: totalPrice,

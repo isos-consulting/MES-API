@@ -1,37 +1,36 @@
 import { SequelizeOptions, Sequelize } from 'sequelize-typescript';
-import * as dotenv from 'dotenv';
-dotenv.config();
+import config from '../configs/config';
 
-const env: string = process.env.NODE_ENV as string
+const env: string = config.node_env;
 const environment: any = {
   production: {
-    database: process.env.DB_NAME,
-    username: process.env.DB_USER,
-    password: process.env.DB_PW,
+    database: config.db.test.database,
+    username: config.db.test.user,
+    password: config.db.test.password,
     logging: false
   },
   development: {
-    database: process.env.DB_DEV,
-    username: process.env.DB_USER,
-    password: process.env.DB_PW,
+    database: config.db.test.database,
+    username: config.db.test.user,
+    password: config.db.test.password,
     logging: true
   },
   test: {
-    database: process.env.DB_TEST,
-    username: process.env.DB_USER,
-    password: process.env.DB_PW,
+    database: config.db.test.database,
+    username: config.db.test.user,
+    password: config.db.test.password,
     logging: false
   },
 };
-const config: SequelizeOptions = environment[env];
+const dbConfig: SequelizeOptions = environment[env];
 
-const database: string = config.database as string;
-const username: string = config.username as string;
-const password: string = config.password as string;
+const database: string = dbConfig.database as string;
+const username: string = dbConfig.username as string;
+const password: string = dbConfig.password as string;
 
-const sequelizeToQuerying = new Sequelize(database, username, password, {
-  host: process.env.DB_HOST,
-  port: Number(process.env.DB_PORT),
+const sequelize = new Sequelize(database, username, password, {
+  host: config.db.test.host,
+  port: Number(config.db.test.port),
   dialect: 'postgres',
   dialectOptions: { 
     useUTC: false, // for reading the data
@@ -42,7 +41,7 @@ const sequelizeToQuerying = new Sequelize(database, username, password, {
   timezone: '+09:00', // for writing the data
   repositoryMode: true,
   quoteIdentifiers: false,
-  logging: process.env.NODE_ENV === 'test' ? false : console.log,
+  logging: env === 'test' ? false : console.log,
 });
 
-export default sequelizeToQuerying
+export default sequelize;

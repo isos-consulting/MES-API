@@ -1,6 +1,7 @@
 import moment = require('moment');
 import IMatRelease from '../../interfaces/mat/release.interface';
 import BaseMigration from '../base-migration';
+import config from '../../configs/config';
 
 // Seed Datas
 let seedDatas: IMatRelease[] = [
@@ -186,7 +187,7 @@ let seedDatas: IMatRelease[] = [
 	}
 ]
 
-const baseMigration = new BaseMigration('MatRelease', 'release_id', process.env.DB_RESET_TYPE === 'test' ? seedDatas : []);
+const baseMigration = new BaseMigration('MatRelease', 'release_id', config.db.reset_type === 'test' ? seedDatas : []);
 const migration = baseMigration.migration;
 const migrationUndo = baseMigration.migrationUndo;
 

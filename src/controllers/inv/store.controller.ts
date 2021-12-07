@@ -1,5 +1,4 @@
 import express = require('express');
-import sequelize from '../../models';
 import InvStoreRepo from '../../repositories/inv/store.repository';
 import StdFactoryRepo from '../../repositories/std/factory.repository';
 import StdLocationRepo from '../../repositories/std/location.repository';
@@ -14,13 +13,16 @@ import isUuid from '../../utils/isUuid';
 import response from '../../utils/response';
 import testErrorHandlingHelper from '../../utils/testErrorHandlingHelper';
 import BaseCtl from '../base.controller';
+import { getSequelize } from '../../utils/getSequelize';
+import ApiResult from '../../interfaces/common/api-result.interface';
+import config from '../../configs/config';
 
 class InvStoreCtl extends BaseCtl {
   // ✅ Inherited Functions Variable
   // result: ApiResult<any>;
 
   // ✅ 부모 Controller (BaseController) 의 repository 변수가 any 로 생성 되어있기 때문에 자식 Controller(this) 에서 Type 지정
-  repo: InvStoreRepo;
+  TRepo: InvStoreRepo;
 
   // ✅ 조회조건 Types
   tranTypes: string[];
@@ -31,43 +33,43 @@ class InvStoreCtl extends BaseCtl {
   //#region ✅ Constructor
   constructor() {
     // ✅ 부모 Controller (Base Controller) 의 CRUD Function 과 상속 받는 자식 Controller(this) 의 Repository 를 연결하기 위하여 생성자에서 Repository 생성
-    super(new InvStoreRepo());
+    super(InvStoreRepo);
 
     // ✅ CUD 연산이 실행되기 전 Fk Table 의 uuid 로 id 를 검색하여 request body 에 삽입하기 위하여 정보 Setting
     this.fkIdInfos = [
       {
         key: 'factory',
-        repo: new StdFactoryRepo(),
+        TRepo: StdFactoryRepo,
         idName: 'factory_id',
         uuidName: 'factory_uuid'
       },
       {
         key: 'location',
-        repo: new StdLocationRepo(),
+        TRepo: StdLocationRepo,
         idName: 'location_id',
         uuidName: 'location_uuid'
       },
       {
         key: 'prod',
-        repo: new StdProdRepo(),
+        TRepo: StdProdRepo,
         idName: 'prod_id',
         uuidName: 'prod_uuid'
       },
       {
         key: 'store',
-        repo: new StdStoreRepo(),
+        TRepo: StdStoreRepo,
         idName: 'store_id',
         uuidName: 'store_uuid'
       },
       {
         key: 'reject',
-        repo: new StdRejectRepo(),
+        TRepo: StdRejectRepo,
         idName: 'reject_id',
         uuidName: 'reject_uuid'
       },
 			{
         key: 'partner',
-        repo: new StdPartnerRepo(),
+        TRepo: StdPartnerRepo,
         idName: 'partner_id',
         uuidName: 'partner_uuid'
       },
@@ -100,9 +102,13 @@ class InvStoreCtl extends BaseCtl {
     try {
       req.body = await this.getFkId(req.body, this.fkIdInfos);
       
+      const sequelize = getSequelize(req.tenant.uuid);
+      const repo = new InvStoreRepo(req.tenant.uuid);
+      let result: ApiResult<any> = { count: 0, raws: [] };
+
       await sequelize.transaction(async(tran) => {
         // 📌 재고실사 관련 Max 전표번호 생성
-        let maxTranId = await this.repo.getMaxTranId(getTranTypeCd('INVENTORY'), tran);
+        let maxTranId = await repo.getMaxTranId(getTranTypeCd('INVENTORY'), tran);
 
         for await (const data of req.body) {
           data.tran_id = ++maxTranId;
@@ -122,7 +128,7 @@ class InvStoreCtl extends BaseCtl {
             price_type: 'all',
           };
 
-          const [ currentStock ] = (await this.repo.readStockAccordingToType(params)).raws;
+          const [ currentStock ] = (await repo.readStockAccordingToType(params)).raws;
           let currentQty = currentStock?.qty ?? 0;
 
           // 📌 기존 수량보다 실사 수량이 크면 입고 작으면 출고
@@ -135,12 +141,12 @@ class InvStoreCtl extends BaseCtl {
         }
 
         // 📌 재고 실사 내역 생성
-        this.result = await this.repo.create(req.body, req.user?.uid as number, tran);
+        result = await repo.create(req.body, req.user?.uid as number, tran);
       });
       
-      return response(res, this.result.raws, { count: this.result.count }, '', 201);
+      return response(res, result.raws, { count: result.count }, '', 201);
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   };
 
@@ -155,6 +161,8 @@ class InvStoreCtl extends BaseCtl {
   // 📒 Fn[readStock]: 유형별 재고 조회
   public readStock = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
+      const repo = new InvStoreRepo(req.tenant.uuid);
+
       const params = Object.assign(req.query, req.params);
       if (!this.stockTypes.includes(params.stock_type)) { throw new Error('잘못된 stock_type(재고조회유형) 입력') }
       if (!this.groupedTypes.includes(params.grouped_type)) { throw new Error('잘못된 grouped_type(재고분류유형) 입력') }
@@ -162,33 +170,37 @@ class InvStoreCtl extends BaseCtl {
       if (!isUuid(params.factory_uuid)) { throw new Error('잘못된 factory_uuid(공장UUID) 입력') };
       if (!isDateFormat(params.reg_date)) { throw new Error('잘못된 reg_date(기준일자) 입력') };
 
-      this.result = await this.repo.readStockAccordingToType(params);
+      const result = await repo.readStockAccordingToType(params);
 
-      return response(res, this.result.raws, { count: this.result.count });
+      return response(res, result.raws, { count: result.count });
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   };
 
   // 📒 Fn[readReturnStock]: 반출 대기재고(단위 변환 적용) 조회
   public readReturnStock = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
+      const repo = new InvStoreRepo(req.tenant.uuid);
+      
       const params = Object.assign(req.query, req.params);
       if (!isUuid(params.factory_uuid)) { throw new Error('잘못된 factory_uuid(공장UUID) 입력') };
       if (!isUuid(params.partner_uuid)) { throw new Error('잘못된 partner_uuid(거래처UUID) 입력') };
       if (!isDateFormat(params.reg_date)) { throw new Error('잘못된 reg_date(기준일자) 입력') };
 
-      this.result = await this.repo.readReturnStock(params);
+      const result = await repo.readReturnStock(params);
 
-      return response(res, this.result.raws, { count: this.result.count });
+      return response(res, result.raws, { count: result.count });
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   };
 
   // 📒 Fn[readStoreHistoryByTransaction]: 수불유형에 따른 이력 조회
   public readStoreHistoryByTransaction = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
+      const repo = new InvStoreRepo(req.tenant.uuid);
+      
       const params = Object.assign(req.query, req.params);  
       if (!this.tranTypes.includes(params.tran_type)) { throw new Error('잘못된 tran_type(재고수불유형) 입력') };
       if (!isUuid(params.factory_uuid)) { throw new Error('잘못된 factory_uuid(공장UUID) 입력') };
@@ -196,17 +208,19 @@ class InvStoreCtl extends BaseCtl {
       if (!isDateFormat(params.end_date)) { throw new Error('잘못된 end_date(기준종료일자) 입력') };
 
       params.tran_type_cd = getTranTypeCdByApiParams(params.tran_type) as string;
-      this.result = await this.repo.readStoreHistoryByTransaction(params);
+      const result = await repo.readStoreHistoryByTransaction(params);
 
-      return response(res, this.result.raws, { count: this.result.count });
+      return response(res, result.raws, { count: result.count });
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   };
 
   // 📒 Fn[readTotalHistory]: 유형별 총괄 수불부 조회
   public readTotalHistory = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
+      const repo = new InvStoreRepo(req.tenant.uuid);
+      
       const params = Object.assign(req.query, req.params);
       if (!this.stockTypes.includes(params.stock_type)) { throw new Error('잘못된 stock_type(재고조회유형) 입력') }
       if (!this.groupedTypes.includes(params.grouped_type)) { throw new Error('잘못된 grouped_type(재고분류유형) 입력') }
@@ -214,44 +228,48 @@ class InvStoreCtl extends BaseCtl {
       if (!isDateFormat(params.start_date)) { throw new Error('잘못된 start_date(기준시작일자) 입력') };
       if (!isDateFormat(params.end_date)) { throw new Error('잘못된 end_date(기준종료일자) 입력') };
 
-      this.result = await this.repo.readTotalHistoryAccordingToType(params);
+      const result = await repo.readTotalHistoryAccordingToType(params);
 
-      return response(res, this.result.raws, { count: this.result.count });
+      return response(res, result.raws, { count: result.count });
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   };
 
   // 📒 Fn[readIndividualHistory]: 유형별 개별 수불부 조회
   public readIndividualHistory = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
+      const repo = new InvStoreRepo(req.tenant.uuid);
+      
       const params = Object.assign(req.query, req.params);
       if (!isUuid(params.factory_uuid)) { throw new Error('잘못된 factory_uuid(공장UUID) 입력') };
       if (!isUuid(params.store_uuid)) { throw new Error('잘못된 store_uuid(창고UUID) 입력') };
       if (!isDateFormat(params.start_date)) { throw new Error('잘못된 start_date(기준시작일자) 입력') };
       if (!isDateFormat(params.end_date)) { throw new Error('잘못된 end_date(기준종료일자) 입력') };
 
-      this.result = await this.repo.readIndividualHistoryAccordingToType(params);
+      const result = await repo.readIndividualHistoryAccordingToType(params);
 
-      return response(res, this.result.raws, { count: this.result.count });
+      return response(res, result.raws, { count: result.count });
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   };
 
   // 📒 Fn[readTypeHistory]: 유형별 수불유형별 수불부 조회
   public readTypeHistory = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
+      const repo = new InvStoreRepo(req.tenant.uuid);
+      
       const params = Object.assign(req.query, req.params);
       if (!this.groupedTypes.includes(params.grouped_type)) { throw new Error('잘못된 grouped_type(재고분류유형) 입력') }
       if (!isUuid(params.factory_uuid)) { throw new Error('잘못된 factory_uuid(공장UUID) 입력') };
       if (!isDateFormat(params.start_date)) { throw new Error('잘못된 start_date(기준시작일자) 입력') };
       if (!isDateFormat(params.end_date)) { throw new Error('잘못된 end_date(기준종료일자) 입력') };
 
-      this.result = await this.repo.readTypeHistoryAccordingToType(params);
+      const result = await repo.readTypeHistoryAccordingToType(params);
 
       const tempResult: any[] = [];
-      this.result.raws.forEach((raw: any) => {
+      result.raws.forEach((raw: any) => {
         const equals = tempResult.find(data => 
           data.factory_uuid == raw.factory_uuid &&
           data.prod_uuid == raw.prod_uuid &&
@@ -273,10 +291,10 @@ class InvStoreCtl extends BaseCtl {
         }
       });
 
-      this.result.raws = tempResult;
-      return response(res, this.result.raws, { count: this.result.count });
+      result.raws = tempResult;
+      return response(res, result.raws, { count: result.count });
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   };
 

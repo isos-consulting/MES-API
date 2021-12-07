@@ -1,21 +1,26 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
 import StdEmp from '../../models/std/emp.model';
 import IStdEmp from '../../interfaces/std/emp.interface';
-import sequelize from '../../models';
+import { Sequelize } from 'sequelize-typescript';
 import convertBulkResult from '../../utils/convertBulkResult';
 import convertResult from '../../utils/convertResult';
-import { Op, Sequelize, Transaction, WhereOptions } from 'sequelize';
+import { Op, Transaction, WhereOptions } from 'sequelize';
 import { UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
+import { getSequelize } from '../../utils/getSequelize';
 
 class StdEmpRepo {
   repo: Repository<StdEmp>;
+  sequelize: Sequelize;
+  tenant: string;
 
   //#region ✅ Constructor
-  constructor() {
-    this.repo = sequelize.getRepository(StdEmp);
+  constructor(tenant: string) {
+    this.tenant = tenant;
+    this.sequelize = getSequelize(tenant);
+    this.repo = this.sequelize.getRepository(StdEmp);
   }
   //#endregion
 
@@ -75,7 +80,7 @@ class StdEmpRepo {
           break;
         
         case 'incumbent':
-          whereOptions = { leave_date: { [Op.eq]: null } }
+          whereOptions = { leave_date: { [Op.eq]: null } as any }
           break;
         
         case 'retiree':
@@ -88,11 +93,11 @@ class StdEmpRepo {
 
       const result = await this.repo.findAll({ 
         include: [
-          { model: sequelize.models.StdDept, attributes: [], required: false },
-          { model: sequelize.models.StdGrade, attributes: [], required: false },
-          { model: sequelize.models.AutUser, as: 'autUser', attributes: [], required: false },
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.StdDept, attributes: [], required: false },
+          { model: this.sequelize.models.StdGrade, attributes: [], required: false },
+          { model: this.sequelize.models.AutUser, as: 'autUser', attributes: [], required: false },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('stdEmp.uuid'), 'emp_uuid' ],
@@ -135,11 +140,11 @@ class StdEmpRepo {
       const result = await this.repo.findOne(
         { 
           include: [
-            { model: sequelize.models.StdDept, attributes: [], required: false },
-            { model: sequelize.models.StdGrade, attributes: [], required: false },
-            { model: sequelize.models.AutUser, as: 'autUser', attributes: [], required: false },
-            { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-            { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+            { model: this.sequelize.models.StdDept, attributes: [], required: false },
+            { model: this.sequelize.models.StdGrade, attributes: [], required: false },
+            { model: this.sequelize.models.AutUser, as: 'autUser', attributes: [], required: false },
+            { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+            { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
           ],
           attributes: [
             [ Sequelize.col('stdEmp.uuid'), 'emp_uuid' ],
@@ -233,7 +238,7 @@ class StdEmpRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.StdEmp.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdEmp.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -281,7 +286,7 @@ class StdEmpRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.StdEmp.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdEmp.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -304,7 +309,7 @@ class StdEmpRepo {
         count += await this.repo.destroy({ where: { uuid: emp.uuid }, transaction});
       };
 
-      await new AdmLogRepo().create('delete', sequelize.models.StdEmp.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.StdEmp.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
     } catch (error) {
       throw error;

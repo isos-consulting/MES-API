@@ -1,21 +1,26 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
-import sequelize from '../../models';
+import { Sequelize } from 'sequelize-typescript';
 import convertBulkResult from '../../utils/convertBulkResult';
 import convertResult from '../../utils/convertResult';
 import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
+import { getSequelize } from '../../utils/getSequelize';
 import PrdOrder from '../../models/prd/order.model';
 import IPrdOrder from '../../interfaces/prd/order.interface';
 import { readOrders } from '../../queries/prd/order.query';
 
 class PrdOrderRepo {
   repo: Repository<PrdOrder>;
+  sequelize: Sequelize;
+  tenant: string;
 
   //#region ✅ Constructor
-  constructor() {
-    this.repo = sequelize.getRepository(PrdOrder);
+  constructor(tenant: string) {
+    this.tenant = tenant;
+    this.sequelize = getSequelize(tenant);
+    this.repo = this.sequelize.getRepository(PrdOrder);
   }
   //#endregion
 
@@ -65,7 +70,7 @@ class PrdOrderRepo {
   // 📒 Fn[read]: Default Read Function
   public read = async(params?: any) => {
     try {
-      const result = await sequelize.query(readOrders(params));
+      const result = await this.sequelize.query(readOrders(params));
 
       return convertReadResult(result[0]);
     } catch (error) {
@@ -76,7 +81,7 @@ class PrdOrderRepo {
   // 📒 Fn[readByUuid]: Default Read With Uuid Function
   public readByUuid = async(uuid: string, params?: any) => {
     try {
-      const result = await sequelize.query(readOrders({ order_uuid: uuid }));
+      const result = await this.sequelize.query(readOrders({ order_uuid: uuid }));
 
       return convertReadResult(result[0]);
     } catch (error) {
@@ -105,7 +110,7 @@ class PrdOrderRepo {
   // 📒 Fn[readWorkComparedOrder]: 지시대비실적 Read Fuction
   public readWorkComparedOrder = async(params?: any) => {
     try {
-      const result = await sequelize.query(`
+      const result = await this.sequelize.query(`
         SELECT
           AVG(COALESCE(p_w.qty, 0) / p_o.qty) AS rate
         FROM prd_order_tb p_o
@@ -160,7 +165,7 @@ class PrdOrderRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.PrdOrder.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.PrdOrder.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -193,7 +198,7 @@ class PrdOrderRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.PrdOrder.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.PrdOrder.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -223,7 +228,7 @@ class PrdOrderRepo {
 
       raws.push(result);
 
-      await new AdmLogRepo().create('update', sequelize.models.PrdOrder.getTableName() as string, previousRaw, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.PrdOrder.getTableName() as string, previousRaw, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -255,7 +260,7 @@ class PrdOrderRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.PrdOrder.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.PrdOrder.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -299,7 +304,7 @@ class PrdOrderRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.PrdOrder.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.PrdOrder.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -322,7 +327,7 @@ class PrdOrderRepo {
         count += await this.repo.destroy({ where: { uuid: order.uuid }, transaction});
       };
 
-      await new AdmLogRepo().create('delete', sequelize.models.PrdOrder.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.PrdOrder.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
     } catch (error) {
       throw error;

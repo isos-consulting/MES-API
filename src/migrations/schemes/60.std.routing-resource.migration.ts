@@ -1,5 +1,6 @@
 import IStdRoutingResource from '../../interfaces/std/routing-resource.interface';
 import BaseMigration from '../base-migration';
+import config from '../../configs/config';
 
 // Seed Datas
 let seedDatas: IStdRoutingResource[] = [
@@ -382,7 +383,7 @@ let seedDatas: IStdRoutingResource[] = [
 	}
 ]
 
-const baseMigration = new BaseMigration('StdRoutingResource', 'routing_resource_id', process.env.DB_RESET_TYPE === 'test' ? seedDatas : []);
+const baseMigration = new BaseMigration('StdRoutingResource', 'routing_resource_id', config.db.reset_type === 'test' ? seedDatas : []);
 const migration = baseMigration.migration;
 const migrationUndo = baseMigration.migrationUndo;
 

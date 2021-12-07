@@ -1,21 +1,26 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
-import sequelize from '../../models';
+import { Sequelize } from 'sequelize-typescript';
 import convertBulkResult from '../../utils/convertBulkResult';
 import convertResult from '../../utils/convertResult';
-import { Op, Sequelize, Transaction, UniqueConstraintError } from 'sequelize';
+import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
+import { getSequelize } from '../../utils/getSequelize';
 import MatReturn from '../../models/mat/return.model';
 import IMatReturn from '../../interfaces/mat/return.interface';
 import { readReturnReport } from '../../queries/mat/return-report.query';
 
 class MatReturnRepo {
   repo: Repository<MatReturn>;
+  sequelize: Sequelize;
+  tenant: string;
 
   //#region ✅ Constructor
-  constructor() {
-    this.repo = sequelize.getRepository(MatReturn);
+  constructor(tenant: string) {
+    this.tenant = tenant;
+    this.sequelize = getSequelize(tenant);
+    this.repo = this.sequelize.getRepository(MatReturn);
   }
   //#endregion
 
@@ -59,21 +64,21 @@ class MatReturnRepo {
       const result = await this.repo.findAll({ 
         include: [
           { 
-            model: sequelize.models.StdFactory, 
+            model: this.sequelize.models.StdFactory, 
             attributes: [], 
             required: true, 
             where: { uuid: params.factory_uuid ? params.factory_uuid : { [Op.ne]: null } }
           },
           { 
-            model: sequelize.models.StdPartner, 
+            model: this.sequelize.models.StdPartner, 
             attributes: [], 
             required: true,
             where: { uuid: params.partner_uuid ? params.partner_uuid : { [Op.ne]: null } }
           },
-          { model: sequelize.models.StdSupplier, attributes: [], required: false },
-          { model: sequelize.models.MatReceive, attributes: [], required: false },
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.StdSupplier, attributes: [], required: false },
+          { model: this.sequelize.models.MatReceive, attributes: [], required: false },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('matReturn.uuid'), 'return_uuid' ],
@@ -121,12 +126,12 @@ class MatReturnRepo {
     try {
       const result = await this.repo.findOne({ 
         include: [
-          { model: sequelize.models.StdFactory, attributes: [], required: true },
-          { model: sequelize.models.StdPartner, attributes: [], required: true },
-          { model: sequelize.models.StdSupplier, attributes: [], required: false },
-          { model: sequelize.models.MatReceive, attributes: [], required: false },
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.StdFactory, attributes: [], required: true },
+          { model: this.sequelize.models.StdPartner, attributes: [], required: true },
+          { model: this.sequelize.models.StdSupplier, attributes: [], required: false },
+          { model: this.sequelize.models.MatReceive, attributes: [], required: false },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('matReturn.uuid'), 'return_uuid' ],
@@ -178,7 +183,7 @@ class MatReturnRepo {
   // 📒 Fn[readReport]: Read Return Repot Function
   public readReport = async(params?: any) => {
     try {
-      const result = await sequelize.query(readReturnReport(params));
+      const result = await this.sequelize.query(readReturnReport(params));
 
       return convertReadResult(result[0]);
     } catch (error) {
@@ -216,7 +221,7 @@ class MatReturnRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.MatReturn.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.MatReturn.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -256,7 +261,7 @@ class MatReturnRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.MatReturn.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.MatReturn.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -279,7 +284,7 @@ class MatReturnRepo {
         count += await this.repo.destroy({ where: { uuid: returnData.uuid }, transaction});
       };
 
-      await new AdmLogRepo().create('delete', sequelize.models.MatReturn.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.MatReturn.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
     } catch (error) {
       throw error;

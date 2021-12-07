@@ -31,7 +31,7 @@ export default async(req: express.Request, res: express.Response, next: express.
         const token = req.headers.authorization.substring(7, req.headers.authorization.length);
         const result = verify(token);
         if (result.ok) {
-          const readUser = await new AutUserRepo().readAuth(result.uuid) as any;
+          const readUser = await new AutUserRepo(req.tenant.uuid).readAuth(result.uuid) as any;
           let user = readUser;
           // 📌 Token이 유효한데 사용자가 없을 경우 Error Return
           if (!user) {

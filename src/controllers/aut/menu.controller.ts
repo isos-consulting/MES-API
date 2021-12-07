@@ -1,44 +1,40 @@
 import express = require('express');
 import { Transaction } from 'sequelize';
 import ApiResult from '../../interfaces/common/api-result.interface';
-import sequelize from '../../models';
 import AutMenuTypeRepo from '../../repositories/aut/menu-type.repository';
 import AutMenuRepo from '../../repositories/aut/menu.repository';
+import { getSequelize } from '../../utils/getSequelize';
 import refreshMaterializedView from '../../utils/refreshMaterializedView';
 import response from '../../utils/response';
 import testErrorHandlingHelper from '../../utils/testErrorHandlingHelper';
 import BaseCtl from '../base.controller';
+import config from '../../configs/config';
 
 class AutMenuCtl extends BaseCtl {
-  // ✅ Inherited Functions Variable
-  // result: ApiResult<any>;
-
-  // ✅ 부모 Controller (BaseController) 의 repository 변수가 any 로 생성 되어있기 때문에 자식 Controller(this) 에서 Type 지정
-  repo: AutMenuRepo;
   treeViewName: string = 'AUT_MENU_TREE_VW';
 
   //#region ✅ Constructor
   constructor() {
     // ✅ 부모 Controller (Base Controller) 의 CRUD Function 과 상속 받는 자식 Controller(this) 의 Repository 를 연결하기 위하여 생성자에서 Repository 생성
-    super(new AutMenuRepo());
+    super(AutMenuRepo);
 
     // ✅ CUD 연산이 실행되기 전 Fk Table 의 uuid 로 id 를 검색하여 request body 에 삽입하기 위하여 정보 Setting
     this.fkIdInfos = [
       {
         key: 'menu',
-        repo: new AutMenuRepo(),
+        TRepo: AutMenuRepo,
         idName: 'menu_id',
         uuidName: 'uuid'
       },
       {
         key: 'menuType',
-        repo: new AutMenuTypeRepo(),
+        TRepo: AutMenuTypeRepo,
         idName: 'menu_type_id',
         uuidName: 'menu_type_uuid'
       },
       {
         key: 'parent',
-        repo: new AutMenuRepo(),
+        TRepo: AutMenuRepo,
         idName: 'menu_id',
         idAlias: 'parent_id',
         uuidName: 'parent_uuid'
@@ -58,12 +54,14 @@ class AutMenuCtl extends BaseCtl {
   // 📒 Fn[readMenuWithPermissionByUid]: 사용자 기준 메뉴 및 권한 조회
   public readMenuWithPermissionByUid = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      this.result = await this.repo.readMenuWithPermissionByUid(req.user?.uid as number);
+      const repo = new AutMenuRepo(req.tenant.uuid);
+
+      const result = await repo.readMenuWithPermissionByUid(req.user?.uid as number);
       let menuResult: any[] = [];
       let firstMenu: any = undefined;
       let secondMenu: any = undefined;
 
-      this.result.raws.forEach((raw: any) => {
+      result.raws.forEach((raw: any) => {
         switch (raw.lv) {
           case 1:
             if (firstMenu) { 
@@ -90,9 +88,9 @@ class AutMenuCtl extends BaseCtl {
         menuResult.push(firstMenu) 
       };
       
-      return response(res, menuResult, { count: this.result.count });
+      return response(res, menuResult, { count: result.count });
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   };
 
@@ -105,6 +103,10 @@ class AutMenuCtl extends BaseCtl {
     try {
       req.body = await this.getFkId(req.body, this.fkIdInfos);
 
+      const sequelize = getSequelize(req.tenant.uuid);
+      const repo = new AutMenuRepo(req.tenant.uuid);
+      let result: ApiResult<any> = { count: 0, raws: [] };
+
       // 📌 생성할 데이터 구분
       let createBody: any[] = [];
       req.body.forEach((data: any) => { 
@@ -116,7 +118,7 @@ class AutMenuCtl extends BaseCtl {
 
       await sequelize.transaction(async(tran) => { 
         // 📌 데이터 생성
-        const createResult = await this.repo.create(createBody, req.user?.uid as number, tran);
+        const createResult = await repo.create(createBody, req.user?.uid as number, tran);
 
         // 📌 입력한 데이터 순서대로 메뉴 정렬
         let firstMenuId = 0;
@@ -161,17 +163,17 @@ class AutMenuCtl extends BaseCtl {
         });
 
         // 📌 데이터 수정
-        const updateResult = await this.repo.update(req.body, req.user?.uid as number, tran); 
+        const updateResult = await repo.update(req.body, req.user?.uid as number, tran); 
 
-        this.result.raws = [...createResult.raws, ...updateResult.raws];
-        this.result.count = createResult.count + updateResult.count;
+        result.raws = [...createResult.raws, ...updateResult.raws];
+        result.count = createResult.count + updateResult.count;
 
-        await refreshMaterializedView(this.treeViewName, tran);
+        await refreshMaterializedView(req.tenant.uuid, this.treeViewName, tran);
       });
 
-      return response(res, this.result.raws, { count: this.result.count }, '', 201);
+      return response(res, result.raws, { count: result.count }, '', 201);
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   }
 
@@ -199,7 +201,7 @@ class AutMenuCtl extends BaseCtl {
 
   // 📒 Fn[afterTranDelete] (✅ Inheritance): Delete Transaction 내부에서 DB Tasking 이 실행된 후 호출되는 Function
   afterTranDelete = async(req: express.Request, result: ApiResult<any>, tran: Transaction) => {
-    await refreshMaterializedView(this.treeViewName, tran);
+    await refreshMaterializedView(req.tenant.uuid, this.treeViewName, tran);
   }
 
   // 📒 Fn[afterDelete] (✅ Inheritance): Delete Transaction 이 실행된 후 호출되는 Function

@@ -1,5 +1,6 @@
 import IStdProdType from '../../interfaces/std/prod-type.interface';
 import BaseMigration from '../base-migration';
+import config from '../../configs/config';
 
 // Seed Datas
 let seedDatas: IStdProdType[] = [
@@ -45,7 +46,7 @@ let seedDatas: IStdProdType[] = [
 	}
 ]
 
-const baseMigration = new BaseMigration('StdProdType', 'prod_type_id', process.env.DB_RESET_TYPE === 'test' ? seedDatas : []);
+const baseMigration = new BaseMigration('StdProdType', 'prod_type_id', config.db.reset_type === 'test' ? seedDatas : []);
 const migration = baseMigration.migration;
 const migrationUndo = baseMigration.migrationUndo;
 

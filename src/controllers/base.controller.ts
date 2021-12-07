@@ -1,12 +1,13 @@
 import * as express from 'express';
 import response from '../utils/response';
 import checkArray from '../utils/checkArray';
-import sequelize from '../models'
 import testErrorHandlingHelper from '../utils/testErrorHandlingHelper';
-import { Transaction } from 'sequelize/types';
+import { Sequelize, Transaction } from 'sequelize/types';
 import ApiResult from '../interfaces/common/api-result.interface';
 import unsealArray from '../utils/unsealArray';
 import isUuid from '../utils/isUuid';
+import { sequelizes } from '../utils/getSequelize';
+import config from '../configs/config';
 
 type getFkIdHelper = {
   info: getFkIdInfo,
@@ -20,18 +21,15 @@ type getFkIdInfo = {
   uuidName: string,
   idName: string,
   idAlias?: string,
-  repo: any,
+  TRepo: any,
 }
 
 class BaseCtl {
-  result: ApiResult<any>;
-  body: any;
-  repo: any;
   fkIdInfos: getFkIdInfo[];
+  TRepo?: any
 
-  constructor(_repo: any) {
-    this.result = { count: 0, raws: [] };
-    this.repo = _repo;
+  constructor(TRepo: any) {
+    this.TRepo = TRepo;
   }
 
   //#region ⚫ Hooks
@@ -173,7 +171,7 @@ class BaseCtl {
     * 🟣 CUD 연산이 실행되기 전 Fk Table 의 uuid 로 id 를 검색하여 request body 에 삽입
     * @param body Request Body
     */
-  getFkId = async(body: any, info?: getFkIdInfo[]) => {
+  getFkId = async(tenant: string, body: any, info?: getFkIdInfo[]) => {
     body = checkArray(body);
     if (!info) { return body; }
     
@@ -204,7 +202,7 @@ class BaseCtl {
       helper.set.forEach((uuid) => { uuids.push(uuid) } );
 
       // 📌 uuid 에 매칭되는 id 조회 및 Map 에 Data Setting
-      helper.read = await helper.info.repo.readRawsByUuids(uuids);
+      helper.read = await new helper.info.TRepo(tenant).readRawsByUuids(uuids);
       helper.read?.raws.forEach((raw: any) => { helper.map.set(raw['uuid'], raw[helper.info.idName]) });
     }
 
@@ -224,40 +222,45 @@ class BaseCtl {
   // 📒 Fn[upsertBulkDatasFromExcel] (✅ Inheritance): Default Excel Upload Function
   public upsertBulkDatasFromExcel = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      req.body = await this.getFkId(req.body, this.fkIdInfos);
+      const sequelize = sequelizes[req.tenant.uuid] as Sequelize;
+      const repo = new this.TRepo(req.tenant.uuid);
+
+      let result: ApiResult<any> = { count: 0, raws: [] };
       let index: number = 0;
 
+      req.body = await this.getFkId(req.body, this.fkIdInfos);
+
       // 📌 Excel Upload 전 Unique Key => Fk 변환 Function(Hook)
-      req.body = await this.convertUniqueToFk(req.body);
+      req.body = await this.convertUniqueToFk(req.body, req.tenant.uuid);
 
       await sequelize.transaction(async(tran) => { 
         try {
-          this.result.raws = [{ insertedResult: [], updatedResult: [] }];
+          result.raws = [{ insertedResult: [], updatedResult: [] }];
           for await (const raw of req.body) {
             index = raw.index;
 
             if (raw.uuid) {
-              const result = await this.repo.update(checkArray(raw), req.user?.uid as number, tran);
-              this.result.raws[0].updatedResult.push(unsealArray(result.raws));
+              const result = await repo.update(checkArray(raw), req.user?.uid as number, tran);
+              result.raws[0].updatedResult.push(unsealArray(result.raws));
             } else {
-              const result = await this.repo.create(checkArray(raw), req.user?.uid as number, tran);
-              this.result.raws[0].insertedResult.push(unsealArray(result.raws));
+              const result = await repo.create(checkArray(raw), req.user?.uid as number, tran);
+              result.raws[0].insertedResult.push(unsealArray(result.raws));
             }
           }
-          await this.afterTranUpload(req, this.result.raws[0].insertedResult, this.result.raws[0].updatedResult, tran);
+          await this.afterTranUpload(req, result.raws[0].insertedResult, result.raws[0].updatedResult, tran);
         } catch (error) {
           throw new Error(`${index}행 ${error}`);
         }
       });
 
-      return response(res, this.result.raws, { count: this.result.count }, '', 201);
+      return response(res, result.raws, { count: result.count }, '', 201);
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   };
 
   // 📒 Fn[convertUniqueToFk] (✅ Inheritance): Excel Upload 전 Unique Key => Fk 변환 Function(Hook)
-  public convertUniqueToFk = async (body: any[]) => { return body; }
+  public convertUniqueToFk = async (body: any[], tenant: string) => { return body; }
 
   // 📒 Fn[afterTranUpload] (✅ Inheritance): Excel Upload 후 Transaction 내에서 로직 처리하기 위한 Function(Hook)
   public afterTranUpload = async (req: express.Request, _insertedRaws: any[], _updatedRaws: any[], tran: Transaction) => {}
@@ -266,100 +269,119 @@ class BaseCtl {
   //#region ✅ CRUD Functions
   public create = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
+      const sequelize = sequelizes[req.tenant.uuid] as Sequelize;
+      const repo = new this.TRepo(req.tenant.uuid);
+      let result: ApiResult<any> = { count: 0, raws: [] };
+
       req.body = await this.getFkId(req.body, this.fkIdInfos);
       await this.beforeCreate(req);
 
       await sequelize.transaction(async(tran) => { 
         await this.beforeTranCreate(req, tran);
-        this.result = await this.repo.create(req.body, req.user?.uid as number, tran); 
-        await this.afterTranCreate(req, this.result, tran);
+        result = await repo.create(req.body, req.user?.uid as number, tran); 
+        await this.afterTranCreate(req, result, tran);
       });
 
-      await this.afterCreate(req, this.result);
+      await this.afterCreate(req, result);
 
-      return response(res, this.result.raws, { count: this.result.count }, '', 201);
+      return response(res, result.raws, { count: result.count }, '', 201);
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   };
   
   public read = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
+      const repo = new this.TRepo(req.tenant.uuid);
+      let result: ApiResult<any> = { count: 0, raws: [] };
       let status: number = 200;
       let message: string = '';
-      const params = Object.assign(req.query, req.params);
+
+      const params = { ...req.query, ...req.params };
       await this.beforeRead(req);
 
       if (req.params.uuid) {
         if (!isUuid(req.params.uuid)) { throw new Error('잘못된 UUID를 입력하였습니다.'); }
-        this.result = await this.repo.readByUuid(req.params.uuid, params);
+        result = await repo.readByUuid(req.params.uuid, params);
 
-        if (!this.result.raws) { 
+        if (!result.raws) { 
           message = '조회 정보를 찾을 수 없습니다.'; 
           status = 404; 
         };
-      } else {  
-        this.result = await this.repo.read(params);
+      } else {
+        result = await repo.read(params);
       }
   
-      await this.afterRead(req, this.result);
-      return response(res, this.result.raws, { count: this.result.count }, message, status);
+      await this.afterRead(req, result);
+      return response(res, result.raws, { count: result.count }, message, status);
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   };
 
   public update = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
+      const sequelize = sequelizes[req.tenant.uuid] as Sequelize;
+      const repo = new this.TRepo(req.tenant.uuid);
+      let result: ApiResult<any> = { count: 0, raws: [] };
+
       req.body = await this.getFkId(req.body, this.fkIdInfos);
       await this.beforeUpdate(req);
 
       await sequelize.transaction(async(tran) => { 
         await this.beforeTranUpdate(req, tran);
-        this.result = await this.repo.update(req.body, req.user?.uid as number, tran); 
-        await this.afterTranUpdate(req, this.result, tran);
+        result = await repo.update(req.body, req.user?.uid as number, tran); 
+        await this.afterTranUpdate(req, result, tran);
       });
 
-      await this.afterUpdate(req, this.result);
-      return response(res, this.result.raws, { count: this.result.count }, '', 201);
+      await this.afterUpdate(req, result);
+      return response(res, result.raws, { count: result.count }, '', 200);
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   };
   
   public patch = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
+      const sequelize = sequelizes[req.tenant.uuid] as Sequelize;
+      const repo = new this.TRepo(req.tenant.uuid);
+      let result: ApiResult<any> = { count: 0, raws: [] };
+
       req.body = await this.getFkId(req.body, this.fkIdInfos);
       await this.beforePatch(req);
 
       await sequelize.transaction(async(tran) => { 
         await this.beforeTranPatch(req, tran);
-        this.result = await this.repo.patch(req.body, req.user?.uid as number, tran); 
-        await this.afterTranPatch(req, this.result, tran);
+        result = await repo.patch(req.body, req.user?.uid as number, tran); 
+        await this.afterTranPatch(req, result, tran);
       });
 
-      await this.afterPatch(req, this.result);
-      return response(res, this.result.raws, { count: this.result.count }, '', 201);
+      await this.afterPatch(req, result);
+      return response(res, result.raws, { count: result.count }, '', 200);
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   };
   
   public delete = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
+      const sequelize = sequelizes[req.tenant.uuid] as Sequelize;
+      const repo = new this.TRepo(req.tenant.uuid);
+      let result: ApiResult<any> = { count: 0, raws: [] };
+
       req.body = await this.getFkId(req.body, this.fkIdInfos);
       await this.beforeDelete(req);
 
       await sequelize.transaction(async(tran) => { 
         await this.beforeTranDelete(req, tran);
-        this.result = await this.repo.delete(req.body, req.user?.uid as number, tran); 
-        await this.afterTranDelete(req, this.result, tran);
+        result = await repo.delete(req.body, req.user?.uid as number, tran); 
+        await this.afterTranDelete(req, result, tran);
       });
 
-      await this.afterDelete(req, this.result);      
-      return response(res, this.result.raws, { count: this.result.count }, '', 200);
+      await this.afterDelete(req, result);      
+      return response(res, result.raws, { count: result.count }, '', 200);
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   };  
   //#endregion

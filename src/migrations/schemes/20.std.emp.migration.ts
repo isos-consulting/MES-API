@@ -1,5 +1,6 @@
 import IStdEmp from '../../interfaces/std/emp.interface';
 import BaseMigration from '../base-migration';
+import config from '../../configs/config';
 
 // Seed Datas
 let seedDatas: IStdEmp[] = [
@@ -176,7 +177,7 @@ let seedDatas: IStdEmp[] = [
   }
 ]
 
-const baseMigration = new BaseMigration('StdEmp', 'emp_id', process.env.DB_RESET_TYPE === 'test' ? seedDatas : []);
+const baseMigration = new BaseMigration('StdEmp', 'emp_id', config.db.reset_type === 'test' ? seedDatas : []);
 const migration = baseMigration.migration;
 const migrationUndo = baseMigration.migrationUndo;
 

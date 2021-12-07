@@ -9,48 +9,40 @@ import StdWorkingsRepo from '../../repositories/std/workings.repository';
 import BaseCtl from '../base.controller';
 
 class PrdOrderRoutingCtl extends BaseCtl {
-  // ✅ Inherited Functions Variable
-  // result: ApiResult<any>;
-
-  // ✅ 부모 Controller (BaseController) 의 repository 변수가 any 로 생성 되어있기 때문에 자식 Controller(this) 에서 Type 지정
-  repo: PrdOrderRoutingRepo;
-  workRepo: PrdWorkRepo;
-
   //#region ✅ Constructor
   constructor() {
     // ✅ 부모 Controller (Base Controller) 의 CRUD Function 과 상속 받는 자식 Controller(this) 의 Repository 를 연결하기 위하여 생성자에서 Repository 생성
-    super(new PrdOrderRoutingRepo());
-    this.workRepo = new PrdWorkRepo();
+    super(PrdOrderRoutingRepo);
 
     // ✅ CUD 연산이 실행되기 전 Fk Table 의 uuid 로 id 를 검색하여 request body 에 삽입하기 위하여 정보 Setting
     this.fkIdInfos = [
       {
         key: 'factory',
-        repo: new StdFactoryRepo(),
+        TRepo: StdFactoryRepo,
         idName: 'factory_id',
         uuidName: 'factory_uuid'
       },
       {
         key: 'order',
-        repo: new PrdOrderRepo(),
+        TRepo: PrdOrderRepo,
         idName: 'order_id',
         uuidName: 'order_uuid'
       },
       {
         key: 'proc',
-        repo: new StdProcRepo(),
+        TRepo: StdProcRepo,
         idName: 'proc_id',
         uuidName: 'proc_uuid'
       },
       {
         key: 'workings',
-        repo: new StdWorkingsRepo(),
+        TRepo: StdWorkingsRepo,
         idName: 'workings_id',
         uuidName: 'workings_uuid'
       },
       {
         key: 'equip',
-        repo: new StdEquipRepo(),
+        TRepo: StdEquipRepo,
         idName: 'equip_id',
         uuidName: 'equip_uuid'
       }
@@ -107,9 +99,11 @@ class PrdOrderRoutingCtl extends BaseCtl {
 
   // 📒 Fn[beforeCreate] (✅ Inheritance): Create Transaction 이 실행되기 전 호출되는 Function
   beforeCreate = async(req: express.Request) => {
+    const workRepo = new PrdWorkRepo(req.tenant.uuid);
+
     // 📌 작업지시대비 저장된 실적이 하나라도 있으면 생성 불가
     const uuids = req.body.map((data: any) => { return data.order_uuid });
-    const workRead = await this.workRepo.readByOrderUuids(uuids);
+    const workRead = await workRepo.readByOrderUuids(uuids);
     if (workRead.raws[0]) { throw new Error(`지시번호 [${workRead.raws[0].order_uuid}]의 생산실적이 이미 등록되어 있습니다.`) }
   }
 
@@ -138,11 +132,14 @@ class PrdOrderRoutingCtl extends BaseCtl {
 
   // 📒 Fn[beforeUpdate] (✅ Inheritance): Update Transaction 이 실행되기 전 호출되는 Function
   beforeUpdate = async(req: express.Request) => {
+    const repo = new PrdOrderRoutingRepo(req.tenant.uuid);
+    const workRepo = new PrdWorkRepo(req.tenant.uuid);
+
     // 📌 작업지시대비 저장된 실적이 하나라도 있으면 수정 불가
     const uuids = req.body.map((data: any) => { return data.uuid });
-    const orderRoutingRead = await this.repo.readRawsByUuids(uuids);
+    const orderRoutingRead = await repo.readRawsByUuids(uuids);
     const orderIds = orderRoutingRead.raws.map((orderRouting: any) => { return orderRouting.order_id });
-    const workRead = await this.workRepo.readByOrderIds(orderIds);
+    const workRead = await workRepo.readByOrderIds(orderIds);
     if (workRead.raws[0]) { throw new Error(`지시번호 [${workRead.raws[0].order_uuid}]의 생산실적이 이미 등록되어 있습니다.`) }
   }
 
@@ -161,11 +158,14 @@ class PrdOrderRoutingCtl extends BaseCtl {
 
   // 📒 Fn[beforePatch] (✅ Inheritance): Patch Transaction 이 실행되기 전 호출되는 Function
   beforePatch = async(req: express.Request) => {
+    const repo = new PrdOrderRoutingRepo(req.tenant.uuid);
+    const workRepo = new PrdWorkRepo(req.tenant.uuid);
+
     // 📌 작업지시대비 저장된 실적이 하나라도 있으면 수정 불가
     const uuids = req.body.map((data: any) => { return data.uuid });
-    const orderRoutingRead = await this.repo.readRawsByUuids(uuids);
+    const orderRoutingRead = await repo.readRawsByUuids(uuids);
     const orderIds = orderRoutingRead.raws.map((orderRouting: any) => { return orderRouting.order_id });
-    const workRead = await this.workRepo.readByOrderIds(orderIds);
+    const workRead = await workRepo.readByOrderIds(orderIds);
     if (workRead.raws[0]) { throw new Error(`지시번호 [${workRead.raws[0].order_uuid}]의 생산실적이 이미 등록되어 있습니다.`) }
   }
 
@@ -184,11 +184,14 @@ class PrdOrderRoutingCtl extends BaseCtl {
 
   // 📒 Fn[beforeDelete] (✅ Inheritance): Delete Transaction 이 실행되기 전 호출되는 Function
   beforeDelete = async(req: express.Request) => {
+    const repo = new PrdOrderRoutingRepo(req.tenant.uuid);
+    const workRepo = new PrdWorkRepo(req.tenant.uuid);
+
     // 📌 작업지시대비 저장된 실적이 하나라도 있으면 삭제 불가
     const uuids = req.body.map((data: any) => { return data.uuid });
-    const orderRoutingRead = await this.repo.readRawsByUuids(uuids);
+    const orderRoutingRead = await repo.readRawsByUuids(uuids);
     const orderIds = orderRoutingRead.raws.map((orderRouting: any) => { return orderRouting.order_id });
-    const workRead = await this.workRepo.readByOrderIds(orderIds);
+    const workRead = await workRepo.readByOrderIds(orderIds);
     if (workRead.raws[0]) { throw new Error(`지시번호 [${workRead.raws[0].order_uuid}]의 생산실적이 이미 등록되어 있습니다.`) }
   }
 

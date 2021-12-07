@@ -1,22 +1,27 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
-import sequelize from '../../models';
+import { Sequelize } from 'sequelize-typescript';
 import convertBulkResult from '../../utils/convertBulkResult';
 import convertResult from '../../utils/convertResult';
-import { Op, Sequelize, Transaction, UniqueConstraintError, WhereOptions } from 'sequelize';
+import { Op, Transaction, UniqueConstraintError, WhereOptions } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
+import { getSequelize } from '../../utils/getSequelize';
 import QmsInspResult from '../../models/qms/insp-result.model';
 import IQmsInspResult from '../../interfaces/qms/insp-result.interface';
 import getInspTypeCd from '../../utils/getInspTypeCd';
 import { readWaitingReceive } from '../../queries/qms/waiting-receive.query';
 
 class QmsInspResultRepo {
-repo: Repository<QmsInspResult>;
+  repo: Repository<QmsInspResult>;
+  sequelize: Sequelize;
+  tenant: string;
 
   //#region ✅ Constructor
-  constructor() {
-    this.repo = sequelize.getRepository(QmsInspResult);
+  constructor(tenant: string) {
+    this.tenant = tenant;
+    this.sequelize = getSequelize(tenant);
+    this.repo = this.sequelize.getRepository(QmsInspResult);
   }
   //#endregion
 
@@ -74,7 +79,7 @@ repo: Repository<QmsInspResult>;
   // 📒 Fn[readWaitingReceive]: 수입검사 성적서 대기 List Read Function
   public readWaitingReceive = async(params?: any) => {
     try {
-      const result = await sequelize.query(readWaitingReceive(params));
+      const result = await this.sequelize.query(readWaitingReceive(params));
       return convertReadResult(result[0]);
     } catch (error) {
       throw error;
@@ -94,54 +99,54 @@ repo: Repository<QmsInspResult>;
       const result = await this.repo.findAll({ 
         include: [
           { 
-            model: sequelize.models.StdFactory, 
+            model: this.sequelize.models.StdFactory, 
             attributes: [], 
             required: true, 
             where: { uuid: params.factory_uuid ? params.factory_uuid : { [Op.ne]: null } }
           },
-          { model: sequelize.models.AdmInspType, attributes: [], required: true },
-          { model: sequelize.models.AdmInspDetailType, attributes: [], required: false },
-          { model: sequelize.models.AdmInspHandlingType, attributes: [], required: false },
+          { model: this.sequelize.models.AdmInspType, attributes: [], required: true },
+          { model: this.sequelize.models.AdmInspDetailType, attributes: [], required: false },
+          { model: this.sequelize.models.AdmInspHandlingType, attributes: [], required: false },
           { 
-            model: sequelize.models.MatReceiveDetail,
+            model: this.sequelize.models.MatReceiveDetail,
             attributes: [],
             required: true,
             include: [
               { 
-                model: sequelize.models.MatReceive, 
+                model: this.sequelize.models.MatReceive, 
                 attributes: [], 
                 required: true,
-                include: [{ model: sequelize.models.StdPartner, attributes: [], required: true }]
+                include: [{ model: this.sequelize.models.StdPartner, attributes: [], required: true }]
               },
-              { model: sequelize.models.StdUnit, attributes: [], required: true },
+              { model: this.sequelize.models.StdUnit, attributes: [], required: true },
             ],
             where: { uuid: params.receive_detail_uuid ? params.receive_detail_uuid : { [Op.ne]: null } }
           },
-          { model: sequelize.models.QmsInsp, attributes: [], required: true },
+          { model: this.sequelize.models.QmsInsp, attributes: [], required: true },
           {
-            model: sequelize.models.StdProd, 
+            model: this.sequelize.models.StdProd, 
             attributes: [], 
             required: true,
             include: [
-              { model: sequelize.models.StdItemType, attributes: [], required: false },
-              { model: sequelize.models.StdProdType, attributes: [], required: false },
-              { model: sequelize.models.StdModel, attributes: [], required: false },
+              { model: this.sequelize.models.StdItemType, attributes: [], required: false },
+              { model: this.sequelize.models.StdProdType, attributes: [], required: false },
+              { model: this.sequelize.models.StdModel, attributes: [], required: false },
             ],
             where: { uuid: params.prod_uuid ? params.prod_uuid : { [Op.ne]: null } }
           },
-          { model: sequelize.models.StdEmp, attributes: [], required: true },
+          { model: this.sequelize.models.StdEmp, attributes: [], required: true },
           { 
-            model: sequelize.models.StdReject, 
+            model: this.sequelize.models.StdReject, 
             attributes: [], 
             required: false,
-            include: [{ model: sequelize.models.StdRejectType, attributes: [], required: false }]
+            include: [{ model: this.sequelize.models.StdRejectType, attributes: [], required: false }]
           },
-          { model: sequelize.models.StdStore, as: 'toStore', attributes: [], required: false },
-          { model: sequelize.models.StdLocation, as: 'toLocation', attributes: [], required: false },
-          { model: sequelize.models.StdStore, as: 'rejectStore', attributes: [], required: false },
-          { model: sequelize.models.StdLocation, as: 'rejectLocation', attributes: [], required: false },
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.StdStore, as: 'toStore', attributes: [], required: false },
+          { model: this.sequelize.models.StdLocation, as: 'toLocation', attributes: [], required: false },
+          { model: this.sequelize.models.StdStore, as: 'rejectStore', attributes: [], required: false },
+          { model: this.sequelize.models.StdLocation, as: 'rejectLocation', attributes: [], required: false },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('qmsInspResult.uuid'), 'insp_result_uuid' ],
@@ -233,48 +238,48 @@ repo: Repository<QmsInspResult>;
     try {
       const result = await this.repo.findOne({ 
         include: [
-          { model: sequelize.models.StdFactory, attributes: [], required: true },
-          { model: sequelize.models.AdmInspType, attributes: [], required: true },
-          { model: sequelize.models.AdmInspDetailType, attributes: [], required: false },
-          { model: sequelize.models.AdmInspHandlingType, attributes: [], required: false },
+          { model: this.sequelize.models.StdFactory, attributes: [], required: true },
+          { model: this.sequelize.models.AdmInspType, attributes: [], required: true },
+          { model: this.sequelize.models.AdmInspDetailType, attributes: [], required: false },
+          { model: this.sequelize.models.AdmInspHandlingType, attributes: [], required: false },
           { 
-            model: sequelize.models.MatReceiveDetail,
+            model: this.sequelize.models.MatReceiveDetail,
             attributes: [],
             required: true,
             include: [
               { 
-                model: sequelize.models.MatReceive, 
+                model: this.sequelize.models.MatReceive, 
                 attributes: [], 
                 required: true,
-                include: [{ model: sequelize.models.StdPartner, attributes: [], required: true }]
+                include: [{ model: this.sequelize.models.StdPartner, attributes: [], required: true }]
               },
-              { model: sequelize.models.StdUnit, attributes: [], required: true }
+              { model: this.sequelize.models.StdUnit, attributes: [], required: true }
             ],
           },
-          { model: sequelize.models.QmsInsp, attributes: [], required: true },
+          { model: this.sequelize.models.QmsInsp, attributes: [], required: true },
           {
-            model: sequelize.models.StdProd, 
+            model: this.sequelize.models.StdProd, 
             attributes: [], 
             required: true,
             include: [
-              { model: sequelize.models.StdItemType, attributes: [], required: false },
-              { model: sequelize.models.StdProdType, attributes: [], required: false },
-              { model: sequelize.models.StdModel, attributes: [], required: false },
+              { model: this.sequelize.models.StdItemType, attributes: [], required: false },
+              { model: this.sequelize.models.StdProdType, attributes: [], required: false },
+              { model: this.sequelize.models.StdModel, attributes: [], required: false },
             ]
           },
-          { model: sequelize.models.StdEmp, attributes: [], required: true },
+          { model: this.sequelize.models.StdEmp, attributes: [], required: true },
           { 
-            model: sequelize.models.StdReject, 
+            model: this.sequelize.models.StdReject, 
             attributes: [], 
             required: false,
-            include: [{ model: sequelize.models.StdRejectType, attributes: [], required: false }]
+            include: [{ model: this.sequelize.models.StdRejectType, attributes: [], required: false }]
           },
-          { model: sequelize.models.StdStore, as: 'toStore', attributes: [], required: false },
-          { model: sequelize.models.StdLocation, as: 'toLocation', attributes: [], required: false },
-          { model: sequelize.models.StdStore, as: 'rejectStore', attributes: [], required: false },
-          { model: sequelize.models.StdLocation, as: 'rejectLocation', attributes: [], required: false },
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.StdStore, as: 'toStore', attributes: [], required: false },
+          { model: this.sequelize.models.StdLocation, as: 'toLocation', attributes: [], required: false },
+          { model: this.sequelize.models.StdStore, as: 'rejectStore', attributes: [], required: false },
+          { model: this.sequelize.models.StdLocation, as: 'rejectLocation', attributes: [], required: false },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('qmsInspResult.uuid'), 'insp_result_uuid' ],
@@ -360,7 +365,7 @@ repo: Repository<QmsInspResult>;
       const result = await this.repo.findAll({ 
         include: [
           { 
-            model: sequelize.models.MatReceiveDetail,
+            model: this.sequelize.models.MatReceiveDetail,
             attributes: [],
             required: true,
             where: { uuid: uuids }
@@ -393,55 +398,55 @@ repo: Repository<QmsInspResult>;
       const result = await this.repo.findAll({ 
         include: [
           { 
-            model: sequelize.models.StdFactory, 
+            model: this.sequelize.models.StdFactory, 
             attributes: [], 
             required: true, 
             where: { uuid: params.factory_uuid ? params.factory_uuid : { [Op.ne]: null } }
           },
-          { model: sequelize.models.AdmInspType, attributes: [], required: true },
-          { model: sequelize.models.AdmInspDetailType, attributes: [], required: false },
-          { model: sequelize.models.AdmInspHandlingType, attributes: [], required: false },
+          { model: this.sequelize.models.AdmInspType, attributes: [], required: true },
+          { model: this.sequelize.models.AdmInspDetailType, attributes: [], required: false },
+          { model: this.sequelize.models.AdmInspHandlingType, attributes: [], required: false },
           { 
-            model: sequelize.models.OutReceiveDetail,
+            model: this.sequelize.models.OutReceiveDetail,
             attributes: [],
             required: true,
             include: [
               { 
-                model: sequelize.models.OutReceive, 
+                model: this.sequelize.models.OutReceive, 
                 attributes: [], 
                 required: true,
-                include: [{ model: sequelize.models.StdPartner, attributes: [], required: true }]
+                include: [{ model: this.sequelize.models.StdPartner, attributes: [], required: true }]
               },
-              { model: sequelize.models.StdUnit, attributes: [], required: true }
+              { model: this.sequelize.models.StdUnit, attributes: [], required: true }
             ],
             where: { uuid: params.receive_detail_uuid ? params.receive_detail_uuid : { [Op.ne]: null } }
           },
-          { model: sequelize.models.QmsInsp, attributes: [], required: true },
+          { model: this.sequelize.models.QmsInsp, attributes: [], required: true },
           {
-            model: sequelize.models.StdProd, 
+            model: this.sequelize.models.StdProd, 
             attributes: [], 
             required: true,
             include: [
-              { model: sequelize.models.StdItemType, attributes: [], required: false },
-              { model: sequelize.models.StdProdType, attributes: [], required: false },
-              { model: sequelize.models.StdModel, attributes: [], required: false },
-              { model: sequelize.models.StdUnit, as: 'stdUnit', attributes: [], required: false },
+              { model: this.sequelize.models.StdItemType, attributes: [], required: false },
+              { model: this.sequelize.models.StdProdType, attributes: [], required: false },
+              { model: this.sequelize.models.StdModel, attributes: [], required: false },
+              { model: this.sequelize.models.StdUnit, as: 'stdUnit', attributes: [], required: false },
             ],
             where: { uuid: params.prod_uuid ? params.prod_uuid : { [Op.ne]: null } }
           },
-          { model: sequelize.models.StdEmp, attributes: [], required: true },
+          { model: this.sequelize.models.StdEmp, attributes: [], required: true },
           { 
-            model: sequelize.models.StdReject, 
+            model: this.sequelize.models.StdReject, 
             attributes: [], 
             required: false,
-            include: [{ model: sequelize.models.StdRejectType, attributes: [], required: false }]
+            include: [{ model: this.sequelize.models.StdRejectType, attributes: [], required: false }]
           },
-          { model: sequelize.models.StdStore, as: 'toStore', attributes: [], required: false },
-          { model: sequelize.models.StdLocation, as: 'toLocation', attributes: [], required: false },
-          { model: sequelize.models.StdStore, as: 'rejectStore', attributes: [], required: false },
-          { model: sequelize.models.StdLocation, as: 'rejectLocation', attributes: [], required: false },
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.StdStore, as: 'toStore', attributes: [], required: false },
+          { model: this.sequelize.models.StdLocation, as: 'toLocation', attributes: [], required: false },
+          { model: this.sequelize.models.StdStore, as: 'rejectStore', attributes: [], required: false },
+          { model: this.sequelize.models.StdLocation, as: 'rejectLocation', attributes: [], required: false },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('qmsInspResult.uuid'), 'insp_result_uuid' ],
@@ -533,49 +538,49 @@ repo: Repository<QmsInspResult>;
     try {
       const result = await this.repo.findAll({ 
         include: [
-          { model: sequelize.models.StdFactory, attributes: [], required: true },
-          { model: sequelize.models.AdmInspType, attributes: [], required: true },
-          { model: sequelize.models.AdmInspDetailType, attributes: [], required: false },
-          { model: sequelize.models.AdmInspHandlingType, attributes: [], required: false },
+          { model: this.sequelize.models.StdFactory, attributes: [], required: true },
+          { model: this.sequelize.models.AdmInspType, attributes: [], required: true },
+          { model: this.sequelize.models.AdmInspDetailType, attributes: [], required: false },
+          { model: this.sequelize.models.AdmInspHandlingType, attributes: [], required: false },
           { 
-            model: sequelize.models.OutReceiveDetail,
+            model: this.sequelize.models.OutReceiveDetail,
             attributes: [],
             required: true,
             include: [
               { 
-                model: sequelize.models.OutReceive, 
+                model: this.sequelize.models.OutReceive, 
                 attributes: [], 
                 required: true,
-                include: [{ model: sequelize.models.StdPartner, attributes: [], required: true }]
+                include: [{ model: this.sequelize.models.StdPartner, attributes: [], required: true }]
               },
-              { model: sequelize.models.StdUnit, attributes: [], required: true }
+              { model: this.sequelize.models.StdUnit, attributes: [], required: true }
             ],
           },
-          { model: sequelize.models.QmsInsp, attributes: [], required: true },
+          { model: this.sequelize.models.QmsInsp, attributes: [], required: true },
           {
-            model: sequelize.models.StdProd, 
+            model: this.sequelize.models.StdProd, 
             attributes: [], 
             required: true,
             include: [
-              { model: sequelize.models.StdItemType, attributes: [], required: false },
-              { model: sequelize.models.StdProdType, attributes: [], required: false },
-              { model: sequelize.models.StdModel, attributes: [], required: false },
-              { model: sequelize.models.StdUnit, as: 'stdUnit', attributes: [], required: false },
+              { model: this.sequelize.models.StdItemType, attributes: [], required: false },
+              { model: this.sequelize.models.StdProdType, attributes: [], required: false },
+              { model: this.sequelize.models.StdModel, attributes: [], required: false },
+              { model: this.sequelize.models.StdUnit, as: 'stdUnit', attributes: [], required: false },
             ]
           },
-          { model: sequelize.models.StdEmp, attributes: [], required: true },
+          { model: this.sequelize.models.StdEmp, attributes: [], required: true },
           { 
-            model: sequelize.models.StdReject, 
+            model: this.sequelize.models.StdReject, 
             attributes: [], 
             required: false,
-            include: [{ model: sequelize.models.StdRejectType, attributes: [], required: false }]
+            include: [{ model: this.sequelize.models.StdRejectType, attributes: [], required: false }]
           },
-          { model: sequelize.models.StdStore, as: 'toStore', attributes: [], required: false },
-          { model: sequelize.models.StdLocation, as: 'toLocation', attributes: [], required: false },
-          { model: sequelize.models.StdStore, as: 'rejectStore', attributes: [], required: false },
-          { model: sequelize.models.StdLocation, as: 'rejectLocation', attributes: [], required: false },
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.StdStore, as: 'toStore', attributes: [], required: false },
+          { model: this.sequelize.models.StdLocation, as: 'toLocation', attributes: [], required: false },
+          { model: this.sequelize.models.StdStore, as: 'rejectStore', attributes: [], required: false },
+          { model: this.sequelize.models.StdLocation, as: 'rejectLocation', attributes: [], required: false },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('qmsInspResult.uuid'), 'insp_result_uuid' ],
@@ -661,7 +666,7 @@ repo: Repository<QmsInspResult>;
       const result = await this.repo.findAll({ 
         include: [
           { 
-            model: sequelize.models.OutReceiveDetail,
+            model: this.sequelize.models.OutReceiveDetail,
             attributes: [],
             required: true,
             where: { uuid: uuids }
@@ -696,35 +701,35 @@ repo: Repository<QmsInspResult>;
       const result = await this.repo.findAll({ 
         include: [
           { 
-            model: sequelize.models.StdFactory, 
+            model: this.sequelize.models.StdFactory, 
             attributes: [], 
             required: true, 
             where: { uuid: params.factory_uuid ? params.factory_uuid : { [Op.ne]: null } }
           },
-          { model: sequelize.models.AdmInspType, attributes: [], required: true },
-          { model: sequelize.models.AdmInspDetailType, attributes: [], required: false },
+          { model: this.sequelize.models.AdmInspType, attributes: [], required: true },
+          { model: this.sequelize.models.AdmInspDetailType, attributes: [], required: false },
           { 
-            model: sequelize.models.PrdWork,
+            model: this.sequelize.models.PrdWork,
             attributes: [],
             required: true,
             where: { uuid: params.work_uuid ? params.work_uuid : { [Op.ne]: null } }
           },
-          { model: sequelize.models.QmsInsp, attributes: [], required: true },
+          { model: this.sequelize.models.QmsInsp, attributes: [], required: true },
           {
-            model: sequelize.models.StdProd, 
+            model: this.sequelize.models.StdProd, 
             attributes: [], 
             required: true,
             include: [
-              { model: sequelize.models.StdItemType, attributes: [], required: false },
-              { model: sequelize.models.StdProdType, attributes: [], required: false },
-              { model: sequelize.models.StdModel, attributes: [], required: false },
-              { model: sequelize.models.StdUnit, as: 'stdUnit', attributes: [], required: false },
+              { model: this.sequelize.models.StdItemType, attributes: [], required: false },
+              { model: this.sequelize.models.StdProdType, attributes: [], required: false },
+              { model: this.sequelize.models.StdModel, attributes: [], required: false },
+              { model: this.sequelize.models.StdUnit, as: 'stdUnit', attributes: [], required: false },
             ],
             where: { uuid: params.prod_uuid ? params.prod_uuid : { [Op.ne]: null } }
           },
-          { model: sequelize.models.StdEmp, attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.StdEmp, attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('qmsInspResult.uuid'), 'insp_result_uuid' ],
@@ -794,25 +799,25 @@ repo: Repository<QmsInspResult>;
     try {
       const result = await this.repo.findOne({ 
         include: [
-          { model: sequelize.models.StdFactory, attributes: [], required: true },
-          { model: sequelize.models.AdmInspType, attributes: [], required: true },
-          { model: sequelize.models.AdmInspDetailType, attributes: [], required: false },
-          { model: sequelize.models.PrdWork, attributes: [], required: true },
-          { model: sequelize.models.QmsInsp, attributes: [], required: true },
+          { model: this.sequelize.models.StdFactory, attributes: [], required: true },
+          { model: this.sequelize.models.AdmInspType, attributes: [], required: true },
+          { model: this.sequelize.models.AdmInspDetailType, attributes: [], required: false },
+          { model: this.sequelize.models.PrdWork, attributes: [], required: true },
+          { model: this.sequelize.models.QmsInsp, attributes: [], required: true },
           {
-            model: sequelize.models.StdProd, 
+            model: this.sequelize.models.StdProd, 
             attributes: [], 
             required: true,
             include: [
-              { model: sequelize.models.StdItemType, attributes: [], required: false },
-              { model: sequelize.models.StdProdType, attributes: [], required: false },
-              { model: sequelize.models.StdModel, attributes: [], required: false },
-              { model: sequelize.models.StdUnit, as: 'stdUnit', attributes: [], required: false },
+              { model: this.sequelize.models.StdItemType, attributes: [], required: false },
+              { model: this.sequelize.models.StdProdType, attributes: [], required: false },
+              { model: this.sequelize.models.StdModel, attributes: [], required: false },
+              { model: this.sequelize.models.StdUnit, as: 'stdUnit', attributes: [], required: false },
             ]
           },
-          { model: sequelize.models.StdEmp, attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.StdEmp, attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('qmsInspResult.uuid'), 'insp_result_uuid' ],
@@ -903,41 +908,41 @@ repo: Repository<QmsInspResult>;
       const result = await this.repo.findAll({ 
         include: [
           { 
-            model: sequelize.models.StdFactory, 
+            model: this.sequelize.models.StdFactory, 
             attributes: [], 
             required: true, 
             where: { uuid: params.factory_uuid ? params.factory_uuid : { [Op.ne]: null } }
           },
-          { model: sequelize.models.AdmInspType, attributes: [], required: true },
-          { model: sequelize.models.AdmInspHandlingType, attributes: [], required: false },
-          { model: sequelize.models.QmsInsp, attributes: [], required: true },
+          { model: this.sequelize.models.AdmInspType, attributes: [], required: true },
+          { model: this.sequelize.models.AdmInspHandlingType, attributes: [], required: false },
+          { model: this.sequelize.models.QmsInsp, attributes: [], required: true },
           {
-            model: sequelize.models.StdProd, 
+            model: this.sequelize.models.StdProd, 
             attributes: [], 
             required: true,
             include: [
-              { model: sequelize.models.StdItemType, attributes: [], required: false },
-              { model: sequelize.models.StdProdType, attributes: [], required: false },
-              { model: sequelize.models.StdModel, attributes: [], required: false },
-              { model: sequelize.models.StdUnit, as: 'stdUnit', attributes: [], required: false },
+              { model: this.sequelize.models.StdItemType, attributes: [], required: false },
+              { model: this.sequelize.models.StdProdType, attributes: [], required: false },
+              { model: this.sequelize.models.StdModel, attributes: [], required: false },
+              { model: this.sequelize.models.StdUnit, as: 'stdUnit', attributes: [], required: false },
             ],
             where: { uuid: params.prod_uuid ? params.prod_uuid : { [Op.ne]: null } }
           },
-          { model: sequelize.models.StdEmp, attributes: [], required: true },
+          { model: this.sequelize.models.StdEmp, attributes: [], required: true },
           { 
-            model: sequelize.models.StdReject, 
+            model: this.sequelize.models.StdReject, 
             attributes: [], 
             required: false,
-            include: [{ model: sequelize.models.StdRejectType, attributes: [], required: false }]
+            include: [{ model: this.sequelize.models.StdRejectType, attributes: [], required: false }]
           },
-          { model: sequelize.models.StdStore, as: 'fromStore', attributes: [], required: true },
-          { model: sequelize.models.StdLocation, as: 'fromLocation', attributes: [], required: false },
-          { model: sequelize.models.StdStore, as: 'toStore', attributes: [], required: false },
-          { model: sequelize.models.StdLocation, as: 'toLocation', attributes: [], required: false },
-          { model: sequelize.models.StdStore, as: 'rejectStore', attributes: [], required: false },
-          { model: sequelize.models.StdLocation, as: 'rejectLocation', attributes: [], required: false },
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.StdStore, as: 'fromStore', attributes: [], required: true },
+          { model: this.sequelize.models.StdLocation, as: 'fromLocation', attributes: [], required: false },
+          { model: this.sequelize.models.StdStore, as: 'toStore', attributes: [], required: false },
+          { model: this.sequelize.models.StdLocation, as: 'toLocation', attributes: [], required: false },
+          { model: this.sequelize.models.StdStore, as: 'rejectStore', attributes: [], required: false },
+          { model: this.sequelize.models.StdLocation, as: 'rejectLocation', attributes: [], required: false },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('qmsInspResult.uuid'), 'insp_result_uuid' ],
@@ -1028,36 +1033,36 @@ repo: Repository<QmsInspResult>;
     try {
       const result = await this.repo.findAll({ 
         include: [
-          { model: sequelize.models.StdFactory, attributes: [], required: true },
-          { model: sequelize.models.AdmInspType, attributes: [], required: true },
-          { model: sequelize.models.AdmInspHandlingType, attributes: [], required: false },
-          { model: sequelize.models.QmsInsp, attributes: [], required: true },
+          { model: this.sequelize.models.StdFactory, attributes: [], required: true },
+          { model: this.sequelize.models.AdmInspType, attributes: [], required: true },
+          { model: this.sequelize.models.AdmInspHandlingType, attributes: [], required: false },
+          { model: this.sequelize.models.QmsInsp, attributes: [], required: true },
           {
-            model: sequelize.models.StdProd, 
+            model: this.sequelize.models.StdProd, 
             attributes: [], 
             required: true,
             include: [
-              { model: sequelize.models.StdItemType, attributes: [], required: false },
-              { model: sequelize.models.StdProdType, attributes: [], required: false },
-              { model: sequelize.models.StdModel, attributes: [], required: false },
-              { model: sequelize.models.StdUnit, as: 'stdUnit', attributes: [], required: false },
+              { model: this.sequelize.models.StdItemType, attributes: [], required: false },
+              { model: this.sequelize.models.StdProdType, attributes: [], required: false },
+              { model: this.sequelize.models.StdModel, attributes: [], required: false },
+              { model: this.sequelize.models.StdUnit, as: 'stdUnit', attributes: [], required: false },
             ]
           },
-          { model: sequelize.models.StdEmp, attributes: [], required: true },
+          { model: this.sequelize.models.StdEmp, attributes: [], required: true },
           { 
-            model: sequelize.models.StdReject, 
+            model: this.sequelize.models.StdReject, 
             attributes: [], 
             required: false,
-            include: [{ model: sequelize.models.StdRejectType, attributes: [], required: false }]
+            include: [{ model: this.sequelize.models.StdRejectType, attributes: [], required: false }]
           },
-          { model: sequelize.models.StdStore, as: 'fromStore', attributes: [], required: true },
-          { model: sequelize.models.StdLocation, as: 'fromLocation', attributes: [], required: false },
-          { model: sequelize.models.StdStore, as: 'toStore', attributes: [], required: false },
-          { model: sequelize.models.StdLocation, as: 'toLocation', attributes: [], required: false },
-          { model: sequelize.models.StdStore, as: 'rejectStore', attributes: [], required: false },
-          { model: sequelize.models.StdLocation, as: 'rejectLocation', attributes: [], required: false },
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.StdStore, as: 'fromStore', attributes: [], required: true },
+          { model: this.sequelize.models.StdLocation, as: 'fromLocation', attributes: [], required: false },
+          { model: this.sequelize.models.StdStore, as: 'toStore', attributes: [], required: false },
+          { model: this.sequelize.models.StdLocation, as: 'toLocation', attributes: [], required: false },
+          { model: this.sequelize.models.StdStore, as: 'rejectStore', attributes: [], required: false },
+          { model: this.sequelize.models.StdLocation, as: 'rejectLocation', attributes: [], required: false },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('qmsInspResult.uuid'), 'insp_result_uuid' ],
@@ -1196,7 +1201,7 @@ repo: Repository<QmsInspResult>;
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.QmsInspResult.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.QmsInspResult.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -1237,7 +1242,7 @@ repo: Repository<QmsInspResult>;
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.QmsInspResult.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.QmsInspResult.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -1260,7 +1265,7 @@ repo: Repository<QmsInspResult>;
         count += await this.repo.destroy({ where: { uuid: insp.uuid }, transaction});
       };
 
-      await new AdmLogRepo().create('delete', sequelize.models.QmsInspResult.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.QmsInspResult.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
     } catch (error) {
       throw error;

@@ -1,8 +1,9 @@
 import IUser from "../interfaces/aut/user.interface";
 import { getAsyncInRedis, setAsyncInRedis } from "./redisClient";
 import * as jwt from 'jsonwebtoken';
+import config from "../configs/config";
 
-const secret = process.env.CRYPTO_SECRET as string;
+const secret = config.jwt.secret;
 
 // 📌 access token 발급
 const sign = (user: IUser) => {

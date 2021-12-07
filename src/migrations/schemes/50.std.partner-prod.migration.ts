@@ -1,5 +1,6 @@
 import IStdPartnerProd from '../../interfaces/std/partner-prod.interface';
 import BaseMigration from '../base-migration';
+import config from '../../configs/config';
 
 // Seed Datas
 const seedDatas: IStdPartnerProd[] = [
@@ -195,7 +196,7 @@ const seedDatas: IStdPartnerProd[] = [
 	}
 ]
 
-const baseMigration = new BaseMigration('StdPartnerProd', 'partner_prod_id', process.env.DB_RESET_TYPE === 'test' ? seedDatas : []);
+const baseMigration = new BaseMigration('StdPartnerProd', 'partner_prod_id', config.db.reset_type === 'test' ? seedDatas : []);
 const migration = baseMigration.migration;
 const migrationUndo = baseMigration.migrationUndo;
 

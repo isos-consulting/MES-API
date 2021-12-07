@@ -1,27 +1,21 @@
 import * as express from 'express';
 import StdFactoryRepo from '../../repositories/std/factory.repository';
-import { sequelizes } from '../../utils/getSequelize';
 import response from '../../utils/response';
 import testErrorHandlingHelper from '../../utils/testErrorHandlingHelper';
 import BaseCtl from '../base.controller';
+import config from '../../configs/config';
 
 class StdFactoryCtl extends BaseCtl {
-  // ✅ Inherited Functions Variable
-  // result: ApiResult<any>;
-
-  // ✅ 부모 Controller (BaseController) 의 repository 변수가 any 로 생성 되어있기 때문에 자식 Controller(this) 에서 Type 지정
-  repo: StdFactoryRepo;
-
   //#region ✅ Constructor
   constructor() {
     // ✅ 부모 Controller (Base Controller) 의 CRUD Function 과 상속 받는 자식 Controller(this) 의 Repository 를 연결하기 위하여 생성자에서 Repository 생성
-    super(new StdFactoryRepo());
+    super(StdFactoryRepo);
 
     // ✅ CUD 연산이 실행되기 전 Fk Table 의 uuid 로 id 를 검색하여 request body 에 삽입하기 위하여 정보 Setting
     // this.fkIdInfos = [
     //   {
     //     key: 'table',
-    //     repo: new TableRepo(),
+    //     TRepo: new TableRepo(),
     //     idName: 'table_id',
     //     uuidName: 'table_uuid'
     //   }
@@ -48,12 +42,10 @@ class StdFactoryCtl extends BaseCtl {
   // 📒 Fn[readForSignIn]: 로그인 화면에서 Token 인증 없이 Factory 기본정보 조회 
   public readForSignIn = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      console.log('옴?')
-      this.result = await new StdFactoryRepo(sequelizes[req.tenant.uuid]).readForSignIn();
-      // this.result = await this.repo.readForSignIn();
-      return response(res, this.result.raws, { count: this.result.count });
+      const result = await new StdFactoryRepo(req.tenant.uuid).readForSignIn();
+      return response(res, result.raws, { count: result.count });
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   };
 
@@ -92,7 +84,7 @@ class StdFactoryCtl extends BaseCtl {
   // }
 
   // 📒 Fn[convertUniqueToFk] (✅ Inheritance): Excel Upload 전 Unique Key => Fk 변환 Function(Hook)
-  // public convertUniqueToFk = async (body: any[]) => { return body; }
+  // public convertUniqueToFk = async (body: any[], tenant: string) => { return body; }
 
   // 📒 Fn[afterTranUpload] (✅ Inheritance): Excel Upload 후 Transaction 내에서 로직 처리하기 위한 Function(Hook)
   // public afterTranUpload = async (req: express.Request, _insertedRaws: any[], _updatedRaws: any[], tran: Transaction) => {}

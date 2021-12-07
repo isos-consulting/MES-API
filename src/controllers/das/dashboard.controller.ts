@@ -7,6 +7,7 @@ import SalOrderDetailRepo from '../../repositories/sal/order-detail.repository';
 import isNumber from '../../utils/isNumber';
 import response from '../../utils/response';
 import testErrorHandlingHelper from '../../utils/testErrorHandlingHelper';
+import config from '../../configs/config';
 
 class DashboardCtl {
   //#region ✅ Constructor
@@ -16,7 +17,7 @@ class DashboardCtl {
   public readWorkComparedOrder = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       const params = { ...req.query, ...req.params, reg_date: moment().format('YYYY-MM-DD') };
-      const datas = (await new PrdOrderRepo().readWorkComparedOrder(params)).raws[0];
+      const datas = (await new PrdOrderRepo(req.tenant.uuid).readWorkComparedOrder(params)).raws[0];
 
       let rate = datas?.rate ?? 0;
       if (rate > 1) rate = 1;
@@ -28,13 +29,13 @@ class DashboardCtl {
   
       return response(res, isNumber(datas?.rate) ? result : [], {});
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   };
 
   public readPassedInspResult = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      const datas = (await new QmsInspResultRepo().readByRegDate(moment().format('YYYY-MM-DD'))).raws;
+      const datas = (await new QmsInspResultRepo(req.tenant.uuid).readByRegDate(moment().format('YYYY-MM-DD'))).raws;
 
       const total = datas.length;
       const passed = datas.filter(data => data.insp_result_fg).length;
@@ -47,13 +48,13 @@ class DashboardCtl {
 
       return response(res, isNumber(rate) ? result : [], {});
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   };
 
   public readDelayedSalOrder = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      const datas = (await new SalOrderDetailRepo().readCountOfDelayedOrder(moment().format('YYYY-MM-DD'))).raws;
+      const datas = (await new SalOrderDetailRepo(req.tenant.uuid).readCountOfDelayedOrder(moment().format('YYYY-MM-DD'))).raws;
       const count = datas[0].count ?? 0;
 
       const result: any[] = [
@@ -62,13 +63,13 @@ class DashboardCtl {
   
       return response(res, result, {});
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   };
   
   public readOperatingRate = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      const datas = (await new PrdWorkRepo().readOperatingRate(moment().format('YYYY-MM-DD'))).raws;
+      const datas = (await new PrdWorkRepo(req.tenant.uuid).readOperatingRate(moment().format('YYYY-MM-DD'))).raws;
       const rate = datas[0].rate ?? 0;
 
       const result: any[] = [
@@ -78,7 +79,7 @@ class DashboardCtl {
 
       return response(res, rate != null ? result : [], {});
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   };
   
@@ -87,11 +88,11 @@ class DashboardCtl {
       const startDate = moment().format('YYYY-MM-DD');
       const endDate = moment().add(6, 'days').format('YYYY-MM-DD');
 
-      const datas = (await new SalOrderDetailRepo().readDeliveredWithinPeriod(startDate, endDate)).raws;
+      const datas = (await new SalOrderDetailRepo(req.tenant.uuid).readDeliveredWithinPeriod(startDate, endDate)).raws;
 
       return response(res, datas, {});
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   };
 }

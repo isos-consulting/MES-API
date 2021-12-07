@@ -11,46 +11,40 @@ import unsealArray from '../../utils/unsealArray';
 import BaseCtl from '../base.controller';
 
 class StdVendorPriceCtl extends BaseCtl {
-  // ✅ Inherited Functions Variable
-  // result: ApiResult<any>;
-
-  // ✅ 부모 Controller (BaseController) 
-  repo: StdVendorPriceRepo;
-
   //#region ✅ Constructor
   constructor() {
     // ✅ 부모 Controller (Base Controller) 의 CRUD Function 과 상속 받는 자식 Controller(this) 의 Repository 를 연결하기 위하여 생성자에서 Repository 생성
-    super(new StdVendorPriceRepo());
+    super(StdVendorPriceRepo);
 
     // ✅ CUD 연산이 실행되기 전 Fk Table 의 uuid 로 id 를 검색하여 request body 에 삽입하기 위하여 정보 Setting
     this.fkIdInfos = [
       {
         key: 'partner',
-        repo: new StdPartnerRepo(),
+        TRepo: StdPartnerRepo,
         idName: 'partner_id',
         uuidName: 'partner_uuid'
       },
       {
         key: 'prod',
-        repo: new StdProdRepo(),
+        TRepo: StdProdRepo,
         idName: 'prod_id',
         uuidName: 'prod_uuid'
       },
       {
         key: 'unit',
-        repo: new StdUnitRepo(),
+        TRepo: StdUnitRepo,
         idName: 'unit_id',
         uuidName: 'unit_uuid'
       },
       {
         key: 'moneyUnit',
-        repo: new StdMoneyUnitRepo(),
+        TRepo: StdMoneyUnitRepo,
         idName: 'money_unit_id',
         uuidName: 'money_unit_uuid'
       },
       {
         key: 'priceType',
-        repo: new StdPriceTypeRepo(),
+        TRepo: StdPriceTypeRepo,
         idName: 'price_type_id',
         uuidName: 'price_type_uuid'
       },
@@ -109,12 +103,12 @@ class StdVendorPriceCtl extends BaseCtl {
   // }
 
   // 📒 Fn[convertUniqueToFk] (✅ Inheritance): Excel Upload 전 Unique Key => Fk 변환 Function(Hook)
-  public convertUniqueToFk = async (body: any[]) => {
-    const partnerRepo = new StdPartnerRepo();
-    const prodRepo = new StdProdRepo();
-    const unitRepo = new StdUnitRepo();
-    const moneyUnitRepo = new StdMoneyUnitRepo();
-    const priceTypeRepo = new StdPriceTypeRepo();
+  public convertUniqueToFk = async (body: any[], tenant: string) => {
+    const partnerRepo = new StdPartnerRepo(tenant);
+    const prodRepo = new StdProdRepo(tenant);
+    const unitRepo = new StdUnitRepo(tenant);
+    const moneyUnitRepo = new StdMoneyUnitRepo(tenant);
+    const priceTypeRepo = new StdPriceTypeRepo(tenant);
 
     for await (const raw of body) {
       const partner = await partnerRepo.readRawByUnique({ partner_cd: raw.partner_cd });
@@ -138,7 +132,7 @@ class StdVendorPriceCtl extends BaseCtl {
   // 📒 Fn[afterTranUpload] (✅ Inheritance): Excel Upload 후 Transaction 내에서 로직 처리하기 위한 Function(Hook)
   public afterTranUpload = async (req: express.Request, _insertedRaws: any[], _updatedRaws: any[], tran: Transaction) => {
     const raws = [..._insertedRaws, ..._updatedRaws];
-    await this.rearrangeDate(raws, tran);
+    await this.rearrangeDate(raws, req.tenant.uuid, tran);
   }
 
   //#endregion
@@ -155,7 +149,7 @@ class StdVendorPriceCtl extends BaseCtl {
 
   // 📒 Fn[afterTranCreate] (✅ Inheritance): Create Transaction 내부에서 DB Tasking 이 실행된 후 호출되는 Function
   afterTranCreate = async(req: express.Request, result: ApiResult<any>, tran: Transaction) => {
-    await this.rearrangeDate(result.raws, tran);
+    await this.rearrangeDate(result.raws, req.tenant.uuid, tran);
   }
 
   // 📒 Fn[afterCreate] (✅ Inheritance): Create Transaction 이 실행된 후 호출되는 Function
@@ -183,7 +177,7 @@ class StdVendorPriceCtl extends BaseCtl {
 
   // 📒 Fn[afterTranUpdate] (✅ Inheritance): Update Transaction 내부에서 DB Tasking 이 실행된 후 호출되는 Function
   afterTranUpdate = async(req: express.Request, result: ApiResult<any>, tran: Transaction) => {
-    await this.rearrangeDate(result.raws, tran);
+    await this.rearrangeDate(result.raws, req.tenant.uuid, tran);
   }
 
   // 📒 Fn[afterUpdate] (✅ Inheritance): Update Transaction 이 실행된 후 호출되는 Function
@@ -201,7 +195,7 @@ class StdVendorPriceCtl extends BaseCtl {
 
   // 📒 Fn[afterTranPatch] (✅ Inheritance): Patch Transaction 내부에서 DB Tasking 이 실행된 후 호출되는 Function
   afterTranPatch = async(req: express.Request, result: ApiResult<any>, tran: Transaction) => {
-    await this.rearrangeDate(result.raws, tran);
+    await this.rearrangeDate(result.raws, req.tenant.uuid, tran);
   }
 
   // 📒 Fn[afterPatch] (✅ Inheritance): Patch Transaction 이 실행된 후 호출되는 Function
@@ -222,7 +216,7 @@ class StdVendorPriceCtl extends BaseCtl {
 
   // 📒 Fn[afterTranDelete] (✅ Inheritance): Delete Transaction 내부에서 DB Tasking 이 실행된 후 호출되는 Function
   afterTranDelete = async(req: express.Request, result: ApiResult<any>, tran: Transaction) => {
-    await this.rearrangeDate(result.raws, tran);
+    await this.rearrangeDate(result.raws, req.tenant.uuid, tran);
   }
 
   //#endregion
@@ -237,7 +231,7 @@ class StdVendorPriceCtl extends BaseCtl {
    * @param _datas 저장 후 Return 된 Data Raws
    * @param tran 트랜잭션
    */
-  rearrangeDate = async (_datas: any[], tran: Transaction) => {
+  rearrangeDate = async (_datas: any[], tenant: string, tran: Transaction) => {
     // 저장 된 값 중 partner_id, prod_id 를 추출하여 중복 제거 후
     // 수정 된 거래처, 품목의 적용일자, 적용종료일자를 재정렬한다.
     const partnerProdArr: any[] = [];
@@ -250,7 +244,7 @@ class StdVendorPriceCtl extends BaseCtl {
       if (!equals) { partnerProdArr.push({ partnerId: data.partner_id, prodId: data.prod_id }); }
     }
 
-    for await (const data of partnerProdArr) { await this.repo.rearrangeDate(data.partnerId, data.prodId, tran); }
+    for await (const data of partnerProdArr) { await new StdVendorPriceRepo(tenant).rearrangeDate(data.partnerId, data.prodId, tran); }
   }
   
   //#endregion

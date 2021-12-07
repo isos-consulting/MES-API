@@ -4,39 +4,35 @@ import AutGroupPermissionRepo from '../../repositories/aut/group-permission.repo
 import BaseCtl from '../base.controller';
 import AutGroupRepo from '../../repositories/aut/group.repository';
 import express = require('express');
-import sequelize from '../../models';
 import response from '../../utils/response';
 import testErrorHandlingHelper from '../../utils/testErrorHandlingHelper';
+import { getSequelize } from '../../utils/getSequelize';
+import ApiResult from '../../interfaces/common/api-result.interface';
+import config from '../../configs/config';
 
 class AutGroupPermissionCtl extends BaseCtl {
-  // ✅ Inherited Functions Variable
-  // result: ApiResult<any>;
-
-  // ✅ 부모 Controller (BaseController) 의 repository 변수가 any 로 생성 되어있기 때문에 자식 Controller(this) 에서 Type 지정
-  repo: AutGroupPermissionRepo;
-
   //#region ✅ Constructor
   constructor() {
     // ✅ 부모 Controller (Base Controller) 의 CRUD Function 과 상속 받는 자식 Controller(this) 의 Repository 를 연결하기 위하여 생성자에서 Repository 생성
-    super(new AutGroupPermissionRepo());
+    super(AutGroupPermissionRepo);
 
     // ✅ CUD 연산이 실행되기 전 Fk Table 의 uuid 로 id 를 검색하여 request body 에 삽입하기 위하여 정보 Setting
     this.fkIdInfos = [
       {
         key: 'group',
-        repo: new AutGroupRepo(),
+        TRepo: AutGroupRepo,
         idName: 'group_id',
         uuidName: 'group_uuid'
       },
       {
         key: 'menu',
-        repo: new AutMenuRepo(),
+        TRepo: AutMenuRepo,
         idName: 'menu_id',
         uuidName: 'menu_uuid'
       },
       {
         key: 'permission',
-        repo: new AutPermissionRepo(),
+        TRepo: AutPermissionRepo,
         idName: 'permission_id',
         uuidName: 'permission_uuid'
       }
@@ -59,15 +55,18 @@ class AutGroupPermissionCtl extends BaseCtl {
   // 📒 Fn[read] (✅ Inheritance): Default Read Function
   public read = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
+      const repo = new AutMenuRepo(req.tenant.uuid);
+      let result: ApiResult<any> = { count: 0, raws: [] };
+
       const params = Object.assign(req.query, req.params);
       if (!params.group_uuid) { throw new Error('잘못된 group_uuid(그룹UUID) 입력') };
-      this.result = await this.repo.read(params);
+      result = await repo.read(params);
 
       // 💥 TreeView 형태 데이터 가공 로직 추가
 
-      return response(res, this.result.raws, { count: this.result.count });
+      return response(res, result.raws, { count: result.count });
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   }
 
@@ -80,6 +79,10 @@ class AutGroupPermissionCtl extends BaseCtl {
     try {
       req.body = await this.getFkId(req.body, this.fkIdInfos);
 
+      const sequelize = getSequelize(req.tenant.uuid);
+      const repo = new AutMenuRepo(req.tenant.uuid);
+      let result: ApiResult<any> = { count: 0, raws: [] };
+
       // 📌 신규 데이터, 수정 할 데이터 구분
       const createBody: any[] = [];
       const updateBody: any[] = [];
@@ -90,16 +93,16 @@ class AutGroupPermissionCtl extends BaseCtl {
 
       await sequelize.transaction(async(tran) => { 
         // 📌 데이터 생성 및 수정
-        const createResult = await this.repo.create(createBody, req.user?.uid as number, tran); 
-        const updateResult = await this.repo.update(updateBody, req.user?.uid as number, tran); 
+        const createResult = await repo.create(createBody, req.user?.uid as number, tran); 
+        const updateResult = await repo.update(updateBody, req.user?.uid as number, tran); 
 
-        this.result.raws = createResult.raws.concat(updateResult.raws);
-        this.result.count = createResult.count + updateResult.count;
+        result.raws = createResult.raws.concat(updateResult.raws);
+        result.count = createResult.count + updateResult.count;
       });
 
-      return response(res, this.result.raws, { count: this.result.count }, '', 201);
+      return response(res, result.raws, { count: result.count }, '', 201);
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   }
 

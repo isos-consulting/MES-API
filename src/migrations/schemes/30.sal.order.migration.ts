@@ -1,6 +1,7 @@
 import moment = require('moment');
 import ISalOrder from '../../interfaces/sal/order.interface';
 import BaseMigration from '../base-migration';
+import config from '../../configs/config';
 
 // Seed Datas
 const seedDatas: ISalOrder[] = [
@@ -123,7 +124,7 @@ const seedDatas: ISalOrder[] = [
 	}
 ];
 
-const baseMigration = new BaseMigration('SalOrder', 'order_id', process.env.DB_RESET_TYPE === 'test' ? seedDatas : []);
+const baseMigration = new BaseMigration('SalOrder', 'order_id', config.db.reset_type === 'test' ? seedDatas : []);
 const migration = baseMigration.migration;
 const migrationUndo = baseMigration.migrationUndo;
 

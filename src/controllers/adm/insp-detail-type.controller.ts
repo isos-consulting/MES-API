@@ -2,22 +2,16 @@ import AdmInspDetailTypeRepo from '../../repositories/adm/insp-detail-type.repos
 import BaseCtl from '../base.controller';
 
 class AdmInspDetailTypeCtl extends BaseCtl {
-  // ✅ Inherited Functions Variable
-  // result: ApiResult<any>;
-
-  // ✅ 부모 Controller (BaseController) 의 repository 변수가 any 로 생성 되어있기 때문에 자식 Controller(this) 에서 Type 지정
-  repo: AdmInspDetailTypeRepo;
-
   //#region ✅ Constructor
   constructor() {
     // ✅ 부모 Controller (Base Controller) 의 CRUD Function 과 상속 받는 자식 Controller(this) 의 Repository 를 연결하기 위하여 생성자에서 Repository 생성
-    super(new AdmInspDetailTypeRepo());
+    super(AdmInspDetailTypeRepo);
 
     // ✅ CUD 연산이 실행되기 전 Fk Table 의 uuid 로 id 를 검색하여 request body 에 삽입하기 위하여 정보 Setting
     // this.fkIdInfos = [
     //   {
     //     key: 'table',
-    //     repo: new TableRepo(),
+    //     TRepo: new TableRepo(),
     //     idName: 'table_id',
     //     uuidName: 'table_uuid'
     //   }

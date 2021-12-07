@@ -1,6 +1,7 @@
 import moment = require('moment');
 import IPrdWork from '../../interfaces/prd/work.interface';
 import BaseMigration from '../base-migration';
+import config from '../../configs/config';
 
 // Seed Datas
 const seedDatas: IPrdWork[] = [
@@ -481,7 +482,7 @@ const seedDatas: IPrdWork[] = [
 	}
 ];
 
-const baseMigration = new BaseMigration('PrdWork', 'work_id', process.env.DB_RESET_TYPE === 'test' ? seedDatas : []);
+const baseMigration = new BaseMigration('PrdWork', 'work_id', config.db.reset_type === 'test' ? seedDatas : []);
 const migration = baseMigration.migration;
 const migrationUndo = baseMigration.migrationUndo;
 
