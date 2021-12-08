@@ -200,7 +200,7 @@ class AutUserCtl extends BaseCtl {
       if (!originPwd) { throw createHttpError(404, '사용자 아이디 또는 비밀번호 불일치'); }
       
       // 📌 개발환경일 경우 postman 에서 비밀번호를 입력하기 위하여 입력된 Password 암호화 진행
-      if (config.node_env === 'development') { req.body.pwd = encrypt(req.body.pwd, config.crypto.secret); }
+      req.body.pwd = encrypt(req.body.pwd, config.crypto.secret);
 
       // 📌 Client에서 양방향 crypto.aes 암호화 방식으로 보낸 Password를 복호화 Key를 통하여 Convert한 Password
       const convertedPwd = decrypt(req.body.pwd, config.crypto.secret);

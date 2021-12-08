@@ -77,8 +77,6 @@ class BaseMigration {
    * @param _tableName 삭제할 Table 의 이름
    */
   dropTable = async(_modelName: string, _tableName: string) => {
-    if (config.db.reset_type === 'admin' && this.modelName.indexOf('AdmStd') < 0 ) { return; }
-
     await this.sequelize.models[_modelName].drop()
       .then(() => {
         console.log(`✅Success Drop ${_tableName}`);
@@ -131,9 +129,9 @@ class BaseMigration {
           ALTER TABLE AUT_GROUP_TB 
           DROP CONSTRAINT IF EXISTS aut_group_tb_updated_uid_fkey;
         `);
-
-        await this.dropTable(this.modelName, this.tableName);
       }
+      
+      await this.dropTable(this.modelName, this.tableName);
     } catch (err) {
       console.log(err);
     }
