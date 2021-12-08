@@ -74,7 +74,7 @@ class PrdWorkInputCtl extends BaseCtl {
   // 📒 Fn[create] (✅ Inheritance): Default Create Function
   public create = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      req.body = await this.getFkId(req.body, this.fkIdInfos);
+      req.body = await this.getFkId(req.tenant.uuid, req.body, this.fkIdInfos);
 
       const sequelize = getSequelize(req.tenant.uuid);
       const repo = new PrdWorkInputRepo(req.tenant.uuid);
@@ -159,7 +159,7 @@ class PrdWorkInputCtl extends BaseCtl {
   // 📒 Fn[update] (✅ Inheritance): Default Update Function
   public update = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      req.body = await this.getFkId(req.body, this.fkIdInfos);
+      req.body = await this.getFkId(req.tenant.uuid, req.body, this.fkIdInfos);
 
       const sequelize = getSequelize(req.tenant.uuid);
       const repo = new PrdWorkInputRepo(req.tenant.uuid);
@@ -206,7 +206,7 @@ class PrdWorkInputCtl extends BaseCtl {
   // 📒 Fn[patch] (✅ Inheritance): Default Patch Function
   public patch = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      req.body = await this.getFkId(req.body, this.fkIdInfos);
+      req.body = await this.getFkId(req.tenant.uuid, req.body, this.fkIdInfos);
 
       const sequelize = getSequelize(req.tenant.uuid);
       const repo = new PrdWorkInputRepo(req.tenant.uuid);
@@ -253,7 +253,7 @@ class PrdWorkInputCtl extends BaseCtl {
   // 📒 Fn[delete] (✅ Inheritance): Default Delete Function
   public delete = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      req.body = await this.getFkId(req.body, this.fkIdInfos);
+      req.body = await this.getFkId(req.tenant.uuid, req.body, this.fkIdInfos);
 
       const sequelize = getSequelize(req.tenant.uuid);
       const repo = new PrdWorkInputRepo(req.tenant.uuid);
@@ -294,7 +294,7 @@ class PrdWorkInputCtl extends BaseCtl {
   // 📒 Fn[deleteByWork]: 실적 기준 투입데이터 전체 삭제
   public deleteByWork = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      req.body = await this.getFkId(req.body, this.fkIdInfos);
+      req.body = await this.getFkId(req.tenant.uuid, req.body, this.fkIdInfos);
 
       const sequelize = getSequelize(req.tenant.uuid);
       const repo = new PrdWorkInputRepo(req.tenant.uuid);

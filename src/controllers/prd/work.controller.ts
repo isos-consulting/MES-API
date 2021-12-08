@@ -116,7 +116,7 @@ class PrdWorkCtl extends BaseCtl {
   // 📒 Fn[create] (✅ Inheritance): Default Create Function
   public create = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      req.body = await this.getFkId(req.body, this.fkIdInfos);
+      req.body = await this.getFkId(req.tenant.uuid, req.body, this.fkIdInfos);
 
       const sequelize = getSequelize(req.tenant.uuid);
       const repo = new PrdWorkRepo(req.tenant.uuid);
@@ -228,7 +228,7 @@ class PrdWorkCtl extends BaseCtl {
       const routingRepo = new PrdWorkRoutingRepo(req.tenant.uuid);
       let result: ApiResult<any> = { raws: [], count: 0 };
 
-      req.body = await this.getFkId(req.body, this.fkIdInfos);
+      req.body = await this.getFkId(req.tenant.uuid, req.body, this.fkIdInfos);
       await this.beforeUpdate(req);
 
       result = { raws: [], count: 0 };

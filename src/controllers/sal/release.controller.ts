@@ -92,7 +92,7 @@ class SalReleaseCtl extends BaseCtl {
   // 📒 Fn[create] (✅ Inheritance): Default Create Function
   public create = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      req.body = await this.getFkId(req.body, this.fkIdInfos);
+      req.body = await this.getFkId(req.tenant.uuid, req.body, this.fkIdInfos);
 
       const sequelize = getSequelize(req.tenant.uuid);
       const repo = new SalReleaseRepo(req.tenant.uuid);
@@ -159,7 +159,7 @@ class SalReleaseCtl extends BaseCtl {
   // 📒 Fn[update] (✅ Inheritance): Default Update Function
   public update = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      req.body = await this.getFkId(req.body, this.fkIdInfos);
+      req.body = await this.getFkId(req.tenant.uuid, req.body, this.fkIdInfos);
 
       const sequelize = getSequelize(req.tenant.uuid);
       const repo = new SalReleaseRepo(req.tenant.uuid);
@@ -200,7 +200,7 @@ class SalReleaseCtl extends BaseCtl {
   // 📒 Fn[patch] (✅ Inheritance): Default Patch Function
   public patch = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      req.body = await this.getFkId(req.body, this.fkIdInfos);
+      req.body = await this.getFkId(req.tenant.uuid, req.body, this.fkIdInfos);
 
       const sequelize = getSequelize(req.tenant.uuid);
       const repo = new SalReleaseRepo(req.tenant.uuid);
@@ -240,7 +240,7 @@ class SalReleaseCtl extends BaseCtl {
   // 📒 Fn[delete] (✅ Inheritance): Default Delete Function
   public delete = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      req.body = await this.getFkId(req.body, this.fkIdInfos);
+      req.body = await this.getFkId(req.tenant.uuid, req.body, this.fkIdInfos);
       
       const sequelize = getSequelize(req.tenant.uuid);
       const repo = new SalReleaseRepo(req.tenant.uuid);

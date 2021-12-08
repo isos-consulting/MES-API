@@ -4,7 +4,6 @@ import * as createHttpError from 'http-errors'
 import response from '../../utils/response';
 import responseNew from '../../utils/response_new';
 import AutUserRepo from '../../repositories/aut/user.repository';
-import encrypt from '../../utils/encrypt';
 import decrypt from '../../utils/decrypt';
 import AutUser from '../../models/aut/user.model';
 import UserWrapper from '../../wrappers/aut/user.wrapper';
@@ -62,11 +61,13 @@ class AutUserCtl extends BaseCtl {
   // 📒 Fn[updatePwd]: Password Update Function
   public updatePwd = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      req.body = await this.getFkId(req.body, this.fkIdInfos);
+      req.body = await this.getFkId(req.tenant.uuid, req.body, this.fkIdInfos);
 
       const sequelize = getSequelize(req.tenant.uuid);
       const repo = new AutUserRepo(req.tenant.uuid);
       let result: ApiResult<any> = { count: 0, raws: [] };
+
+      console.log(req.body);
 
       await sequelize.transaction(async(tran) => { 
         result = await repo.updatePwd(req.body, req.user?.uid as number, tran); 
@@ -198,9 +199,6 @@ class AutUserCtl extends BaseCtl {
 
       // ❗ 아이디가 없는 경우 Interlock
       if (!originPwd) { throw createHttpError(404, '사용자 아이디 또는 비밀번호 불일치'); }
-      
-      // 📌 개발환경일 경우 postman 에서 비밀번호를 입력하기 위하여 입력된 Password 암호화 진행
-      req.body.pwd = encrypt(req.body.pwd, config.crypto.secret);
 
       // 📌 Client에서 양방향 crypto.aes 암호화 방식으로 보낸 Password를 복호화 Key를 통하여 Convert한 Password
       const convertedPwd = decrypt(req.body.pwd, config.crypto.secret);

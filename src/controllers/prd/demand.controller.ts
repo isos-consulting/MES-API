@@ -104,7 +104,7 @@ class PrdDemandCtl extends BaseCtl {
   // 📒 Fn[updateComplete]: Update Complete(완료여부) Function
   public updateComplete = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      req.body = await this.getFkId(req.body, this.fkIdInfos);
+      req.body = await this.getFkId(req.tenant.uuid, req.body, this.fkIdInfos);
 
       const sequelize = getSequelize(req.tenant.uuid);
       const repo = new PrdDemandRepo(req.tenant.uuid);

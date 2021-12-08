@@ -70,7 +70,7 @@ class PrdWorkDowntimeCtl extends BaseCtl {
   // 📒 Fn[create] (✅ Inheritance): Default Create Function
   public create = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      req.body = await this.getFkId(req.body, this.fkIdInfos);
+      req.body = await this.getFkId(req.tenant.uuid, req.body, this.fkIdInfos);
 
       const sequelize = getSequelize(req.tenant.uuid);
       const repo = new PrdWorkDowntimeRepo(req.tenant.uuid);
@@ -145,7 +145,7 @@ class PrdWorkDowntimeCtl extends BaseCtl {
   // 📒 Fn[update] (✅ Inheritance): Default Update Function
   public update = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      req.body = await this.getFkId(req.body, this.fkIdInfos);
+      req.body = await this.getFkId(req.tenant.uuid, req.body, this.fkIdInfos);
 
       const sequelize = getSequelize(req.tenant.uuid);
       const repo = new PrdWorkDowntimeRepo(req.tenant.uuid);
@@ -196,7 +196,7 @@ class PrdWorkDowntimeCtl extends BaseCtl {
   // 📒 Fn[patch] (✅ Inheritance): Default Patch Function
   public patch = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      req.body = await this.getFkId(req.body, this.fkIdInfos);
+      req.body = await this.getFkId(req.tenant.uuid, req.body, this.fkIdInfos);
       
       const sequelize = getSequelize(req.tenant.uuid);
       const repo = new PrdWorkDowntimeRepo(req.tenant.uuid);

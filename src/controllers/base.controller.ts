@@ -174,7 +174,7 @@ class BaseCtl {
   getFkId = async(tenant: string, body: any, info?: getFkIdInfo[]) => {
     body = checkArray(body);
     if (!info) { return body; }
-    
+
     const helpers: Map<string, getFkIdHelper> = new Map<string, getFkIdHelper>();
 
     // 📌 fk uuid => id 로 변환하기 위한 정보 초기값 Setting
@@ -228,7 +228,7 @@ class BaseCtl {
       let result: ApiResult<any> = { count: 0, raws: [] };
       let index: number = 0;
 
-      req.body = await this.getFkId(req.body, this.fkIdInfos);
+      req.body = await this.getFkId(req.tenant.uuid, req.body, this.fkIdInfos);
 
       // 📌 Excel Upload 전 Unique Key => Fk 변환 Function(Hook)
       req.body = await this.convertUniqueToFk(req.body, req.tenant.uuid);
@@ -273,7 +273,7 @@ class BaseCtl {
       const repo = new this.TRepo(req.tenant.uuid);
       let result: ApiResult<any> = { count: 0, raws: [] };
 
-      req.body = await this.getFkId(req.body, this.fkIdInfos);
+      req.body = await this.getFkId(req.tenant.uuid, req.body, this.fkIdInfos);
       await this.beforeCreate(req);
 
       await sequelize.transaction(async(tran) => { 
@@ -325,7 +325,7 @@ class BaseCtl {
       const repo = new this.TRepo(req.tenant.uuid);
       let result: ApiResult<any> = { count: 0, raws: [] };
 
-      req.body = await this.getFkId(req.body, this.fkIdInfos);
+      req.body = await this.getFkId(req.tenant.uuid, req.body, this.fkIdInfos);
       await this.beforeUpdate(req);
 
       await sequelize.transaction(async(tran) => { 
@@ -347,7 +347,7 @@ class BaseCtl {
       const repo = new this.TRepo(req.tenant.uuid);
       let result: ApiResult<any> = { count: 0, raws: [] };
 
-      req.body = await this.getFkId(req.body, this.fkIdInfos);
+      req.body = await this.getFkId(req.tenant.uuid, req.body, this.fkIdInfos);
       await this.beforePatch(req);
 
       await sequelize.transaction(async(tran) => { 
@@ -369,7 +369,7 @@ class BaseCtl {
       const repo = new this.TRepo(req.tenant.uuid);
       let result: ApiResult<any> = { count: 0, raws: [] };
 
-      req.body = await this.getFkId(req.body, this.fkIdInfos);
+      req.body = await this.getFkId(req.tenant.uuid, req.body, this.fkIdInfos);
       await this.beforeDelete(req);
 
       await sequelize.transaction(async(tran) => { 
