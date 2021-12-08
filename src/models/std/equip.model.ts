@@ -62,6 +62,14 @@ export default class StdEquip extends Model<IStdEquip> {
   use_fg: string;
 
   @Column({
+    comment: '생산설비여부',
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: true
+  })
+  prd_fg: string;
+
+  @Column({
     comment: '비고',
     type: DataType.STRING(250),
   })

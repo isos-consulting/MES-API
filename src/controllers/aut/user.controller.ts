@@ -214,7 +214,7 @@ class AutUserCtl extends BaseCtl {
       let result = new UserWrapper(user).toWeb() as any;
 
       const accessToken = sign(user);
-      const refreshToken = await refresh(user.uid);
+      const refreshToken = await refresh(user.uuid);
       result = {
         ...result, 
         access_token: accessToken,
