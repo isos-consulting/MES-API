@@ -16,7 +16,12 @@ const router = express.Router();
 
 //#region ✅ BomType (BOM 구성 유형)
 const bomType = new AdmBomTypeCtl();
+router.route('/bom-type/:uuid').get(bomType.read);
 router.route('/bom-types').get(bomType.read);
+router.route('/bom-types').post(bomType.create);
+router.route('/bom-types').put(bomType.update);
+router.route('/bom-types').patch(bomType.patch);
+router.route('/bom-types').delete(bomType.delete);
 //#endregion
 
 //#region ✅ InspType (검사 유형)
@@ -36,7 +41,12 @@ router.route('/prd-plan-types').get(prdPlanType.read);
 
 //#region ✅ InspDetailType (세부검사 유형)
 const inspDetailType = new AdmInspDetailTypeCtl();
+router.route('/insp-detail-type/:uuid').get(inspDetailType.read);
 router.route('/insp-detail-types').get(inspDetailType.read);
+router.route('/insp-detail-types').post(inspDetailType.create);
+router.route('/insp-detail-types').put(inspDetailType.update);
+router.route('/insp-detail-types').patch(inspDetailType.patch);
+router.route('/insp-detail-types').delete(inspDetailType.delete);
 //#endregion
 
 //#region ✅ Transaction (수불 유형)
@@ -51,7 +61,12 @@ router.route('/demand-types').get(demandType.read);
 
 //#region ✅ PatternOpt (자동번호발행 옵션)
 const patternOpt = new AdmPatternOptCtl();
+router.route('/pattern-opt/:uuid').get(patternOpt.read);
 router.route('/pattern-opts').get(patternOpt.read);
+router.route('/pattern-opts').post(patternOpt.create);
+router.route('/pattern-opts').put(patternOpt.update);
+router.route('/pattern-opts').patch(patternOpt.patch);
+router.route('/pattern-opts').delete(patternOpt.delete);
 //#endregion
 
 //#region ✅ ReworkType (재작업 유형)
@@ -76,7 +91,12 @@ router.route('/file-mgmts').delete(fileMgmt.delete);
 
 //#region ✅ CompanyOpt (회사 옵션)
 const companyOpt = new AdmCompanyOptCtl();
+router.route('/company-opt/:uuid').get(companyOpt.read);
 router.route('/company-opts').get(companyOpt.read);
+router.route('/company-opts').post(companyOpt.create);
+router.route('/company-opts').put(companyOpt.update);
+router.route('/company-opts').patch(companyOpt.patch);
+router.route('/company-opts').delete(companyOpt.delete);
 //#endregion
 
 export default router;

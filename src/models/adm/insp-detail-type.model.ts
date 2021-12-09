@@ -3,9 +3,9 @@ import IAdmInspDetailType from '../../interfaces/adm/insp-detail-type.interface'
 import AutUser from '../aut/user.model';
 
 @Table({
-  tableName: 'ADM_INSP_DETAIL_TYPE_VW',
+  tableName: 'ADM_INSP_DETAIL_TYPE_TB',
   modelName: 'AdmInspDetailType',
-  comment: '세부검사유형 정보 뷰',
+  comment: '세부검사유형 정보 테이블',
   timestamps: true,
   underscored: true,
 })
@@ -15,6 +15,8 @@ export default class AdmInspDetailType extends Model<IAdmInspDetailType> {
     type: DataType.INTEGER,
     allowNull: false,
     primaryKey: true,
+		autoIncrement: true,
+    autoIncrementIdentity: true,
   })
   insp_detail_type_id: number;
 
@@ -90,11 +92,20 @@ export default class AdmInspDetailType extends Model<IAdmInspDetailType> {
   })
   updated_uid: number;
 
+	@Unique('adm_insp_detail_type_tb_uuid_un')
+  @Column({
+    comment: '세부검사유형UUID',
+    type: DataType.UUID,
+    allowNull: false,
+    defaultValue: Sequelize.fn('gen_random_uuid')
+  })
+  uuid: string;
+
   //#region ✅ Define Association
   // BelongTo
-  @BelongsTo(() => AutUser, { as: 'createUser', foreignKey: 'created_uid', targetKey: 'uid', constraints: false })
+  @BelongsTo(() => AutUser, { as: 'createUser', foreignKey: 'created_uid', targetKey: 'uid', onDelete: 'restrict', onUpdate: 'cascade' })
   createUser: AutUser;
-  @BelongsTo(() => AutUser, { as: 'updateUser', foreignKey: 'updated_uid', targetKey: 'uid', constraints: false })
+  @BelongsTo(() => AutUser, { as: 'updateUser', foreignKey: 'updated_uid', targetKey: 'uid', onDelete: 'restrict', onUpdate: 'cascade' })
   updateUser: AutUser;
 
   // HasMany
