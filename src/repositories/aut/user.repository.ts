@@ -23,7 +23,7 @@ class AutUserRepo {
     this.tenant = tenant;
     this.sequelize = getSequelize(tenant);
     this.repo = this.sequelize.getRepository(AutUser);
-    this.cache = new AutUserCache();
+    this.cache = new AutUserCache(this.tenant);
   }
   //#endregion
 
@@ -143,13 +143,13 @@ class AutUserRepo {
 
   public readAuth = async(uuid: string) => {
     try {
-      let user = await this.cache.read(uuid, this.tenant);
+      let user = await this.cache.read(uuid);
       if (!user) {
         user = await this.repo.findOne({
           attributes: [ 'uid', 'uuid', 'group_id', 'id', 'user_nm', 'pwd', 'email', 'pwd_fg', 'admin_fg', 'super_admin_fg' ],
           where: { uuid }
         });
-        await this.cache.create(user, this.tenant);
+        await this.cache.create(user);
       }
 
       return UserWrapper.create(user);
@@ -160,13 +160,13 @@ class AutUserRepo {
 
   public readById = async(id: string) => {
     try {
-      let user = await this.cache.readById(id, this.tenant);
+      let user = await this.cache.readById(id);
       if (!user) {
         user = await this.repo.findOne({
           attributes: [ 'uid', 'uuid', 'group_id', 'id', 'user_nm', 'pwd', 'email', 'pwd_fg', 'admin_fg', 'super_admin_fg' ],
           where: { id }
         });
-        await this.cache.create(user, this.tenant);
+        await this.cache.create(user);
       }
 
       return UserWrapper.create(user);

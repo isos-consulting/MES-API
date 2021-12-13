@@ -146,11 +146,7 @@ export default class AutUser extends Model<IAutUser> {
     }
 
     const convertedPwd = decrypt(user.pwd, config.crypto.secret);
-    // 💥 Postgresql과 Node Express의 Bcrypt 암호화 호환이 안되서 잠시 봉인
     user.pwd = await bcrypt.hash(convertedPwd, salt);
-
-    // const bcryptRead = await sequelizeToQuerying.query(`SELECT crypt('${convertedPwd}', gen_salt('bf', 10)) as encrypted_pwd`);
-    // user.pwd = convertReadResult(bcryptRead[0]).raws[0].encrypted_pwd;
   };
   //#endregion
 

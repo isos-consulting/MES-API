@@ -27,6 +27,7 @@ const refreshToken = async (req: express.Request, res: express.Response) => {
     const decoded: any = jwt.decode(authToken);
 
     const readUser = await new AutUserRepo(req.tenant.uuid).readAuth(decoded.uuid) as any;
+
     let user = readUser;
     // 📌 Token이 유효한데 사용자가 없을 경우 Error Return
     if (!user) {

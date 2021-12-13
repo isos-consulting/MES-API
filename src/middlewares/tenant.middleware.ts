@@ -61,9 +61,7 @@ export default async(req: express.Request, res: express.Response, next: express.
 
       if (sequelizes[tenantUuid]) {
         // 📌 Tenant의 Sequelize 객체가 이미 존재하는 경우
-        const existingUpdatedAt = await getAsyncInRedis(`tenant:${tenantUuid}:updatedAt`);
-        console.log(existingUpdatedAt)
-        console.log(connectionUpdatedAt)
+        const existingUpdatedAt = await getAsyncInRedis('localhost', 6379)(`tenant:${tenantUuid}:updatedAt`);
         // 📌 Connection 정보가 Update 되지 않은 경우는 넘어감
         if (connectionUpdatedAt === existingUpdatedAt) { return next(); }
       } 
@@ -80,8 +78,7 @@ export default async(req: express.Request, res: express.Response, next: express.
         ...baseDbSetting
       });
 
-      console.log('다시만듬')
-      await setAsyncInRedis(`tenant:${tenantUuid}:updatedAt`, connectionUpdatedAt);
+      await setAsyncInRedis('localhost', 6379)(`tenant:${tenantUuid}:updatedAt`, connectionUpdatedAt);
       return next();
     }
   } catch (e) {

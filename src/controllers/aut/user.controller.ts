@@ -15,6 +15,7 @@ import { refresh, sign } from '../../utils/jwt-util';
 import { userSuccessState } from '../../states/user.state';
 import { getSequelize } from '../../utils/getSequelize';
 import config from '../../configs/config';
+import AutUserCache from '../../caches/aut/user.cache';
 
 class AutUserCtl extends BaseCtl {
   //#region ✅ Constructor
@@ -67,11 +68,19 @@ class AutUserCtl extends BaseCtl {
       const repo = new AutUserRepo(req.tenant.uuid);
       let result: ApiResult<any> = { count: 0, raws: [] };
 
-      console.log(req.body);
-
       await sequelize.transaction(async(tran) => { 
         result = await repo.updatePwd(req.body, req.user?.uid as number, tran); 
       });
+
+      const cache = new AutUserCache(req.tenant.uuid);
+
+      let tempResult = [];
+      for await (const raw of result.raws) {
+        await cache.create(raw);
+        tempResult.push(new UserWrapper(raw).toWeb());
+      }
+
+      result.raws = tempResult;
 
       return response(res, result.raws, { count: result.count }, '', 201);
     } catch (e) {
@@ -142,7 +151,13 @@ class AutUserCtl extends BaseCtl {
 
   // 📒 Fn[afterUpdate] (✅ Inheritance): Update Transaction 이 실행된 후 호출되는 Function
   afterUpdate = async(req: express.Request, result: ApiResult<any>) => {
-    result.raws = result.raws.map((raw: any) => { return new UserWrapper(raw).toWeb(); });
+    const cache = new AutUserCache(req.tenant.uuid);
+
+    let tempResult = [];
+    for await (const raw of result.raws) {
+      await cache.create(raw);
+      tempResult.push(new UserWrapper(raw).toWeb());
+    }
   }
 
   //#endregion
@@ -160,7 +175,13 @@ class AutUserCtl extends BaseCtl {
 
   // 📒 Fn[afterPatch] (✅ Inheritance): Patch Transaction 이 실행된 후 호출되는 Function
   afterPatch = async(req: express.Request, result: ApiResult<any>) => {
-    result.raws = result.raws.map((raw: any) => { return new UserWrapper(raw).toWeb(); });
+    const cache = new AutUserCache(req.tenant.uuid);
+    
+    let tempResult = [];
+    for await (const raw of result.raws) {
+      await cache.create(raw);
+      tempResult.push(new UserWrapper(raw).toWeb());
+    }
   }
 
   //#endregion
@@ -178,7 +199,14 @@ class AutUserCtl extends BaseCtl {
 
   // 📒 Fn[afterDelete] (✅ Inheritance): Delete Transaction 이 실행된 후 호출되는 Function
   afterDelete = async(req: express.Request, result: ApiResult<any>) => {
-    result.raws = result.raws.map((raw: any) => { return new UserWrapper(raw).toWeb(); });
+    console.log(result);
+    const cache = new AutUserCache(req.tenant.uuid);
+    
+    let tempResult = [];
+    for await (const raw of result.raws) {
+      await cache.delete(raw);
+      tempResult.push(new UserWrapper(raw).toWeb());
+    }
   }
 
   //#endregion
@@ -208,7 +236,7 @@ class AutUserCtl extends BaseCtl {
       if(!match) { throw createHttpError(404, '사용자 아이디 또는 비밀번호 불일치'); }
 
       // 로그인 성공시 Cache 에 User 정보 저장
-      // await new AutUserCache().create(user);
+      await new AutUserCache(req.tenant.uuid).create(user);
 
       // id, pwd Property 삭제 후 Front 로 전달
       let result = new UserWrapper(user).toWeb() as any;

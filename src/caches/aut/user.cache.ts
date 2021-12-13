@@ -1,48 +1,26 @@
 import AutUser from '../../models/aut/user.model';
-import * as redis from 'redis';
-import * as bluebird from 'bluebird';
-
-declare module 'redis' {
-  export interface RedisClient extends NodeJS.EventEmitter {
-    setAsync(key:string, value:any): Promise<void>;
-    getAsync(key:string): Promise<any>;
-  }
-}
+import { getAsyncInRedis, setAsyncInRedis } from '../../utils/redisClient';
 
 class AutUserCache {
-  client: redis.RedisClient;
+  tenant: string;
 
-  constructor() {
-    this.client = redis.createClient();
-
-    bluebird.promisifyAll(this.client);
-
-    // this.client.on('connect', () => {
-    //   bluebird.promisifyAll(this.client);
-    // });
-    this.client.on('error', (err) => {
-      console.error(`redis error: ${err}`);
-    });
-
-    process.on('exit', () => {
-      console.log(`✅ redis quit`);
-      this.client.quit();
-    });
+  constructor(tenant: string) {
+    this.tenant = tenant;
   }
 
-  public create = async(_user: AutUser, tenant: string) => {
+  public create = async(_user: AutUser) => {
     try {
-      await this.client.setAsync(`tenants:${tenant}:users:id:${_user.id}`, _user.uuid);
-      await this.client.setAsync(`tenants:${tenant}:users:uuid:${_user.uuid}`, JSON.stringify(_user.toJSON()));
+      await setAsyncInRedis('localhost', 6379)(`tenants:${this.tenant}:users:id:${_user.id}`, _user.uuid);
+      await setAsyncInRedis('localhost', 6379)(`tenants:${this.tenant}:users:uuid:${_user.uuid}`, JSON.stringify(_user.toJSON ? _user.toJSON() : _user));
     } catch (err) {
       console.error(`redis create error: ${err}`);
     } 
   };
   
-  public read = async(uuid: string, tenant: string) => {
+  public read = async(uuid: string) => {
     if (uuid) {
       try {
-        return await this.client.getAsync(`tenants:${tenant}:users:uuid:${uuid}`);
+        return await getAsyncInRedis('localhost', 6379)(`tenants:${this.tenant}:users:uuid:${uuid}`);
       } catch (err) {
         console.error(`redis read error: ${err}`);
         return null;
@@ -52,11 +30,11 @@ class AutUserCache {
     return null;
   };
 
-  public readById = async(id: string, tenant: string) => {
+  public readById = async(id: string) => {
     if (id) {
       try {
-        const uuid = await this.client.getAsync(`tenants:${tenant}:users:id:${id}`);
-        return this.read(uuid, tenant);
+        const uuid = await getAsyncInRedis('localhost', 6379)(`tenants:${this.tenant}:users:id:${id}`);
+        return this.read(uuid);
       } catch (err) {
         console.error(`redis readById error: ${err}`);
         return null;
@@ -64,6 +42,15 @@ class AutUserCache {
     }
 
     return null;
+  };
+
+  public delete = async(_user: AutUser) => {
+    try {
+      await setAsyncInRedis('localhost', 6379)(`tenants:${this.tenant}:users:id:${_user.id}`, JSON.stringify(null));
+      await setAsyncInRedis('localhost', 6379)(`tenants:${this.tenant}:users:uuid:${_user.uuid}`, JSON.stringify(null));
+    } catch (err) {
+      console.error(`redis delete error: ${err}`);
+    } 
   };
 }
 

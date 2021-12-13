@@ -1,17 +1,41 @@
 import * as redis from 'redis';
 import { promisify } from 'util';
 
-const redisClient = redis.createClient();
-const getAsyncInRedis = promisify(redisClient.get).bind(redisClient);
-const setAsyncInRedis = promisify(redisClient.set).bind(redisClient);
+let redisClients: any = {};
 
-redisClient.on('error', (err) => {
-  console.error(`redis error: ${err}`);
-});
+const setRedisClient = (host: string, port: number, option?: redis.ClientOpts) => {
+  const client = redis.createClient(port, host, option) as redis.RedisClient;
 
-process.on('exit', () => {
-  console.log(`✅ redis quit`);
-  redisClient.quit();
-});
+  client.on('error', (err: any) => {
+    console.error(`redis error: ${err}`);
+  });
+  
+  process.on('exit', () => {
+    console.log(`✅ redis quit`);
+    client.quit();
+  });
 
-export { redisClient, getAsyncInRedis, setAsyncInRedis }
+  return client;
+}
+
+const getRedisClient = (host: string, port: number, option?: redis.ClientOpts) => {
+  if (!redisClients[host]) { redisClients[host] = setRedisClient(host, port, option); }
+
+  return redisClients[host] as redis.RedisClient;
+}
+
+const quitRedis = async (host: string) => {
+  if (!redisClients[host]) { return; }
+
+  await new Promise<void>((resolve) => {
+    redisClients[host].quit(() => { resolve(); });
+  });
+  // redis.quit() creates a thread to close the connection.
+  // We wait until all threads have been run once to ensure the connection closes.
+  await new Promise(resolve => setImmediate(resolve));
+}
+
+const getAsyncInRedis = (host: string, port: number, option?: redis.ClientOpts) => promisify(getRedisClient(host, port, option).get).bind(getRedisClient(host, port, option));
+const setAsyncInRedis = (host: string, port: number, option?: redis.ClientOpts) => promisify(getRedisClient(host, port, option).set).bind(getRedisClient(host, port, option));
+
+export { getAsyncInRedis, setAsyncInRedis, quitRedis }

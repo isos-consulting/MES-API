@@ -16,7 +16,7 @@ let seedDatas: IAutUser[] = [
     updated_uid: 1
   },
   { 
-    uid: 1,
+    uid: 2,
     group_id: 1,
     id: 'admin',
     user_nm: '관리자',

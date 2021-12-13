@@ -18,7 +18,7 @@ const sign = (user: IUser) => {
   // secret으로 sign하여 발급하고 return
   return jwt.sign(payload, secret, {
     algorithm: 'HS256',
-    expiresIn: '5s',
+    expiresIn: '30m',
     subject: 'iso-was-access-token',
     issuer: 'isos',
     audience: 'iso-client-user'
@@ -58,7 +58,7 @@ const refresh = async (uuid: string) => {
   });
 
   // redis에 Refresh Token 저장
-  await setAsyncInRedis(`token:refresh:${uuid}`, token);
+  await setAsyncInRedis('localhost', 6379)(`token:refresh:${uuid}`, token);
 
   return token;
 }
@@ -66,7 +66,7 @@ const refresh = async (uuid: string) => {
 // 📌 refresh token 검증
 const refreshVerify = async (token: string, uuid: string) => {
   try {
-    const data = await getAsyncInRedis(`token:refresh:${uuid}`); // refresh token 가져오기
+    const data = await getAsyncInRedis('localhost', 6379)(`token:refresh:${uuid}`); // refresh token 가져오기
     if (token === data) {
       try {
         jwt.verify(token, secret);
