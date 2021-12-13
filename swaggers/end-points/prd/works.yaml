@@ -204,11 +204,14 @@ put:
             - uuid
             - qty
             - start_date
+            - to_store_uuid
           allOf:
             - $ref: ../../schemas/prd/work.schema.yaml#/uuid
             - $ref: ../../schemas/prd/work.schema.yaml#/qty
             - $ref: ../../schemas/prd/work.schema.yaml#/start_date
             - $ref: ../../schemas/prd/work.schema.yaml#/end_date
+            - $ref: ../../schemas/prd/work.schema.yaml#/to_store_uuid
+            - $ref: ../../schemas/prd/work.schema.yaml#/to_location_uuid
             - $ref: ../../schemas/prd/work.schema.yaml#/remark
   responses:
     201:
@@ -234,6 +237,8 @@ patch:
             - $ref: ../../schemas/prd/work.schema.yaml#/qty
             - $ref: ../../schemas/prd/work.schema.yaml#/start_date
             - $ref: ../../schemas/prd/work.schema.yaml#/end_date
+            - $ref: ../../schemas/prd/work.schema.yaml#/to_store_uuid
+            - $ref: ../../schemas/prd/work.schema.yaml#/to_location_uuid
             - $ref: ../../schemas/prd/work.schema.yaml#/remark
   responses:
     201:
