@@ -3,7 +3,6 @@ export default interface IPrdWorkDowntime {
   factory_id?: number,
   work_id?: number | null,
   work_routing_id?: number | null,
-  proc_id?: number | null,
   equip_id?: number | null,
   downtime_id?: number,
   start_date?: Date,

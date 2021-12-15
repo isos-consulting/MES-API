@@ -4,6 +4,12 @@ dotenv.config();
 export default {
   node_env: process.env.NODE_ENV as string,
   port: process.env.PORT,
+  cache: {
+    elastic: {
+      host: process.env.NODE_ENV === 'test' ? 'localhost' : process.env.CACHE_ELA_HOST as string,
+      port: process.env.NODE_ENV === 'test' ? 6379 : process.env.CACHE_ELA_PORT as string,
+    }
+  },
   db: {
     reset_type: process.env.DB_RESET_TYPE as string,
     test: {

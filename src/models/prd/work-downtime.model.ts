@@ -4,7 +4,6 @@ import AutUser from '../aut/user.model';
 import StdDowntime from '../std/downtime.model';
 import StdEquip from '../std/equip.model';
 import StdFactory from '../std/factory.model';
-import StdProc from '../std/proc.model';
 import PrdWorkRouting from './work-routing.model';
 import PrdWork from './work.model';
 
@@ -47,13 +46,6 @@ export default class ProdWorkDowntime extends Model<IProdWorkDowntime> {
     type: DataType.INTEGER,
   })
   work_routing_id: number;
-
-  @ForeignKey(() => StdProc)
-  @Column({
-    comment: '공정ID',
-    type: DataType.INTEGER,
-  })
-  proc_id: number;
 
   @ForeignKey(() => StdEquip)
   @Column({
@@ -150,9 +142,6 @@ export default class ProdWorkDowntime extends Model<IProdWorkDowntime> {
 
   @BelongsTo(() => PrdWorkRouting, { foreignKey: 'work_routing_id', targetKey: 'work_routing_id', onDelete: 'restrict', onUpdate: 'cascade' })
   prdWorkRouting: PrdWorkRouting;
-
-  @BelongsTo(() => StdProc, { foreignKey: 'proc_id', targetKey: 'proc_id', onDelete: 'restrict', onUpdate: 'cascade' })
-  stdProc: StdProc;
 
   @BelongsTo(() => StdEquip, { foreignKey: 'equip_id', targetKey: 'equip_id', onDelete: 'restrict', onUpdate: 'cascade' })
   stdEquip: StdEquip;

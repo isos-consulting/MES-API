@@ -36,7 +36,6 @@ class PrdWorkDowntimeRepo {
           factory_id: workDowntime.factory_id,
           work_id: workDowntime.work_id,
           work_routing_id: workDowntime.work_routing_id,
-          proc_id: workDowntime.proc_id,
           equip_id: workDowntime.equip_id,
           downtime_id: workDowntime.downtime_id,
           start_date: workDowntime.start_date,
@@ -78,7 +77,16 @@ class PrdWorkDowntimeRepo {
             required: true,
             where: params.work_uuid ? { uuid: params.work_uuid } : {}
           },
-          { model: this.sequelize.models.StdProc, attributes: [], required: false },
+          { 
+            model: this.sequelize.models.PrdWorkRouting, 
+            attributes: [], 
+            required: false,
+            include: [
+              { model: this.sequelize.models.StdProc, attributes: [], required: false },
+              { model: this.sequelize.models.StdWorkings, attributes: [], required: false },
+              { model: this.sequelize.models.StdEquip, attributes: [], required: false }
+            ]
+          },
           { model: this.sequelize.models.StdEquip, attributes: [], required: false },
           { 
             model: this.sequelize.models.StdDowntime,
@@ -101,12 +109,29 @@ class PrdWorkDowntimeRepo {
           [ Sequelize.col('stdFactory.factory_cd'), 'factory_cd' ],
           [ Sequelize.col('stdFactory.factory_nm'), 'factory_nm' ],
           [ Sequelize.col('prdWork.uuid'), 'work_uuid' ],
-          [ Sequelize.col('stdProc.uuid'), 'proc_uuid' ],
-          [ Sequelize.col('stdProc.proc_cd'), 'proc_cd' ],
-          [ Sequelize.col('stdProc.proc_nm'), 'proc_nm' ],
-          [ Sequelize.col('stdEquip.uuid'), 'equip_uuid' ],
-          [ Sequelize.col('stdEquip.equip_cd'), 'equip_cd' ],
-          [ Sequelize.col('stdEquip.equip_nm'), 'equip_nm' ],
+          [ Sequelize.col('prdWorkRouting.uuid'), 'work_routing_uuid' ],
+          [ Sequelize.col('prdWorkRouting.proc_no'), 'proc_no' ],
+          [ Sequelize.col('prdWorkRouting.stdProc.uuid'), 'proc_uuid' ],
+          [ Sequelize.col('prdWorkRouting.stdProc.proc_cd'), 'proc_cd' ],
+          [ Sequelize.col('prdWorkRouting.stdProc.proc_nm'), 'proc_nm' ],
+          [ Sequelize.col('prdWorkRouting.stdWorkings.uuid'), 'workings_uuid' ],
+          [ Sequelize.col('prdWorkRouting.stdWorkings.workings_cd'), 'workings_cd' ],
+          [ Sequelize.col('prdWorkRouting.stdWorkings.workings_nm'), 'workings_nm' ],
+          [ Sequelize.literal(`
+            CASE prdWorkDowntime.work_routing_id  
+              WHEN NULL THEN stdEquip.uuid
+              ELSE "prdWorkRouting->stdEquip".uuid
+            END`), 'equip_uuid' ],
+          [ Sequelize.literal(`
+            CASE prdWorkDowntime.work_routing_id  
+              WHEN NULL THEN stdEquip.equip_cd
+              ELSE "prdWorkRouting->stdEquip".equip_cd
+            END`), 'equip_cd' ],
+          [ Sequelize.literal(`
+            CASE prdWorkDowntime.work_routing_id  
+              WHEN NULL THEN stdEquip.equip_nm
+              ELSE "prdWorkRouting->stdEquip".equip_nm
+              END`), 'equip_nm' ],
           [ Sequelize.col('stdDowntime.uuid'), 'downtime_uuid' ],
           [ Sequelize.col('stdDowntime.downtime_cd'), 'downtime_cd' ],
           [ Sequelize.col('stdDowntime.downtime_nm'), 'downtime_nm' ],
@@ -140,7 +165,16 @@ class PrdWorkDowntimeRepo {
         include: [
           { model: this.sequelize.models.StdFactory, attributes: [], required: true },
           { model: this.sequelize.models.PrdWork, attributes: [], required: true },
-          { model: this.sequelize.models.StdProc, attributes: [], required: false },
+          { 
+            model: this.sequelize.models.PrdWorkRouting, 
+            attributes: [], 
+            required: false,
+            include: [
+              { model: this.sequelize.models.StdProc, attributes: [], required: false },
+              { model: this.sequelize.models.StdWorkings, attributes: [], required: false },
+              { model: this.sequelize.models.StdEquip, attributes: [], required: false }
+            ]
+          },
           { model: this.sequelize.models.StdEquip, attributes: [], required: false },
           { 
             model: this.sequelize.models.StdDowntime,
@@ -157,12 +191,29 @@ class PrdWorkDowntimeRepo {
           [ Sequelize.col('stdFactory.factory_cd'), 'factory_cd' ],
           [ Sequelize.col('stdFactory.factory_nm'), 'factory_nm' ],
           [ Sequelize.col('prdWork.uuid'), 'work_uuid' ],
-          [ Sequelize.col('stdProc.uuid'), 'proc_uuid' ],
-          [ Sequelize.col('stdProc.proc_cd'), 'proc_cd' ],
-          [ Sequelize.col('stdProc.proc_nm'), 'proc_nm' ],
-          [ Sequelize.col('stdEquip.uuid'), 'equip_uuid' ],
-          [ Sequelize.col('stdEquip.equip_cd'), 'equip_cd' ],
-          [ Sequelize.col('stdEquip.equip_nm'), 'equip_nm' ],
+          [ Sequelize.col('prdWorkRouting.uuid'), 'work_routing_uuid' ],
+          [ Sequelize.col('prdWorkRouting.proc_no'), 'proc_no' ],
+          [ Sequelize.col('prdWorkRouting.stdProc.uuid'), 'proc_uuid' ],
+          [ Sequelize.col('prdWorkRouting.stdProc.proc_cd'), 'proc_cd' ],
+          [ Sequelize.col('prdWorkRouting.stdProc.proc_nm'), 'proc_nm' ],
+          [ Sequelize.col('prdWorkRouting.stdWorkings.uuid'), 'workings_uuid' ],
+          [ Sequelize.col('prdWorkRouting.stdWorkings.workings_cd'), 'workings_cd' ],
+          [ Sequelize.col('prdWorkRouting.stdWorkings.workings_nm'), 'workings_nm' ],
+          [ Sequelize.literal(`
+            CASE prdWorkDowntime.work_routing_id  
+              WHEN NULL THEN stdEquip.uuid
+              ELSE "prdWorkRouting->stdEquip".uuid
+            END`), 'equip_uuid' ],
+          [ Sequelize.literal(`
+            CASE prdWorkDowntime.work_routing_id  
+              WHEN NULL THEN stdEquip.equip_cd
+              ELSE "prdWorkRouting->stdEquip".equip_cd
+            END`), 'equip_cd' ],
+          [ Sequelize.literal(`
+            CASE prdWorkDowntime.work_routing_id  
+              WHEN NULL THEN stdEquip.equip_nm
+              ELSE "prdWorkRouting->stdEquip".equip_nm
+              END`), 'equip_nm' ],
           [ Sequelize.col('stdDowntime.uuid'), 'downtime_uuid' ],
           [ Sequelize.col('stdDowntime.downtime_cd'), 'downtime_cd' ],
           [ Sequelize.col('stdDowntime.downtime_nm'), 'downtime_nm' ],

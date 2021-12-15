@@ -1,24 +1,28 @@
 version: 0.2
 
 phases:
-  install:
-    commands:
-      # - yarn install
-      # - apt update -y
-      # - apt install -y redis-server wget
   pre_build:
     commands:
-      # - export NODE_ENV=test
-      # - wget https://raw.githubusercontent.com/Hronom/wait-for-redis/master/wait-for-redis.sh
-      # - chmod +x ./wait-for-redis.sh
-      # - service redis-server start
-      # - ./wait-for-redis.sh localhost:6379
+      - echo Logging in to Amazon ECR...
+      - aws --version
+      - $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
+      - REPOSITORY_URI=557471975685.dkr.ecr.ap-northeast-2.amazonaws.com/iso-server
+      - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - IMAGE_TAG=${COMMIT_HASH:=latest}
   build:
     commands:
-      # - yarn test
+      - echo Build started on `date`
+      - echo Building the Docker image...          
+      - docker build -t $REPOSITORY_URI:latest .
+      - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
   post_build:
     commands:
-      # - sudo rm -rf node_modules
+      - echo Build completed on `date`
+      - echo Pushing the Docker images...
+      - docker push $REPOSITORY_URI:latest
+      - docker push $REPOSITORY_URI:$IMAGE_TAG
+      - echo Writing image definitions file...
+      - printf '[{"name":"helloapp","imageUri":"%s"}]' $REPOSITORY_URI:$IMAGE_TAG > imagedefinitions.json
 artifacts:
-  files:
-    - '**/*'
+  files: 
+    - imagedefinitions.json

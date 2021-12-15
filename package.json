@@ -90,7 +90,7 @@
     "prereset-data": "yarn cleanup && tsc",
     "reset-data": "yarn migration-undo-all && yarn migration-all",
     "prestart": "yarn tsc && node dist/caches/refresh-all-cache.js",
-    "start": "tsc-watch --onSuccess \"node dist/bin/www.js\"",
+    "start": "tsc-watch --onSuccess \"node --max-old-space-size=4096 dist/bin/www.js\"",
     "pretest": "tsc && yarn reset-data && yarn refresh-all-cache",
     "test": "./node_modules/.bin/jest tests --detectOpenHandles --forceExit --coverage"
   }

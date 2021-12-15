@@ -6,7 +6,6 @@ import PrdWorkRepo from '../../repositories/prd/work.repository';
 import StdDowntimeRepo from '../../repositories/std/downtime.repository';
 import StdEquipRepo from '../../repositories/std/equip.repository';
 import StdFactoryRepo from '../../repositories/std/factory.repository';
-import StdProcRepo from '../../repositories/std/proc.repository';
 import checkArray from '../../utils/checkArray';
 import { getSequelize } from '../../utils/getSequelize';
 import getSubtractTwoDates from '../../utils/getSubtractTwoDates';
@@ -40,12 +39,6 @@ class PrdWorkDowntimeCtl extends BaseCtl {
         TRepo: PrdWorkRoutingRepo,
         idName: 'work_routing_id',
         uuidName: 'work_routing_uuid'
-      },
-      {
-        key: 'proc',
-        TRepo: StdProcRepo,
-        idName: 'proc_id',
-        uuidName: 'proc_uuid'
       },
       {
         key: 'equip',
@@ -84,8 +77,11 @@ class PrdWorkDowntimeCtl extends BaseCtl {
         if (work.complete_fg == true) { throw new Error(`실적번호 [${work.uuid}]는 완료상태이므로 데이터 생성이 불가능합니다.`)} 
       });
 
-      // 📌 시작, 종료시간이 같거나 시작시간이 더 늦을 경우 데이터 생성 불가
       req.body.forEach((data: any) => {
+        // 📌 공정순서 id를 입력한 경우 설비 id보다 우선적으로 입력
+        if (data.work_routing_id) { delete data.equip_id; }
+
+        // 📌 시작, 종료시간이 같거나 시작시간이 더 늦을 경우 데이터 생성 불가
         if (data.start_date && data.end_date) {
           data.downtime = getSubtractTwoDates(data.start_date, data.end_date);
           if (data.downtime <= 0) { throw new Error('잘못된 시작시간(start_date) 및 종료시간(end_date)이 입력되었습니다.'); }
@@ -100,9 +96,9 @@ class PrdWorkDowntimeCtl extends BaseCtl {
             if (count > 0) { throw new Error('시간내에 이미 등록된 비가동 내역이 있습니다.'); }
           }
 
-          const result = await repo.create(checkArray(data), req.user?.uid as number, tran); 
-          result.raws = result.raws.concat(result.raws);
-          result.count += result.count;
+          const tempResult = await repo.create(checkArray(data), req.user?.uid as number, tran); 
+          result.raws = [...result.raws, ...tempResult.raws];
+          result.count += tempResult.count;
         }
       });
 
@@ -177,9 +173,9 @@ class PrdWorkDowntimeCtl extends BaseCtl {
             if (count > 0) { throw new Error('시간내에 이미 등록된 비가동 내역이 있습니다.'); }
           }
 
-          const result = await repo.update(checkArray(data), req.user?.uid as number, tran); 
-          result.raws = result.raws.concat(result.raws);
-          result.count += result.count;
+          const tempResult = await repo.update(checkArray(data), req.user?.uid as number, tran); 
+          result.raws = [...result.raws, ...tempResult.raws];
+          result.count += tempResult.count;
         }
       });
 
@@ -228,9 +224,9 @@ class PrdWorkDowntimeCtl extends BaseCtl {
             if (count > 0) { throw new Error('시간내에 이미 등록된 비가동 내역이 있습니다.'); }
           }
 
-          const result = await repo.patch(checkArray(data), req.user?.uid as number, tran); 
-          result.raws = result.raws.concat(result.raws);
-          result.count += result.count;
+          const tempResult = await repo.patch(checkArray(data), req.user?.uid as number, tran); 
+          result.raws = [...result.raws, ...tempResult.raws];
+          result.count += tempResult.count;
         }
       });
 

@@ -33,14 +33,6 @@ work_routing_id:
       type: number
       format: int4
 
-proc_id: 
-  type: object
-  properties: 
-    proc_id:
-      description: 공정ID
-      type: number
-      format: int4
-
 equip_id: 
   type: object
   properties: 
@@ -127,14 +119,6 @@ work_routing_uuid:
   properties: 
     work_routing_uuid:
       description: 공정순서UUID
-      type: string
-      format: uuid
-
-proc_uuid:
-  type: object
-  properties: 
-    proc_uuid:
-      description: 공정UUID
       type: string
       format: uuid
 

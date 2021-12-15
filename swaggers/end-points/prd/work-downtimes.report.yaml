@@ -94,7 +94,7 @@ get:
                             - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
                             - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
                             - $ref: ../../schemas/prd/work.schema.yaml#/reg_date
-                            - $ref: ../../schemas/prd/work-downtime.schema.yaml#/proc_uuid
+                            - $ref: ../../schemas/prd/work.schema.yaml#/proc_uuid
                             - $ref: ../../schemas/std/proc.schema.yaml#/proc_cd
                             - $ref: ../../schemas/std/proc.schema.yaml#/proc_nm
                             - $ref: ../../schemas/prd/work.schema.yaml#/workings_uuid
