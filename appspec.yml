@@ -1,22 +1,9 @@
 version: 0.0
-os: linux
-files:
-  - source: /
-    destination: /var/iso-server-development
-hooks:
-  ApplicationStop: 
-    - location: ./shells/application-stop.sh
-      timeout: 300
-      runas: root
-  BeforeInstall:
-    - location: ./shells/before-install.sh
-      timeout: 300
-      runas: root    
-  AfterInstall:
-    - location: ./shells/after-install.sh
-      timeout: 300
-      runas: root
-  ApplicationStart:
-    - location: ./shells/application-start.sh
-      timeout: 300
-      runas: root
+Resources:
+  - TargetService:
+      Type: AWS::ECS::Service
+      Properties:
+        TaskDefinition: "arn:aws:ecs:ap-northeast-2:557471975685:task-definition/iso-server"
+        LoadBalancerInfo:
+            ContainerName: "iso-server"
+            ContainerPort: 4000

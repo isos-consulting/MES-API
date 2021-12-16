@@ -1,0 +1,20 @@
+{
+  "executionRoleArn": "arn:aws:iam::557471975685:role/ecsTaskExecutionRole",
+  "containerDefinitions": [{
+    "name": "iso-server",
+    "image": "557471975685.dkr.ecr.ap-northeast-2.amazonaws.com/iso-server",
+    "essential": true,
+    "portMappings": [{
+      "hostPort": 4000,
+      "protocol": "tcp",
+      "containerPort": 4000
+    }]
+  }],
+  "requiresCompatibilities": [
+    "FARGATE"
+  ],
+  "networkMode": "awsvpc",
+  "cpu": "2048",
+  "memory": "2048",
+  "family": "iso-server"
+} 

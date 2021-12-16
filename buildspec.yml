@@ -7,7 +7,6 @@ phases:
       - aws --version
       - echo $AWS_DEFAULT_REGION
       - aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin 557471975685.dkr.ecr.ap-northeast-2.amazonaws.com
-      # - $(aws ecr get-login --region $AWS_DEFAULT_REGION --no-include-email)
       - REPOSITORY_URI=557471975685.dkr.ecr.ap-northeast-2.amazonaws.com/iso-server
       - COMMIT_HASH=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
       - IMAGE_TAG=${COMMIT_HASH:=latest}
@@ -28,3 +27,6 @@ phases:
 artifacts:
   files: 
     - imagedefinitions.json
+    - taskdef.json
+    - appspec.yml
+  discard-paths: yes
