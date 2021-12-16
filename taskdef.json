@@ -26,9 +26,32 @@
         "name": "CACHE_ELA_PORT",
         "value": "6379"
       }
-    ]
+    ],
+    "environmentFiles": [],
+    "mountPoints": [],
+    "volumesFrom": [],
+    "secrets": [],
+    "dnsServers": [],
+    "dnsSearchDomains": [],
+    "extraHosts": [],
+    "dockerSecurityOptions": [],
+    "dockerLabels": {},
+    "ulimits": [],
+    "logConfiguration": {
+        "logDriver": "awslogs",
+        "options": {
+            "awslogs-create-group": "true",
+            "awslogs-group": "/ecs/iso-server",
+            "awslogs-region": "ap-northeast-2",
+            "awslogs-stream-prefix": "ecs"
+        },
+        "secretOptions": []
+    },
+    "systemControls": []
   }],
+  "placementConstraints": [],
   "requiresCompatibilities": [
+    "EC2",
     "FARGATE"
   ],
   "networkMode": "awsvpc",
