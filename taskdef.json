@@ -8,7 +8,25 @@
       "hostPort": 4000,
       "protocol": "tcp",
       "containerPort": 4000
-    }]
+    }],
+    "environment": [
+      {
+        "name": "PORT",
+        "value": "4000"
+      },
+      {
+        "name": "NODE_ENV",
+        "value": "development"
+      },
+      {
+        "name": "CACHE_ELA_HOST",
+        "value": "cache-private-redis-tenant-001.ocp9pr.0001.apn2.cache.amazonaws.com"
+      },
+      {
+        "name": "CACHE_ELA_PORT",
+        "value": "6379"
+      }
+    ]
   }],
   "requiresCompatibilities": [
     "FARGATE"
