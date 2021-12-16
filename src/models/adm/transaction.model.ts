@@ -3,7 +3,7 @@ import IAdmTransaction from '../../interfaces/adm/transaction.interface';
 import AutUser from '../aut/user.model';
 
 @Table({
-  tableName: 'ADM_TRANSACTION_VW',
+  tableName: 'ADM_TRANSACTION_TB',
   modelName: 'AdmTransaction',
   comment: '수불 유형 정보 뷰',
   timestamps: true,
@@ -15,10 +15,12 @@ export default class AdmTransaction extends Model<IAdmTransaction> {
     type: DataType.INTEGER,
     allowNull: false,
     primaryKey: true,
+		autoIncrement: true,
+    autoIncrementIdentity: true,
   })
   tran_id: number;
 
-  @Unique('adm_transaction_vw_tran_cd_un')
+  @Unique('adm_transaction_tb_tran_cd_un')
   @Column({
     comment: '수불 유형코드',
     type: DataType.STRING(20),
@@ -33,10 +35,15 @@ export default class AdmTransaction extends Model<IAdmTransaction> {
   })
   tran_nm: string;
 
+	@Column({
+    comment: '정렬',
+    type: DataType.INTEGER,
+  })
+  sortby: number;
+
   @Column({
     comment: '비고',
     type: DataType.STRING,
-    allowNull: false,
   })
   remark: string;
 
@@ -71,6 +78,15 @@ export default class AdmTransaction extends Model<IAdmTransaction> {
     allowNull: false,
   })
   updated_uid: number;
+
+	@Unique('adm_transaction_tb_uuid_un')
+  @Column({
+    comment: '수불 유형UUID',
+    type: DataType.UUID,
+    allowNull: false,
+    defaultValue: Sequelize.fn('gen_random_uuid')
+  })
+  uuid: string;
 
   //#region ✅ Define Association
   // BelongTo

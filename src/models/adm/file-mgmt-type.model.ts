@@ -1,39 +1,51 @@
 import { Sequelize, Table, Column, Model, DataType, CreatedAt, UpdatedAt, BelongsTo, Unique } from 'sequelize-typescript'
-import IAdmInspHandlingType from '../../interfaces/adm/insp-handling-type.interface';
+import IAdmFileMgmtType from '../../interfaces/adm/file-mgmt-type.interface';
 import AutUser from '../aut/user.model';
 
 @Table({
-  tableName: 'ADM_INSP_HANDLING_TYPE_TB',
-  modelName: 'AdmInspHandlingType',
-  comment: '검사처리 유형 정보 뷰',
+  tableName: 'ADM_FILE_MGMT_TYPE_TB',
+  modelName: 'AdmFileMgmtType',
+  comment: '파일 관리 유형 테이블',
   timestamps: true,
   underscored: true,
 })
-export default class AdmInspHandlingType extends Model<IAdmInspHandlingType> {
+export default class AdmFileMgmtType extends Model<IAdmFileMgmtType> {
   @Column({
-    comment: '검사처리 유형ID',
+    comment: '파일 관리 유형ID',
     type: DataType.INTEGER,
     allowNull: false,
     primaryKey: true,
 		autoIncrement: true,
     autoIncrementIdentity: true,
   })
-  insp_handling_type_id: number;
+  file_mgmt_type_id: number;
 
-  @Unique('adm_insp_handling_type_tb_insp_handling_type_cd_un')
+  @Unique('adm_file_mgmt_type_tb_file_mgmt_type_cd_un')
   @Column({
-    comment: '검사처리 유형코드',
+    comment: '파일 관리 유형코드',
     type: DataType.STRING(20),
     allowNull: false,
   })
-  insp_handling_type_cd: string;
+  file_mgmt_type_cd: string;
 
   @Column({
-    comment: '검사처리 유형명',
+    comment: '파일 관리 유형명',
     type: DataType.STRING(50),
     allowNull: false,
   })
-  insp_handling_type_nm: string;
+  file_mgmt_type_nm: string;
+
+  @Column({
+    comment: '테이블명',
+    type: DataType.STRING,
+  })
+  table_nm: string;
+
+  @Column({
+    comment: '아이디명',
+    type: DataType.STRING,
+  })
+  id_nm: string;
 
   @Column({
     comment: '정렬',
@@ -73,9 +85,9 @@ export default class AdmInspHandlingType extends Model<IAdmInspHandlingType> {
   })
   updated_uid: number;
 
-	@Unique('adm_insp_handling_type_tb_uuid_un')
+	@Unique('adm_file_mgmt_type_tb_uuid_un')
   @Column({
-    comment: '검사처리 유형UUID',
+    comment: '파일 관리 유형UUID',
     type: DataType.UUID,
     allowNull: false,
     defaultValue: Sequelize.fn('gen_random_uuid')
@@ -84,9 +96,9 @@ export default class AdmInspHandlingType extends Model<IAdmInspHandlingType> {
 
   //#region ✅ Define Association
   // BelongTo
-  @BelongsTo(() => AutUser, { as: 'createUser', foreignKey: 'created_uid', targetKey: 'uid', constraints: false })
+  @BelongsTo(() => AutUser, { as: 'createUser', foreignKey: 'created_uid', targetKey: 'uid', onDelete: 'restrict', onUpdate: 'cascade' })
   createUser: AutUser;
-  @BelongsTo(() => AutUser, { as: 'updateUser', foreignKey: 'updated_uid', targetKey: 'uid', constraints: false })
+  @BelongsTo(() => AutUser, { as: 'updateUser', foreignKey: 'updated_uid', targetKey: 'uid', onDelete: 'restrict', onUpdate: 'cascade' })
   updateUser: AutUser;
 
   // HasMany

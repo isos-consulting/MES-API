@@ -1,12 +1,10 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
 import AdmInspDetailType from '../../models/adm/insp-detail-type.model';
-import { Sequelize } from 'sequelize-typescript';
 import IAdmInspDetailType from '../../interfaces/adm/insp-detail-type.interface';
-import sequelize from '../../models';
+import { Sequelize } from 'sequelize-typescript';
 import convertBulkResult from '../../utils/convertBulkResult';
 import convertResult from '../../utils/convertResult';
-import { Op, Transaction } from 'sequelize';
-import { UniqueConstraintError } from 'sequelize';
+import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
@@ -35,7 +33,7 @@ class AdmInspDetailTypeRepo {
 					insp_detail_type_id: insp_detail_type.insp_detail_type_id,
 					insp_detail_type_cd: insp_detail_type.insp_detail_type_cd,
 					insp_detail_type_nm: insp_detail_type.insp_detail_type_nm,
-					insp_type_cd: insp_detail_type.insp_type_cd,
+					insp_type_id: insp_detail_type.insp_type_id,
 					sortby: insp_detail_type.sortby,
 					worker_fg: insp_detail_type.worker_fg,
 					inspector_fg: insp_detail_type.inspector_fg,
@@ -61,13 +59,21 @@ class AdmInspDetailTypeRepo {
     try {
       const result = await this.repo.findAll({ 
         include: [
+					{ 
+            model: this.sequelize.models.AdmInspType, 
+            attributes: [], 
+            required: true, 
+            where: { uuid: params.insp_type_uuid ? params.insp_type_uuid : { [Op.ne]: null } }
+          },
           { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           'insp_detail_type_cd',
           'insp_detail_type_nm',
-          'insp_type_cd',
+          [ Sequelize.col('admInspType.uuid'), 'insp_type_uuid' ],
+          [ Sequelize.col('admInspType.insp_type_cd'), 'insp_type_cd' ],
+          [ Sequelize.col('admInspType.insp_type_nm'), 'insp_type_nm' ],
           'worker_fg',
           'inspector_fg',
           'created_at',
@@ -75,12 +81,6 @@ class AdmInspDetailTypeRepo {
           'updated_at',
           [ Sequelize.col('updateUser.user_nm'), 'updated_nm' ]
         ],
-        where: { 
-          [Op.and]: [
-            { insp_type_cd: params.insp_type_cd ? params.insp_type_cd : { [Op.ne]: null }},
-            { insp_detail_type_cd: params.insp_detail_type_cd ? params.insp_detail_type_cd : { [Op.ne]: null }}
-          ]
-        },
         order: [ 'sortby' ],
       });
 
@@ -96,14 +96,22 @@ class AdmInspDetailTypeRepo {
 		try {
 			const result = await this.repo.findOne({ 
 				include: [
-					{ model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-					{ model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+					{ 
+            model: this.sequelize.models.AdmInspType, 
+            attributes: [], 
+            required: true, 
+            where: { uuid: params.insp_type_uuid ? params.insp_type_uuid : { [Op.ne]: null } }
+          },
+					{ model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+					{ model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
 				],
 				attributes: [
 					[ Sequelize.col('admInspDetailType.uuid'), 'insp_detail_type_uuid' ],
 					'insp_detail_type_cd',
           'insp_detail_type_nm',
-          'insp_type_cd',
+          [ Sequelize.col('admInspType.uuid'), 'insp_type_uuid' ],
+          [ Sequelize.col('admInspType.insp_type_cd'), 'insp_type_cd' ],
+          [ Sequelize.col('admInspType.insp_type_nm'), 'insp_type_nm' ],
           'worker_fg',
           'inspector_fg',
           'created_at',
@@ -112,25 +120,6 @@ class AdmInspDetailTypeRepo {
 					[ Sequelize.col('updateUser.user_nm'), 'updated_nm' ]
 				],
 				where: { uuid },
-			});
-
-			return convertReadResult(result);
-		} catch (error) {
-			throw error;
-		}
-	};
-
-	public readForSignIn = async() => {
-		try {
-			const result = await this.repo.findAll({
-				attributes: [
-					[ Sequelize.col('admInspDetailType.uuid'), 'insp_detail_type_uuid' ],
-					'insp_detail_type_cd',
-          'insp_detail_type_nm',
-          'insp_type_cd',
-          'worker_fg',
-          'inspector_fg',
-				]
 			});
 
 			return convertReadResult(result);
@@ -174,7 +163,7 @@ class AdmInspDetailTypeRepo {
             insp_detail_type_id: insp_detail_type.insp_detail_type_id != null ? insp_detail_type.insp_detail_type_id : null,
             insp_detail_type_cd: insp_detail_type.insp_detail_type_cd != null ? insp_detail_type.insp_detail_type_cd : null,
 						insp_detail_type_nm: insp_detail_type.insp_detail_type_nm != null ? insp_detail_type.insp_detail_type_nm : null,
-						insp_type_cd: insp_detail_type.insp_type_cd != null ? insp_detail_type.insp_type_cd : null,
+						insp_type_id: insp_detail_type.insp_type_id != null ? insp_detail_type.insp_type_id : null,
 						sortby: insp_detail_type.sortby != null ? insp_detail_type.sortby : null,
 						worker_fg: insp_detail_type.worker_fg != null ? insp_detail_type.worker_fg : null,
 						inspector_fg: insp_detail_type.inspector_fg != null ? insp_detail_type.inspector_fg : null,
@@ -191,7 +180,7 @@ class AdmInspDetailTypeRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo(this.tenant).create('update', sequelize.models.StdFactory.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdFactory.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -216,7 +205,7 @@ class AdmInspDetailTypeRepo {
             insp_detail_type_id: insp_detail_type.insp_detail_type_id,
 						insp_detail_type_cd: insp_detail_type.insp_detail_type_cd,
 						insp_detail_type_nm: insp_detail_type.insp_detail_type_nm,
-						insp_type_cd: insp_detail_type.insp_type_cd,
+						insp_type_id: insp_detail_type.insp_type_id,
 						sortby: insp_detail_type.sortby,
 						worker_fg: insp_detail_type.worker_fg,
 						inspector_fg: insp_detail_type.inspector_fg,
@@ -233,7 +222,7 @@ class AdmInspDetailTypeRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo(this.tenant).create('update', sequelize.models.StdFactory.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdFactory.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -256,7 +245,7 @@ class AdmInspDetailTypeRepo {
         count += await this.repo.destroy({ where: { uuid: insp_detail_type.uuid }, transaction});
       };
 
-      await new AdmLogRepo(this.tenant).create('delete', sequelize.models.StdFactory.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.StdFactory.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
     } catch (error) {
       throw error;

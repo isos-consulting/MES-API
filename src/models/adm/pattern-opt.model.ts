@@ -20,10 +20,10 @@ export default class AdmPatternOpt extends Model<IAdmPatternOpt> {
   })
   pattern_opt_id: number;
 
-  @Unique('adm_pattern_opt_vw_pattern_opt_cd_un')
+  @Unique('adm_pattern_opt_tb_pattern_opt_cd_un')
   @Column({
     comment: '자동번호발행 옵션정보코드',
-    type: DataType.STRING(20),
+    type: DataType.STRING(50),
     allowNull: false,
   })
   pattern_opt_cd: string;
@@ -52,14 +52,12 @@ export default class AdmPatternOpt extends Model<IAdmPatternOpt> {
   @Column({
     comment: '컬럼 명',
     type: DataType.STRING,
-    allowNull: false,
   })
   col_nm: string;
 
   @Column({
     comment: '패턴',
     type: DataType.STRING,
-    allowNull: false,
   })
   pattern: string;
 

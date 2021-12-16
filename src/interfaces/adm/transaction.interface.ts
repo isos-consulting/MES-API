@@ -2,6 +2,7 @@ export default interface IAdmTransaction {
   tran_id?: number,
   tran_cd?: string,
   tran_nm?: string,
+	sortby?: number | null,
   remark?: string | null,
   created_at?: Date,
   created_uid?: number,

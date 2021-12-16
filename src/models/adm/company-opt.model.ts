@@ -20,7 +20,7 @@ export default class AdmCompanyOpt extends Model<IAdmCompanyOpt> {
   })
   company_opt_id: number;
 
-  @Unique('adm_company_opt_vw_company_opt_cd_un')
+  @Unique('adm_company_opt_tb_company_opt_cd_un')
   @Column({
     comment: '회사 옵션정보코드',
     type: DataType.STRING(20),
@@ -38,21 +38,18 @@ export default class AdmCompanyOpt extends Model<IAdmCompanyOpt> {
   @Column({
     comment: '옵션 값',
     type: DataType.STRING,
-    allowNull: false,
   })
   val: string;
 
   @Column({
     comment: '옵션 값(추가)',
     type: DataType.STRING,
-    allowNull: false,
   })
   val_opt: string;
 
   @Column({
     comment: '비고',
     type: DataType.STRING,
-    allowNull: false,
   })
   remark: string;
 

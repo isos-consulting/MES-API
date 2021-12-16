@@ -1,21 +1,21 @@
-import AdmInspDetailTypeRepo from '../../repositories/adm/insp-detail-type.repository';
+import AdmFileMgmtTypeRepo from '../../repositories/adm/file-mgmt-type.repository';
 import BaseCtl from '../base.controller';
 
-class AdmInspDetailTypeCtl extends BaseCtl {
+class AdmFileMgmtTypeRepotl extends BaseCtl {
   //#region ✅ Constructor
   constructor() {
     // ✅ 부모 Controller (Base Controller) 의 CRUD Function 과 상속 받는 자식 Controller(this) 의 Repository 를 연결하기 위하여 생성자에서 Repository 생성
-    super(AdmInspDetailTypeRepo);
+    super(AdmFileMgmtTypeRepo);
 
     // ✅ CUD 연산이 실행되기 전 Fk Table 의 uuid 로 id 를 검색하여 request body 에 삽입하기 위하여 정보 Setting
-    this.fkIdInfos = [
-      {
-        key: 'insp_detail_type',
-        TRepo: AdmInspDetailTypeRepo,
-        idName: 'insp_detail_type_id',
-        uuidName: 'insp_detail_type_uuid'
-      }
-    ];
+    // this.fkIdInfos = [
+    //   {
+    //     key: 'admcompanyopt',
+    //     TRepo: AdmCompanyOptRepo,
+    //     idName: 'company_opt_id',
+    //     uuidName: 'company_opt_uuid'
+    //   }
+    // ];
   };
   //#endregion
 
@@ -142,4 +142,4 @@ class AdmInspDetailTypeCtl extends BaseCtl {
   //#endregion
 }
 
-export default AdmInspDetailTypeCtl;
+export default AdmFileMgmtTypeRepotl;
