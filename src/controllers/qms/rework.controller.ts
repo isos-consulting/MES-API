@@ -141,7 +141,7 @@ class QmsReworkCtl extends BaseCtl {
   // 📒 Fn[createDisassemble]: Create Disassemble Function
   public createDisassemble = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      req.body = await this.getBodyIncludedId(req.body);
+      req.body = await this.getBodyIncludedId(req.tenant.uuid, req.body);
       
       const sequelize = getSequelize(req.tenant.uuid);
       const repo = new QmsReworkRepo(req.tenant.uuid);
@@ -379,19 +379,19 @@ class QmsReworkCtl extends BaseCtl {
    * @param _body Request Body
    * @returns Uuid => Id 로 Conversion 되어있는 Body
    */
-  getBodyIncludedId = async (_body: any) => {
+  getBodyIncludedId = async (tenant: string, _body: any) => {
     const resultBody: any[] = [];
     _body = checkArray(_body);
 
     for await (const data of _body) {
       if (data.header) { 
         data.header = checkArray(data.header); 
-        data.header = await this.getFkId(data.header, 
+        data.header = await this.getFkId(tenant, data.header, 
           [...this.fkIdInfos ]);
       }
     if (data.details) { 
       data.details = checkArray(data.details); 
-      data.details = await this.getFkId(data.details, 
+      data.details = await this.getFkId(tenant, data.details, 
         [
           {
             key: 'factory',
