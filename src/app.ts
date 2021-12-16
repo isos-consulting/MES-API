@@ -48,7 +48,7 @@ app.use(cookieParser());
 // }
 // app.use(cors(corsOptions));
 app.use(cors());
-app.use('/health-check', (req: express.Request, res: express.Response, next: express.NextFunction) => { return response(res, [], {}, '', 200); });
+app.use('/health-check', (req: express.Request, res: express.Response, next: express.NextFunction) => { return response(res, [], {}, 'HealthCheck', 200); });
 
 // Create Log (IP, User, Date, Method, Uri, Status, Response Length, Referrer, Agent, ResponseTime, TotalTime)
 app.use(morgan('combined', { stream }));
