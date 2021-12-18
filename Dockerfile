@@ -8,9 +8,6 @@ COPY package.json /app/
 COPY yarn.lock /app/
 
 RUN yarn install
-RUN apt update -y
-RUN apt install -y redis-server wget
-RUN service redis-server start
 
 COPY . /app
 
