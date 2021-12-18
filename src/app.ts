@@ -11,7 +11,6 @@ import { stream } from './configs/winston';
 import { refreshToken } from './utils/refreshToken';
 import tenantMiddleware from './middlewares/tenant.middleware';
 import config from './configs/config';
-// import { getAsyncInRedis, setAsyncInRedis } from './utils/redisClient';
 
 // Import Environment
 dotenv.config();
@@ -50,9 +49,6 @@ app.use(cookieParser());
 // app.use(cors(corsOptions));
 app.use(cors());
 app.use('/health-check', async (req: express.Request, res: express.Response, next: express.NextFunction) => { 
-  // await setAsyncInRedis('localhost', 6379)('test12345678', 'test1234test')
-  // const abc = getAsyncInRedis('localhost', 6379)('test12345678');
-  // console.log(abc);
   return response(res, [], {}, 'HealthCheck', 200); 
 });
 
