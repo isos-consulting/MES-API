@@ -9,25 +9,13 @@
       "protocol": "tcp",
       "containerPort": 4000
     }],
-    "environment": [
+    "environment": [],
+    "environmentFiles": [
       {
-        "name": "PORT",
-        "value": "4000"
-      },
-      {
-        "name": "NODE_ENV",
-        "value": "development"
-      },
-      {
-        "name": "CACHE_ELA_HOST",
-        "value": "cache-private-redis-tenant-001.ocp9pr.0001.apn2.cache.amazonaws.com"
-      },
-      {
-        "name": "CACHE_ELA_PORT",
-        "value": "6379"
+        "value": "arn:aws:s3:::s3-isos-environment/test.env",
+        "type": "s3"
       }
     ],
-    "environmentFiles": [],
     "mountPoints": [],
     "volumesFrom": [],
     "secrets": [],
