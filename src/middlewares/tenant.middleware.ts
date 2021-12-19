@@ -63,7 +63,8 @@ export default async(req: express.Request, res: express.Response, next: express.
 
       if (sequelizes[tenantUuid]) {
         // 📌 Tenant의 Sequelize 객체가 이미 존재하는 경우
-        const existingUpdatedAt = await getAsyncInRedis(config.cache.elastic.host, Number(config.cache.elastic.port))(`tenant:${tenantUuid}:service:${serviceType}:environment:${environment}:updatedAt`);
+        // const existingUpdatedAt = await getAsyncInRedis(config.cache.elastic.host, Number(config.cache.elastic.port))(`tenant:${tenantUuid}:service:${serviceType}:environment:${environment}:updatedAt`);
+        const existingUpdatedAt = await getAsyncInRedis('localhost', 6379)(`tenant:${tenantUuid}:service:${serviceType}:environment:${environment}:updatedAt`);
         // 📌 Connection 정보가 Update 되지 않은 경우는 넘어감
         if (connectionUpdatedAt === existingUpdatedAt) { return next(); }
       } 
@@ -80,7 +81,8 @@ export default async(req: express.Request, res: express.Response, next: express.
         ...baseDbSetting
       });
 
-      await setAsyncInRedis(config.cache.elastic.host, Number(config.cache.elastic.port))(`tenant:${tenantUuid}:service:${serviceType}:environment:${environment}:updatedAt`, connectionUpdatedAt);
+      // await setAsyncInRedis(config.cache.elastic.host, Number(config.cache.elastic.port))(`tenant:${tenantUuid}:service:${serviceType}:environment:${environment}:updatedAt`, connectionUpdatedAt);
+      await setAsyncInRedis('localhost', 6379)(`tenant:${tenantUuid}:service:${serviceType}:environment:${environment}:updatedAt`, connectionUpdatedAt);
       return next();
     }
   } catch (e) {
