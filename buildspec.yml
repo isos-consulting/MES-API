@@ -5,8 +5,6 @@ phases:
     commands:
       - echo Logging in to Amazon ECR...
       - aws --version
-      - apt update -y
-      - apt install -y redis-server wget
       - echo $AWS_DEFAULT_REGION
       - aws ecr get-login-password --region ap-northeast-2 | docker login --username AWS --password-stdin 557471975685.dkr.ecr.ap-northeast-2.amazonaws.com
       - REPOSITORY_URI=557471975685.dkr.ecr.ap-northeast-2.amazonaws.com/iso-server
@@ -16,7 +14,6 @@ phases:
     commands:
       - echo Build started on `date`
       - echo Building the Docker image...          
-      - service redis-server restart
       - docker build -t $REPOSITORY_URI:latest .
       - docker tag $REPOSITORY_URI:latest $REPOSITORY_URI:$IMAGE_TAG
   post_build:
