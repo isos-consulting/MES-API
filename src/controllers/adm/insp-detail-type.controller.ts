@@ -1,4 +1,5 @@
 import AdmInspDetailTypeRepo from '../../repositories/adm/insp-detail-type.repository';
+import AdmInspTypeRepo from '../../repositories/adm/insp-type.repository';
 import BaseCtl from '../base.controller';
 
 class AdmInspDetailTypeCtl extends BaseCtl {
@@ -10,10 +11,10 @@ class AdmInspDetailTypeCtl extends BaseCtl {
     // ✅ CUD 연산이 실행되기 전 Fk Table 의 uuid 로 id 를 검색하여 request body 에 삽입하기 위하여 정보 Setting
     this.fkIdInfos = [
       {
-        key: 'insp_detail_type',
-        TRepo: AdmInspDetailTypeRepo,
-        idName: 'insp_detail_type_id',
-        uuidName: 'insp_detail_type_uuid'
+        key: 'insp_type',
+        TRepo: AdmInspTypeRepo,
+        idName: 'insp_type_id',
+        uuidName: 'insp_type_uuid'
       }
     ];
   };

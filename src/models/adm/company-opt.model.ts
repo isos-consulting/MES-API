@@ -37,19 +37,19 @@ export default class AdmCompanyOpt extends Model<IAdmCompanyOpt> {
 
   @Column({
     comment: '옵션 값',
-    type: DataType.STRING,
+    type: DataType.STRING(50),
   })
   val: string;
 
   @Column({
     comment: '옵션 값(추가)',
-    type: DataType.STRING,
+    type: DataType.STRING(50),
   })
   val_opt: string;
 
   @Column({
     comment: '비고',
-    type: DataType.STRING,
+    type: DataType.STRING(250),
   })
   remark: string;
 
