@@ -2,7 +2,6 @@ import { Transaction } from 'sequelize/types';
 import * as express from 'express';
 import checkArray from '../../utils/checkArray';
 import BaseCtl from '../base.controller';
-import sequelize from '../../models';
 import response from '../../utils/response';
 import testErrorHandlingHelper from '../../utils/testErrorHandlingHelper';
 import OutReceiveRepo from '../../repositories/out/receive.repository';
@@ -26,38 +25,26 @@ import QmsInspResultRepo from '../../repositories/qms/insp-result.repository';
 import StdUnitRepo from '../../repositories/std/unit.repository';
 import StdUnitConvertRepo from '../../repositories/std/unit-convert.repository';
 import isDateFormat from '../../utils/isDateFormat';
+import { getSequelize } from '../../utils/getSequelize';
+import config from '../../configs/config';
 
 class OutReceiveCtl extends BaseCtl {
-  // ✅ Inherited Functions Variable
-  // result: ApiResult<any>;
-
-  // ✅ 부모 Controller (BaseController) 의 repository 변수가 any 로 생성 되어있기 때문에 자식 Controller(this) 에서 Type 지정
-  repo: OutReceiveRepo;
-  detailRepo: OutReceiveDetailRepo;
-  incomeRepo: OutIncomeRepo;
-  storeRepo: InvStoreRepo;
-  inspResultRepo: QmsInspResultRepo;
-
   //#region ✅ Constructor
   constructor() {
     // ✅ 부모 Controller (Base Controller) 의 CRUD Function 과 상속 받는 자식 Controller(this) 의 Repository 를 연결하기 위하여 생성자에서 Repository 생성
-    super(new OutReceiveRepo());
-    this.detailRepo = new OutReceiveDetailRepo();
-    this.incomeRepo = new OutIncomeRepo();
-    this.storeRepo = new InvStoreRepo();
-    this.inspResultRepo = new QmsInspResultRepo();
+    super(OutReceiveRepo);
 
     // ✅ CUD 연산이 실행되기 전 Fk Table 의 uuid 로 id 를 검색하여 request body 에 삽입하기 위하여 정보 Setting
     this.fkIdInfos = [
       {
         key: 'factory',
-        repo: new StdFactoryRepo(),
+        TRepo: StdFactoryRepo,
         idName: 'factory_id',
         uuidName: 'factory_uuid'
       },
       {
         key: 'receive',
-        repo: new OutReceiveRepo(),
+        TRepo: OutReceiveRepo,
         idName: 'receive_id',
         uuidName: 'receive_uuid'
       },
@@ -73,7 +60,13 @@ class OutReceiveCtl extends BaseCtl {
   public create = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       req.body = await this.getBodyIncludedId(req.body);
-      this.result = { raws: [], count: 0 };
+      
+      const sequelize = getSequelize(req.tenant.uuid);
+      const repo = new OutReceiveRepo(req.tenant.uuid);
+      const detailRepo = new OutReceiveDetailRepo(req.tenant.uuid);
+      const incomeRepo = new OutIncomeRepo(req.tenant.uuid);
+      const storeRepo = new InvStoreRepo(req.tenant.uuid);
+      let result: ApiResult<any> = { count: 0, raws: [] };
 
       await sequelize.transaction(async(tran) => { 
         for await (const data of req.body) {
@@ -89,6 +82,7 @@ class OutReceiveCtl extends BaseCtl {
             // 📌 전표번호가 수기 입력되지 않고 자동발행 Option일 경우 번호 자동발행
             if (!header.stmt_no) { 
               header.stmt_no = await new AdmPatternHistoryCtl().getPattern({
+                tenant: req.tenant.uuid,
                 factory_id: header.factory_id,
                 table_nm: 'OUT_RECEIVE_TB',
                 col_nm: 'stmt_no',
@@ -99,7 +93,7 @@ class OutReceiveCtl extends BaseCtl {
               });
             }
 
-            headerResult = await this.repo.create(data.header, req.user?.uid as number, tran);
+            headerResult = await repo.create(data.header, req.user?.uid as number, tran);
             receiveId = headerResult.raws[0].receive_id;
             receiveUuid = headerResult.raws[0].uuid;
 
@@ -108,7 +102,7 @@ class OutReceiveCtl extends BaseCtl {
             receiveId = header.receive_id;
 
             // 📌 Max Seq 계산
-            maxSeq = await this.detailRepo.getMaxSeq(receiveId, tran) as number;
+            maxSeq = await detailRepo.getMaxSeq(receiveId, tran) as number;
           }
 
           data.details = data.details.map((detail: any) => {
@@ -119,18 +113,18 @@ class OutReceiveCtl extends BaseCtl {
           });
 
           // 📌 입하 데이터 생성
-          const detailResult = await this.detailRepo.create(data.details, req.user?.uid as number, tran);
-          headerResult = await this.updateTotal(receiveId, receiveUuid, req.user?.uid as number, tran);
+          const detailResult = await detailRepo.create(data.details, req.user?.uid as number, tran);
+          headerResult = await this.updateTotal(req.tenant.uuid, receiveId, receiveUuid, req.user?.uid as number, tran);
 
           // 📌 입고 데이터 생성
-          const incomeBody = await this.getIncomeBody(detailResult, header.reg_date);
-          const incomeResult = await this.incomeRepo.create(incomeBody, req.user?.uid as number, tran);
+          const incomeBody = await this.getIncomeBody(req.tenant.uuid, detailResult, header.reg_date);
+          const incomeResult = await incomeRepo.create(incomeBody, req.user?.uid as number, tran);
 
           // 📌 수불 데이터 생성
           const storeBody = getStoreBody(incomeResult.raws, 'TO', 'income_id', getTranTypeCd('OUT_INCOME'));
-          const storeResult = await this.storeRepo.create(storeBody, req.user?.uid as number, tran);
+          const storeResult = await storeRepo.create(storeBody, req.user?.uid as number, tran);
 
-          this.result.raws.push({
+          result.raws.push({
             receive: {
               header: headerResult.raws,
               details: detailResult.raws,
@@ -139,13 +133,13 @@ class OutReceiveCtl extends BaseCtl {
             store: storeResult.raws
           });
 
-          this.result.count += headerResult.count + detailResult.count + incomeResult.count + storeResult.count;
+          result.count += headerResult.count + detailResult.count + incomeResult.count + storeResult.count;
         }
       });
 
-      return response(res, this.result.raws, { count: this.result.count }, '', 201);
+      return response(res, result.raws, { count: result.count }, '', 201);
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   };
   //#endregion
@@ -159,48 +153,56 @@ class OutReceiveCtl extends BaseCtl {
   // 📒 Fn[readIncludeDetails]: 입하 데이터의 Header + Detail 함께 조회
   public readIncludeDetails = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
+      const repo = new OutReceiveRepo(req.tenant.uuid);
+      const detailRepo = new OutReceiveDetailRepo(req.tenant.uuid);
+      let result: ApiResult<any> = { count: 0, raws: [] };
+
       const params = Object.assign(req.query, req.params);
       params.receive_uuid = params.uuid;
 
-      const headerResult = await this.repo.readByUuid(params.receive_uuid);
-      const detailsResult = await this.detailRepo.read(params);
+      const headerResult = await repo.readByUuid(params.receive_uuid);
+      const detailsResult = await detailRepo.read(params);
 
-      this.result.raws = [{ header: unsealArray(headerResult.raws), details: detailsResult.raws }];
-      this.result.count = headerResult.count + detailsResult.count;
+      result.raws = [{ header: unsealArray(headerResult.raws), details: detailsResult.raws }];
+      result.count = headerResult.count + detailsResult.count;
       
-      return response(res, this.result.raws, { count: this.result.count });
+      return response(res, result.raws, { count: result.count });
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   };
 
   // 📒 Fn[readDetails]: 입하 데이터의 Detail 조회
   public readDetails = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
+      const detailRepo = new OutReceiveDetailRepo(req.tenant.uuid);
+
       const params = Object.assign(req.query, req.params);
       params.receive_uuid = params.uuid;
 
-      this.result = await this.detailRepo.read(params);
+      const result = await detailRepo.read(params);
       
-      return response(res, this.result.raws, { count: this.result.count });
+      return response(res, result.raws, { count: result.count });
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   };
 
   // 📒 Fn[readReport]: 입하현황 데이터 조회
   public readReport = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
+      const repo = new OutReceiveRepo(req.tenant.uuid);
+
       const params = Object.assign(req.query, req.params);
 
       const sort_type = params.sort_type as string;
       if (![ 'partner', 'prod', 'date' ].includes(sort_type)) { throw new Error('잘못된 sort_type(정렬) 입력') }
 
-      this.result = await this.repo.readReport(params);
+      const result = await repo.readReport(params);
       
-      return response(res, this.result.raws, { count: this.result.count });
+      return response(res, result.raws, { count: result.count });
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   };
 
@@ -212,7 +214,14 @@ class OutReceiveCtl extends BaseCtl {
   public update = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       req.body = await this.getBodyIncludedId(req.body);
-      this.result = { raws: [], count: 0 };
+      
+      const sequelize = getSequelize(req.tenant.uuid);
+      const repo = new OutReceiveRepo(req.tenant.uuid);
+      const detailRepo = new OutReceiveDetailRepo(req.tenant.uuid);
+      const incomeRepo = new OutIncomeRepo(req.tenant.uuid);
+      const storeRepo = new InvStoreRepo(req.tenant.uuid);
+      const inspResultRepo = new QmsInspResultRepo(req.tenant.uuid);
+      let result: ApiResult<any> = { count: 0, raws: [] };
 
       await sequelize.transaction(async(tran) => { 
         for await (const data of req.body) {
@@ -224,23 +233,23 @@ class OutReceiveCtl extends BaseCtl {
           });
 
           // 📌 수입검사 이력이 있을 경우 Interlock
-          const receiveInspResult = await this.inspResultRepo.readOutReceiveByReceiveUuids(receiveDetailUuids);
+          const receiveInspResult = await inspResultRepo.readOutReceiveByReceiveUuids(receiveDetailUuids);
           if (receiveInspResult.raws.length > 0) { throw new Error(`입하상세번호 ${receiveInspResult.raws[0].uuid}의 수입검사 이력이 등록되어 수정할 수 없습니다.`); }
 
           // 📌 입하 데이터 수정
-          await this.repo.update(data.header, req.user?.uid as number, tran);
-          const detailResult = await this.detailRepo.update(data.details, req.user?.uid as number, tran);
-          const headerResult = await this.updateTotal(data.header[0].receive_id, data.header[0].uuid, req.user?.uid as number, tran);
+          await repo.update(data.header, req.user?.uid as number, tran);
+          const detailResult = await detailRepo.update(data.details, req.user?.uid as number, tran);
+          const headerResult = await this.updateTotal(req.tenant.uuid, data.header[0].receive_id, data.header[0].uuid, req.user?.uid as number, tran);
 
           // 📌 입고 데이터 수정
-          const incomeBody = await this.getIncomeBody(data.details);
-          const incomeResult = await this.incomeRepo.updateToPk(incomeBody, req.user?.uid as number, tran);
+          const incomeBody = await this.getIncomeBody(req.tenant.uuid, data.details);
+          const incomeResult = await incomeRepo.updateToPk(incomeBody, req.user?.uid as number, tran);
 
           // 📌 수불 데이터 수정
           const storeBody = getStoreBody(incomeResult.raws, 'TO', 'income_id', getTranTypeCd('OUT_INCOME'));
-          const storeResult = await this.storeRepo.updateToTransaction(storeBody, req.user?.uid as number, tran);
+          const storeResult = await storeRepo.updateToTransaction(storeBody, req.user?.uid as number, tran);
 
-          this.result.raws.push({
+          result.raws.push({
             receive: {
               header: headerResult.raws,
               details: detailResult.raws,
@@ -249,13 +258,13 @@ class OutReceiveCtl extends BaseCtl {
             store: storeResult.raws
           });
 
-          this.result.count += headerResult.count + detailResult.count + incomeResult.count + storeResult.count;
+          result.count += headerResult.count + detailResult.count + incomeResult.count + storeResult.count;
         }
       });
       
-      return response(res, this.result.raws, { count: this.result.count }, '', 201);
+      return response(res, result.raws, { count: result.count }, '', 201);
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   };
   
@@ -267,7 +276,14 @@ class OutReceiveCtl extends BaseCtl {
   public patch = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       req.body = await this.getBodyIncludedId(req.body);
-      this.result = { raws: [], count: 0 };
+      
+      const sequelize = getSequelize(req.tenant.uuid);
+      const repo = new OutReceiveRepo(req.tenant.uuid);
+      const detailRepo = new OutReceiveDetailRepo(req.tenant.uuid);
+      const incomeRepo = new OutIncomeRepo(req.tenant.uuid);
+      const storeRepo = new InvStoreRepo(req.tenant.uuid);
+      const inspResultRepo = new QmsInspResultRepo(req.tenant.uuid);
+      let result: ApiResult<any> = { count: 0, raws: [] };
 
       await sequelize.transaction(async(tran) => { 
         for await (const data of req.body) {
@@ -279,23 +295,23 @@ class OutReceiveCtl extends BaseCtl {
           });
 
           // 📌 수입검사 이력이 있을 경우 Interlock
-          const receiveInspResult = await this.inspResultRepo.readOutReceiveByReceiveUuids(receiveDetailUuids);
+          const receiveInspResult = await inspResultRepo.readOutReceiveByReceiveUuids(receiveDetailUuids);
           if (receiveInspResult.raws.length > 0) { throw new Error(`입하상세번호 ${receiveInspResult.raws[0].uuid}의 수입검사 이력이 등록되어 수정할 수 없습니다.`); }
 
           // 📌 입하 데이터 수정
-          await this.repo.patch(data.header, req.user?.uid as number, tran);
-          const detailResult = await this.detailRepo.patch(data.details, req.user?.uid as number, tran);
-          const headerResult = await this.updateTotal(data.header[0].receive_id, data.header[0].uuid, req.user?.uid as number, tran);
+          await repo.patch(data.header, req.user?.uid as number, tran);
+          const detailResult = await detailRepo.patch(data.details, req.user?.uid as number, tran);
+          const headerResult = await this.updateTotal(req.tenant.uuid, data.header[0].receive_id, data.header[0].uuid, req.user?.uid as number, tran);
 
           // 📌 입고 데이터 수정
-          const incomeBody = await this.getIncomeBody(data.details);
-          const incomeResult = await this.incomeRepo.updateToPk(incomeBody, req.user?.uid as number, tran);
+          const incomeBody = await this.getIncomeBody(req.tenant.uuid, data.details);
+          const incomeResult = await incomeRepo.updateToPk(incomeBody, req.user?.uid as number, tran);
 
           // 📌 수불 데이터 수정
           const storeBody = getStoreBody(incomeResult.raws, 'TO', 'income_id', getTranTypeCd('OUT_INCOME'));
-          const storeResult = await this.storeRepo.updateToTransaction(storeBody, req.user?.uid as number, tran);
+          const storeResult = await storeRepo.updateToTransaction(storeBody, req.user?.uid as number, tran);
 
-          this.result.raws.push({
+          result.raws.push({
             receive: {
               header: headerResult.raws,
               details: detailResult.raws,
@@ -304,13 +320,13 @@ class OutReceiveCtl extends BaseCtl {
             store: storeResult.raws
           });
 
-          this.result.count += headerResult.count + detailResult.count + incomeResult.count + storeResult.count;
+          result.count += headerResult.count + detailResult.count + incomeResult.count + storeResult.count;
         }
       });
 
-      return response(res, this.result.raws, { count: this.result.count }, '', 201);
+      return response(res, result.raws, { count: result.count }, '', 201);
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   };
   
@@ -322,7 +338,14 @@ class OutReceiveCtl extends BaseCtl {
   public delete = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       req.body = await this.getBodyIncludedId(req.body);
-      this.result = { raws: [], count: 0 };
+      
+      const sequelize = getSequelize(req.tenant.uuid);
+      const repo = new OutReceiveRepo(req.tenant.uuid);
+      const detailRepo = new OutReceiveDetailRepo(req.tenant.uuid);
+      const incomeRepo = new OutIncomeRepo(req.tenant.uuid);
+      const storeRepo = new InvStoreRepo(req.tenant.uuid);
+      const inspResultRepo = new QmsInspResultRepo(req.tenant.uuid);
+      let result: ApiResult<any> = { count: 0, raws: [] };
 
       await sequelize.transaction(async(tran) => { 
         for await (const data of req.body) {
@@ -330,10 +353,10 @@ class OutReceiveCtl extends BaseCtl {
           const receiveDetailUuids = data.details.map((detail: any) => { return detail.uuid; });
 
           // 📌 수입검사 이력이 있을 경우 Interlock
-          const receiveInspResult = await this.inspResultRepo.readOutReceiveByReceiveUuids(receiveDetailUuids);
+          const receiveInspResult = await inspResultRepo.readOutReceiveByReceiveUuids(receiveDetailUuids);
           if (receiveInspResult.raws.length > 0) { throw new Error(`입하상세번호 ${receiveInspResult.raws[0].uuid}의 수입검사 이력이 등록되어 삭제할 수 없습니다.`); }
 
-          const incomeIds = await this.incomeRepo.readIncomeIdsToReceiveDetailUuids(receiveDetailUuids);
+          const incomeIds = await incomeRepo.readIncomeIdsToReceiveDetailUuids(receiveDetailUuids);
           const deleteBody = incomeIds.map((incomeId: number) => {
             return {
               income_id: incomeId,
@@ -344,21 +367,21 @@ class OutReceiveCtl extends BaseCtl {
           });
 
           // 📌 수불 내역 삭제
-          const storeResult = await this.storeRepo.deleteToTransaction(deleteBody, req.user?.uid as number, tran);
+          const storeResult = await storeRepo.deleteToTransaction(deleteBody, req.user?.uid as number, tran);
           // 📌 입고 내역 삭제
-          const incomeResult = await this.incomeRepo.deleteToPk(deleteBody, req.user?.uid as number, tran);
+          const incomeResult = await incomeRepo.deleteToPk(deleteBody, req.user?.uid as number, tran);
           // 📌 입하 내역 삭제
-          const detailResult = await this.detailRepo.delete(data.details, req.user?.uid as number, tran);
-          const count = await this.detailRepo.getCount(data.header[0].receive_id, tran);
+          const detailResult = await detailRepo.delete(data.details, req.user?.uid as number, tran);
+          const count = await detailRepo.getCount(data.header[0].receive_id, tran);
 
           let headerResult: ApiResult<any>;
           if (count == 0) {
-            headerResult = await this.repo.delete(data.header, req.user?.uid as number, tran);
+            headerResult = await repo.delete(data.header, req.user?.uid as number, tran);
           } else {
-            headerResult = await this.updateTotal(data.header[0].receive_id, data.header[0].uuid, req.user?.uid as number, tran);
+            headerResult = await this.updateTotal(req.tenant.uuid, data.header[0].receive_id, data.header[0].uuid, req.user?.uid as number, tran);
           }
 
-          this.result.raws.push({
+          result.raws.push({
             receive: {
               header: headerResult.raws,
               details: detailResult.raws,
@@ -367,13 +390,13 @@ class OutReceiveCtl extends BaseCtl {
             store: storeResult.raws
           });
 
-          this.result.count += headerResult.count + detailResult.count + incomeResult.count + storeResult.count;
+          result.count += headerResult.count + detailResult.count + incomeResult.count + storeResult.count;
         }
       });
   
-      return response(res, this.result.raws, { count: this.result.count }, '', 200);
+      return response(res, result.raws, { count: result.count }, '', 200);
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   };
 
@@ -419,19 +442,19 @@ class OutReceiveCtl extends BaseCtl {
           [...this.fkIdInfos, 
             {
               key: 'uuid',
-              repo: new OutReceiveRepo(),
+              TRepo: OutReceiveRepo,
               idName: 'receive_id',
               uuidName: 'uuid'
             },
             {
               key: 'partner',
-              repo: new StdPartnerRepo(),
+              TRepo: StdPartnerRepo,
               idName: 'partner_id',
               uuidName: 'partner_uuid'
             },
             {
               key: 'supplier',
-              repo: new StdSupplierRepo(),
+              TRepo: StdSupplierRepo,
               idName: 'supplier_id',
               uuidName: 'supplier_uuid'
             },
@@ -443,51 +466,51 @@ class OutReceiveCtl extends BaseCtl {
         [...this.fkIdInfos, 
           {
             key: 'uuid',
-            repo: new OutReceiveDetailRepo(),
+            TRepo: OutReceiveDetailRepo,
             idName: 'receive_detail_id',
             uuidName: 'uuid'
           },
           {
             key: 'prod',
-            repo: new StdProdRepo(),
+            TRepo: StdProdRepo,
             idName: 'prod_id',
             uuidName: 'prod_uuid'
           },
           {
             key: 'unit',
-            repo: new StdUnitRepo(),
+            TRepo: StdUnitRepo,
             idName: 'unit_id',
             uuidName: 'unit_uuid'
           },
           {
             key: 'moneyUnit',
-            repo: new StdMoneyUnitRepo(),
+            TRepo: StdMoneyUnitRepo,
             idName: 'money_unit_id',
             uuidName: 'money_unit_uuid'
           },
           {
             key: 'orderDetail',
-            repo: new MatOrderDetailRepo(),
+            TRepo: MatOrderDetailRepo,
             idName: 'order_detail_id',
             uuidName: 'order_detail_uuid'
           },
           {
             key: 'toStore',
-            repo: new StdStoreRepo(),
+            TRepo: StdStoreRepo,
             idName: 'store_id',
             idAlias: 'to_store_id',
             uuidName: 'to_store_uuid'
           },
           {
             key: 'toLocation',
-            repo: new StdLocationRepo(),
+            TRepo: StdLocationRepo,
             idName: 'location_id',
             idAlias: 'to_location_id',
             uuidName: 'to_location_uuid'
           },
           {
             key: 'income',
-            repo: new OutIncomeRepo(),
+            TRepo: OutIncomeRepo,
             idName: 'income_id',
             uuidName: 'income_uuid'
           },
@@ -507,10 +530,10 @@ class OutReceiveCtl extends BaseCtl {
    * @param _regDate 
    * @returns 
    */
-  getIncomeBody = async (_body: any, _regDate?: string) => {
+  getIncomeBody = async (tenant: string, _body: any, _regDate?: string) => {
     const result: any[] = [];
-    const prodRepo = new StdProdRepo();
-    const unitConvertRepo = new StdUnitConvertRepo();
+    const prodRepo = new StdProdRepo(tenant);
+    const unitConvertRepo = new StdUnitConvertRepo(tenant);
     const datas = _body.raws ?? _body;
     
     for await (const data of datas) {
@@ -550,12 +573,15 @@ class OutReceiveCtl extends BaseCtl {
    * @param _transaction Transaction
    * @returns 합계 금액, 수량이 계산 된 전표 결과
    */
-  updateTotal = async (_id: number, _uuid: string, _uid: number, _transaction?: Transaction) => {
-    const getTotals = await this.detailRepo.getTotals(_id, _transaction);
+  updateTotal = async (tenant: string, _id: number, _uuid: string, _uid: number, _transaction?: Transaction) => {
+    const repo = new OutReceiveRepo(tenant);
+    const detailRepo = new OutReceiveDetailRepo(tenant);
+
+    const getTotals = await detailRepo.getTotals(_id, _transaction);
     const totalQty = getTotals?.totalQty;
     const totalPrice = getTotals?.totalPrice;
 
-    const result = await this.repo.patch(
+    const result = await repo.patch(
       [{ 
         total_qty: totalQty,
         total_price: totalPrice,

@@ -1,22 +1,26 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
-import sequelize from '../../models';
+import { Sequelize } from 'sequelize-typescript';
 import convertBulkResult from '../../utils/convertBulkResult';
 import convertResult from '../../utils/convertResult';
-import { Op, Sequelize, Transaction, UniqueConstraintError } from 'sequelize';
+import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
+import { getSequelize } from '../../utils/getSequelize';
 import OutReceiveDetail from '../../models/out/receive-detail.model';
 import IOutReceiveDetail from '../../interfaces/out/receive-detail.interface';
 import { readReceiveDetails } from '../../queries/out/receive-detail.query';
-// import { readReceiveDetails } from '../../queries/out/receive-detail.query';
 
 class OutReceiveDetailRepo {
   repo: Repository<OutReceiveDetail>;
+  sequelize: Sequelize;
+  tenant: string;
 
   //#region ✅ Constructor
-  constructor() {
-    this.repo = sequelize.getRepository(OutReceiveDetail);
+  constructor(tenant: string) {
+    this.tenant = tenant;
+    this.sequelize = getSequelize(tenant);
+    this.repo = this.sequelize.getRepository(OutReceiveDetail);
   }
   //#endregion
 
@@ -70,7 +74,7 @@ class OutReceiveDetailRepo {
   // 📒 Fn[read]: Default Read Function
   public read = async(params?: any) => {
     try {
-      const result = await sequelize.query(
+      const result = await this.sequelize.query(
         readReceiveDetails(undefined, params.receive_uuid, params.factory_uuid, params.partner_uuid, params.complete_state, params.start_date, params.end_date)
       );
 
@@ -83,7 +87,7 @@ class OutReceiveDetailRepo {
   // 📒 Fn[readByUuid]: Default Read With Uuid Function
   public readByUuid = async(uuid: string, params?: any) => {
     try {
-      const result = await sequelize.query(
+      const result = await this.sequelize.query(
         readReceiveDetails(uuid)
       );
 
@@ -141,7 +145,7 @@ class OutReceiveDetailRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.OutReceiveDetail.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.OutReceiveDetail.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -185,7 +189,7 @@ class OutReceiveDetailRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.OutReceiveDetail.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.OutReceiveDetail.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -208,7 +212,7 @@ class OutReceiveDetailRepo {
         count += await this.repo.destroy({ where: { uuid: receiveDetail.uuid }, transaction});
       };
 
-      await new AdmLogRepo().create('delete', sequelize.models.OutReceiveDetail.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.OutReceiveDetail.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
     } catch (error) {
       throw error;

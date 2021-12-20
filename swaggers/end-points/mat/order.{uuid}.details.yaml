@@ -119,6 +119,7 @@ get:
                             - $ref: ../../schemas/mat/order-detail.schema.yaml#/to_location_nm
                             - $ref: ../../schemas/mat/order-detail.schema.yaml#/qty
                             - $ref: ../../schemas/mat/order-detail.schema.yaml#/balance
+                            - $ref: ../../schemas/mat/order-detail.schema.yaml#/complete_fg
                             - $ref: ../../schemas/mat/order-detail.schema.yaml#/complete_state
                             - $ref: ../../schemas/mat/order-detail.schema.yaml#/price
                             - $ref: ../../schemas/mat/order-detail.schema.yaml#/money_unit_uuid

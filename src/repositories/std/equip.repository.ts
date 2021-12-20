@@ -1,20 +1,25 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
 import StdEquip from '../../models/std/equip.model';
 import IStdEquip from '../../interfaces/std/equip.interface';
-import sequelize from '../../models';
+import { Sequelize } from 'sequelize-typescript';
 import convertBulkResult from '../../utils/convertBulkResult';
 import convertResult from '../../utils/convertResult';
-import { Op , Sequelize, Transaction, UniqueConstraintError } from 'sequelize';
+import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
+import { getSequelize } from '../../utils/getSequelize';
 
 class StdEquipRepo {
   repo: Repository<StdEquip>;
+  sequelize: Sequelize;
+  tenant: string;
 
   //#region ✅ Constructor
-  constructor() {
-    this.repo = sequelize.getRepository(StdEquip);
+  constructor(tenant: string) {
+    this.tenant = tenant;
+    this.sequelize = getSequelize(tenant);
+    this.repo = this.sequelize.getRepository(StdEquip);
   }
   //#endregion
 
@@ -32,6 +37,7 @@ class StdEquipRepo {
           equip_cd: equip.equip_cd,
           equip_nm: equip.equip_nm,
           use_fg: equip.use_fg,
+          prd_fg: equip.prd_fg,
           remark: equip.remark,
           created_uid: uid,
           updated_uid: uid,
@@ -57,19 +63,19 @@ class StdEquipRepo {
       const result = await this.repo.findAll({ 
         include: [
           { 
-            model: sequelize.models.StdFactory, 
+            model: this.sequelize.models.StdFactory, 
             attributes: [], 
             required: true, 
             where: { uuid: params.factory_uuid ? params.factory_uuid : { [Op.ne]: null } }
           },
           { 
-            model: sequelize.models.StdEquipType, 
+            model: this.sequelize.models.StdEquipType, 
             attributes: [], 
             required: false, 
             where: { uuid: params.equip_type_uuid ? params.equip_type_uuid : { [Op.ne]: null } }
           },
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('stdEquip.uuid'), 'equip_uuid' ],
@@ -82,6 +88,7 @@ class StdEquipRepo {
           'equip_cd',
           'equip_nm',
           'use_fg',
+          'prd_fg',
           'remark',
           'created_at',
           [ Sequelize.col('createUser.user_nm'), 'created_nm' ],
@@ -102,10 +109,10 @@ class StdEquipRepo {
     try {
       const result = await this.repo.findOne({ 
         include: [
-          { model: sequelize.models.StdFactory, attributes: [], required: true },
-          { model: sequelize.models.StdEquipType, attributes: [], required: false },
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.StdFactory, attributes: [], required: true },
+          { model: this.sequelize.models.StdEquipType, attributes: [], required: false },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('stdEquip.uuid'), 'equip_uuid' ],
@@ -118,6 +125,7 @@ class StdEquipRepo {
           'equip_cd',
           'equip_nm',
           'use_fg',
+          'prd_fg',
           'remark',
           'created_at',
           [ Sequelize.col('createUser.user_nm'), 'created_nm' ],
@@ -178,6 +186,7 @@ class StdEquipRepo {
             equip_cd: equip.equip_cd != null ? equip.equip_cd : null,
             equip_nm: equip.equip_nm != null ? equip.equip_nm : null,
             use_fg: equip.use_fg != null ? equip.use_fg : null,
+            prd_fg: equip.prd_fg != null ? equip.prd_fg : null,
             remark: equip.remark != null ? equip.remark : null,
             updated_uid: uid,
           } as any,
@@ -192,7 +201,7 @@ class StdEquipRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.StdEquip.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdEquip.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -218,6 +227,7 @@ class StdEquipRepo {
             equip_cd: equip.equip_cd,
             equip_nm: equip.equip_nm,
             use_fg: equip.use_fg,
+            prd_fg: equip.prd_fg,
             remark: equip.remark,
             updated_uid: uid,
           },
@@ -232,7 +242,7 @@ class StdEquipRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.StdEquip.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdEquip.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -255,7 +265,7 @@ class StdEquipRepo {
         count += await this.repo.destroy({ where: { uuid: equip.uuid }, transaction});
       };
 
-      await new AdmLogRepo().create('delete', sequelize.models.StdEquip.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.StdEquip.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
     } catch (error) {
       throw error;

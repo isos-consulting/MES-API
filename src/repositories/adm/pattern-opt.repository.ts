@@ -1,21 +1,25 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
 import AdmPatternOpt from '../../models/adm/pattern-opt.model';
 import IAdmPatternOpt from '../../interfaces/adm/pattern-opt.interface';
-import sequelize from '../../models';
+import { Sequelize } from 'sequelize-typescript';
 import convertBulkResult from '../../utils/convertBulkResult';
 import convertResult from '../../utils/convertResult';
-import { Op, Sequelize, Transaction } from 'sequelize';
-import { UniqueConstraintError } from 'sequelize';
+import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
+import { getSequelize } from '../../utils/getSequelize';
 
 class AdmPatternOptRepo {
   repo: Repository<AdmPatternOpt>;
+  sequelize: Sequelize;
+  tenant: string;
 
   //#region ✅ Constructor
-  constructor() {
-    this.repo = sequelize.getRepository(AdmPatternOpt);
+  constructor(tenant: string) {
+    this.tenant = tenant;
+    this.sequelize = getSequelize(tenant);
+    this.repo = this.sequelize.getRepository(AdmPatternOpt);
   }
   //#endregion
 
@@ -46,8 +50,8 @@ class AdmPatternOptRepo {
 			throw error;
 		}
 	};
-		
-		//#endregion
+	//#endregion
+
   //#region 🔵 Read Functions
   
   // 📒 Fn[read]: Default Read Function
@@ -55,8 +59,8 @@ class AdmPatternOptRepo {
     try {
       const result = await this.repo.findAll({ 
         include: [
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
 					[ Sequelize.col('admPatternOpt.uuid'), 'pattern_opt_uuid' ],
@@ -66,6 +70,7 @@ class AdmPatternOptRepo {
           'auto_fg',
           'col_nm',
           'pattern',
+					'sortby',
           'created_at',
           [ Sequelize.col('createUser.user_nm'), 'created_nm' ],
           'updated_at',
@@ -107,8 +112,8 @@ class AdmPatternOptRepo {
 		try {
 			const result = await this.repo.findOne({ 
 				include: [
-					{ model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-					{ model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+					{ model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+					{ model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
 				],
 				attributes: [
 					[ Sequelize.col('admPatternOpt.uuid'), 'pattern_opt_uuid' ],
@@ -118,32 +123,13 @@ class AdmPatternOptRepo {
           'auto_fg',
           'col_nm',
           'pattern',
+					'sortby',
           'created_at',
 					[ Sequelize.col('createUser.user_nm'), 'created_nm' ],
 					'updated_at',
 					[ Sequelize.col('updateUser.user_nm'), 'updated_nm' ]
 				],
 				where: { uuid },
-			});
-
-			return convertReadResult(result);
-		} catch (error) {
-			throw error;
-		}
-	};
-
-	public readForSignIn = async() => {
-		try {
-			const result = await this.repo.findAll({
-				attributes: [
-					[ Sequelize.col('admPatternOpt.uuid'), 'pattern_opt_uuid' ],
-					'pattern_opt_cd',
-          'pattern_opt_nm',
-          'table_nm',
-          'auto_fg',
-          'col_nm',
-          'pattern',
-				]
 			});
 
 			return convertReadResult(result);
@@ -204,7 +190,7 @@ class AdmPatternOptRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.StdFactory.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.AdmPatternOpt.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -246,7 +232,7 @@ class AdmPatternOptRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.StdFactory.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.AdmPatternOpt.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -269,7 +255,7 @@ class AdmPatternOptRepo {
         count += await this.repo.destroy({ where: { uuid: pattern_opt.uuid }, transaction});
       };
 
-      await new AdmLogRepo().create('delete', sequelize.models.StdFactory.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.AdmPatternOpt.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
     } catch (error) {
       throw error;

@@ -1,6 +1,7 @@
 import moment = require('moment');
 import IQmsRework from '../../interfaces/qms/rework.interface';
 import BaseMigration from '../base-migration';
+import config from '../../configs/config';
 
 // Seed Datas
 const seedDatas: IQmsRework[] = [
@@ -474,7 +475,7 @@ const seedDatas: IQmsRework[] = [
 	}
 ];
 
-const baseMigration = new BaseMigration('QmsRework', 'rework_id', process.env.DB_RESET_TYPE === 'test' ? seedDatas : []);
+const baseMigration = new BaseMigration('QmsRework', 'rework_id', config.db.reset_type === 'test' ? seedDatas : []);
 const migration = baseMigration.migration;
 const migrationUndo = baseMigration.migrationUndo;
 

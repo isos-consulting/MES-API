@@ -10,38 +10,22 @@ import StdProcRepo from '../../repositories/std/proc.repository';
 import convertWeekByMonth from '../../utils/convertWeekByMonth';
 
 class AdmPatternHistoryCtl extends BaseCtl {
-  // ✅ Inherited Functions Variable
-  // result: ApiResult<any>;
-
-  // ✅ 부모 Controller (BaseController) 의 repository 변수가 any 로 생성 되어있기 때문에 자식 Controller(this) 에서 Type 지정
-  repo: AdmPatternHistoryRepo;
-  patternOptRepo: AdmPatternOptRepo;
-  shiftRepo: StdShiftRepo;
-  equipRepo: StdEquipRepo;
-  partnerRepo: StdPartnerRepo;
-  procRepo: StdProcRepo;
-
   //#region ✅ Constructor
   constructor() {
     // ✅ 부모 Controller (Base Controller) 의 CRUD Function 과 상속 받는 자식 Controller(this) 의 Repository 를 연결하기 위하여 생성자에서 Repository 생성
-    super(new AdmPatternHistoryRepo());
-    this.patternOptRepo = new AdmPatternOptRepo();
-    this.shiftRepo = new StdShiftRepo();
-    this.equipRepo = new StdEquipRepo();
-    this.partnerRepo = new StdPartnerRepo();
-    this.procRepo = new StdProcRepo();
+    super(AdmPatternHistoryRepo);
 
     // ✅ CUD 연산이 실행되기 전 Fk Table 의 uuid 로 id 를 검색하여 request body 에 삽입하기 위하여 정보 Setting
-    // this.fkIdInfos = [
+    // fkIdInfos = [
     //   {
     //     key: 'factory',
-    //     repo: new StdFactoryRepo(),
+    //     TRepo: new StdFactoryRepo(),
     //     idName: 'factory_id',
     //     uuidName: 'factory_uuid'
     //   },
     //   {
     //     key: 'receive',
-    //     repo: new AdmPatternHistoryRepo(),
+    //     TRepo: new AdmPatternHistoryRepo(),
     //     idName: 'receive_id',
     //     uuidName: 'receive_uuid'
     //   },
@@ -55,6 +39,7 @@ class AdmPatternHistoryCtl extends BaseCtl {
    * @returns 자동발행 번호
    */
   public getPattern = async (params: {
+    tenant: string,
     factory_id: number,
     table_nm: string,
     col_nm: string,
@@ -66,13 +51,20 @@ class AdmPatternHistoryCtl extends BaseCtl {
     uid: number,
     tran: Transaction
   }) => {
+    const repo = new AdmPatternHistoryRepo(params.tenant);
+    const patternOptRepo = new AdmPatternOptRepo(params.tenant);
+    const shiftRepo = new StdShiftRepo(params.tenant);
+    const equipRepo = new StdEquipRepo(params.tenant);
+    const partnerRepo = new StdPartnerRepo(params.tenant);
+    const procRepo = new StdProcRepo(params.tenant);
+    
     // 📌 Table 및 Column명을 통하여 자동발행 패턴 검색
-    const pattern = await this.patternOptRepo.readPattern({ table_nm: params.table_nm, col_nm: params.col_nm });
+    const pattern = await patternOptRepo.readPattern({ table_nm: params.table_nm, col_nm: params.col_nm });
     // 📌 자동발행 패턴이 없을 경우 Return
     if (!pattern) { return null; }
     
     // 📌 해당 자동발행 패턴의 Max Seq 검색
-    const maxSeq = await this.repo.getMaxSeq({
+    const maxSeq = await repo.getMaxSeq({
       factory_id: params.factory_id,
       table_nm: params.table_nm,
       col_nm: params.col_nm, 
@@ -83,7 +75,7 @@ class AdmPatternHistoryCtl extends BaseCtl {
 
     if (maxSeq == 0) {
       // 📌 Max Seq가 없을 경우 Seq 새로 입력
-      await this.repo.create([{
+      await repo.create([{
         factory_id: params.factory_id, 
         table_nm: params.table_nm, 
         col_nm: params.col_nm, 
@@ -93,7 +85,7 @@ class AdmPatternHistoryCtl extends BaseCtl {
       }], params.uid, params.tran)
     } else {
       // 📌 기존 Max Seq에 사용한 Seq 입력
-      await this.repo.updateSeqByGroup({ 
+      await repo.updateSeqByGroup({ 
         factory_id: params.factory_id, 
         table_nm: params.table_nm, 
         col_nm: params.col_nm, 
@@ -115,10 +107,10 @@ class AdmPatternHistoryCtl extends BaseCtl {
     result = result.replace('{WW}', moment(params.reg_date).format('WW'));
 
     // 📌 기준정보와 연결된 패턴 데이터 Replace
-    if (result.indexOf('{DN}') >= 0) { result = result.replace('{DN}', (await this.shiftRepo.readRawByUuid(params.shift_uuid as string)).raws[0].shift_nm); }
-    if (result.indexOf('{EQ}') >= 0) { result = result.replace('{EQ}', (await this.equipRepo.readRawByUuid(params.equip_uuid as string)).raws[0].equip_cd); }
-    if (result.indexOf('{PT}') >= 0) { result = result.replace('{PT}', (await this.partnerRepo.readRawByUuid(params.partner_uuid as string)).raws[0].partner_cd); }
-    if (result.indexOf('{PC}') >= 0) { result = result.replace('{PC}', (await this.procRepo.readRawByUuid(params.proc_uuid as string)).raws[0].proc_cd); }
+    if (result.indexOf('{DN}') >= 0) { result = result.replace('{DN}', (await shiftRepo.readRawByUuid(params.shift_uuid as string)).raws[0].shift_nm); }
+    if (result.indexOf('{EQ}') >= 0) { result = result.replace('{EQ}', (await equipRepo.readRawByUuid(params.equip_uuid as string)).raws[0].equip_cd); }
+    if (result.indexOf('{PT}') >= 0) { result = result.replace('{PT}', (await partnerRepo.readRawByUuid(params.partner_uuid as string)).raws[0].partner_cd); }
+    if (result.indexOf('{PC}') >= 0) { result = result.replace('{PC}', (await procRepo.readRawByUuid(params.proc_uuid as string)).raws[0].proc_cd); }
 
     // 📌 Seq의 자리수에 따라 데이터 Replace
     const re = new RegExp(/{0*}/);

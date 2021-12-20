@@ -1,21 +1,26 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
-import sequelize from '../../models';
+import { Sequelize } from 'sequelize-typescript';
 import convertBulkResult from '../../utils/convertBulkResult';
 import convertResult from '../../utils/convertResult';
-import { Op, Sequelize, Transaction, UniqueConstraintError } from 'sequelize';
+import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
+import { getSequelize } from '../../utils/getSequelize';
 import PrdWorkReject from '../../models/prd/work-reject.model';
 import IPrdWorkReject from '../../interfaces/prd/work-reject.interface';
 import { readWorkRejectReport } from '../../queries/prd/work-reject-report.query';
 
 class PrdWorkRejectRepo {
   repo: Repository<PrdWorkReject>;
+  sequelize: Sequelize;
+  tenant: string;
 
   //#region ✅ Constructor
-  constructor() {
-    this.repo = sequelize.getRepository(PrdWorkReject);
+  constructor(tenant: string) {
+    this.tenant = tenant;
+    this.sequelize = getSequelize(tenant);
+    this.repo = this.sequelize.getRepository(PrdWorkReject);
   }
   //#endregion
 
@@ -60,43 +65,43 @@ class PrdWorkRejectRepo {
       const result = await this.repo.findAll({ 
         include: [
           { 
-            model: sequelize.models.StdFactory, 
+            model: this.sequelize.models.StdFactory, 
             attributes: [], 
             required: true,
             where: params.factory_uuid ? { uuid: params.factory_uuid } : {}
           },
           { 
-            model: sequelize.models.PrdWork,
+            model: this.sequelize.models.PrdWork,
             attributes: [], 
             required: true,
           where: params.work_uuid ? { uuid: params.work_uuid } : {}
           },
           { 
-            model: sequelize.models.PrdWorkRouting, 
+            model: this.sequelize.models.PrdWorkRouting, 
             attributes: [], 
             required: false,
             include: [
-              { model: sequelize.models.StdProc, attributes: [], required: false },
-              { model: sequelize.models.StdWorkings, attributes: [], required: false },
-              { model: sequelize.models.StdEquip, attributes: [], required: false },
+              { model: this.sequelize.models.StdProc, attributes: [], required: false },
+              { model: this.sequelize.models.StdWorkings, attributes: [], required: false },
+              { model: this.sequelize.models.StdEquip, attributes: [], required: false },
             ]
           },
           { 
-            model: sequelize.models.StdReject,
+            model: this.sequelize.models.StdReject,
             attributes: [],
             required: true,
             include: [{ 
-              model: sequelize.models.StdRejectType,
+              model: this.sequelize.models.StdRejectType,
               attributes: [],
               required: false,
               where: params.reject_type_uuid ? { uuid: params.reject_type_uuid } : {}
             }],
             where: params.reject_uuid ? { uuid: params.reject_uuid } : {}
           },
-          { model: sequelize.models.StdStore, attributes: [], required: false },
-          { model: sequelize.models.StdLocation, attributes: [], required: false },
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.StdStore, attributes: [], required: false },
+          { model: this.sequelize.models.StdLocation, attributes: [], required: false },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('prdWorkReject.uuid'), 'work_reject_uuid' ],
@@ -148,28 +153,28 @@ class PrdWorkRejectRepo {
     try {
       const result = await this.repo.findOne({ 
         include: [
-          { model: sequelize.models.StdFactory, attributes: [], required: true },
-          { model: sequelize.models.PrdWork, attributes: [], required: true },
+          { model: this.sequelize.models.StdFactory, attributes: [], required: true },
+          { model: this.sequelize.models.PrdWork, attributes: [], required: true },
           { 
-            model: sequelize.models.PrdWorkRouting, 
+            model: this.sequelize.models.PrdWorkRouting, 
             attributes: [], 
             required: false,
             include: [
-              { model: sequelize.models.StdProc, attributes: [], required: false },
-              { model: sequelize.models.StdWorkings, attributes: [], required: false },
-              { model: sequelize.models.StdEquip, attributes: [], required: false },
+              { model: this.sequelize.models.StdProc, attributes: [], required: false },
+              { model: this.sequelize.models.StdWorkings, attributes: [], required: false },
+              { model: this.sequelize.models.StdEquip, attributes: [], required: false },
             ]
           },
           { 
-            model: sequelize.models.StdReject,
+            model: this.sequelize.models.StdReject,
             attributes: [],
             required: true,
-            include: [{ model: sequelize.models.StdRejectType, attributes: [], required: false }]
+            include: [{ model: this.sequelize.models.StdRejectType, attributes: [], required: false }]
           },
-          { model: sequelize.models.StdStore, attributes: [], required: false },
-          { model: sequelize.models.StdLocation, attributes: [], required: false },
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.StdStore, attributes: [], required: false },
+          { model: this.sequelize.models.StdLocation, attributes: [], required: false },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('prdWorkReject.uuid'), 'work_reject_uuid' ],
@@ -237,7 +242,7 @@ class PrdWorkRejectRepo {
   // 📒 Fn[readReport]: Read Order Repot Function
   public readReport = async(params?: any) => {
     try {
-      const result = await sequelize.query(readWorkRejectReport(params));
+      const result = await this.sequelize.query(readWorkRejectReport(params));
       return convertReadResult(result[0]);
     } catch (error) {
       throw error;
@@ -287,7 +292,7 @@ class PrdWorkRejectRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.PrdWorkReject.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.PrdWorkReject.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -324,7 +329,7 @@ class PrdWorkRejectRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.PrdWorkReject.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.PrdWorkReject.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -347,7 +352,7 @@ class PrdWorkRejectRepo {
         count += await this.repo.destroy({ where: { uuid: workReject.uuid }, transaction});
       };
 
-      await new AdmLogRepo().create('delete', sequelize.models.PrdWorkReject.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.PrdWorkReject.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
     } catch (error) {
       throw error;
@@ -363,7 +368,7 @@ class PrdWorkRejectRepo {
 
       count += await this.repo.destroy({ where: { work_id: workId }, transaction});
 
-      await new AdmLogRepo().create('delete', sequelize.models.PrdWorkReject.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.PrdWorkReject.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
     } catch (error) {
       throw error;

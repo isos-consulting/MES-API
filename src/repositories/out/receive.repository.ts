@@ -1,21 +1,26 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
-import sequelize from '../../models';
+import { Sequelize } from 'sequelize-typescript';
 import convertBulkResult from '../../utils/convertBulkResult';
 import convertResult from '../../utils/convertResult';
-import { Op, Sequelize, Transaction, UniqueConstraintError } from 'sequelize';
+import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
+import { getSequelize } from '../../utils/getSequelize';
 import OutReceive from '../../models/out/receive.model';
 import IOutReceive from '../../interfaces/out/receive.interface';
 import { readReceiveReport } from '../../queries/out/receive-report.query';
 
 class OutReceiveRepo {
-repo: Repository<OutReceive>;
+  repo: Repository<OutReceive>;
+  sequelize: Sequelize;
+  tenant: string;
 
   //#region ✅ Constructor
-  constructor() {
-    this.repo = sequelize.getRepository(OutReceive);
+  constructor(tenant: string) {
+    this.tenant = tenant;
+    this.sequelize = getSequelize(tenant);
+    this.repo = this.sequelize.getRepository(OutReceive);
   }
   //#endregion
 
@@ -58,15 +63,15 @@ repo: Repository<OutReceive>;
       const result = await this.repo.findAll({ 
         include: [
           { 
-            model: sequelize.models.StdFactory, 
+            model: this.sequelize.models.StdFactory, 
             attributes: [], 
             required: true, 
             where: { uuid: params.factory_uuid ? params.factory_uuid : { [Op.ne]: null } }
           },
-          { model: sequelize.models.StdPartner, attributes: [], required: true },
-          { model: sequelize.models.StdSupplier, attributes: [], required: false },
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.StdPartner, attributes: [], required: true },
+          { model: this.sequelize.models.StdSupplier, attributes: [], required: false },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('outReceive.uuid'), 'receive_uuid' ],
@@ -109,11 +114,11 @@ repo: Repository<OutReceive>;
     try {
       const result = await this.repo.findOne({ 
         include: [
-          { model: sequelize.models.StdFactory, attributes: [], required: true },
-          { model: sequelize.models.StdPartner, attributes: [], required: true },
-          { model: sequelize.models.StdSupplier, attributes: [], required: false },
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.StdFactory, attributes: [], required: true },
+          { model: this.sequelize.models.StdPartner, attributes: [], required: true },
+          { model: this.sequelize.models.StdSupplier, attributes: [], required: false },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('outReceive.uuid'), 'receive_uuid' ],
@@ -160,7 +165,7 @@ repo: Repository<OutReceive>;
   // 📒 Fn[readReport]: Read Receive Repot Function
   public readReport = async(params?: any) => {
     try {
-      const result = await sequelize.query(readReceiveReport(params));
+      const result = await this.sequelize.query(readReceiveReport(params));
 
       return convertReadResult(result[0]);
     } catch (error) {
@@ -198,7 +203,7 @@ repo: Repository<OutReceive>;
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.OutReceive.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.OutReceive.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -238,7 +243,7 @@ repo: Repository<OutReceive>;
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.OutReceive.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.OutReceive.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -261,7 +266,7 @@ repo: Repository<OutReceive>;
         count += await this.repo.destroy({ where: { uuid: receive.uuid }, transaction});
       };
 
-      await new AdmLogRepo().create('delete', sequelize.models.OutReceive.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.OutReceive.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
     } catch (error) {
       throw error;

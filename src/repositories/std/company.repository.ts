@@ -1,19 +1,25 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
 import StdCompany from '../../models/std/company.model';
 import IStdCompany from '../../interfaces/std/company.interface';
-import sequelize from '../../models';
 import convertBulkResult from '../../utils/convertBulkResult';
 import convertResult from '../../utils/convertResult';
-import { Op, Sequelize, Transaction, UniqueConstraintError } from 'sequelize';
+import { Sequelize } from 'sequelize-typescript';
+import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
+import { getSequelize } from '../../utils/getSequelize';
 
 class StdCompanyRepo {
   repo: Repository<StdCompany>;
+  sequelize: Sequelize;
+  tenant: string;
+
   //#region ✅ Constructor
-  constructor() {
-    this.repo = sequelize.getRepository(StdCompany);
+  constructor(tenant: string) {
+    this.tenant = tenant;
+    this.sequelize = getSequelize(tenant);
+    this.repo = this.sequelize.getRepository(StdCompany);
   }
   //#endregion
 
@@ -57,8 +63,8 @@ class StdCompanyRepo {
     try {
       const result = await this.repo.findAll({ 
         include: [
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('stdCompany.uuid'), 'company_uuid' ],
@@ -88,8 +94,8 @@ class StdCompanyRepo {
     try {
       const result = await this.repo.findOne({ 
         include: [
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('stdCompany.uuid'), 'company_uuid' ],
@@ -168,7 +174,7 @@ class StdCompanyRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.StdCompany.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdCompany.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -211,7 +217,7 @@ class StdCompanyRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.StdCompany.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdCompany.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -234,7 +240,7 @@ class StdCompanyRepo {
         count += await this.repo.destroy({ where: { uuid: company.uuid }, transaction});
       };
 
-      await new AdmLogRepo().create('delete', sequelize.models.StdCompany.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.StdCompany.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
     } catch (error) {
       throw error;

@@ -1,20 +1,25 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
-import sequelize from '../../models';
+import { Sequelize } from 'sequelize-typescript';
 import convertBulkResult from '../../utils/convertBulkResult';
 import convertResult from '../../utils/convertResult';
-import { Op, Sequelize, Transaction, UniqueConstraintError } from 'sequelize';
+import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
+import { getSequelize } from '../../utils/getSequelize';
 import SalOutgoOrder from '../../models/sal/outgo-order.model';
 import ISalOutgoOrder from '../../interfaces/sal/outgo-order.interface';
 
 class SalOutgoOrderRepo {
   repo: Repository<SalOutgoOrder>;
+  sequelize: Sequelize;
+  tenant: string;
 
   //#region ✅ Constructor
-  constructor() {
-    this.repo = sequelize.getRepository(SalOutgoOrder);
+  constructor(tenant: string) {
+    this.tenant = tenant;
+    this.sequelize = getSequelize(tenant);
+    this.repo = this.sequelize.getRepository(SalOutgoOrder);
   }
   //#endregion
 
@@ -57,16 +62,16 @@ class SalOutgoOrderRepo {
       const result = await this.repo.findAll({ 
         include: [
           { 
-            model: sequelize.models.StdFactory, 
+            model: this.sequelize.models.StdFactory, 
             attributes: [], 
             required: true, 
             where: { uuid: params.factory_uuid ? params.factory_uuid : { [Op.ne]: null } }
           },
-          { model: sequelize.models.StdPartner, attributes: [], required: true },
-          { model: sequelize.models.StdDelivery, attributes: [], required: false },
-          { model: sequelize.models.SalOrder, attributes: [], required: false },
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.StdPartner, attributes: [], required: true },
+          { model: this.sequelize.models.StdDelivery, attributes: [], required: false },
+          { model: this.sequelize.models.SalOrder, attributes: [], required: false },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('salOutgoOrder.uuid'), 'outgo_order_uuid' ],
@@ -110,12 +115,12 @@ class SalOutgoOrderRepo {
     try {
       const result = await this.repo.findOne({ 
         include: [
-          { model: sequelize.models.StdFactory, attributes: [], required: true },
-          { model: sequelize.models.StdPartner, attributes: [], required: true },
-          { model: sequelize.models.StdDelivery, attributes: [], required: false },
-          { model: sequelize.models.SalOrder, attributes: [], required: false },
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.StdFactory, attributes: [], required: true },
+          { model: this.sequelize.models.StdPartner, attributes: [], required: true },
+          { model: this.sequelize.models.StdDelivery, attributes: [], required: false },
+          { model: this.sequelize.models.SalOrder, attributes: [], required: false },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('salOutgoOrder.uuid'), 'outgo_order_uuid' ],
@@ -190,7 +195,7 @@ class SalOutgoOrderRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.SalOutgoOrder.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.SalOutgoOrder.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -228,7 +233,7 @@ class SalOutgoOrderRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.SalOutgoOrder.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.SalOutgoOrder.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -251,7 +256,7 @@ class SalOutgoOrderRepo {
         count += await this.repo.destroy({ where: { uuid: outgoOrder.uuid }, transaction});
       };
 
-      await new AdmLogRepo().create('delete', sequelize.models.SalOutgoOrder.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.SalOutgoOrder.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
     } catch (error) {
       throw error;

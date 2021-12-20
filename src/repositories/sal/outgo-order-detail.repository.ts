@@ -1,21 +1,26 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
-import sequelize from '../../models';
+import { Sequelize } from 'sequelize-typescript';
 import convertBulkResult from '../../utils/convertBulkResult';
 import convertResult from '../../utils/convertResult';
-import { Op, Sequelize, Transaction, UniqueConstraintError } from 'sequelize';
+import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
+import { getSequelize } from '../../utils/getSequelize';
 import SalOutgoOrderDetail from '../../models/sal/outgo-order-detail.model';
 import ISalOutgoOrderDetail from '../../interfaces/sal/outgo-order-detail.interface';
 import { readOrderDetails } from '../../queries/sal/outgo-order-detail.query';
 
 class SalOutgoOrderDetailRepo {
   repo: Repository<SalOutgoOrderDetail>;
+  sequelize: Sequelize;
+  tenant: string;
 
   //#region ✅ Constructor
-  constructor() {
-    this.repo = sequelize.getRepository(SalOutgoOrderDetail);
+  constructor(tenant: string) {
+    this.tenant = tenant;
+    this.sequelize = getSequelize(tenant);
+    this.repo = this.sequelize.getRepository(SalOutgoOrderDetail);
   }
   //#endregion
 
@@ -57,7 +62,7 @@ class SalOutgoOrderDetailRepo {
   // 📒 Fn[read]: Default Read Function
   public read = async(params?: any) => {
     try {
-      const result = await sequelize.query(
+      const result = await this.sequelize.query(
         readOrderDetails({
           complete_state: params.complete_state,
           start_date: params.start_date,
@@ -78,7 +83,7 @@ class SalOutgoOrderDetailRepo {
   // 📒 Fn[readByUuid]: Default Read With Uuid Function
   public readByUuid = async(uuid: string, params?: any) => {
     try {
-      const result = await sequelize.query(readOrderDetails({ outgo_order_detail_uuid: uuid }));
+      const result = await this.sequelize.query(readOrderDetails({ outgo_order_detail_uuid: uuid }));
 
       return convertReadResult(result[0]);
     } catch (error) {
@@ -128,7 +133,7 @@ class SalOutgoOrderDetailRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.SalOutgoOrderDetail.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.SalOutgoOrderDetail.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -160,7 +165,7 @@ class SalOutgoOrderDetailRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.SalOutgoOrderDetail.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.SalOutgoOrderDetail.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -198,7 +203,7 @@ class SalOutgoOrderDetailRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.SalOutgoOrderDetail.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.SalOutgoOrderDetail.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -221,7 +226,7 @@ class SalOutgoOrderDetailRepo {
         count += await this.repo.destroy({ where: { uuid: outgoOrderDetail.uuid }, transaction});
       };
 
-      await new AdmLogRepo().create('delete', sequelize.models.SalOutgoOrderDetail.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.SalOutgoOrderDetail.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
     } catch (error) {
       throw error;

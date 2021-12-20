@@ -1,24 +1,29 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
 import AutUserPermission from '../../models/aut/user-permission.model';
 import IAutUserPermission from '../../interfaces/aut/user-permission.interface';
-import sequelize from '../../models';
+import { Sequelize } from 'sequelize-typescript';
 import convertBulkResult from '../../utils/convertBulkResult';
 import convertResult from '../../utils/convertResult';
-import { Op, Sequelize, Transaction } from 'sequelize';
+import { Op, Transaction } from 'sequelize';
 import { UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
+import { getSequelize } from '../../utils/getSequelize';
 import AutMenuTree from '../../models/aut/menu-tree.model';
 
 class AutUserPermissionRepo {
   repo: Repository<AutUserPermission>;
   menuTreeRepo: Repository<AutMenuTree>;
+  sequelize: Sequelize;
+  tenant: string;
 
   //#region ✅ Constructor
-  constructor() {
-    this.repo = sequelize.getRepository(AutUserPermission);
-    this.menuTreeRepo = sequelize.getRepository(AutMenuTree);
+  constructor(tenant: string) {
+    this.tenant = tenant;
+    this.sequelize = getSequelize(tenant);
+    this.repo = this.sequelize.getRepository(AutUserPermission);
+    this.menuTreeRepo = this.sequelize.getRepository(AutMenuTree);
   }
   //#endregion
 
@@ -58,43 +63,43 @@ class AutUserPermissionRepo {
       const result = await this.menuTreeRepo.findAll({ 
         include: [
           { 
-            model: sequelize.models.AutMenu, 
+            model: this.sequelize.models.AutMenu, 
             as: 'autMenu', 
             attributes: [], 
             required: true,
-            include: [{ model: sequelize.models.AutMenuType, attributes: [], required: false }]
+            include: [{ model: this.sequelize.models.AutMenuType, attributes: [], required: false }]
           },
           { 
-            model: sequelize.models.AutUserPermission, 
+            model: this.sequelize.models.AutUserPermission, 
             attributes: [], 
             required: false,
             include: [
               { 
-                model: sequelize.models.AutUser, 
+                model: this.sequelize.models.AutUser, 
                 as: 'autUser',
                 attributes: [], 
                 required: true,
                 where: { uuid: params.user_uuid }
               },
-              { model: sequelize.models.AutPermission, attributes: [], required: false },
-              { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-              { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true }
+              { model: this.sequelize.models.AutPermission, attributes: [], required: false },
+              { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+              { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true }
             ]
           },
           { 
-            model: sequelize.models.AutGroupPermission, 
+            model: this.sequelize.models.AutGroupPermission, 
             attributes: [], 
             required: false,
-            include: [{ model: sequelize.models.AutPermission, attributes: [], required: false }],
+            include: [{ model: this.sequelize.models.AutPermission, attributes: [], required: false }],
             where: Sequelize.where(Sequelize.col('autGroupPermission.group_id'), '=', Sequelize.col('autUserPermission.autUser.group_id'))
           },
-          { model: sequelize.models.AutMenu, as: 'firstMenu', attributes: [], required: true },
+          { model: this.sequelize.models.AutMenu, as: 'firstMenu', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('autMenu.uuid'), 'menu_uuid' ],
           [ Sequelize.col('autMenu.menu_nm'), 'menu_nm' ],
           [ Sequelize.col('firstMenu.menu_nm'), 'first_menu_nm' ],
-          [ Sequelize.col('autMenu.sortby'), 'sortby' ],
+          'sortby',
           [ Sequelize.col('autMenu.autMenuType.uuid'), 'menu_type_uuid' ],
           [ Sequelize.col('autMenu.autMenuType.menu_type_nm'), 'menu_type_nm' ],
           [ Sequelize.col('autUserPermission.uuid'), 'user_permission_uuid' ],
@@ -167,7 +172,7 @@ class AutUserPermissionRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.AutUserPermission.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.AutUserPermission.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -203,7 +208,7 @@ class AutUserPermissionRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.AutUserPermission.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.AutUserPermission.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -226,7 +231,7 @@ class AutUserPermissionRepo {
         count += await this.repo.destroy({ where: { uuid: userPermission.uuid }, transaction});
       };
 
-      await new AdmLogRepo().create('delete', sequelize.models.AutUserPermission.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.AutUserPermission.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
     } catch (error) {
       throw error;

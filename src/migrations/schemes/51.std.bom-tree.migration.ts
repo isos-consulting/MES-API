@@ -1,10 +1,10 @@
-import sequelize from '../../models';
 import createBomTreeView from '../../queries/std/create-bom-tree-view.query';
+import { getSequelize } from '../../utils/getSequelize';
 
 const viewNm = 'STD_BOM_TREE_VW';
 
 const migration = async () => {
-  await sequelize.query(`${createBomTreeView()}`)
+  await getSequelize('test').query(`${createBomTreeView()}`)
 		.then(() => {
       console.log(`✅Success Create View ${viewNm}`);
     })
@@ -14,7 +14,7 @@ const migration = async () => {
 };
 
 const migrationUndo = async () => {
-	await sequelize.query(`DROP MATERIALIZED VIEW IF EXISTS ${viewNm};`)
+	await getSequelize('test').query(`DROP MATERIALIZED VIEW IF EXISTS ${viewNm};`)
 		.then(() => {
       console.log(`✅Success Drop View ${viewNm}`);
     })

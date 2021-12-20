@@ -1,5 +1,6 @@
 import IStdGrade from '../../interfaces/std/grade.interface';
 import BaseMigration from '../base-migration';
+import config from '../../configs/config';
 
 // Seed Datas
 let seedDatas: IStdGrade[] = [
@@ -157,7 +158,7 @@ let seedDatas: IStdGrade[] = [
 	}
 ]
 
-const baseMigration = new BaseMigration('StdGrade', 'grade_id', process.env.DB_RESET_TYPE === 'test' ? seedDatas : []);
+const baseMigration = new BaseMigration('StdGrade', 'grade_id', config.db.reset_type === 'test' ? seedDatas : []);
 const migration = baseMigration.migration;
 const migrationUndo = baseMigration.migrationUndo;
 

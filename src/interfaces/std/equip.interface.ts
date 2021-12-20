@@ -5,6 +5,7 @@ export default interface IStdEquip {
   equip_cd?: string,
   equip_nm?: string,
   use_fg?: boolean,
+  prd_fg?: boolean,
   remark?: string | null,
   created_at?: Date,
   created_uid?: number,

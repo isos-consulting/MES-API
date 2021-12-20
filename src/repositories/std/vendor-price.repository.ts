@@ -1,22 +1,27 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
 import StdVendorPrice from '../../models/std/vendor-price.model';
 import IStdVendorPrice from '../../interfaces/std/vendor-price.interface';
-import sequelize from '../../models';
+import { Sequelize } from 'sequelize-typescript';
 import convertBulkResult from '../../utils/convertBulkResult';
 import convertResult from '../../utils/convertResult';
-import { Op, Sequelize, Transaction, WhereOptions } from 'sequelize';
+import { Op, Transaction, WhereOptions } from 'sequelize';
 import { UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
+import { getSequelize } from '../../utils/getSequelize';
 import * as moment from 'moment';
 
 class StdVendorPriceRepo {
   repo: Repository<StdVendorPrice>;
+  sequelize: Sequelize;
+  tenant: string;
 
   //#region ✅ Constructor
-  constructor() {
-    this.repo = sequelize.getRepository(StdVendorPrice);
+  constructor(tenant: string) {
+    this.tenant = tenant;
+    this.sequelize = getSequelize(tenant);
+    this.repo = this.sequelize.getRepository(StdVendorPrice);
   }
   //#endregion
 
@@ -79,29 +84,29 @@ class StdVendorPriceRepo {
       const result = await this.repo.findAll({ 
         include: [
           { 
-            model: sequelize.models.StdPartner, 
+            model: this.sequelize.models.StdPartner, 
             attributes: [], 
             required: true,
             where: { uuid: params.partner_uuid ? params.partner_uuid : { [Op.ne]: null } }
           },
-          { model: sequelize.models.StdMoneyUnit, attributes: [], required: false },
-          { model: sequelize.models.StdPriceType, attributes: [], required: false },
+          { model: this.sequelize.models.StdMoneyUnit, attributes: [], required: false },
+          { model: this.sequelize.models.StdPriceType, attributes: [], required: false },
           { 
-            model: sequelize.models.StdProd, 
+            model: this.sequelize.models.StdProd, 
             attributes: [], 
             required: true,
             include: [
-              { model: sequelize.models.StdItemType, attributes: [], required: false },
-              { model: sequelize.models.StdProdType, attributes: [], required: false },
-              { model: sequelize.models.StdModel, attributes: [], required: false },
-              { model: sequelize.models.StdStore, attributes: [], required: false },
-              { model: sequelize.models.StdLocation, attributes: [], required: false },
+              { model: this.sequelize.models.StdItemType, attributes: [], required: false },
+              { model: this.sequelize.models.StdProdType, attributes: [], required: false },
+              { model: this.sequelize.models.StdModel, attributes: [], required: false },
+              { model: this.sequelize.models.StdStore, attributes: [], required: false },
+              { model: this.sequelize.models.StdLocation, attributes: [], required: false },
             ],
             where: { uuid: params.prod_uuid ? params.prod_uuid : { [Op.ne]: null } },
           },
-          { model: sequelize.models.StdUnit, attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.StdUnit, attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('stdVendorPrice.uuid'), 'vendor_price_uuid' ],
@@ -166,24 +171,24 @@ class StdVendorPriceRepo {
     try {
       const result = await this.repo.findOne({ 
         include: [
-          { model: sequelize.models.StdPartner, attributes: [], required: true },
-          { model: sequelize.models.StdMoneyUnit, attributes: [], required: false },
-          { model: sequelize.models.StdPriceType, attributes: [], required: false },
+          { model: this.sequelize.models.StdPartner, attributes: [], required: true },
+          { model: this.sequelize.models.StdMoneyUnit, attributes: [], required: false },
+          { model: this.sequelize.models.StdPriceType, attributes: [], required: false },
           { 
-            model: sequelize.models.StdProd, 
+            model: this.sequelize.models.StdProd, 
             attributes: [], 
             required: true,
             include: [
-              { model: sequelize.models.StdItemType, attributes: [], required: false },
-              { model: sequelize.models.StdProdType, attributes: [], required: false },
-              { model: sequelize.models.StdModel, attributes: [], required: false },
-              { model: sequelize.models.StdStore, attributes: [], required: false },
-              { model: sequelize.models.StdLocation, attributes: [], required: false },
+              { model: this.sequelize.models.StdItemType, attributes: [], required: false },
+              { model: this.sequelize.models.StdProdType, attributes: [], required: false },
+              { model: this.sequelize.models.StdModel, attributes: [], required: false },
+              { model: this.sequelize.models.StdStore, attributes: [], required: false },
+              { model: this.sequelize.models.StdLocation, attributes: [], required: false },
             ]
           },
-          { model: sequelize.models.StdUnit, attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.StdUnit, attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('stdVendorPrice.uuid'), 'vendor_price_uuid' ],
@@ -305,7 +310,7 @@ class StdVendorPriceRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.StdVendorPrice.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdVendorPrice.getTableName() as string, previousRaws, uid, transaction);
 
       return convertResult(raws);
     } catch (error) {
@@ -349,7 +354,7 @@ class StdVendorPriceRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.StdVendorPrice.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdVendorPrice.getTableName() as string, previousRaws, uid, transaction);
 
       return convertResult(raws);
     } catch (error) {
@@ -373,7 +378,7 @@ class StdVendorPriceRepo {
         count += await this.repo.destroy({ where: { uuid: vendorPrice.uuid }, transaction});
       };
 
-      await new AdmLogRepo().create('delete', sequelize.models.StdVendorPrice.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.StdVendorPrice.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
     } catch (error) {
       throw error;

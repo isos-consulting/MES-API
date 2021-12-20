@@ -1,21 +1,26 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
-import sequelize from '../../models';
+import { Sequelize } from 'sequelize-typescript';
 import convertBulkResult from '../../utils/convertBulkResult';
 import convertResult from '../../utils/convertResult';
 import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
+import { getSequelize } from '../../utils/getSequelize';
 import PrdDemand from '../../models/prd/demand.model';
 import IPrdDemand from '../../interfaces/prd/demand.interface';
 import { readDemands } from '../../queries/prd/demand.query';
 
 class PrdDemandRepo {
   repo: Repository<PrdDemand>;
+  sequelize: Sequelize;
+  tenant: string;
 
   //#region ✅ Constructor
-  constructor() {
-    this.repo = sequelize.getRepository(PrdDemand);
+  constructor(tenant: string) {
+    this.tenant = tenant;
+    this.sequelize = getSequelize(tenant);
+    this.repo = this.sequelize.getRepository(PrdDemand);
   }
   //#endregion
 
@@ -63,7 +68,7 @@ class PrdDemandRepo {
   // 📒 Fn[read]: Default Read Function
   public read = async(params?: any) => {
     try {
-      const result = await sequelize.query(
+      const result = await this.sequelize.query(
         readDemands({
           complete_state: params.complete_state,
           start_date: params.start_date,
@@ -83,7 +88,7 @@ class PrdDemandRepo {
   // 📒 Fn[readByUuid]: Default Read With Uuid Function
   public readByUuid = async(uuid: string, params?: any) => {
     try {
-      const result = await sequelize.query(
+      const result = await this.sequelize.query(
         readDemands({ demand_uuid: params.demand_uuid })
       );
 
@@ -135,7 +140,7 @@ class PrdDemandRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.PrdDemand.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.PrdDemand.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -167,7 +172,7 @@ class PrdDemandRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.PrdDemand.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.PrdDemand.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -206,7 +211,7 @@ class PrdDemandRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.PrdDemand.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.PrdDemand.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -229,7 +234,7 @@ class PrdDemandRepo {
         count += await this.repo.destroy({ where: { uuid: demand.uuid }, transaction});
       };
 
-      await new AdmLogRepo().create('delete', sequelize.models.PrdDemand.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.PrdDemand.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
     } catch (error) {
       throw error;

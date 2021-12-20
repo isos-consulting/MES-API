@@ -57,6 +57,7 @@ get:
                             - $ref: ../../schemas/std/equip.schema.yaml#/equip_cd
                             - $ref: ../../schemas/std/equip.schema.yaml#/equip_nm
                             - $ref: ../../schemas/std/equip.schema.yaml#/use_fg
+                            - $ref: ../../schemas/std/equip.schema.yaml#/prd_fg
                             - $ref: ../../schemas/std/equip.schema.yaml#/remark
                             - $ref: ../../schemas/common/timestamp.schema.yaml
     500:
@@ -77,12 +78,14 @@ post:
             - equip_cd
             - equip_nm
             - use_fg
+            - prd_fg
           allOf:
             - $ref: ../../schemas/std/equip.schema.yaml#/factory_uuid
             - $ref: ../../schemas/std/equip.schema.yaml#/equip_type_uuid
             - $ref: ../../schemas/std/equip.schema.yaml#/equip_cd
             - $ref: ../../schemas/std/equip.schema.yaml#/equip_nm
             - $ref: ../../schemas/std/equip.schema.yaml#/use_fg
+            - $ref: ../../schemas/std/equip.schema.yaml#/prd_fg
             - $ref: ../../schemas/std/equip.schema.yaml#/remark
   responses:
     201:
@@ -105,12 +108,14 @@ put:
             - equip_cd
             - equip_nm
             - use_fg
+            - prd_fg
           allOf:
             - $ref: ../../schemas/std/equip.schema.yaml#/uuid
             - $ref: ../../schemas/std/equip.schema.yaml#/equip_type_uuid
             - $ref: ../../schemas/std/equip.schema.yaml#/equip_cd
             - $ref: ../../schemas/std/equip.schema.yaml#/equip_nm
             - $ref: ../../schemas/std/equip.schema.yaml#/use_fg
+            - $ref: ../../schemas/std/equip.schema.yaml#/prd_fg
             - $ref: ../../schemas/std/equip.schema.yaml#/remark
   responses:
     201:
@@ -136,6 +141,7 @@ patch:
             - $ref: ../../schemas/std/equip.schema.yaml#/equip_cd
             - $ref: ../../schemas/std/equip.schema.yaml#/equip_nm
             - $ref: ../../schemas/std/equip.schema.yaml#/use_fg
+            - $ref: ../../schemas/std/equip.schema.yaml#/prd_fg
             - $ref: ../../schemas/std/equip.schema.yaml#/remark
   responses:
     201:

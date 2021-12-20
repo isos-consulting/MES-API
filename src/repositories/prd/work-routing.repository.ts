@@ -1,20 +1,25 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
-import sequelize from '../../models';
+import { Sequelize } from 'sequelize-typescript';
 import convertBulkResult from '../../utils/convertBulkResult';
 import convertResult from '../../utils/convertResult';
-import { Op, Sequelize, Transaction, UniqueConstraintError } from 'sequelize';
+import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
+import { getSequelize } from '../../utils/getSequelize';
 import PrdWorkRouting from '../../models/prd/work-routing.model';
 import IPrdWorkRouting from '../../interfaces/prd/work-routing.interface';
 
 class PrdWorkRoutingRepo {
   repo: Repository<PrdWorkRouting>;
+  sequelize: Sequelize;
+  tenant: string;
 
   //#region ✅ Constructor
-  constructor() {
-    this.repo = sequelize.getRepository(PrdWorkRouting);
+  constructor(tenant: string) {
+    this.tenant = tenant;
+    this.sequelize = getSequelize(tenant);
+    this.repo = this.sequelize.getRepository(PrdWorkRouting);
   }
   //#endregion
 
@@ -62,22 +67,22 @@ class PrdWorkRoutingRepo {
       const result = await this.repo.findAll({ 
         include: [
           { 
-            model: sequelize.models.StdFactory, 
+            model: this.sequelize.models.StdFactory, 
             attributes: [], 
             required: true,
             where: params.factory_uuid ? { uuid: params.factory_uuid } : {}
           },
           { 
-            model: sequelize.models.PrdWork,
+            model: this.sequelize.models.PrdWork,
             attributes: [], 
             required: true,
             where: params.work_uuid ? { uuid: params.work_uuid } : {}
           },
-          { model: sequelize.models.StdProc, attributes: [], required: true },
-          { model: sequelize.models.StdWorkings, attributes: [], required: true },
-          { model: sequelize.models.StdEquip, attributes: [], required: false },
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.StdProc, attributes: [], required: true },
+          { model: this.sequelize.models.StdWorkings, attributes: [], required: true },
+          { model: this.sequelize.models.StdEquip, attributes: [], required: false },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('prdWorkRouting.uuid'), 'work_routing_uuid' ],
@@ -121,16 +126,16 @@ class PrdWorkRoutingRepo {
     try {
       const result = await this.repo.findOne({ 
         include: [
-          { model: sequelize.models.StdFactory, attributes: [], required: true },
-          { model: sequelize.models.PrdWork,attributes: [], required: true },
-          { model: sequelize.models.StdProc, attributes: [], required: true },
-          { model: sequelize.models.StdWorkings, attributes: [], required: true },
-          { model: sequelize.models.StdEquip, attributes: [], required: false },
-          { model: sequelize.models.StdUnitConvert,attributes: [], required: false },
-          { model: sequelize.models.StdStore, attributes: [], required: false },
-          { model: sequelize.models.StdLocation, attributes: [], required: false },
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.StdFactory, attributes: [], required: true },
+          { model: this.sequelize.models.PrdWork,attributes: [], required: true },
+          { model: this.sequelize.models.StdProc, attributes: [], required: true },
+          { model: this.sequelize.models.StdWorkings, attributes: [], required: true },
+          { model: this.sequelize.models.StdEquip, attributes: [], required: false },
+          { model: this.sequelize.models.StdUnitConvert,attributes: [], required: false },
+          { model: this.sequelize.models.StdStore, attributes: [], required: false },
+          { model: this.sequelize.models.StdLocation, attributes: [], required: false },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('prdWorkRouting.uuid'), 'work_routing_uuid' ],
@@ -221,7 +226,7 @@ class PrdWorkRoutingRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.PrdWorkRouting.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.PrdWorkRouting.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -263,7 +268,7 @@ class PrdWorkRoutingRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.PrdWorkRouting.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.PrdWorkRouting.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -286,7 +291,7 @@ class PrdWorkRoutingRepo {
         count += await this.repo.destroy({ where: { uuid: workRouting.uuid }, transaction});
       };
 
-      await new AdmLogRepo().create('delete', sequelize.models.PrdWorkRouting.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.PrdWorkRouting.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
     } catch (error) {
       throw error;
@@ -301,7 +306,7 @@ class PrdWorkRoutingRepo {
       const previousRaws = await this.repo.findAll({ where: { work_id: workId }});
       count += await this.repo.destroy({ where: { work_id: workId }, transaction});
 
-      await new AdmLogRepo().create('delete', sequelize.models.PrdWorkRouting.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.PrdWorkRouting.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
     } catch (error) {
       throw error;

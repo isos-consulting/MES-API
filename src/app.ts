@@ -9,6 +9,8 @@ import response from './utils/response';
 import morgan = require('morgan');
 import { stream } from './configs/winston';
 import { refreshToken } from './utils/refreshToken';
+import tenantMiddleware from './middlewares/tenant.middleware';
+import config from './configs/config';
 
 // Import Environment
 dotenv.config();
@@ -18,6 +20,9 @@ declare global {
   // add user information in express request
   namespace Express {
     interface Request {
+      tenant: {
+        uuid: string
+      }
       user: {
         uuid: string,
         uid: number,
@@ -28,6 +33,8 @@ declare global {
   }
 };
 const app: express.Application = express();
+
+console.log(config.node_env);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -47,6 +54,7 @@ app.use('/health-check', (req: express.Request, res: express.Response, next: exp
 app.use(morgan('combined', { stream }));
 app.use(morgan('dev'));
 
+app.use(tenantMiddleware);
 app.use('/refresh-token', refreshToken)
 app.use(jwtMiddleware);
 app.use('/', routers);
@@ -66,7 +74,7 @@ app.use((err: createError.HttpError, req: express.Request, res: express.Response
 
   // set locals, only providing error in development
   res.locals.message = apiError.message;
-  res.locals.error = process.env.NODE_ENV === 'development' || 'test' ? apiError : {};
+  res.locals.error = config.node_env === 'development' || 'test' ? apiError : {};
 
   // render the error page
   return response(res, [], {}, apiError.message, apiError.status);

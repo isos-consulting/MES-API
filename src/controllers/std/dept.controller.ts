@@ -2,22 +2,16 @@ import StdDeptRepo from '../../repositories/std/dept.repository';
 import BaseCtl from '../base.controller';
 
 class StdDeptCtl extends BaseCtl {
-  // ✅ Inherited Functions Variable
-  // result: ApiResult<any>;
-
-  // ✅ 부모 Controller (BaseController) 의 repository 변수가 any 로 생성 되어있기 때문에 자식 Controller(this) 에서 Type 지정
-  repo: StdDeptRepo;
-
   //#region ✅ Constructor
   constructor() {
     // ✅ 부모 Controller (Base Controller) 의 CRUD Function 과 상속 받는 자식 Controller(this) 의 Repository 를 연결하기 위하여 생성자에서 Repository 생성
-    super(new StdDeptRepo());
+    super(StdDeptRepo);
 
     // ✅ CUD 연산이 실행되기 전 Fk Table 의 uuid 로 id 를 검색하여 request body 에 삽입하기 위하여 정보 Setting
     // this.fkIdInfos = [
     //   {
     //     key: 'table',
-    //     repo: new TableRepo(),
+    //     TRepo: new TableRepo(),
     //     idName: 'table_id',
     //     uuidName: 'table_uuid'
     //   }
@@ -76,7 +70,7 @@ class StdDeptCtl extends BaseCtl {
   // }
 
   // 📒 Fn[convertUniqueToFk] (✅ Inheritance): Excel Upload 전 Unique Key => Fk 변환 Function(Hook)
-  // public convertUniqueToFk = async (body: any[]) => { return body; }
+  // public convertUniqueToFk = async (body: any[], tenant: string) => { return body; }
 
   // 📒 Fn[afterTranUpload] (✅ Inheritance): Excel Upload 후 Transaction 내에서 로직 처리하기 위한 Function(Hook)
   // public afterTranUpload = async (req: express.Request, _insertedRaws: any[], _updatedRaws: any[], tran: Transaction) => {}

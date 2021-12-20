@@ -12,58 +12,54 @@ import response from '../../utils/response';
 import testErrorHandlingHelper from '../../utils/testErrorHandlingHelper';
 import unsealArray from '../../utils/unsealArray';
 import BaseCtl from '../base.controller';
+import config from '../../configs/config';
 
 class StdBomCtl extends BaseCtl {
-  // ✅ Inherited Functions Variable
-  // result: ApiResult<any>;
-
-  // ✅ 부모 Controller (BaseController) 의 repository 변수가 any 로 생성 되어있기 때문에 자식 Controller(this) 에서 Type 지정
-  repo: StdBomRepo;
   treeViewName: string = 'STD_BOM_TREE_VW';
 
   //#region ✅ Constructor
   constructor() {
     // ✅ 부모 Controller (Base Controller) 의 CRUD Function 과 상속 받는 자식 Controller(this) 의 Repository 를 연결하기 위하여 생성자에서 Repository 생성
-    super(new StdBomRepo());
+    super(StdBomRepo);
 
     // ✅ CUD 연산이 실행되기 전 Fk Table 의 uuid 로 id 를 검색하여 request body 에 삽입하기 위하여 정보 Setting
     this.fkIdInfos = [
       {
         key: 'factory',
-        repo: new StdFactoryRepo(),
+        TRepo: StdFactoryRepo,
         idName: 'factory_id',
         uuidName: 'factory_uuid'
       },
       {
         key: 'parentProd',
-        repo: new StdProdRepo(),
+        TRepo: StdProdRepo,
         idName: 'prod_id',
         idAlias: 'p_prod_id',
         uuidName: 'p_prod_uuid'
       },
       {
         key: 'childProd',
-        repo: new StdProdRepo(),
+        TRepo: StdProdRepo,
         idName: 'prod_id',
         idAlias: 'c_prod_id',
         uuidName: 'c_prod_uuid'
       },
       {
         key: 'unit',
-        repo: new StdUnitRepo(),
+        TRepo: StdUnitRepo,
         idName: 'unit_id',
         uuidName: 'unit_uuid'
       },
       {
         key: 'store',
-        repo: new StdStoreRepo(),
+        TRepo: StdStoreRepo,
         idName: 'store_id',
         idAlias: 'from_store_id',
         uuidName: 'from_store_uuid'
       },
       {
         key: 'location',
-        repo: new StdLocationRepo(),
+        TRepo: StdLocationRepo,
         idName: 'location_id',
         idAlias: 'from_location_id',
         uuidName: 'from_location_uuid'
@@ -92,12 +88,12 @@ class StdBomCtl extends BaseCtl {
   public readToTrees = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       const params = Object.assign(req.query, req.params);
-      if (params.prod_uuid) { params.prod_id = unsealArray((await new StdProdRepo().readRawByUuid(params.prod_uuid)).raws).prod_id }
+      if (params.prod_uuid) { params.prod_id = unsealArray((await new StdProdRepo(req.tenant.uuid).readRawByUuid(params.prod_uuid)).raws).prod_id }
 
-      this.result = await this.repo.readToTrees(params);
-      return response(res, this.result.raws, { count: this.result.count });
+      const result = await new StdBomRepo(req.tenant.uuid).readToTrees(params);
+      return response(res, result.raws, { count: result.count });
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   };
   
@@ -136,11 +132,11 @@ class StdBomCtl extends BaseCtl {
   // }
 
   // 📒 Fn[convertUniqueToFk] (✅ Inheritance): Excel Upload 전 Unique Key => Fk 변환 Function(Hook)
-  // public convertUniqueToFk = async (body: any[]) => { return body; }
+  // public convertUniqueToFk = async (body: any[], tenant: string) => { return body; }
 
   // 📒 Fn[afterTranUpload] (✅ Inheritance): Excel Upload 후 Transaction 내에서 로직 처리하기 위한 Function(Hook)
   public afterTranUpload = async (req: express.Request, _insertedRaws: any[], _updatedRaws: any[], tran: Transaction) => {
-    await refreshMaterializedView(this.treeViewName, tran);
+    await refreshMaterializedView(req.tenant.uuid, this.treeViewName, tran);
   }
 
   //#endregion
@@ -157,7 +153,7 @@ class StdBomCtl extends BaseCtl {
 
   // 📒 Fn[afterTranCreate] (✅ Inheritance): Create Transaction 내부에서 DB Tasking 이 실행된 후 호출되는 Function
   afterTranCreate = async(req: express.Request, result: ApiResult<any>, tran: Transaction) => {
-    await refreshMaterializedView(this.treeViewName, tran);
+    await refreshMaterializedView(req.tenant.uuid, this.treeViewName, tran);
   }
 
   // 📒 Fn[afterCreate] (✅ Inheritance): Create Transaction 이 실행된 후 호출되는 Function
@@ -185,7 +181,7 @@ class StdBomCtl extends BaseCtl {
 
   // 📒 Fn[afterTranUpdate] (✅ Inheritance): Update Transaction 내부에서 DB Tasking 이 실행된 후 호출되는 Function
   afterTranUpdate = async(req: express.Request, result: ApiResult<any>, tran: Transaction) => {
-    await refreshMaterializedView(this.treeViewName, tran);
+    await refreshMaterializedView(req.tenant.uuid, this.treeViewName, tran);
   }
 
   // 📒 Fn[afterUpdate] (✅ Inheritance): Update Transaction 이 실행된 후 호출되는 Function
@@ -203,7 +199,7 @@ class StdBomCtl extends BaseCtl {
 
   // 📒 Fn[afterTranPatch] (✅ Inheritance): Patch Transaction 내부에서 DB Tasking 이 실행된 후 호출되는 Function
   afterTranPatch = async(req: express.Request, result: ApiResult<any>, tran: Transaction) => {
-    await refreshMaterializedView(this.treeViewName, tran);
+    await refreshMaterializedView(req.tenant.uuid, this.treeViewName, tran);
   }
 
   // 📒 Fn[afterPatch] (✅ Inheritance): Patch Transaction 이 실행된 후 호출되는 Function
@@ -221,7 +217,7 @@ class StdBomCtl extends BaseCtl {
 
   // 📒 Fn[afterTranDelete] (✅ Inheritance): Delete Transaction 내부에서 DB Tasking 이 실행된 후 호출되는 Function
   afterTranDelete = async(req: express.Request, result: ApiResult<any>, tran: Transaction) => {
-    await refreshMaterializedView(this.treeViewName, tran);
+    await refreshMaterializedView(req.tenant.uuid, this.treeViewName, tran);
   }
 
   // 📒 Fn[afterDelete] (✅ Inheritance): Delete Transaction 이 실행된 후 호출되는 Function

@@ -1,5 +1,6 @@
 import IStdWorkerGroupWorker from '../../interfaces/std/worker-group-worker.interface';
 import BaseMigration from '../base-migration';
+import config from '../../configs/config';
 
 // Seed Datas
 const seedDatas: IStdWorkerGroupWorker[] = [
@@ -155,7 +156,7 @@ const seedDatas: IStdWorkerGroupWorker[] = [
 	}
 ];
 
-const baseMigration = new BaseMigration('StdWorkerGroupWorker', 'worker_group_worker_id', process.env.DB_RESET_TYPE === 'test' ? seedDatas : []);
+const baseMigration = new BaseMigration('StdWorkerGroupWorker', 'worker_group_worker_id', config.db.reset_type === 'test' ? seedDatas : []);
 const migration = baseMigration.migration;
 const migrationUndo = baseMigration.migrationUndo;
 

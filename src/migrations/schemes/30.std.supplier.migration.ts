@@ -1,5 +1,6 @@
 import IStdSupplier from '../../interfaces/std/supplier.interface';
 import BaseMigration from '../base-migration';
+import config from '../../configs/config';
 
 // Seed Datas
 let seedDatas: IStdSupplier[] = [
@@ -95,7 +96,7 @@ let seedDatas: IStdSupplier[] = [
 	}
 ]
 
-const baseMigration = new BaseMigration('StdSupplier', 'supplier_id', process.env.DB_RESET_TYPE === 'test' ? seedDatas : []);
+const baseMigration = new BaseMigration('StdSupplier', 'supplier_id', config.db.reset_type === 'test' ? seedDatas : []);
 const migration = baseMigration.migration;
 const migrationUndo = baseMigration.migrationUndo;
 

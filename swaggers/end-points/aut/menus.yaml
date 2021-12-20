@@ -69,11 +69,13 @@ put:
         schema:
           required:
             - uuid
+            - lv
             - menu_nm
             - sortby
             - use_fg
           allOf:
             - $ref: ../../schemas/aut/menu.schema.yaml#/uuid
+            - $ref: ../../schemas/aut/menu.schema.yaml#/lv
             - $ref: ../../schemas/aut/menu.schema.yaml#/menu_type_uuid
             - $ref: ../../schemas/aut/menu.schema.yaml#/menu_nm
             - $ref: ../../schemas/aut/menu.schema.yaml#/menu_uri

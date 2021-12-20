@@ -1,21 +1,26 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
 import AdmBomType from '../../models/adm/bom-type.model';
 import IAdmBomType from '../../interfaces/adm/bom-type.interface';
+import { Sequelize } from 'sequelize-typescript';
 import sequelize from '../../models';
 import convertBulkResult from '../../utils/convertBulkResult';
 import convertResult from '../../utils/convertResult';
-import { Op, Sequelize, Transaction } from 'sequelize';
-import { UniqueConstraintError } from 'sequelize';
+import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
+import { getSequelize } from '../../utils/getSequelize';
 
 class AdmBomTypeRepo {
   repo: Repository<AdmBomType>;
+  sequelize: Sequelize;
+  tenant: string;
 
   //#region ✅ Constructor
-  constructor() {
-    this.repo = sequelize.getRepository(AdmBomType);
+  constructor(tenant: string) {
+    this.tenant = tenant;
+    this.sequelize = getSequelize(tenant);
+    this.repo = this.sequelize.getRepository(AdmBomType);
   }
   //#endregion
 
@@ -52,8 +57,8 @@ class AdmBomTypeRepo {
     try {
       const result = await this.repo.findAll({ 
         include: [
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           'bom_type_cd',
@@ -95,23 +100,6 @@ class AdmBomTypeRepo {
 					[ Sequelize.col('updateUser.user_nm'), 'updated_nm' ]
 				],
 				where: { uuid },
-			});
-
-			return convertReadResult(result);
-		} catch (error) {
-			throw error;
-		}
-	};
-
-	public readForSignIn = async() => {
-		try {
-			const result = await this.repo.findAll({
-				attributes: [
-					[ Sequelize.col('admBomType.uuid'), 'bom_type_uuid' ],
-					'bom_type_cd',
-          'bom_type_nm',
-					'sortby',
-				]
 			});
 
 			return convertReadResult(result);
@@ -169,7 +157,7 @@ class AdmBomTypeRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.StdFactory.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', sequelize.models.AdmBomType.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -208,7 +196,7 @@ class AdmBomTypeRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.StdFactory.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', sequelize.models.AdmBomType.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -231,7 +219,7 @@ class AdmBomTypeRepo {
         count += await this.repo.destroy({ where: { uuid: bom_type.uuid }, transaction});
       };
 
-      await new AdmLogRepo().create('delete', sequelize.models.StdFactory.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', sequelize.models.AdmBomType.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
     } catch (error) {
       throw error;

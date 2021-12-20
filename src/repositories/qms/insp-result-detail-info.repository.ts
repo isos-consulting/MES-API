@@ -1,20 +1,25 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
-import sequelize from '../../models';
+import { Sequelize } from 'sequelize-typescript';
 import convertBulkResult from '../../utils/convertBulkResult';
 import convertResult from '../../utils/convertResult';
-import { Op, Sequelize, Transaction, UniqueConstraintError } from 'sequelize';
+import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
+import { getSequelize } from '../../utils/getSequelize';
 import QmsInspResultDetailInfo from '../../models/qms/insp-result-detail-info.model';
 import IQmsInspResultDetailInfo from '../../interfaces/qms/insp-result-detail-info.interface';
 
 class QmsInspResultDetailInfoRepo {
-repo: Repository<QmsInspResultDetailInfo>;
+  repo: Repository<QmsInspResultDetailInfo>;
+  sequelize: Sequelize;
+  tenant: string;
 
   //#region ✅ Constructor
-  constructor() {
-    this.repo = sequelize.getRepository(QmsInspResultDetailInfo);
+  constructor(tenant: string) {
+    this.tenant = tenant;
+    this.sequelize = getSequelize(tenant);
+    this.repo = this.sequelize.getRepository(QmsInspResultDetailInfo);
   }
   //#endregion
 
@@ -55,26 +60,26 @@ repo: Repository<QmsInspResultDetailInfo>;
     try {
       const result = await this.repo.findAll({ 
         include: [
-          { model: sequelize.models.StdFactory, attributes: [], required: true },
+          { model: this.sequelize.models.StdFactory, attributes: [], required: true },
           { 
-            model: sequelize.models.QmsInspResult,
+            model: this.sequelize.models.QmsInspResult,
             attributes: [], 
             required: true,
             where: { uuid: params.insp_result_uuid }
           },
           { 
-            model: sequelize.models.QmsInspDetail,
+            model: this.sequelize.models.QmsInspDetail,
             attributes: [], 
             required: true,
             include: [
-              { model: sequelize.models.StdInspMethod, attributes: [], required: false },
-              { model: sequelize.models.StdInspTool, attributes: [], required: false },
+              { model: this.sequelize.models.StdInspMethod, attributes: [], required: false },
+              { model: this.sequelize.models.StdInspTool, attributes: [], required: false },
               { 
-                model: sequelize.models.StdInspItem, 
+                model: this.sequelize.models.StdInspItem, 
                 attributes: [], 
                 required: true,
                 include: [
-                  { model: sequelize.models.StdInspItemType, attributes: [], required: false },
+                  { model: this.sequelize.models.StdInspItemType, attributes: [], required: false },
                 ] 
               },
             ],
@@ -85,8 +90,8 @@ repo: Repository<QmsInspResultDetailInfo>;
               ]
             }
           },
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('qmsInspResultDetailInfo.uuid'), 'insp_result_detail_info_uuid' ],
@@ -138,27 +143,27 @@ repo: Repository<QmsInspResultDetailInfo>;
     try {
       const result = await this.repo.findAll({ 
         include: [
-          { model: sequelize.models.StdFactory, attributes: [], required: true },
-          { model: sequelize.models.QmsInspResult,attributes: [], required: true },
+          { model: this.sequelize.models.StdFactory, attributes: [], required: true },
+          { model: this.sequelize.models.QmsInspResult,attributes: [], required: true },
           { 
-            model: sequelize.models.QmsInspDetail,
+            model: this.sequelize.models.QmsInspDetail,
             attributes: [], 
             required: true,
             include: [
-              { model: sequelize.models.StdInspMethod, attributes: [], required: false },
-              { model: sequelize.models.StdInspTool, attributes: [], required: false },
+              { model: this.sequelize.models.StdInspMethod, attributes: [], required: false },
+              { model: this.sequelize.models.StdInspTool, attributes: [], required: false },
               { 
-                model: sequelize.models.StdInspItem, 
+                model: this.sequelize.models.StdInspItem, 
                 attributes: [], 
                 required: true,
                 include: [
-                  { model: sequelize.models.StdInspItemType, attributes: [], required: false },
+                  { model: this.sequelize.models.StdInspItemType, attributes: [], required: false },
                 ] 
               },
             ]
           },
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('qmsInspResultDetailInfo.uuid'), 'insp_result_detail_info_uuid' ],
@@ -252,7 +257,7 @@ repo: Repository<QmsInspResultDetailInfo>;
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.QmsInspResultDetailInfo.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.QmsInspResultDetailInfo.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -289,7 +294,7 @@ repo: Repository<QmsInspResultDetailInfo>;
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.QmsInspResultDetailInfo.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.QmsInspResultDetailInfo.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -312,7 +317,7 @@ repo: Repository<QmsInspResultDetailInfo>;
         count += await this.repo.destroy({ where: { uuid: inspDetailInfo.uuid }, transaction});
       };
 
-      await new AdmLogRepo().create('delete', sequelize.models.QmsInspResultDetailInfo.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.QmsInspResultDetailInfo.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
     } catch (error) {
       throw error;
@@ -328,7 +333,7 @@ repo: Repository<QmsInspResultDetailInfo>;
 
       count = await this.repo.destroy({ where: { insp_result_id: ids }, transaction});
 
-      await new AdmLogRepo().create('delete', sequelize.models.QmsInspResultDetailInfo.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.QmsInspResultDetailInfo.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
     } catch (error) {
       throw error;

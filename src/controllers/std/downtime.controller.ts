@@ -5,28 +5,22 @@ import unsealArray from '../../utils/unsealArray';
 import BaseCtl from '../base.controller';
 
 class StdDowntimeCtl extends BaseCtl {
-  // ✅ Inherited Functions Variable
-  // result: ApiResult<any>;
-
-  // ✅ 부모 Controller (BaseController) 의 repository 변수가 any 로 생성 되어있기 때문에 자식 Controller(this) 에서 Type 지정
-  repo: StdDowntimeRepo;
-
   //#region ✅ Constructor
   constructor() {
     // ✅ 부모 Controller (Base Controller) 의 CRUD Function 과 상속 받는 자식 Controller(this) 의 Repository 를 연결하기 위하여 생성자에서 Repository 생성
-    super(new StdDowntimeRepo());
+    super(StdDowntimeRepo);
 
     // ✅ CUD 연산이 실행되기 전 Fk Table 의 uuid 로 id 를 검색하여 request body 에 삽입하기 위하여 정보 Setting
     this.fkIdInfos = [
       {
         key: 'factory',
-        repo: new StdFactoryRepo(),
+        TRepo: StdFactoryRepo,
         idName: 'factory_id',
         uuidName: 'factory_uuid'
       },
       {
         key: 'downtimeType',
-        repo: new StdDowntimeTypeRepo(),
+        TRepo: StdDowntimeTypeRepo,
         idName: 'downtime_type_id',
         uuidName: 'downtime_type_uuid'
       },
@@ -85,9 +79,9 @@ class StdDowntimeCtl extends BaseCtl {
   // }
 
   // 📒 Fn[convertUniqueToFk] (✅ Inheritance): Excel Upload 전 Unique Key => Fk 변환 Function(Hook)
-  public convertUniqueToFk = async (body: any[]) => {
-    const factoryRepo = new StdFactoryRepo();
-    const downtimeTypeRepo = new StdDowntimeTypeRepo();
+  public convertUniqueToFk = async (body: any[], tenant: string) => {
+    const factoryRepo = new StdFactoryRepo(tenant);
+    const downtimeTypeRepo = new StdDowntimeTypeRepo(tenant);
 
     for await (const raw of body) {
       const factory = await factoryRepo.readRawByUnique({ factory_cd: raw.factory_cd });

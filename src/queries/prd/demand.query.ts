@@ -79,10 +79,10 @@ const readDemands = (
       p_d.remark,
       p_d.created_at,
       p_d.created_uid,
-      a_uc.user_nm,
+      a_uc.user_nm as created_nm,
       p_d.updated_at,
       p_d.updated_uid,
-      a_uu.user_nm
+      a_uu.user_nm as updated_nm
     FROM prd_demand_tb p_d
     JOIN std_factory_tb s_f ON s_f.factory_id = p_d.factory_id
     LEFT JOIN prd_order_tb p_o ON p_o.order_id = p_d.order_id

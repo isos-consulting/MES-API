@@ -49,6 +49,14 @@ use_fg:
       type: boolean
       format: boolean
 
+prd_fg: 
+  type: object
+  properties: 
+    prd_fg:
+      description: 생산설비여부
+      type: boolean
+      format: boolean
+
 remark: 
   type: object
   properties: 

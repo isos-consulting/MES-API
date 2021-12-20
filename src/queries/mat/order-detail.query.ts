@@ -67,6 +67,7 @@ const readOrderDetails = (
       s_l.location_nm to_location_nm,
       m_od.qty,
       CASE WHEN (m_od.qty - COALESCE(m_rd.qty,0)) < 0 THEN 0 ELSE m_od.qty - COALESCE(m_rd.qty,0) END AS balance,
+      m_od.complete_fg,
       CASE WHEN m_od.complete_fg = FALSE AND ((m_od.qty - COALESCE(m_rd.qty,0)) > 0) THEN '미완료' ELSE '완료' END as complete_state,
       m_od.price,
       s_mu.uuid AS money_unit_uuid,

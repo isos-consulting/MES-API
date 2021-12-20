@@ -5,28 +5,22 @@ import unsealArray from '../../utils/unsealArray';
 import BaseCtl from '../base.controller';
 
 class StdPartnerProdCtl extends BaseCtl {
-  // ✅ Inherited Functions Variable
-  // result: ApiResult<any>;
-
-  // ✅ 부모 Controller (BaseController) 의 repository 변수가 any 로 생성 되어있기 때문에 자식 Controller(this) 에서 Type 지정
-  repo: StdPartnerProdRepo;
-
   //#region ✅ Constructor
   constructor() {
     // ✅ 부모 Controller (Base Controller) 의 CRUD Function 과 상속 받는 자식 Controller(this) 의 Repository 를 연결하기 위하여 생성자에서 Repository 생성
-    super(new StdPartnerProdRepo());
+    super(StdPartnerProdRepo);
 
     // ✅ CUD 연산이 실행되기 전 Fk Table 의 uuid 로 id 를 검색하여 request body 에 삽입하기 위하여 정보 Setting
     this.fkIdInfos = [
       {
         key: 'partner',
-        repo: new StdPartnerRepo(),
+        TRepo: StdPartnerRepo,
         idName: 'partner_id',
         uuidName: 'partner_uuid'
       },
       {
         key: 'prod',
-        repo: new StdProdRepo(),
+        TRepo: StdProdRepo,
         idName: 'prod_id',
         uuidName: 'prod_uuid'
       },
@@ -85,9 +79,9 @@ class StdPartnerProdCtl extends BaseCtl {
   // }
 
   // 📒 Fn[convertUniqueToFk] (✅ Inheritance): Excel Upload 전 Unique Key => Fk 변환 Function(Hook)
-  public convertUniqueToFk = async (body: any[]) => {
-    const partnerRepo = new StdPartnerRepo();
-    const prodRepo = new StdProdRepo();
+  public convertUniqueToFk = async (body: any[], tenant: string) => {
+    const partnerRepo = new StdPartnerRepo(tenant);
+    const prodRepo = new StdProdRepo(tenant);
 
     for await (const raw of body) {
       const partner = await partnerRepo.readRawByUnique({ partner_cd: raw.partner_cd });

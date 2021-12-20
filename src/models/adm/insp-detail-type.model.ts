@@ -1,6 +1,7 @@
-import { Sequelize, Table, Column, Model, DataType, CreatedAt, UpdatedAt, BelongsTo, Unique } from 'sequelize-typescript'
+import { Sequelize, Table, Column, Model, DataType, CreatedAt, UpdatedAt, BelongsTo, Unique, ForeignKey } from 'sequelize-typescript'
 import IAdmInspDetailType from '../../interfaces/adm/insp-detail-type.interface';
 import AutUser from '../aut/user.model';
+import AdmInspType from './insp-type.model';
 
 @Table({
   tableName: 'ADM_INSP_DETAIL_TYPE_TB',
@@ -35,12 +36,14 @@ export default class AdmInspDetailType extends Model<IAdmInspDetailType> {
   })
   insp_detail_type_nm: string;
 
+	@Unique('adm_insp_detail_type_tb_insp_type_id_un')
+  @ForeignKey(() => AdmInspType)
   @Column({
     comment: '검사유형코드',
-    type: DataType.STRING(50),
+    type: DataType.INTEGER,
     allowNull: false,
   })
-  insp_type_cd: string;
+  insp_type_id: string;
 
   @Column({
     comment: '작업자 여부',
@@ -107,6 +110,8 @@ export default class AdmInspDetailType extends Model<IAdmInspDetailType> {
   createUser: AutUser;
   @BelongsTo(() => AutUser, { as: 'updateUser', foreignKey: 'updated_uid', targetKey: 'uid', onDelete: 'restrict', onUpdate: 'cascade' })
   updateUser: AutUser;
+	@BelongsTo(() => AdmInspType, { foreignKey: 'insp_type_id', targetKey: 'insp_type_id', onDelete: 'restrict', onUpdate: 'cascade' })
+  AdmInspType: AdmInspType;
 
   // HasMany
   //#endregion

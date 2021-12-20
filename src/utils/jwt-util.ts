@@ -1,8 +1,9 @@
 import IUser from "../interfaces/aut/user.interface";
 import { getAsyncInRedis, setAsyncInRedis } from "./redisClient";
 import * as jwt from 'jsonwebtoken';
+import config from "../configs/config";
 
-const secret = process.env.CRYPTO_SECRET as string;
+const secret = config.jwt.secret;
 
 // 📌 access token 발급
 const sign = (user: IUser) => {
@@ -17,7 +18,7 @@ const sign = (user: IUser) => {
   // secret으로 sign하여 발급하고 return
   return jwt.sign(payload, secret, {
     algorithm: 'HS256',
-    expiresIn: '30m',
+    expiresIn: '5s',
     subject: 'iso-was-access-token',
     issuer: 'isos',
     audience: 'iso-client-user'
@@ -46,7 +47,7 @@ const verify = (token: string) => {
 }
 
 // 📌 refresh token 발급
-const refresh = async (uid: number) => {
+const refresh = async (uuid: string) => {
   // refresh token은 payload 없이 발급
   const token = jwt.sign({}, secret, { 
     algorithm: 'HS256',
@@ -57,15 +58,15 @@ const refresh = async (uid: number) => {
   });
 
   // redis에 Refresh Token 저장
-  await setAsyncInRedis(`token:refresh:${uid}`, token);
+  await setAsyncInRedis(`token:refresh:${uuid}`, token);
 
   return token;
 }
 
 // 📌 refresh token 검증
-const refreshVerify = async (token: string, uid: number) => {
+const refreshVerify = async (token: string, uuid: string) => {
   try {
-    const data = await getAsyncInRedis(`token:refresh:${uid}`); // refresh token 가져오기
+    const data = await getAsyncInRedis(`token:refresh:${uuid}`); // refresh token 가져오기
     if (token === data) {
       try {
         jwt.verify(token, secret);

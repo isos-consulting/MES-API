@@ -2,8 +2,9 @@ import app from "../app";
 import { createServer } from "http";
 import { Server } from "node:http";
 import { HttpError } from "http-errors";
+import config from "../configs/config";
 
-const port: number = Number(process.env.PORT) || 3000;
+const port: number = Number(config.port) || 3000;
 
 const server: Server = createServer(app);
 const debug: NodeRequire = require('debug')('server:server');

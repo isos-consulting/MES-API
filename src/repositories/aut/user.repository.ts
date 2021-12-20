@@ -1,23 +1,28 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
 import AutUser from '../../models/aut/user.model';
 import IAutUser from '../../interfaces/aut/user.interface';
-import sequelize from '../../models';
+import { Sequelize } from 'sequelize-typescript';
 import convertBulkResult from '../../utils/convertBulkResult';
 import convertResult from '../../utils/convertResult';
-import { Op, Sequelize, Transaction, UniqueConstraintError } from 'sequelize';
+import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import AutUserCache from '../../caches/aut/user.cache';
 import UserWrapper from '../../wrappers/aut/user.wrapper';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
+import { getSequelize } from '../../utils/getSequelize';
 
 class AutUserRepo {
   repo: Repository<AutUser>;
   cache: AutUserCache;
+  sequelize: Sequelize;
+  tenant: string;
 
   //#region ✅ Constructor
-  constructor() {
-    this.repo = sequelize.getRepository(AutUser);
+  constructor(tenant: string) {
+    this.tenant = tenant;
+    this.sequelize = getSequelize(tenant);
+    this.repo = this.sequelize.getRepository(AutUser);
     this.cache = new AutUserCache();
   }
   //#endregion
@@ -57,13 +62,13 @@ class AutUserRepo {
       const result = await this.repo.findAll({ 
         include: [
           { 
-            model: sequelize.models.AutGroup, 
+            model: this.sequelize.models.AutGroup, 
             attributes: [], 
             required: false,
             where: params.group_uuid ? { uuid: params.group_uuid } : {}
           },
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [ 
           [ Sequelize.col('autUser.uuid'), 'user_uuid' ], 
@@ -91,9 +96,9 @@ class AutUserRepo {
     try {
       const result = await this.repo.findOne({ 
         include: [
-          { model: sequelize.models.AutGroup, attributes: [], required: false },
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutGroup, attributes: [], required: false },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [ 
           [ Sequelize.col('autUser.uuid'), 'user_uuid' ], 
@@ -138,13 +143,13 @@ class AutUserRepo {
 
   public readAuth = async(uuid: string) => {
     try {
-      let user = await this.cache.read(uuid);
+      let user = await this.cache.read(uuid, this.tenant);
       if (!user) {
         user = await this.repo.findOne({
           attributes: [ 'uid', 'uuid', 'group_id', 'id', 'user_nm', 'pwd', 'email', 'pwd_fg', 'admin_fg', 'super_admin_fg' ],
           where: { uuid }
         });
-        await this.cache.create(user);
+        await this.cache.create(user, this.tenant);
       }
 
       return UserWrapper.create(user);
@@ -155,13 +160,13 @@ class AutUserRepo {
 
   public readById = async(id: string) => {
     try {
-      let user = await this.cache.readById(id);
+      let user = await this.cache.readById(id, this.tenant);
       if (!user) {
         user = await this.repo.findOne({
           attributes: [ 'uid', 'uuid', 'group_id', 'id', 'user_nm', 'pwd', 'email', 'pwd_fg', 'admin_fg', 'super_admin_fg' ],
           where: { id }
         });
-        await this.cache.create(user);
+        await this.cache.create(user, this.tenant);
       }
 
       return UserWrapper.create(user);
@@ -201,7 +206,7 @@ class AutUserRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.AutUser.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.AutUser.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -234,7 +239,7 @@ class AutUserRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.AutUser.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.AutUser.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -273,7 +278,7 @@ class AutUserRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.AutUser.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.AutUser.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -296,7 +301,7 @@ class AutUserRepo {
         count += await this.repo.destroy({ where: { uuid: user.uuid }, transaction});
       };
 
-      await new AdmLogRepo().create('delete', sequelize.models.AutUser.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.AutUser.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
     } catch (error) {
       throw error;

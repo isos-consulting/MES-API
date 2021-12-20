@@ -3,7 +3,7 @@ import IAdmInspHandlingType from '../../interfaces/adm/insp-handling-type.interf
 import AutUser from '../aut/user.model';
 
 @Table({
-  tableName: 'ADM_INSP_HANDLING_TYPE_VW',
+  tableName: 'ADM_INSP_HANDLING_TYPE_TB',
   modelName: 'AdmInspHandlingType',
   comment: '검사처리 유형 정보 뷰',
   timestamps: true,
@@ -15,10 +15,12 @@ export default class AdmInspHandlingType extends Model<IAdmInspHandlingType> {
     type: DataType.INTEGER,
     allowNull: false,
     primaryKey: true,
+		autoIncrement: true,
+    autoIncrementIdentity: true,
   })
   insp_handling_type_id: number;
 
-  @Unique('adm_insp_handling_type_vw_insp_handling_type_cd_un')
+  @Unique('adm_insp_handling_type_tb_insp_handling_type_cd_un')
   @Column({
     comment: '검사처리 유형코드',
     type: DataType.STRING(20),
@@ -70,6 +72,15 @@ export default class AdmInspHandlingType extends Model<IAdmInspHandlingType> {
     allowNull: false,
   })
   updated_uid: number;
+
+	@Unique('adm_insp_handling_type_tb_uuid_un')
+  @Column({
+    comment: '검사처리 유형UUID',
+    type: DataType.UUID,
+    allowNull: false,
+    defaultValue: Sequelize.fn('gen_random_uuid')
+  })
+  uuid: string;
 
   //#region ✅ Define Association
   // BelongTo

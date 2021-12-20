@@ -9,11 +9,11 @@ class options implements Options{
 }        
 
 const createDBOptions = new options();
-createDBOptions.username = process.env.DB_USERNAME || 'root';
-createDBOptions.password = process.env.DB_PASSWORD || 'your password';
+createDBOptions.username = 'root';
+createDBOptions.password = 'your password';
 createDBOptions.dialect = 'mysql';
 
-let db_name = process.env.DB_DBNAME || 'new DataBase';
+let db_name = 'new DataBase';
 
 const dbCreateSequelize = new Sequelize(createDBOptions);
 

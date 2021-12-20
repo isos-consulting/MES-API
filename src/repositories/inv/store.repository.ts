@@ -1,11 +1,12 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
-import sequelize from '../../models';
+import { Sequelize } from 'sequelize-typescript';
 import convertBulkResult from '../../utils/convertBulkResult';
 import convertResult from '../../utils/convertResult';
-import { Op, Sequelize, Transaction, UniqueConstraintError, WhereOptions } from 'sequelize';
+import { Op, Transaction, UniqueConstraintError, WhereOptions } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
+import { getSequelize } from '../../utils/getSequelize';
 import InvStore from '../../models/inv/store.model';
 import IInvStore from '../../interfaces/inv/store.interface';
 import getTranTypeCd from '../../utils/getTranTypeCd';
@@ -18,10 +19,14 @@ import { readReturnStocks } from '../../queries/inv/store.return.query';
 
 class InvStoreRepo {
   repo: Repository<InvStore>;
+  sequelize: Sequelize;
+  tenant: string;
 
   //#region ✅ Constructor
-  constructor() {
-    this.repo = sequelize.getRepository(InvStore);
+  constructor(tenant: string) {
+    this.tenant = tenant;
+    this.sequelize = getSequelize(tenant);
+    this.repo = this.sequelize.getRepository(InvStore);
   }
   //#endregion
 
@@ -71,34 +76,34 @@ class InvStoreRepo {
       const result = await this.repo.findAll({ 
         include: [
           { 
-            model: sequelize.models.StdFactory, 
+            model: this.sequelize.models.StdFactory, 
             attributes: [], 
             required: true, 
             where: { uuid: params.factory_uuid ? params.factory_uuid : { [Op.ne]: null } }
           },
           { 
-            model: sequelize.models.StdProd, 
+            model: this.sequelize.models.StdProd, 
             attributes: [], 
             required: true,
             include: [
-              { model: sequelize.models.StdItemType, attributes: [], required: false },
-              { model: sequelize.models.StdProdType, attributes: [], required: false },
-              { model: sequelize.models.StdModel, attributes: [], required: false },
-              { model: sequelize.models.StdUnit, as: 'stdUnit', attributes: [], required: false },
+              { model: this.sequelize.models.StdItemType, attributes: [], required: false },
+              { model: this.sequelize.models.StdProdType, attributes: [], required: false },
+              { model: this.sequelize.models.StdModel, attributes: [], required: false },
+              { model: this.sequelize.models.StdUnit, as: 'stdUnit', attributes: [], required: false },
             ],
             where: { uuid: params.prod_uuid ? params.prod_uuid : { [Op.ne]: null } }
           },
           { 
-            model: sequelize.models.StdStore, 
+            model: this.sequelize.models.StdStore, 
             attributes: [], 
             required: true,
             where: { uuid: params.store_uuid ? params.store_uuid : { [Op.ne]: null } }
           },
-          { model: sequelize.models.StdLocation, attributes: [], required: false },
-          { model: sequelize.models.StdReject, attributes: [], required: false },
-					{ model: sequelize.models.StdPartner, attributes: [], required: false },
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.StdLocation, attributes: [], required: false },
+          { model: this.sequelize.models.StdReject, attributes: [], required: false },
+					{ model: this.sequelize.models.StdPartner, attributes: [], required: false },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('invStore.uuid'), 'inv_store_uuid' ],
@@ -165,24 +170,24 @@ class InvStoreRepo {
     try {
       const result = await this.repo.findAll({ 
         include: [
-          { model: sequelize.models.StdFactory, attributes: [], required: true },
+          { model: this.sequelize.models.StdFactory, attributes: [], required: true },
           { 
-            model: sequelize.models.StdProd, 
+            model: this.sequelize.models.StdProd, 
             attributes: [], 
             required: true,
             include: [
-              { model: sequelize.models.StdItemType, attributes: [], required: false },
-              { model: sequelize.models.StdProdType, attributes: [], required: false },
-              { model: sequelize.models.StdModel, attributes: [], required: false },
-              { model: sequelize.models.StdUnit, as: 'stdUnit', attributes: [], required: false },
+              { model: this.sequelize.models.StdItemType, attributes: [], required: false },
+              { model: this.sequelize.models.StdProdType, attributes: [], required: false },
+              { model: this.sequelize.models.StdModel, attributes: [], required: false },
+              { model: this.sequelize.models.StdUnit, as: 'stdUnit', attributes: [], required: false },
             ],
           },
-          { model: sequelize.models.StdStore, attributes: [], required: true },
-          { model: sequelize.models.StdLocation, attributes: [], required: false },
-          { model: sequelize.models.StdReject, attributes: [], required: false },
-					{ model: sequelize.models.StdPartner, attributes: [], required: false },
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.StdStore, attributes: [], required: true },
+          { model: this.sequelize.models.StdLocation, attributes: [], required: false },
+          { model: this.sequelize.models.StdReject, attributes: [], required: false },
+					{ model: this.sequelize.models.StdPartner, attributes: [], required: false },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('invStore.uuid'), 'inv_store_uuid' ],
@@ -252,7 +257,7 @@ class InvStoreRepo {
   // 📒 Fn[readStockAccordingToType]: 유형에 따라 재고 조회
   public readStockAccordingToType = async(params?: any) => {
     try {
-      const result = await sequelize.query(readStocks(params));
+      const result = await this.sequelize.query(readStocks(params));
 
       return convertReadResult(result[0]);
     } catch (error) {
@@ -263,7 +268,7 @@ class InvStoreRepo {
   // 📒 Fn[readReturnStock]: 유형에 따라 재고 조회
   public readReturnStock = async(params?: any) => {
     try {
-      const result = await sequelize.query(readReturnStocks(params));
+      const result = await this.sequelize.query(readReturnStocks(params));
 
       return convertReadResult(result[0]);
     } catch (error) {
@@ -274,7 +279,7 @@ class InvStoreRepo {
   // 📒 Fn[readStoreHistoryByTransaction]: 수불유형에 따른 이력 조회
   public readStoreHistoryByTransaction = async(params?: any) => {
     try {
-      const result = await sequelize.query(readStoreHistoryByTransaction(params));
+      const result = await this.sequelize.query(readStoreHistoryByTransaction(params));
 
       return convertReadResult(result[0]);
     } catch (error) {
@@ -285,7 +290,7 @@ class InvStoreRepo {
   // 📒 Fn[readTotalHistoryAccordingToType]: 유형에 따른 총괄수불부 조회
   public readTotalHistoryAccordingToType = async(params?: any) => {
     try {
-      const result = await sequelize.query(readStoreTotalInventory(params));
+      const result = await this.sequelize.query(readStoreTotalInventory(params));
 
       return convertReadResult(result[0]);
     } catch (error) {
@@ -296,7 +301,7 @@ class InvStoreRepo {
   // 📒 Fn[readIndividualHistoryAccordingToType]: 유형에 따른 개별수불부 조회
   public readIndividualHistoryAccordingToType = async(params?: any) => {
     try {
-      const result = await sequelize.query(readStoreIndividualHistory(params));
+      const result = await this.sequelize.query(readStoreIndividualHistory(params));
 
       return convertReadResult(result[0]);
     } catch (error) {
@@ -307,7 +312,7 @@ class InvStoreRepo {
   // 📒 Fn[readTypeHistoryAccordingToType]: 유형에 따른 수불유형별 수불부 조회
   public readTypeHistoryAccordingToType = async(params?: any) => {
     try {
-      const result = await sequelize.query(readStoreTypeInventory(params));
+      const result = await this.sequelize.query(readStoreTypeInventory(params));
 
       return convertReadResult(result[0]);
     } catch (error) {
@@ -343,7 +348,7 @@ class InvStoreRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.InvStore.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.InvStore.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -390,7 +395,7 @@ class InvStoreRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.InvStore.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.InvStore.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -427,7 +432,7 @@ class InvStoreRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.InvStore.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.InvStore.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -450,7 +455,7 @@ class InvStoreRepo {
         count += await this.repo.destroy({ where: { uuid: store.uuid }, transaction});
       };
 
-      await new AdmLogRepo().create('delete', sequelize.models.InvStore.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.InvStore.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
     } catch (error) {
       throw error;
@@ -485,7 +490,7 @@ class InvStoreRepo {
         });
       };
 
-      await new AdmLogRepo().create('delete', sequelize.models.InvStore.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.InvStore.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
     } catch (error) {
       throw error;

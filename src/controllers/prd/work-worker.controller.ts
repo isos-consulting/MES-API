@@ -7,36 +7,28 @@ import getSubtractTwoDates from '../../utils/getSubtractTwoDates';
 import BaseCtl from '../base.controller';
 
 class PrdWorkWorkerCtl extends BaseCtl {
-  // ✅ Inherited Functions Variable
-  // result: ApiResult<any>;
-
-  // ✅ 부모 Controller (BaseController) 의 repository 변수가 any 로 생성 되어있기 때문에 자식 Controller(this) 에서 Type 지정
-  repo: PrdWorkWorkerRepo;
-  workRepo: PrdWorkRepo;
-
   //#region ✅ Constructor
   constructor() {
     // ✅ 부모 Controller (Base Controller) 의 CRUD Function 과 상속 받는 자식 Controller(this) 의 Repository 를 연결하기 위하여 생성자에서 Repository 생성
-    super(new PrdWorkWorkerRepo());
-    this.workRepo = new PrdWorkRepo();
+    super(PrdWorkWorkerRepo);
 
     // ✅ CUD 연산이 실행되기 전 Fk Table 의 uuid 로 id 를 검색하여 request body 에 삽입하기 위하여 정보 Setting
     this.fkIdInfos = [
       {
         key: 'factory',
-        repo: new StdFactoryRepo(),
+        TRepo: StdFactoryRepo,
         idName: 'factory_id',
         uuidName: 'factory_uuid'
       },
       {
         key: 'work',
-        repo: new PrdWorkRepo(),
+        TRepo: PrdWorkRepo,
         idName: 'work_id',
         uuidName: 'work_uuid'
       },
       {
         key: 'worker',
-        repo: new StdWorkerRepo(),
+        TRepo: StdWorkerRepo,
         idName: 'worker_id',
         uuidName: 'worker_uuid'
       },
@@ -93,11 +85,14 @@ class PrdWorkWorkerCtl extends BaseCtl {
 
   // 📒 Fn[beforeCreate] (✅ Inheritance): Create Transaction 이 실행되기 전 호출되는 Function
   beforeCreate = async(req: express.Request) => {
+    const repo = new PrdWorkWorkerRepo(req.tenant.uuid);
+    const workRepo = new PrdWorkRepo(req.tenant.uuid);
+
     // 📌 생산실적이 완료상태일 경우 데이터 삭제 불가
     const uuids = req.body.map((data: any) => { return data.uuid });
-    const workWorkerRead = await this.repo.readRawsByUuids(uuids);
+    const workWorkerRead = await repo.readRawsByUuids(uuids);
     const workIds = workWorkerRead.raws.map((workWorker: any) => { return workWorker.work_id });
-    const workRead = await this.workRepo.readRawByIds(workIds);
+    const workRead = await workRepo.readRawByIds(workIds);
     workRead.raws.forEach((work: any) => { 
       if (work.complete_fg) { throw new Error(`실적번호 [${work.uuid}]는 완료상태이므로 데이터 삭제가 불가능합니다.`)} 
     });
@@ -135,11 +130,14 @@ class PrdWorkWorkerCtl extends BaseCtl {
 
   // 📒 Fn[beforeUpdate] (✅ Inheritance): Update Transaction 이 실행되기 전 호출되는 Function
   beforeUpdate = async(req: express.Request) => {
+    const repo = new PrdWorkWorkerRepo(req.tenant.uuid);
+    const workRepo = new PrdWorkRepo(req.tenant.uuid);
+
     // 📌 생산실적이 완료상태일 경우 데이터 삭제 불가
     const uuids = req.body.map((data: any) => { return data.uuid });
-    const workWorkerRead = await this.repo.readRawsByUuids(uuids);
+    const workWorkerRead = await repo.readRawsByUuids(uuids);
     const workIds = workWorkerRead.raws.map((workWorker: any) => { return workWorker.work_id });
-    const workRead = await this.workRepo.readRawByIds(workIds);
+    const workRead = await workRepo.readRawByIds(workIds);
     workRead.raws.forEach((work: any) => { 
       if (work.complete_fg) { throw new Error(`실적번호 [${work.uuid}]는 완료상태이므로 데이터 삭제가 불가능합니다.`)} 
     });
@@ -168,11 +166,14 @@ class PrdWorkWorkerCtl extends BaseCtl {
 
   // 📒 Fn[beforePatch] (✅ Inheritance): Patch Transaction 이 실행되기 전 호출되는 Function
   beforePatch = async(req: express.Request) => {
+    const repo = new PrdWorkWorkerRepo(req.tenant.uuid);
+    const workRepo = new PrdWorkRepo(req.tenant.uuid);
+
     // 📌 생산실적이 완료상태일 경우 데이터 삭제 불가
     const uuids = req.body.map((data: any) => { return data.uuid });
-    const workWorkerRead = await this.repo.readRawsByUuids(uuids);
+    const workWorkerRead = await repo.readRawsByUuids(uuids);
     const workIds = workWorkerRead.raws.map((workWorker: any) => { return workWorker.work_id });
-    const workRead = await this.workRepo.readRawByIds(workIds);
+    const workRead = await workRepo.readRawByIds(workIds);
     workRead.raws.forEach((work: any) => { 
       if (work.complete_fg) { throw new Error(`실적번호 [${work.uuid}]는 완료상태이므로 데이터 삭제가 불가능합니다.`)} 
     });
@@ -201,11 +202,14 @@ class PrdWorkWorkerCtl extends BaseCtl {
 
   // 📒 Fn[beforeDelete] (✅ Inheritance): Delete Transaction 이 실행되기 전 호출되는 Function
   beforeDelete = async(req: express.Request) => {
+    const repo = new PrdWorkWorkerRepo(req.tenant.uuid);
+    const workRepo = new PrdWorkRepo(req.tenant.uuid);
+
     // 📌 생산실적이 완료상태일 경우 데이터 삭제 불가
     const uuids = req.body.map((data: any) => { return data.uuid });
-    const workWorkerRead = await this.repo.readRawsByUuids(uuids);
+    const workWorkerRead = await repo.readRawsByUuids(uuids);
     const workIds = workWorkerRead.raws.map((workWorker: any) => { return workWorker.work_id });
-    const workRead = await this.workRepo.readRawByIds(workIds);
+    const workRead = await workRepo.readRawByIds(workIds);
     workRead.raws.forEach((work: any) => { 
       if (work.complete_fg) { throw new Error(`실적번호 [${work.uuid}]는 완료상태이므로 데이터 삭제가 불가능합니다.`)} 
     });

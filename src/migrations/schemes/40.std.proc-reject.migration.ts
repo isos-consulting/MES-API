@@ -1,5 +1,6 @@
 import IStdProcReject from '../../interfaces/std/proc-reject.interface';
 import BaseMigration from '../base-migration';
+import config from '../../configs/config';
 
 // Seed Datas
 const seedDatas: IStdProcReject[] = [
@@ -125,7 +126,7 @@ const seedDatas: IStdProcReject[] = [
 	}
 ]
 
-const baseMigration = new BaseMigration('StdProcReject', 'proc_reject_id', process.env.DB_RESET_TYPE === 'test' ? seedDatas : []);
+const baseMigration = new BaseMigration('StdProcReject', 'proc_reject_id', config.db.reset_type === 'test' ? seedDatas : []);
 const migration = baseMigration.migration;
 const migrationUndo = baseMigration.migrationUndo;
 

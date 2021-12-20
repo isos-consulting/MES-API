@@ -1,60 +1,54 @@
 import express = require('express');
+import ApiResult from '../../interfaces/common/api-result.interface';
 import IPrdWork from '../../interfaces/prd/work.interface';
-import sequelize from '../../models';
 import PrdWorkRoutingRepo from '../../repositories/prd/work-routing.repository';
 import PrdWorkRepo from '../../repositories/prd/work.repository';
 import StdEquipRepo from '../../repositories/std/equip.repository';
 import StdFactoryRepo from '../../repositories/std/factory.repository';
 import StdProcRepo from '../../repositories/std/proc.repository';
 import StdWorkingsRepo from '../../repositories/std/workings.repository';
+import { getSequelize } from '../../utils/getSequelize';
 import getSubtractTwoDates from '../../utils/getSubtractTwoDates';
 import response from '../../utils/response';
 import testErrorHandlingHelper from '../../utils/testErrorHandlingHelper';
 import BaseCtl from '../base.controller';
+import config from '../../configs/config';
 
 class PrdWorkRoutingCtl extends BaseCtl {
-  // ✅ Inherited Functions Variable
-  // result: ApiResult<any>;
-
-  // ✅ 부모 Controller (BaseController) 의 repository 변수가 any 로 생성 되어있기 때문에 자식 Controller(this) 에서 Type 지정
-  repo: PrdWorkRoutingRepo;
-  workRepo: PrdWorkRepo;
-
   //#region ✅ Constructor
   constructor() {
     // ✅ 부모 Controller (Base Controller) 의 CRUD Function 과 상속 받는 자식 Controller(this) 의 Repository 를 연결하기 위하여 생성자에서 Repository 생성
-    super(new PrdWorkRoutingRepo());
-    this.workRepo = new PrdWorkRepo();
+    super(PrdWorkRoutingRepo);
 
     // ✅ CUD 연산이 실행되기 전 Fk Table 의 uuid 로 id 를 검색하여 request body 에 삽입하기 위하여 정보 Setting
     this.fkIdInfos = [
       {
         key: 'factory',
-        repo: new StdFactoryRepo(),
+        TRepo: StdFactoryRepo,
         idName: 'factory_id',
         uuidName: 'factory_uuid'
       },
       {
         key: 'order',
-        repo: new PrdWorkRepo(),
+        TRepo: PrdWorkRepo,
         idName: 'order_id',
         uuidName: 'order_uuid'
       },
       {
         key: 'proc',
-        repo: new StdProcRepo(),
+        TRepo: StdProcRepo,
         idName: 'proc_id',
         uuidName: 'proc_uuid'
       },
       {
         key: 'workings',
-        repo: new StdWorkingsRepo(),
+        TRepo: StdWorkingsRepo,
         idName: 'workings_id',
         uuidName: 'workings_uuid'
       },
       {
         key: 'equip',
-        repo: new StdEquipRepo(),
+        TRepo: StdEquipRepo,
         idName: 'equip_id',
         uuidName: 'equip_uuid'
       }
@@ -84,13 +78,18 @@ class PrdWorkRoutingCtl extends BaseCtl {
   // 📒 Fn[update] (✅ Inheritance): Default Update Function
   public update = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      req.body = await this.getFkId(req.body, this.fkIdInfos);
+      req.body = await this.getFkId(req.tenant.uuid, req.body, this.fkIdInfos);
+
+      const sequelize = getSequelize(req.tenant.uuid);
+      const repo = new PrdWorkRoutingRepo(req.tenant.uuid);
+      const workRepo = new PrdWorkRepo(req.tenant.uuid);
+      let result: ApiResult<any> = { count: 0, raws: [] };
+
       await this.beforeUpdate(req);
       
-      this.result = { raws: [], count: 0 };
       await sequelize.transaction(async(tran) => { 
         for await (const data of req.body) {
-          const workRoutingResult = await this.repo.update([data], req.user?.uid as number, tran); 
+          const workRoutingResult = await repo.update([data], req.user?.uid as number, tran); 
 
           //📌 work_uuid 기준으로 prd_work update params 셋팅
           const workParams: IPrdWork = {
@@ -101,17 +100,17 @@ class PrdWorkRoutingCtl extends BaseCtl {
           };
 
           //📌 prd_work 업데이트
-          const workResult = await this.workRepo.update([workParams], req.user?.uid as number, tran); 
-          this.result.raws.push({
+          const workResult = await workRepo.update([workParams], req.user?.uid as number, tran); 
+          result.raws.push({
             work_routing: workRoutingResult.raws,
             work: workResult.raws,
           });
         }
       });
 
-      return response(res, this.result.raws, { count: this.result.count }, '', 201);
+      return response(res, result.raws, { count: result.count }, '', 201);
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   }
 
@@ -141,9 +140,11 @@ class PrdWorkRoutingCtl extends BaseCtl {
 
   // 📒 Fn[beforeCreate] (✅ Inheritance): Create Transaction 이 실행되기 전 호출되는 Function
   beforeCreate = async(req: express.Request) => {
+    const workRepo = new PrdWorkRepo(req.tenant.uuid);
+
     // 📌 생산실적이 완료상태일 경우 데이터 생성 불가
     const uuids = req.body.map((data: any) => { return data.work_uuid });
-    const workRead = await this.workRepo.readRawsByUuids(uuids);
+    const workRead = await workRepo.readRawsByUuids(uuids);
     workRead.raws.forEach((work: any) => { 
       if (work.complete_fg == true) { throw new Error(`실적번호 [${work.uuid}]는 완료상태이므로 데이터 생성이 불가능합니다.`)} 
     });
@@ -181,11 +182,14 @@ class PrdWorkRoutingCtl extends BaseCtl {
 
   // 📒 Fn[beforeUpdate] (✅ Inheritance): Update Transaction 이 실행되기 전 호출되는 Function
   beforeUpdate = async(req: express.Request) => {
+    const repo = new PrdWorkRoutingRepo(req.tenant.uuid);
+    const workRepo = new PrdWorkRepo(req.tenant.uuid);
+
     // 📌 생산실적이 완료상태일 경우 데이터 삭제 불가
     const uuids = req.body.map((data: any) => { return data.uuid });
-    const workRoutingRead = await this.repo.readRawsByUuids(uuids);
+    const workRoutingRead = await repo.readRawsByUuids(uuids);
     const workIds = workRoutingRead.raws.map((workRouting: any) => { return workRouting.work_id });
-    const workRead = await this.workRepo.readRawByIds(workIds);
+    const workRead = await workRepo.readRawByIds(workIds);
     workRead.raws.forEach((work: any) => { 
       if (work.complete_fg) { throw new Error(`실적번호 [${work.uuid}]는 완료상태이므로 데이터 삭제가 불가능합니다.`)} 
     });
@@ -213,11 +217,14 @@ class PrdWorkRoutingCtl extends BaseCtl {
 
   // 📒 Fn[beforePatch] (✅ Inheritance): Patch Transaction 이 실행되기 전 호출되는 Function
   beforePatch = async(req: express.Request) => {
+    const repo = new PrdWorkRoutingRepo(req.tenant.uuid);
+    const workRepo = new PrdWorkRepo(req.tenant.uuid);
+
     // 📌 생산실적이 완료상태일 경우 데이터 삭제 불가
     const uuids = req.body.map((data: any) => { return data.uuid });
-    const workRoutingRead = await this.repo.readRawsByUuids(uuids);
+    const workRoutingRead = await repo.readRawsByUuids(uuids);
     const workIds = workRoutingRead.raws.map((workRouting: any) => { return workRouting.work_id });
-    const workRead = await this.workRepo.readRawByIds(workIds);
+    const workRead = await workRepo.readRawByIds(workIds);
     workRead.raws.forEach((work: any) => { 
       if (work.complete_fg) { throw new Error(`실적번호 [${work.uuid}]는 완료상태이므로 데이터 삭제가 불가능합니다.`)} 
     });
@@ -245,11 +252,14 @@ class PrdWorkRoutingCtl extends BaseCtl {
 
   // 📒 Fn[beforeDelete] (✅ Inheritance): Delete Transaction 이 실행되기 전 호출되는 Function
   beforeDelete = async(req: express.Request) => {
+    const repo = new PrdWorkRoutingRepo(req.tenant.uuid);
+    const workRepo = new PrdWorkRepo(req.tenant.uuid);
+
     // 📌 생산실적이 완료상태일 경우 데이터 삭제 불가
     const uuids = req.body.map((data: any) => { return data.uuid });
-    const workRoutingRead = await this.repo.readRawsByUuids(uuids);
+    const workRoutingRead = await repo.readRawsByUuids(uuids);
     const workIds = workRoutingRead.raws.map((workRouting: any) => { return workRouting.work_id });
-    const workRead = await this.workRepo.readRawByIds(workIds);
+    const workRead = await workRepo.readRawByIds(workIds);
     workRead.raws.forEach((work: any) => { 
       if (work.complete_fg) { throw new Error(`실적번호 [${work.uuid}]는 완료상태이므로 데이터 삭제가 불가능합니다.`)} 
     });

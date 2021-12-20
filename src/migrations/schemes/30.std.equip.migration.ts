@@ -1,5 +1,6 @@
 import IStdEquip from '../../interfaces/std/equip.interface';
 import BaseMigration from '../base-migration';
+import config from '../../configs/config';
 
 // Seed Datas
 let seedDatas: IStdEquip[] = [
@@ -10,6 +11,7 @@ let seedDatas: IStdEquip[] = [
 		"equip_cd" : "001",
 		"equip_nm" : "조립 1호기",
 		"use_fg" : true,
+		"prd_fg" : true,
 		"remark" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
@@ -22,6 +24,7 @@ let seedDatas: IStdEquip[] = [
 		"equip_cd" : "002",
 		"equip_nm" : "수동조립 1호기",
 		"use_fg" : true,
+		"prd_fg" : true,
 		"remark" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
@@ -34,6 +37,7 @@ let seedDatas: IStdEquip[] = [
 		"equip_cd" : "003",
 		"equip_nm" : "쇼트 1호기",
 		"use_fg" : true,
+		"prd_fg" : true,
 		"remark" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
@@ -46,6 +50,7 @@ let seedDatas: IStdEquip[] = [
 		"equip_cd" : "004",
 		"equip_nm" : "컴프레셔 1호기",
 		"use_fg" : true,
+		"prd_fg" : true,
 		"remark" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
@@ -58,6 +63,7 @@ let seedDatas: IStdEquip[] = [
 		"equip_cd" : "005",
 		"equip_nm" : "CAP 라인 1호기",
 		"use_fg" : true,
+		"prd_fg" : true,
 		"remark" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
@@ -65,7 +71,7 @@ let seedDatas: IStdEquip[] = [
 	}
 ]
 
-const baseMigration = new BaseMigration('StdEquip', 'equip_id', process.env.DB_RESET_TYPE === 'test' ? seedDatas : []);
+const baseMigration = new BaseMigration('StdEquip', 'equip_id', config.db.reset_type === 'test' ? seedDatas : []);
 const migration = baseMigration.migration;
 const migrationUndo = baseMigration.migrationUndo;
 

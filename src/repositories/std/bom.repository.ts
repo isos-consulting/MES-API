@@ -1,23 +1,27 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
 import StdBom from '../../models/std/bom.model';
 import IStdBom from '../../interfaces/std/bom.interface';
-import sequelize from '../../models';
 import convertBulkResult from '../../utils/convertBulkResult';
 import convertResult from '../../utils/convertResult';
-import { Op, Sequelize, Transaction } from 'sequelize';
+import { Sequelize } from 'sequelize-typescript';
+import { Op, Transaction } from 'sequelize';
 import { UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
+import { getSequelize } from '../../utils/getSequelize';
 import { readBomTrees } from '../../queries/std/bom.tree.query';
   
-
 class StdBomRepo {
   repo: Repository<StdBom>;
+  sequelize: Sequelize;
+  tenant: string;
 
   //#region ✅ Constructor
-  constructor() {
-    this.repo = sequelize.getRepository(StdBom);
+  constructor(tenant: string) {
+    this.tenant = tenant;
+    this.sequelize = getSequelize(tenant);
+    this.repo = this.sequelize.getRepository(StdBom);
   }
   //#endregion
 
@@ -63,40 +67,40 @@ class StdBomRepo {
       const result = await this.repo.findAll({
         include: [
           { 
-            model: sequelize.models.StdFactory, 
+            model: this.sequelize.models.StdFactory, 
             attributes: [], 
             required: true, 
             where: { uuid: params.factory_uuid ? params.factory_uuid : { [Op.ne]: null } }
           },
           { 
             as: 'stdPProd',
-            model: sequelize.models.StdProd, 
+            model: this.sequelize.models.StdProd, 
             attributes: [], 
             required: true,
             where: { uuid: params.p_prod_uuid ? params.p_prod_uuid : { [Op.ne]: null } },
             include: [
-              { model: sequelize.models.StdItemType, attributes: [], required: false },
-              { model: sequelize.models.StdProdType, attributes: [], required: false },
-              { model: sequelize.models.StdModel, attributes: [], required: false },
-              { model: sequelize.models.StdUnit, as: 'stdUnit', attributes: [], required: false },
+              { model: this.sequelize.models.StdItemType, attributes: [], required: false },
+              { model: this.sequelize.models.StdProdType, attributes: [], required: false },
+              { model: this.sequelize.models.StdModel, attributes: [], required: false },
+              { model: this.sequelize.models.StdUnit, as: 'stdUnit', attributes: [], required: false },
             ]
           },
           { 
             as: 'stdCProd',
-            model: sequelize.models.StdProd, 
+            model: this.sequelize.models.StdProd, 
             attributes: [], 
             required: true,
             include: [
-              { model: sequelize.models.StdItemType, attributes: [], required: false },
-              { model: sequelize.models.StdProdType, attributes: [], required: false },
-              { model: sequelize.models.StdModel, attributes: [], required: false },
+              { model: this.sequelize.models.StdItemType, attributes: [], required: false },
+              { model: this.sequelize.models.StdProdType, attributes: [], required: false },
+              { model: this.sequelize.models.StdModel, attributes: [], required: false },
             ]
           },
-          { model: sequelize.models.StdUnit, attributes: [], required: true },
-          { model: sequelize.models.StdStore, attributes: [], required: true },
-          { model: sequelize.models.StdLocation, attributes: [], required: false },
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.StdUnit, attributes: [], required: true },
+          { model: this.sequelize.models.StdStore, attributes: [], required: true },
+          { model: this.sequelize.models.StdLocation, attributes: [], required: false },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('stdBom.uuid'), 'bom_uuid' ],
@@ -166,35 +170,35 @@ class StdBomRepo {
       const result = await this.repo.findOne(
         { 
           include: [
-            { model: sequelize.models.StdFactory, attributes: [], required: true },
+            { model: this.sequelize.models.StdFactory, attributes: [], required: true },
             { 
               as: 'stdPProd',
-              model: sequelize.models.StdProd, 
+              model: this.sequelize.models.StdProd, 
               attributes: [], 
               required: true,
               include: [
-                { model: sequelize.models.StdItemType, attributes: [], required: false },
-                { model: sequelize.models.StdProdType, attributes: [], required: false },
-                { model: sequelize.models.StdModel, attributes: [], required: false },
-                { model: sequelize.models.StdUnit, as: 'stdUnit', attributes: [], required: false },
+                { model: this.sequelize.models.StdItemType, attributes: [], required: false },
+                { model: this.sequelize.models.StdProdType, attributes: [], required: false },
+                { model: this.sequelize.models.StdModel, attributes: [], required: false },
+                { model: this.sequelize.models.StdUnit, as: 'stdUnit', attributes: [], required: false },
               ]
             },
             { 
               as: 'stdCProd',
-              model: sequelize.models.StdProd, 
+              model: this.sequelize.models.StdProd, 
               attributes: [], 
               required: true,
               include: [
-                { model: sequelize.models.StdItemType, attributes: [], required: false },
-                { model: sequelize.models.StdProdType, attributes: [], required: false },
-                { model: sequelize.models.StdModel, attributes: [], required: false },
+                { model: this.sequelize.models.StdItemType, attributes: [], required: false },
+                { model: this.sequelize.models.StdProdType, attributes: [], required: false },
+                { model: this.sequelize.models.StdModel, attributes: [], required: false },
               ]
             },
-            { model: sequelize.models.StdUnit, attributes: [], required: true },
-            { model: sequelize.models.StdStore, attributes: [], required: true },
-            { model: sequelize.models.StdLocation, attributes: [], required: false },
-            { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-            { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+            { model: this.sequelize.models.StdUnit, attributes: [], required: true },
+            { model: this.sequelize.models.StdStore, attributes: [], required: true },
+            { model: this.sequelize.models.StdLocation, attributes: [], required: false },
+            { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+            { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
           ],
           attributes: [
             [ Sequelize.col('stdBom.uuid'), 'bom_uuid' ],
@@ -288,7 +292,7 @@ class StdBomRepo {
 
   public readToTrees = async(params?: any) => {
     try {
-      const result = await sequelize.query(readBomTrees(params.factory_uuid, params.prod_id));
+      const result = await this.sequelize.query(readBomTrees(params.factory_uuid, params.prod_id));
       return convertReadResult(result[0]);
     } catch (error) {
       throw error;
@@ -347,7 +351,7 @@ class StdBomRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.StdBom.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdBom.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -388,7 +392,7 @@ class StdBomRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.StdBom.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdBom.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -411,7 +415,7 @@ class StdBomRepo {
         count += await this.repo.destroy({ where: { uuid: bom.uuid }, transaction});
       };
 
-      await new AdmLogRepo().create('delete', sequelize.models.StdBom.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.StdBom.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
     } catch (error) {
       throw error;

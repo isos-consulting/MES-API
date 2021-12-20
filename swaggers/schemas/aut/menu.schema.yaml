@@ -84,7 +84,7 @@ use_fg:
 uuid:
   type: object
   properties: 
-    factory_uuid:
+    uuid:
       description: 메뉴UUID
       type: string
       format: uuid

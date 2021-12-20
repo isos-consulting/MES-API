@@ -1,4 +1,4 @@
-import sequelize from "../models";
+import { getSequelize } from "./getSequelize";
 
 /**
  * Table 의 Sequence 재정렬 함수
@@ -6,7 +6,8 @@ import sequelize from "../models";
  * @param _tableName 재정렬 할 Table Name
  * @param _columnName Table 의 Sequence Column Name
  */
-const rearrangeSequence = async (_tableName: string, _columnName: string) => {
+const rearrangeSequence = async (tenant: string, _tableName: string, _columnName: string) => {
+  const sequelize = getSequelize(tenant);
   await sequelize.query(`SELECT setval(pg_get_serial_sequence('${_tableName}', '${_columnName}'), (SELECT COALESCE(max(${_columnName}),0)+1 FROM ${_tableName}), false);`);
 }
 

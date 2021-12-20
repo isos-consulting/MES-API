@@ -1,21 +1,26 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
-import sequelize from '../../models';
+import { Sequelize } from 'sequelize-typescript';
 import convertBulkResult from '../../utils/convertBulkResult';
 import convertResult from '../../utils/convertResult';
-import { Op, Sequelize, Transaction, UniqueConstraintError, WhereOptions } from 'sequelize';
+import { Op, Transaction, UniqueConstraintError, WhereOptions } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
+import { getSequelize } from '../../utils/getSequelize';
 import SalOutgoDetail from '../../models/sal/outgo-detail.model';
 import ISalOutgoDetail from '../../interfaces/sal/outgo-detail.interface';
 import SalOutgo from '../../models/sal/outgo.model';
 
 class SalOutgoDetailRepo {
   repo: Repository<SalOutgoDetail>;
+  sequelize: Sequelize;
+  tenant: string;
 
   //#region ✅ Constructor
-  constructor() {
-    this.repo = sequelize.getRepository(SalOutgoDetail);
+  constructor(tenant: string) {
+    this.tenant = tenant;
+    this.sequelize = getSequelize(tenant);
+    this.repo = this.sequelize.getRepository(SalOutgoDetail);
   }
   //#endregion
 
@@ -86,13 +91,13 @@ class SalOutgoDetailRepo {
       const result = await this.repo.findAll({ 
         include: [
           { 
-            model: sequelize.models.SalOutgo, 
+            model: this.sequelize.models.SalOutgo, 
             attributes: [], 
             required: true, 
             where: outgoWhereOptions,
             include: [
               { 
-                model: sequelize.models.StdPartner, 
+                model: this.sequelize.models.StdPartner, 
                 attributes: [], 
                 required: true,
                 where: { uuid: params.partner_uuid ? params.partner_uuid : { [Op.ne]: null } }
@@ -100,29 +105,29 @@ class SalOutgoDetailRepo {
             ]
           },
           { 
-            model: sequelize.models.StdFactory, 
+            model: this.sequelize.models.StdFactory, 
             attributes: [], 
             required: true, 
             where: { uuid: params.factory_uuid ? params.factory_uuid : { [Op.ne]: null } }
           },
           { 
-            model: sequelize.models.StdProd, 
+            model: this.sequelize.models.StdProd, 
             attributes: [], 
             required: true,
             include: [
-              { model: sequelize.models.StdItemType, attributes: [], required: false },
-              { model: sequelize.models.StdProdType, attributes: [], required: false },
-              { model: sequelize.models.StdModel, attributes: [], required: false },
-              { model: sequelize.models.StdUnit, as: 'stdUnit', attributes: [], required: false },
+              { model: this.sequelize.models.StdItemType, attributes: [], required: false },
+              { model: this.sequelize.models.StdProdType, attributes: [], required: false },
+              { model: this.sequelize.models.StdModel, attributes: [], required: false },
+              { model: this.sequelize.models.StdUnit, as: 'stdUnit', attributes: [], required: false },
             ],
           },
-          { model: sequelize.models.StdMoneyUnit, attributes: [], required: true },
-          { model: sequelize.models.SalOrderDetail, attributes: [], required: false },
-          { model: sequelize.models.SalOutgoOrderDetail, attributes: [], required: false },
-          { model: sequelize.models.StdStore, attributes: [], required: true },
-          { model: sequelize.models.StdLocation, attributes: [], required: false },
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.StdMoneyUnit, attributes: [], required: true },
+          { model: this.sequelize.models.SalOrderDetail, attributes: [], required: false },
+          { model: this.sequelize.models.SalOutgoOrderDetail, attributes: [], required: false },
+          { model: this.sequelize.models.StdStore, attributes: [], required: true },
+          { model: this.sequelize.models.StdLocation, attributes: [], required: false },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('salOutgo.uuid'), 'outgo_uuid' ],
@@ -192,30 +197,30 @@ class SalOutgoDetailRepo {
       const result = await this.repo.findOne({ 
         include: [
           { 
-            model: sequelize.models.SalOutgo, 
+            model: this.sequelize.models.SalOutgo, 
             attributes: [], 
             required: true, 
-            include: [{ model: sequelize.models.StdPartner, attributes: [], required: true }]
+            include: [{ model: this.sequelize.models.StdPartner, attributes: [], required: true }]
           },
-          { model: sequelize.models.StdFactory, attributes: [], required: true },
+          { model: this.sequelize.models.StdFactory, attributes: [], required: true },
           { 
-            model: sequelize.models.StdProd, 
+            model: this.sequelize.models.StdProd, 
             attributes: [], 
             required: true,
             include: [
-              { model: sequelize.models.StdItemType, attributes: [], required: false },
-              { model: sequelize.models.StdProdType, attributes: [], required: false },
-              { model: sequelize.models.StdModel, attributes: [], required: false },
-              { model: sequelize.models.StdUnit, as: 'stdUnit', attributes: [], required: false },
+              { model: this.sequelize.models.StdItemType, attributes: [], required: false },
+              { model: this.sequelize.models.StdProdType, attributes: [], required: false },
+              { model: this.sequelize.models.StdModel, attributes: [], required: false },
+              { model: this.sequelize.models.StdUnit, as: 'stdUnit', attributes: [], required: false },
             ],
           },
-          { model: sequelize.models.StdMoneyUnit, attributes: [], required: true },
-          { model: sequelize.models.SalOrderDetail, attributes: [], required: false },
-          { model: sequelize.models.SalOutgoOrderDetail, attributes: [], required: false },
-          { model: sequelize.models.StdStore, attributes: [], required: true },
-          { model: sequelize.models.StdLocation, attributes: [], required: false },
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.StdMoneyUnit, attributes: [], required: true },
+          { model: this.sequelize.models.SalOrderDetail, attributes: [], required: false },
+          { model: this.sequelize.models.SalOutgoOrderDetail, attributes: [], required: false },
+          { model: this.sequelize.models.StdStore, attributes: [], required: true },
+          { model: this.sequelize.models.StdLocation, attributes: [], required: false },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('salOutgo.uuid'), 'outgo_uuid' ],
@@ -326,7 +331,7 @@ class SalOutgoDetailRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.SalOutgoDetail.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.SalOutgoDetail.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -369,7 +374,7 @@ class SalOutgoDetailRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.SalOutgoDetail.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.SalOutgoDetail.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -392,7 +397,7 @@ class SalOutgoDetailRepo {
         count += await this.repo.destroy({ where: { uuid: outgoDetail.uuid }, transaction});
       };
 
-      await new AdmLogRepo().create('delete', sequelize.models.SalOutgoDetail.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.SalOutgoDetail.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
     } catch (error) {
       throw error;

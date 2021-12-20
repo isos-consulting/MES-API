@@ -1,5 +1,6 @@
 import ISalOutgoDetail from '../../interfaces/sal/outgo-detail.interface';
 import BaseMigration from '../base-migration';
+import config from '../../configs/config';
 
 // Seed Datas
 const seedDatas: ISalOutgoDetail[] = [
@@ -653,7 +654,7 @@ const seedDatas: ISalOutgoDetail[] = [
 	}
 ];
 
-const baseMigration = new BaseMigration('SalOutgoDetail', 'outgo_detail_id', process.env.DB_RESET_TYPE === 'test' ? seedDatas : []);
+const baseMigration = new BaseMigration('SalOutgoDetail', 'outgo_detail_id', config.db.reset_type === 'test' ? seedDatas : []);
 const migration = baseMigration.migration;
 const migrationUndo = baseMigration.migrationUndo;
 

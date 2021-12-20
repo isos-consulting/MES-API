@@ -1,5 +1,6 @@
 import IStdCustomerPrice from '../../interfaces/std/customer-price.interface';
 import BaseMigration from '../base-migration';
+import config from '../../configs/config';
 
 // Seed Datas
 const seedDatas: IStdCustomerPrice[] = [
@@ -357,7 +358,7 @@ const seedDatas: IStdCustomerPrice[] = [
   }
 ]
 
-const baseMigration = new BaseMigration('StdCustomerPrice', 'customer_price_id', process.env.DB_RESET_TYPE === 'test' ? seedDatas : []);
+const baseMigration = new BaseMigration('StdCustomerPrice', 'customer_price_id', config.db.reset_type === 'test' ? seedDatas : []);
 const migration = baseMigration.migration;
 const migrationUndo = baseMigration.migrationUndo;
 

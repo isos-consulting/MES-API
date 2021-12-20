@@ -1,11 +1,12 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
-import sequelize from '../../models';
+import { Sequelize } from 'sequelize-typescript';
 import convertBulkResult from '../../utils/convertBulkResult';
 import convertResult from '../../utils/convertResult';
-import { Op, Sequelize, Transaction, UniqueConstraintError } from 'sequelize';
+import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
+import { getSequelize } from '../../utils/getSequelize';
 import PrdWork from '../../models/prd/work.model';
 import IPrdWork from '../../interfaces/prd/work.interface';
 import { readWorks } from '../../queries/prd/work.query';
@@ -13,10 +14,14 @@ import { readWorkReport } from '../../queries/prd/work-report.query';
 
 class PrdWorkRepo {
   repo: Repository<PrdWork>;
+  sequelize: Sequelize;
+  tenant: string;
 
   //#region ✅ Constructor
-  constructor() {
-    this.repo = sequelize.getRepository(PrdWork);
+  constructor(tenant: string) {
+    this.tenant = tenant;
+    this.sequelize = getSequelize(tenant);
+    this.repo = this.sequelize.getRepository(PrdWork);
   }
   //#endregion
 
@@ -67,7 +72,7 @@ class PrdWorkRepo {
   // 📒 Fn[read]: Default Read Function
   public read = async(params?: any) => {
     try {
-      const result = await sequelize.query(readWorks(params));
+      const result = await this.sequelize.query(readWorks(params));
 
       return convertReadResult(result[0]);
     } catch (error) {
@@ -78,7 +83,7 @@ class PrdWorkRepo {
   // 📒 Fn[readByUuid]: Default Read With Uuid Function
   public readByUuid = async(uuid: string, params?: any) => {
     try {
-      const result = await sequelize.query(readWorks({ work_uuid: uuid }));
+      const result = await this.sequelize.query(readWorks({ work_uuid: uuid }));
 
       return convertReadResult(result[0]);
     } catch (error) {
@@ -89,7 +94,7 @@ class PrdWorkRepo {
   // 📒 Fn[readReport]: Read Order Repot Function
   public readReport = async(params?: any) => {
     try {
-      const result = await sequelize.query(readWorkReport(params));
+      const result = await this.sequelize.query(readWorkReport(params));
       return convertReadResult(result[0]);
     } catch (error) {
       throw error;
@@ -118,7 +123,7 @@ class PrdWorkRepo {
   public readByOrderIds = async(orderIds?: number[]) => {
     try {
       const result = await this.repo.findAll({
-        include: [{ model: sequelize.models.PrdOrder, attributes: [], required: true }],
+        include: [{ model: this.sequelize.models.PrdOrder, attributes: [], required: true }],
         attributes: [
           'factory_id',
           'reg_date',
@@ -154,7 +159,7 @@ class PrdWorkRepo {
     try {
       const result = await this.repo.findAll({
         include: [{ 
-          model: sequelize.models.PrdOrder, 
+          model: this.sequelize.models.PrdOrder, 
           attributes: [], 
           required: true,
           where: uuids ? { uuid: uuids } : {}
@@ -205,7 +210,7 @@ class PrdWorkRepo {
     // 일자 넘어가는거 (2일 이상) 어떻게 처리할지 생각해야 함
     // 비가동 시작은 있고 종료가 없는경우는 now로 처리
 
-    const result = await sequelize.query(`
+    const result = await this.sequelize.query(`
       SELECT * INTO temp_work_tb
       FROM prd_work_tb s_od;
       --WHERE DATE(reg_date) = '${date}';
@@ -283,7 +288,7 @@ class PrdWorkRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.PrdWork.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.PrdWork.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -316,7 +321,7 @@ class PrdWorkRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.PrdWork.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.PrdWork.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -350,7 +355,7 @@ class PrdWorkRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.PrdWork.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.PrdWork.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -389,7 +394,7 @@ class PrdWorkRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.PrdWork.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.PrdWork.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -412,7 +417,7 @@ class PrdWorkRepo {
         count += await this.repo.destroy({ where: { uuid: work.uuid }, transaction});
       };
 
-      await new AdmLogRepo().create('delete', sequelize.models.PrdWork.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.PrdWork.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
     } catch (error) {
       throw error;

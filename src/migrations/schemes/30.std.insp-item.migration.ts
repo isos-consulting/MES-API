@@ -1,5 +1,6 @@
 import IStdInspItem from '../../interfaces/std/insp-item.interface';
 import BaseMigration from '../base-migration';
+import config from '../../configs/config';
 
 // Seed Datas
 let seedDatas: IStdInspItem[] = [
@@ -65,7 +66,7 @@ let seedDatas: IStdInspItem[] = [
 	}
 ]
 
-const baseMigration = new BaseMigration('StdInspItem', 'insp_item_id', process.env.DB_RESET_TYPE === 'test' ? seedDatas : []);
+const baseMigration = new BaseMigration('StdInspItem', 'insp_item_id', config.db.reset_type === 'test' ? seedDatas : []);
 const migration = baseMigration.migration;
 const migrationUndo = baseMigration.migrationUndo;
 

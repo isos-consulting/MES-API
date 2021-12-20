@@ -1,21 +1,26 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
-import sequelize from '../../models';
+import { Sequelize } from 'sequelize-typescript';
 import convertBulkResult from '../../utils/convertBulkResult';
 import convertResult from '../../utils/convertResult';
-import { Op, Sequelize, Transaction, UniqueConstraintError } from 'sequelize';
+import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
+import { getSequelize } from '../../utils/getSequelize';
 import PrdReturn from '../../models/prd/return.model';
 import IPrdReturn from '../../interfaces/prd/return.interface';
 import { readReturnReport } from '../../queries/prd/return-report.query';
 
 class PrdReturnRepo {
   repo: Repository<PrdReturn>;
+  sequelize: Sequelize;
+  tenant: string;
 
   //#region ✅ Constructor
-  constructor() {
-    this.repo = sequelize.getRepository(PrdReturn);
+  constructor(tenant: string) {
+    this.tenant = tenant;
+    this.sequelize = getSequelize(tenant);
+    this.repo = this.sequelize.getRepository(PrdReturn);
   }
   //#endregion
 
@@ -63,34 +68,34 @@ class PrdReturnRepo {
       const result = await this.repo.findAll({ 
         include: [
           { 
-            model: sequelize.models.StdFactory, 
+            model: this.sequelize.models.StdFactory, 
             attributes: [], 
             required: true, 
             where: { uuid: params.factory_uuid ? params.factory_uuid : { [Op.ne]: null } }
           },
           { 
-            model: sequelize.models.StdProd, 
+            model: this.sequelize.models.StdProd, 
             attributes: [], 
             required: true,
             include: [
-              { model: sequelize.models.StdItemType, attributes: [], required: false },
-              { model: sequelize.models.StdProdType, attributes: [], required: false },
-              { model: sequelize.models.StdModel, attributes: [], required: false },
-              { model: sequelize.models.StdUnit, as: 'stdUnit', attributes: [], required: false },
+              { model: this.sequelize.models.StdItemType, attributes: [], required: false },
+              { model: this.sequelize.models.StdProdType, attributes: [], required: false },
+              { model: this.sequelize.models.StdModel, attributes: [], required: false },
+              { model: this.sequelize.models.StdUnit, as: 'stdUnit', attributes: [], required: false },
             ],
           },
           { 
-            model: sequelize.models.StdStore, 
+            model: this.sequelize.models.StdStore, 
             as: 'fromStore', 
             attributes: [], 
             required: true,
             where: { uuid: params.from_store_uuid ? params.from_store_uuid : { [Op.ne]: null } }
           },
-          { model: sequelize.models.StdLocation, as: 'fromLocation', attributes: [], required: false },
-          { model: sequelize.models.StdStore, as: 'toStore', attributes: [], required: true },
-          { model: sequelize.models.StdLocation, as: 'toLocation', attributes: [], required: false },
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.StdLocation, as: 'fromLocation', attributes: [], required: false },
+          { model: this.sequelize.models.StdStore, as: 'toStore', attributes: [], required: true },
+          { model: this.sequelize.models.StdLocation, as: 'toLocation', attributes: [], required: false },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('prdReturn.uuid'), 'return_uuid' ],
@@ -155,24 +160,24 @@ class PrdReturnRepo {
     try {
       const result = await this.repo.findAll({ 
         include: [
-          { model: sequelize.models.StdFactory, attributes: [], required: true },
+          { model: this.sequelize.models.StdFactory, attributes: [], required: true },
           { 
-            model: sequelize.models.StdProd, 
+            model: this.sequelize.models.StdProd, 
             attributes: [], 
             required: true,
             include: [
-              { model: sequelize.models.StdItemType, attributes: [], required: false },
-              { model: sequelize.models.StdProdType, attributes: [], required: false },
-              { model: sequelize.models.StdModel, attributes: [], required: false },
-              { model: sequelize.models.StdUnit, as: 'stdUnit', attributes: [], required: false },
+              { model: this.sequelize.models.StdItemType, attributes: [], required: false },
+              { model: this.sequelize.models.StdProdType, attributes: [], required: false },
+              { model: this.sequelize.models.StdModel, attributes: [], required: false },
+              { model: this.sequelize.models.StdUnit, as: 'stdUnit', attributes: [], required: false },
             ],
           },
-          { model: sequelize.models.StdStore, as: 'fromStore', attributes: [], required: true },
-          { model: sequelize.models.StdLocation, as: 'fromLocation', attributes: [], required: false },
-          { model: sequelize.models.StdStore, as: 'toStore', attributes: [], required: true },
-          { model: sequelize.models.StdLocation, as: 'toLocation', attributes: [], required: false },
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.StdStore, as: 'fromStore', attributes: [], required: true },
+          { model: this.sequelize.models.StdLocation, as: 'fromLocation', attributes: [], required: false },
+          { model: this.sequelize.models.StdStore, as: 'toStore', attributes: [], required: true },
+          { model: this.sequelize.models.StdLocation, as: 'toLocation', attributes: [], required: false },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('prdReturn.uuid'), 'return_uuid' ],
@@ -241,7 +246,7 @@ class PrdReturnRepo {
   // 📒 Fn[readReport]: Read Return Repot Function
   public readReport = async(params?: any) => {
     try {
-      const result = await sequelize.query(readReturnReport(params));
+      const result = await this.sequelize.query(readReturnReport(params));
 
       return convertReadResult(result[0]);
     } catch (error) {
@@ -278,7 +283,7 @@ class PrdReturnRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.PrdReturn.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.PrdReturn.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -315,7 +320,7 @@ class PrdReturnRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.PrdReturn.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.PrdReturn.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -338,7 +343,7 @@ class PrdReturnRepo {
         count += await this.repo.destroy({ where: { uuid: returnData.uuid }, transaction});
       };
 
-      await new AdmLogRepo().create('delete', sequelize.models.PrdReturn.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.PrdReturn.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
     } catch (error) {
       throw error;

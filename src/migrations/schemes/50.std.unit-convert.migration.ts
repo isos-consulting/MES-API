@@ -1,5 +1,6 @@
 import IStdUnitConvert from '../../interfaces/std/unit-convert.interface';
 import BaseMigration from '../base-migration';
+import config from '../../configs/config';
 
 // Seed Datas
 let seedDatas: IStdUnitConvert[] = [
@@ -369,7 +370,7 @@ let seedDatas: IStdUnitConvert[] = [
 	}
 ]
 
-const baseMigration = new BaseMigration('StdUnitConvert', 'unit_convert_id', process.env.DB_RESET_TYPE === 'test' ? seedDatas : []);
+const baseMigration = new BaseMigration('StdUnitConvert', 'unit_convert_id', config.db.reset_type === 'test' ? seedDatas : []);
 const migration = baseMigration.migration;
 const migrationUndo = baseMigration.migrationUndo;
 

@@ -3,10 +3,16 @@ version: 0.2
 phases:
   install:
     commands:
-      # - sudo npm install
+      # - yarn install
+      # - apt update -y
+      # - apt install -y redis-server wget
   pre_build:
     commands:
-      # - yarn run lint
+      # - export NODE_ENV=test
+      # - wget https://raw.githubusercontent.com/Hronom/wait-for-redis/master/wait-for-redis.sh
+      # - chmod +x ./wait-for-redis.sh
+      # - service redis-server start
+      # - ./wait-for-redis.sh localhost:6379
   build:
     commands:
       # - yarn test

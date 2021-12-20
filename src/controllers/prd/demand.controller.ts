@@ -1,5 +1,5 @@
 import express = require('express');
-import sequelize from '../../models';
+import ApiResult from '../../interfaces/common/api-result.interface';
 import PrdDemandRepo from '../../repositories/prd/demand.repository';
 import PrdOrderRepo from '../../repositories/prd/order.repository';
 import StdDeptRepo from '../../repositories/std/dept.repository';
@@ -9,71 +9,67 @@ import StdLocationRepo from '../../repositories/std/location.repository';
 import StdProcRepo from '../../repositories/std/proc.repository';
 import StdProdRepo from '../../repositories/std/prod.repository';
 import StdStoreRepo from '../../repositories/std/store.repository';
+import { getSequelize } from '../../utils/getSequelize';
 import isDateFormat from '../../utils/isDateFormat';
 import response from '../../utils/response';
 import testErrorHandlingHelper from '../../utils/testErrorHandlingHelper';
 import BaseCtl from '../base.controller';
+import config from '../../configs/config';
 
 class PrdDemandCtl extends BaseCtl {
-  // ✅ Inherited Functions Variable
-  // result: ApiResult<any>;
-
-  // ✅ 부모 Controller (BaseController) 의 repository 변수가 any 로 생성 되어있기 때문에 자식 Controller(this) 에서 Type 지정
-  repo: PrdDemandRepo;
-
   //#region ✅ Constructor
   constructor() {
     // ✅ 부모 Controller (Base Controller) 의 CRUD Function 과 상속 받는 자식 Controller(this) 의 Repository 를 연결하기 위하여 생성자에서 Repository 생성
-    super(new PrdDemandRepo());
+    super(PrdDemandRepo);
 
     // ✅ CUD 연산이 실행되기 전 Fk Table 의 uuid 로 id 를 검색하여 request body 에 삽입하기 위하여 정보 Setting
     this.fkIdInfos = [
       {
         key: 'factory',
-        repo: new StdFactoryRepo(),
+        TRepo: StdFactoryRepo,
         idName: 'factory_id',
         uuidName: 'factory_uuid'
       },
       {
         key: 'order',
-        repo: new PrdOrderRepo(),
+        TRepo: PrdOrderRepo,
         idName: 'order_id',
         uuidName: 'order_uuid'
       },
       {
         key: 'proc',
-        repo: new StdProcRepo(),
+        TRepo: StdProcRepo,
         idName: 'proc_id',
         uuidName: 'proc_uuid'
       },
       {
         key: 'equip',
-        repo: new StdEquipRepo(),
+        TRepo: StdEquipRepo,
         idName: 'equip_id',
         uuidName: 'equip_uuid'
       },
       {
         key: 'prod',
-        repo: new StdProdRepo(),
+        TRepo: StdProdRepo,
         idName: 'prod_id',
         uuidName: 'prod_uuid'
       },
       {
         key: 'dept',
-        repo: new StdDeptRepo(),
+        TRepo: StdDeptRepo,
         idName: 'dept_id',
         uuidName: 'dept_uuid'
       },
       {
         key: 'toStore',
-        repo: new StdStoreRepo(),
+        TRepo: StdStoreRepo,
         idName: 'store_id',
         idAlias: 'to_store_id',
         uuidName: 'to_store_uuid'
       },
       {
         key: 'toLocation',
-        repo: new StdLocationRepo(),
+        TRepo: StdLocationRepo,
         idName: 'location_id',
         idAlias: 'to_location_id',
         uuidName: 'to_location_uuid'
@@ -108,15 +104,19 @@ class PrdDemandCtl extends BaseCtl {
   // 📒 Fn[updateComplete]: Update Complete(완료여부) Function
   public updateComplete = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      req.body = await this.getFkId(req.body, this.fkIdInfos);
+      req.body = await this.getFkId(req.tenant.uuid, req.body, this.fkIdInfos);
+
+      const sequelize = getSequelize(req.tenant.uuid);
+      const repo = new PrdDemandRepo(req.tenant.uuid);
+      let result: ApiResult<any> = { count: 0, raws: [] };
 
       await sequelize.transaction(async(tran) => { 
-        this.result = await this.repo.updateComplete(req.body, req.user?.uid as number, tran); 
+        result = await repo.updateComplete(req.body, req.user?.uid as number, tran); 
       });
 
-      return response(res, this.result.raws, { count: this.result.count }, '', 201);
+      return response(res, result.raws, { count: result.count }, '', 201);
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   };
 

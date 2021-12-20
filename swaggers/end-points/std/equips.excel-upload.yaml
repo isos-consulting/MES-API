@@ -16,6 +16,7 @@ post:
             - equip_cd
             - equip_nm
             - use_fg
+            - prd_fg
           allOf:
             - $ref: ../../schemas/std/equip.schema.yaml#/uuid
             - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
@@ -23,6 +24,7 @@ post:
             - $ref: ../../schemas/std/equip.schema.yaml#/equip_cd
             - $ref: ../../schemas/std/equip.schema.yaml#/equip_nm
             - $ref: ../../schemas/std/equip.schema.yaml#/use_fg
+            - $ref: ../../schemas/std/equip.schema.yaml#/prd_fg
             - $ref: ../../schemas/std/equip.schema.yaml#/remark
   responses:
     201:

@@ -1,21 +1,26 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
-import sequelize from '../../models';
+import { Sequelize } from 'sequelize-typescript';
 import convertBulkResult from '../../utils/convertBulkResult';
 import convertResult from '../../utils/convertResult';
-import { Op, Sequelize, Transaction, UniqueConstraintError } from 'sequelize';
+import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
+import { getSequelize } from '../../utils/getSequelize';
 import PrdWorkDowntime from '../../models/prd/work-downtime.model';
 import IPrdWorkDowntime from '../../interfaces/prd/work-downtime.interface';
 import { readWorkDowntimeReport } from '../../queries/prd/work-downtime-report.query';
 
 class PrdWorkDowntimeRepo {
   repo: Repository<PrdWorkDowntime>;
+  sequelize: Sequelize;
+  tenant: string;
 
   //#region ✅ Constructor
-  constructor() {
-    this.repo = sequelize.getRepository(PrdWorkDowntime);
+  constructor(tenant: string) {
+    this.tenant = tenant;
+    this.sequelize = getSequelize(tenant);
+    this.repo = this.sequelize.getRepository(PrdWorkDowntime);
   }
   //#endregion
 
@@ -62,33 +67,33 @@ class PrdWorkDowntimeRepo {
       const result = await this.repo.findAll({ 
         include: [
           { 
-            model: sequelize.models.StdFactory, 
+            model: this.sequelize.models.StdFactory, 
             attributes: [], 
             required: true,
             where: params.factory_uuid ? { uuid: params.factory_uuid } : {}
           },
           { 
-            model: sequelize.models.PrdWork,
+            model: this.sequelize.models.PrdWork,
             attributes: [], 
             required: true,
             where: params.work_uuid ? { uuid: params.work_uuid } : {}
           },
-          { model: sequelize.models.StdProc, attributes: [], required: false },
-          { model: sequelize.models.StdEquip, attributes: [], required: false },
+          { model: this.sequelize.models.StdProc, attributes: [], required: false },
+          { model: this.sequelize.models.StdEquip, attributes: [], required: false },
           { 
-            model: sequelize.models.StdDowntime,
+            model: this.sequelize.models.StdDowntime,
             attributes: [],
             required: true,
             include: [{ 
-              model: sequelize.models.StdDowntimeType,
+              model: this.sequelize.models.StdDowntimeType,
               attributes: [],
               required: false,
               where: params.downtime_type_uuid ? { uuid: params.downtime_type_uuid } : {}
             }],
             where: params.downtime_uuid ? { uuid: params.downtime_uuid } : {}
           },
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('prdWorkDowntime.uuid'), 'work_downtime_uuid' ],
@@ -133,18 +138,18 @@ class PrdWorkDowntimeRepo {
     try {
       const result = await this.repo.findOne({ 
         include: [
-          { model: sequelize.models.StdFactory, attributes: [], required: true },
-          { model: sequelize.models.PrdWork, attributes: [], required: true },
-          { model: sequelize.models.StdProc, attributes: [], required: false },
-          { model: sequelize.models.StdEquip, attributes: [], required: false },
+          { model: this.sequelize.models.StdFactory, attributes: [], required: true },
+          { model: this.sequelize.models.PrdWork, attributes: [], required: true },
+          { model: this.sequelize.models.StdProc, attributes: [], required: false },
+          { model: this.sequelize.models.StdEquip, attributes: [], required: false },
           { 
-            model: sequelize.models.StdDowntime,
+            model: this.sequelize.models.StdDowntime,
             attributes: [],
             required: true,
-            include: [{ model: sequelize.models.StdDowntimeType, attributes: [], required: false }],
+            include: [{ model: this.sequelize.models.StdDowntimeType, attributes: [], required: false }],
           },
-          { model: sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('prdWorkDowntime.uuid'), 'work_downtime_uuid' ],
@@ -199,7 +204,7 @@ class PrdWorkDowntimeRepo {
   // 📒 Fn[readReport]: Read Order Repot Function
   public readReport = async(params?: any) => {
     try {
-      const result = await sequelize.query(readWorkDowntimeReport(params));
+      const result = await this.sequelize.query(readWorkDowntimeReport(params));
       return convertReadResult(result[0]);
     } catch (error) {
       throw error;
@@ -237,7 +242,7 @@ class PrdWorkDowntimeRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.PrdWorkDowntime.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.PrdWorkDowntime.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -276,7 +281,7 @@ class PrdWorkDowntimeRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.PrdWorkDowntime.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.PrdWorkDowntime.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -299,7 +304,7 @@ class PrdWorkDowntimeRepo {
         count += await this.repo.destroy({ where: { uuid: workDowntime.uuid }, transaction});
       };
 
-      await new AdmLogRepo().create('delete', sequelize.models.PrdWorkDowntime.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.PrdWorkDowntime.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
     } catch (error) {
       throw error;
@@ -315,7 +320,7 @@ class PrdWorkDowntimeRepo {
 
       count += await this.repo.destroy({ where: { work_id: workId }, transaction});
 
-      await new AdmLogRepo().create('delete', sequelize.models.PrdWorkDowntime.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.PrdWorkDowntime.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
     } catch (error) {
       throw error;

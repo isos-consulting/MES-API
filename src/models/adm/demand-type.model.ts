@@ -3,7 +3,7 @@ import IAdmDemandType from '../../interfaces/adm/demand-type.interface';
 import AutUser from '../aut/user.model';
 
 @Table({
-  tableName: 'ADM_DEMAND_TYPE_VW',
+  tableName: 'ADM_DEMAND_TYPE_TB',
   modelName: 'AdmDemandType',
   comment: '자재출고요청 유형 정보 뷰',
   timestamps: true,
@@ -15,10 +15,12 @@ export default class AdmDemandType extends Model<IAdmDemandType> {
     type: DataType.INTEGER,
     allowNull: false,
     primaryKey: true,
+		autoIncrement: true,
+    autoIncrementIdentity: true,
   })
   demand_type_id: number;
 
-  @Unique('adm_demand_type_vw_demand_type_cd_un')
+  @Unique('adm_demand_type_tb_demand_type_cd_un')
   @Column({
     comment: '자재출고요청 유형코드',
     type: DataType.STRING(20),
@@ -70,6 +72,15 @@ export default class AdmDemandType extends Model<IAdmDemandType> {
     allowNull: false,
   })
   updated_uid: number;
+
+	@Unique('adm_file_mgmt_type_tb_uuid_un')
+  @Column({
+    comment: '자재출고요청 유형UUID',
+    type: DataType.UUID,
+    allowNull: false,
+    defaultValue: Sequelize.fn('gen_random_uuid')
+  })
+  uuid: string;
 
   //#region ✅ Define Association
   // BelongTo

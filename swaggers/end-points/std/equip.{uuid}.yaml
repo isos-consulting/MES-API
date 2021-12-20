@@ -51,6 +51,7 @@ get:
                             - $ref: ../../schemas/std/equip.schema.yaml#/equip_cd
                             - $ref: ../../schemas/std/equip.schema.yaml#/equip_nm
                             - $ref: ../../schemas/std/equip.schema.yaml#/use_fg
+                            - $ref: ../../schemas/std/equip.schema.yaml#/prd_fg
                             - $ref: ../../schemas/std/equip.schema.yaml#/remark
                             - $ref: ../../schemas/common/timestamp.schema.yaml
     500:

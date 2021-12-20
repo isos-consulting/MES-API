@@ -4,36 +4,29 @@ import * as createHttpError from 'http-errors'
 import response from '../../utils/response';
 import responseNew from '../../utils/response_new';
 import AutUserRepo from '../../repositories/aut/user.repository';
-import encrypt from '../../utils/encrypt';
 import decrypt from '../../utils/decrypt';
-import AutUserCache from '../../caches/aut/user.cache';
 import AutUser from '../../models/aut/user.model';
 import UserWrapper from '../../wrappers/aut/user.wrapper';
 import testErrorHandlingHelper from '../../utils/testErrorHandlingHelper';
 import BaseCtl from '../base.controller';
 import AutGroupRepo from '../../repositories/aut/group.repository';
 import ApiResult from '../../interfaces/common/api-result.interface';
-import sequelize from '../../models';
 import { refresh, sign } from '../../utils/jwt-util';
 import { userSuccessState } from '../../states/user.state';
+import { getSequelize } from '../../utils/getSequelize';
+import config from '../../configs/config';
 
 class AutUserCtl extends BaseCtl {
-  // ✅ Inherited Functions Variable
-  // result: ApiResult<any>;
-
-  // ✅ 부모 Controller (BaseController) 의 repository 변수가 any 로 생성 되어있기 때문에 자식 Controller(this) 에서 Type 지정
-  repo: AutUserRepo;
-
   //#region ✅ Constructor
   constructor() {
     // ✅ 부모 Controller (Base Controller) 의 CRUD Function 과 상속 받는 자식 Controller(this) 의 Repository 를 연결하기 위하여 생성자에서 Repository 생성
-    super(new AutUserRepo());
+    super(AutUserRepo);
 
     // ✅ CUD 연산이 실행되기 전 Fk Table 의 uuid 로 id 를 검색하여 request body 에 삽입하기 위하여 정보 Setting
     this.fkIdInfos = [
       {
         key: 'group',
-        repo: new AutGroupRepo(),
+        TRepo: AutGroupRepo,
         idName: 'group_id',
         uuidName: 'group_uuid'
       }
@@ -68,15 +61,21 @@ class AutUserCtl extends BaseCtl {
   // 📒 Fn[updatePwd]: Password Update Function
   public updatePwd = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      req.body = await this.getFkId(req.body, this.fkIdInfos);
+      req.body = await this.getFkId(req.tenant.uuid, req.body, this.fkIdInfos);
+
+      const sequelize = getSequelize(req.tenant.uuid);
+      const repo = new AutUserRepo(req.tenant.uuid);
+      let result: ApiResult<any> = { count: 0, raws: [] };
+
+      console.log(req.body);
 
       await sequelize.transaction(async(tran) => { 
-        this.result = await this.repo.updatePwd(req.body, req.user?.uid as number, tran); 
+        result = await repo.updatePwd(req.body, req.user?.uid as number, tran); 
       });
 
-      return response(res, this.result.raws, { count: this.result.count }, '', 201);
+      return response(res, result.raws, { count: result.count }, '', 201);
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   };
 
@@ -115,7 +114,7 @@ class AutUserCtl extends BaseCtl {
 
   // 📒 Fn[afterCreate] (✅ Inheritance): Create Transaction 이 실행된 후 호출되는 Function
   afterCreate = async(req: express.Request, result: ApiResult<any>) => {
-    this.result.raws = result.raws.map((raw: any) => { return new UserWrapper(raw).toWeb(); });
+    result.raws = result.raws.map((raw: any) => { return new UserWrapper(raw).toWeb(); });
   }
 
   //#endregion
@@ -143,7 +142,7 @@ class AutUserCtl extends BaseCtl {
 
   // 📒 Fn[afterUpdate] (✅ Inheritance): Update Transaction 이 실행된 후 호출되는 Function
   afterUpdate = async(req: express.Request, result: ApiResult<any>) => {
-    this.result.raws = result.raws.map((raw: any) => { return new UserWrapper(raw).toWeb(); });
+    result.raws = result.raws.map((raw: any) => { return new UserWrapper(raw).toWeb(); });
   }
 
   //#endregion
@@ -161,7 +160,7 @@ class AutUserCtl extends BaseCtl {
 
   // 📒 Fn[afterPatch] (✅ Inheritance): Patch Transaction 이 실행된 후 호출되는 Function
   afterPatch = async(req: express.Request, result: ApiResult<any>) => {
-    this.result.raws = result.raws.map((raw: any) => { return new UserWrapper(raw).toWeb(); });
+    result.raws = result.raws.map((raw: any) => { return new UserWrapper(raw).toWeb(); });
   }
 
   //#endregion
@@ -179,7 +178,7 @@ class AutUserCtl extends BaseCtl {
 
   // 📒 Fn[afterDelete] (✅ Inheritance): Delete Transaction 이 실행된 후 호출되는 Function
   afterDelete = async(req: express.Request, result: ApiResult<any>) => {
-    this.result.raws = result.raws.map((raw: any) => { return new UserWrapper(raw).toWeb(); });
+    result.raws = result.raws.map((raw: any) => { return new UserWrapper(raw).toWeb(); });
   }
 
   //#endregion
@@ -191,61 +190,44 @@ class AutUserCtl extends BaseCtl {
   // 📒 Fn[signIn]: 사용자 Login Function
   public signIn = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      const user = await this.repo.readById(req.body.id) as AutUser;
+      const repo = new AutUserRepo(req.tenant.uuid);
+
+      const user = await repo.readById(req.body.id) as AutUser;
 
       // 📌 DB에 bcrypt 단방향 암호화 방식으로 저장되어있는 Password
       const originPwd = user?.pwd;
 
       // ❗ 아이디가 없는 경우 Interlock
       if (!originPwd) { throw createHttpError(404, '사용자 아이디 또는 비밀번호 불일치'); }
-      
-      // 📌 개발환경일 경우 postman 에서 비밀번호를 입력하기 위하여 입력된 Password 암호화 진행
-      if (process.env.NODE_ENV === 'development') { req.body.pwd = encrypt(req.body.pwd, process.env.CRYPTO_SECRET as string); }
 
       // 📌 Client에서 양방향 crypto.aes 암호화 방식으로 보낸 Password를 복호화 Key를 통하여 Convert한 Password
-      const convertedPwd = decrypt(req.body.pwd, process.env.CRYPTO_SECRET as string);
+      const convertedPwd = decrypt(req.body.pwd, config.crypto.secret);
 
       // ❗ 비밀번호 불일치 Interlock
       const match = await bcrypt.compare(convertedPwd, originPwd);
       if(!match) { throw createHttpError(404, '사용자 아이디 또는 비밀번호 불일치'); }
 
       // 로그인 성공시 Cache 에 User 정보 저장
-      await new AutUserCache().create(user);
+      // await new AutUserCache().create(user);
 
       // id, pwd Property 삭제 후 Front 로 전달
       let result = new UserWrapper(user).toWeb() as any;
 
       const accessToken = sign(user);
-      const refreshToken = await refresh(user.uid);
+      const refreshToken = await refresh(user.uuid);
       result = {
         ...result, 
         access_token: accessToken,
         refresh_token: refreshToken
       }
 
-      // jwt payload 에 담길 내용
-      // const payload = result;
-      // const token = jwt.sign(payload, process.env.JWT_SECRET as string, {
-      //   audience: 'front',
-      //   header: { abc: 'abc' },
-      //   issuer: 'cyj',
-      //   jwtid: 'what is this',
-      //   keyid: 'whats that',
-      //   subject: 'this is a token',
-      //   expiresIn: process.env.JWT_EXPIRESIN
-      // })
-      // console.log(process.env.JWT_SECRET)
-      // console.log(token)
-    
-      // result.token = token;
-      // return response(res, result);
       return responseNew(
         res, 
         { raws: [result], status: 201 },
         { state_tag: 'user', type: 'SUCCESS', state_no: userSuccessState.SIGNIN }
       );
     } catch (e) {
-      return process.env.NODE_ENV === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
   };
 

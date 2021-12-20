@@ -1,3 +1,4 @@
 #!/bin/bash 
-cd /var/iso-server
-/root/node_modules/.bin/pm2 start --name iso-server yarn -- start
+source /etc/profile.d/codedeploy.sh
+cd /var/${DEPLOYMENT_GROUP_NAME}
+/root/node_modules/.bin/pm2 start --name ${DEPLOYMENT_GROUP_NAME} yarn -- start

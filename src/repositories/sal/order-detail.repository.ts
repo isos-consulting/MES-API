@@ -1,21 +1,26 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
-import sequelize from '../../models';
+import { Sequelize } from 'sequelize-typescript';
 import convertBulkResult from '../../utils/convertBulkResult';
 import convertResult from '../../utils/convertResult';
-import { Op, Sequelize, Transaction, UniqueConstraintError } from 'sequelize';
+import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
+import { getSequelize } from '../../utils/getSequelize';
 import SalOrderDetail from '../../models/sal/order-detail.model';
 import ISalOrderDetail from '../../interfaces/sal/order-detail.interface';
 import { readOrderDetails } from '../../queries/sal/order-detail.query';
 
 class SalOrderDetailRepo {
   repo: Repository<SalOrderDetail>;
+  sequelize: Sequelize;
+  tenant: string;
 
   //#region ✅ Constructor
-  constructor() {
-    this.repo = sequelize.getRepository(SalOrderDetail);
+  constructor(tenant: string) {
+    this.tenant = tenant;
+    this.sequelize = getSequelize(tenant);
+    this.repo = this.sequelize.getRepository(SalOrderDetail);
   }
   //#endregion
 
@@ -61,7 +66,7 @@ class SalOrderDetailRepo {
   // 📒 Fn[read]: Default Read Function
   public read = async(params?: any) => {
     try {
-      const result = await sequelize.query(
+      const result = await this.sequelize.query(
         readOrderDetails({
           complete_state: params.complete_state,
           start_reg_date: params.start_reg_date,
@@ -84,7 +89,7 @@ class SalOrderDetailRepo {
   // 📒 Fn[readByUuid]: Default Read With Uuid Function
   public readByUuid = async(uuid: string, params?: any) => {
     try {
-      const result = await sequelize.query(
+      const result = await this.sequelize.query(
         readOrderDetails({ order_detail_uuid: uuid })
       );
 
@@ -108,7 +113,7 @@ class SalOrderDetailRepo {
 
   // 📒 Fn[readDeliveredWithinPeriod]: 기간 내 납기 완료 및 미완료 건수 Read Function
   public readDeliveredWithinPeriod = async(startDate: string, endDate: string) => {
-    const result = await sequelize.query(`
+    const result = await this.sequelize.query(`
       SELECT * INTO temp_order_detail_tb
       FROM sal_order_detail_tb s_od
       WHERE DATE(due_date) BETWEEN '${startDate}' AND '${endDate}';
@@ -156,7 +161,7 @@ class SalOrderDetailRepo {
 
   // 📒 Fn[readCountOfDelayedOrder]: 납기 지연된 수주 Read Function
   public readCountOfDelayedOrder = async(date: string) => {
-    const result = await sequelize.query(`
+    const result = await this.sequelize.query(`
       SELECT * INTO temp_order_detail_tb
       FROM sal_order_detail_tb s_od
       WHERE DATE(due_date) < '${date}'
@@ -217,7 +222,7 @@ class SalOrderDetailRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.SalOrderDetail.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.SalOrderDetail.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -249,7 +254,7 @@ class SalOrderDetailRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.SalOrderDetail.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.SalOrderDetail.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -292,7 +297,7 @@ class SalOrderDetailRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo().create('update', sequelize.models.SalOrderDetail.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.SalOrderDetail.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -315,7 +320,7 @@ class SalOrderDetailRepo {
         count += await this.repo.destroy({ where: { uuid: orderDetail.uuid }, transaction});
       };
 
-      await new AdmLogRepo().create('delete', sequelize.models.SalOrderDetail.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.SalOrderDetail.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
     } catch (error) {
       throw error;
