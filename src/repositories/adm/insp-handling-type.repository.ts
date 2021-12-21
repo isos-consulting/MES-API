@@ -28,18 +28,17 @@ class AdmInspHandlingTypeRepo {
 	// 📒 Fn[create]: Default Create Function
 	public create = async(body: IAdmInspHandlingType[], uid: number, transaction?: Transaction) => {
 		try {
-			const insp_handling_type = body.map((insp_handling_type) => {
+			const inspHandlingType = body.map((inspHandlingType) => {
 				return {
-					insp_handling_type_id: insp_handling_type.insp_handling_type_id,
-					insp_handling_type_cd: insp_handling_type.insp_handling_type_cd,
-					insp_handling_type_nm: insp_handling_type.insp_handling_type_nm,
-					sortby: insp_handling_type.sortby,
+					insp_handling_type_cd: inspHandlingType.insp_handling_type_cd,
+					insp_handling_type_nm: inspHandlingType.insp_handling_type_nm,
+					sortby: inspHandlingType.sortby,
 					created_uid: uid,
 					updated_uid: uid,
 				}
 			});
 
-			const result = await this.repo.bulkCreate(insp_handling_type, { individualHooks: true, transaction });
+			const result = await this.repo.bulkCreate(inspHandlingType, { individualHooks: true, transaction });
 
 			return convertBulkResult(result);
 		} catch (error) {
@@ -60,6 +59,7 @@ class AdmInspHandlingTypeRepo {
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
+					[ Sequelize.col('admInspHandlingType.uuid'), 'insp_handling_type_uuid' ],
           'insp_handling_type_cd',
           'insp_handling_type_nm',
 					'sortby',
@@ -135,17 +135,16 @@ class AdmInspHandlingTypeRepo {
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let insp_handling_type of body) {
+      for await (let inspHandlingType of body) {
         const result = await this.repo.update(
           {
-            insp_handling_type_id: insp_handling_type.insp_handling_type_id != null ? insp_handling_type.insp_handling_type_id : null,
-            insp_handling_type_cd: insp_handling_type.insp_handling_type_cd != null ? insp_handling_type.insp_handling_type_cd : null,
-						insp_handling_type_nm: insp_handling_type.insp_handling_type_nm != null ? insp_handling_type.insp_handling_type_nm : null,
-						sortby: insp_handling_type.sortby != null ? insp_handling_type.sortby : null,
+            insp_handling_type_cd: inspHandlingType.insp_handling_type_cd != null ? inspHandlingType.insp_handling_type_cd : null,
+						insp_handling_type_nm: inspHandlingType.insp_handling_type_nm != null ? inspHandlingType.insp_handling_type_nm : null,
+						sortby: inspHandlingType.sortby != null ? inspHandlingType.sortby : null,
             updated_uid: uid,
           } as any,
           { 
-            where: { uuid: insp_handling_type.uuid },
+            where: { uuid: inspHandlingType.uuid },
             returning: true,
             individualHooks: true,
             transaction
@@ -174,17 +173,16 @@ class AdmInspHandlingTypeRepo {
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let insp_handling_type of body) {
+      for await (let inspHandlingType of body) {
         const result = await this.repo.update(
           {
-            insp_handling_type_id: insp_handling_type.insp_handling_type_id,
-						insp_handling_type_cd: insp_handling_type.insp_handling_type_cd,
-						insp_handling_type_nm: insp_handling_type.insp_handling_type_nm,
-						sortby: insp_handling_type.sortby,
+						insp_handling_type_cd: inspHandlingType.insp_handling_type_cd,
+						insp_handling_type_nm: inspHandlingType.insp_handling_type_nm,
+						sortby: inspHandlingType.sortby,
             updated_uid: uid,
           },
           { 
-            where: { uuid: insp_handling_type.uuid },
+            where: { uuid: inspHandlingType.uuid },
             returning: true,
             individualHooks: true,
             transaction
@@ -213,8 +211,8 @@ class AdmInspHandlingTypeRepo {
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let insp_handling_type of body) {
-        count += await this.repo.destroy({ where: { uuid: insp_handling_type.uuid }, transaction});
+      for await (let inspHandlingType of body) {
+        count += await this.repo.destroy({ where: { uuid: inspHandlingType.uuid }, transaction});
       };
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.AdmInspHandlingType.getTableName() as string, previousRaws, uid, transaction);

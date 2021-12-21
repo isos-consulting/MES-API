@@ -28,20 +28,19 @@ class AdmInspTypeRepo {
 	// 📒 Fn[create]: Default Create Function
 	public create = async(body: IAdmInspType[], uid: number, transaction?: Transaction) => {
 		try {
-			const insp_type = body.map((insp_type) => {
+			const inspType = body.map((inspType) => {
 				return {
-					insp_type_id: insp_type.insp_type_id,
-					insp_type_cd: insp_type.insp_type_cd,
-					insp_type_nm: insp_type.insp_type_nm,
-					worker_fg: insp_type.worker_fg,
-					inspector_fg: insp_type.inspector_fg,
-					sortby: insp_type.sortby,
+					insp_type_cd: inspType.insp_type_cd,
+					insp_type_nm: inspType.insp_type_nm,
+					worker_fg: inspType.worker_fg,
+					inspector_fg: inspType.inspector_fg,
+					sortby: inspType.sortby,
 					created_uid: uid,
 					updated_uid: uid,
 				}
 			});
 
-			const result = await this.repo.bulkCreate(insp_type, { individualHooks: true, transaction });
+			const result = await this.repo.bulkCreate(inspType, { individualHooks: true, transaction });
 
 			return convertBulkResult(result);
 		} catch (error) {
@@ -62,6 +61,7 @@ class AdmInspTypeRepo {
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
+					[ Sequelize.col('admInspType.uuid'), 'insp_type_uuid' ],
           'insp_type_cd',
           'insp_type_nm',
           'worker_fg',
@@ -140,19 +140,18 @@ class AdmInspTypeRepo {
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let insp_type of body) {
+      for await (let inspType of body) {
         const result = await this.repo.update(
           {
-            insp_type_id: insp_type.insp_type_id != null ? insp_type.insp_type_id : null,
-            insp_type_cd: insp_type.insp_type_cd != null ? insp_type.insp_type_cd : null,
-						insp_type_nm: insp_type.insp_type_nm != null ? insp_type.insp_type_nm : null,
-						worker_fg: insp_type.worker_fg != null ? insp_type.worker_fg : null,
-						inspector_fg: insp_type.inspector_fg != null ? insp_type.inspector_fg : null,
-						sortby: insp_type.sortby != null ? insp_type.sortby : null,
+            insp_type_cd: inspType.insp_type_cd != null ? inspType.insp_type_cd : null,
+						insp_type_nm: inspType.insp_type_nm != null ? inspType.insp_type_nm : null,
+						worker_fg: inspType.worker_fg != null ? inspType.worker_fg : null,
+						inspector_fg: inspType.inspector_fg != null ? inspType.inspector_fg : null,
+						sortby: inspType.sortby != null ? inspType.sortby : null,
             updated_uid: uid,
           } as any,
           { 
-            where: { uuid: insp_type.uuid },
+            where: { uuid: inspType.uuid },
             returning: true,
             individualHooks: true,
             transaction
@@ -181,19 +180,18 @@ class AdmInspTypeRepo {
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let insp_type of body) {
+      for await (let inspType of body) {
         const result = await this.repo.update(
           {
-            insp_type_id: insp_type.insp_type_id,
-						insp_type_cd: insp_type.insp_type_cd,
-						insp_type_nm: insp_type.insp_type_nm,
-						worker_fg: insp_type.worker_fg,
-						inspector_fg: insp_type.inspector_fg,
-						sortby: insp_type.sortby,
+						insp_type_cd: inspType.insp_type_cd,
+						insp_type_nm: inspType.insp_type_nm,
+						worker_fg: inspType.worker_fg,
+						inspector_fg: inspType.inspector_fg,
+						sortby: inspType.sortby,
             updated_uid: uid,
           },
           { 
-            where: { uuid: insp_type.uuid },
+            where: { uuid: inspType.uuid },
             returning: true,
             individualHooks: true,
             transaction
@@ -222,8 +220,8 @@ class AdmInspTypeRepo {
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let insp_type of body) {
-        count += await this.repo.destroy({ where: { uuid: insp_type.uuid }, transaction});
+      for await (let inspType of body) {
+        count += await this.repo.destroy({ where: { uuid: inspType.uuid }, transaction});
       };
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.AdmInspType.getTableName() as string, previousRaws, uid, transaction);

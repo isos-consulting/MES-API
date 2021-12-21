@@ -10,7 +10,7 @@ get:
       description: Read OK
       content:
         application/json:
-          schema: 
+          schema:
             allOf:
               - $ref: ../../schemas/common/default-response.schema.yaml
               - type: object
@@ -23,7 +23,7 @@ get:
                         description: Enable
                         type: object
                         properties:
-                          count: 
+                          count:
                             description: 영향받은 데이터의 개수
                             type: number
                             format: int32
@@ -33,12 +33,117 @@ get:
                         type: array
                         items:
                           allOf:
+                            - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/pattern_opt_uuid
                             - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/pattern_opt_cd
                             - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/pattern_opt_nm
                             - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/table_nm
                             - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/auto_fg
                             - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/col_nm
                             - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/pattern
+                            - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/sortby
                             - $ref: ../../schemas/common/timestamp.schema.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml
+
+post:
+  description: |
+    번호자동발행 옵션 데이터를 생성합니다.
+  summary: 번호자동발행 옵션 데이터 생성
+  tags:
+    - 번호자동발행 옵션(PatternOpt)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - pattern_opt_cd
+            - pattern_opt_nm
+          allOf:
+            - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/pattern_opt_cd
+            - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/pattern_opt_nm
+            - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/table_nm
+            - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/auto_fg
+            - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/col_nm
+            - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/pattern
+            - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/sortby
+  responses:
+    201:
+      $ref: ../../responses/common/succeed-create.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml
+
+put:
+  description: |
+    번호자동발행 옵션 데이터를 행(Row) 단위로 수정합니다.
+  summary: 번호자동발행 옵션 데이터 수정
+  tags:
+    - 번호자동발행 옵션(PatternOpt)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - pattern_opt_uuid
+            - pattern_opt_cd
+            - pattern_opt_nm
+          allOf:
+            - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/pattern_opt_uuid
+            - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/pattern_opt_cd
+            - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/pattern_opt_nm
+            - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/table_nm
+            - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/auto_fg
+            - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/col_nm
+            - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/pattern
+            - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/sortby
+  responses:
+    201:
+      $ref: ../../responses/common/succeed-update.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml
+
+patch:
+  description: |
+    번호자동발행 옵션 데이터를 개별 항목 단위로 수정합니다.
+  summary: 번호자동발행 옵션 데이터 수정
+  tags:
+    - 번호자동발행 옵션(PatternOpt)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - pattern_opt_uuid
+          allOf:
+            - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/pattern_opt_uuid
+            - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/pattern_opt_cd
+            - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/pattern_opt_nm
+            - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/table_nm
+            - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/auto_fg
+            - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/col_nm
+            - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/pattern
+            - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/sortby
+  responses:
+    201:
+      $ref: ../../responses/common/succeed-update.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml
+
+delete:
+  description: |
+    번호자동발행 옵션 데이터를 삭제합니다.
+  summary: 번호자동발행 옵션 데이터 삭제
+  tags:
+    - 번호자동발행 옵션(PatternOpt)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - pattern_opt_uuid
+          allOf:
+            - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/pattern_opt_uuid
+  responses:
+    200:
+      $ref: ../../responses/common/succeed-delete.response.yaml
     500:
       $ref: ../../responses/common/general-error.response.yaml

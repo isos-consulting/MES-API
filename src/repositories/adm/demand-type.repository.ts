@@ -28,18 +28,17 @@ class AdmDemandTypeRepo {
 // 📒 Fn[create]: Default Create Function
 public create = async(body: IAdmDemandType[], uid: number, transaction?: Transaction) => {
 	try {
-		const demand_type = body.map((demand_type) => {
+		const demandType = body.map((demandType) => {
 			return {
-				demand_type_id: demand_type.demand_type_id,
-				demand_type_cd: demand_type.demand_type_cd,
-				demand_type_nm: demand_type.demand_type_nm,
-				sortby: demand_type.sortby,
+				demand_type_cd: demandType.demand_type_cd,
+				demand_type_nm: demandType.demand_type_nm,
+				sortby: demandType.sortby,
 				created_uid: uid,
 				updated_uid: uid,
 			}
 		});
 
-		const result = await this.repo.bulkCreate(demand_type, { individualHooks: true, transaction });
+		const result = await this.repo.bulkCreate(demandType, { individualHooks: true, transaction });
 
 		return convertBulkResult(result);
 	} catch (error) {
@@ -60,6 +59,7 @@ public create = async(body: IAdmDemandType[], uid: number, transaction?: Transac
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
+					[ Sequelize.col('admDemandType.uuid'), 'demand_type_uuid' ],
           'demand_type_cd',
           'demand_type_nm',
 					'sortby',
@@ -135,17 +135,17 @@ public create = async(body: IAdmDemandType[], uid: number, transaction?: Transac
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let demand_type of body) {
+      for await (let demandType of body) {
         const result = await this.repo.update(
           {
-            demand_type_id: demand_type.demand_type_id != null ? demand_type.demand_type_id : null,
-            demand_type_cd: demand_type.demand_type_cd != null ? demand_type.demand_type_cd : null,
-						demand_type_nm: demand_type.demand_type_nm != null ? demand_type.demand_type_nm : null,
-						sortby: demand_type.sortby != null ? demand_type.sortby : null,
+            demand_type_id: demandType.demand_type_id != null ? demandType.demand_type_id : null,
+            demand_type_cd: demandType.demand_type_cd != null ? demandType.demand_type_cd : null,
+						demand_type_nm: demandType.demand_type_nm != null ? demandType.demand_type_nm : null,
+						sortby: demandType.sortby != null ? demandType.sortby : null,
             updated_uid: uid,
           } as any,
           { 
-            where: { uuid: demand_type.uuid },
+            where: { uuid: demandType.uuid },
             returning: true,
             individualHooks: true,
             transaction
@@ -174,17 +174,17 @@ public create = async(body: IAdmDemandType[], uid: number, transaction?: Transac
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let demand_type of body) {
+      for await (let demandType of body) {
         const result = await this.repo.update(
           {
-            demand_type_id: demand_type.demand_type_id,
-						demand_type_cd: demand_type.demand_type_cd,
-						demand_type_nm: demand_type.demand_type_nm,
-						sortby: demand_type.sortby,
+            demand_type_id: demandType.demand_type_id,
+						demand_type_cd: demandType.demand_type_cd,
+						demand_type_nm: demandType.demand_type_nm,
+						sortby: demandType.sortby,
             updated_uid: uid,
           },
           { 
-            where: { uuid: demand_type.uuid },
+            where: { uuid: demandType.uuid },
             returning: true,
             individualHooks: true,
             transaction
@@ -213,8 +213,8 @@ public create = async(body: IAdmDemandType[], uid: number, transaction?: Transac
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let demand_type of body) {
-        count += await this.repo.destroy({ where: { uuid: demand_type.uuid }, transaction});
+      for await (let demandType of body) {
+        count += await this.repo.destroy({ where: { uuid: demandType.uuid }, transaction});
       };
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.AdmDemandType.getTableName() as string, previousRaws, uid, transaction);
