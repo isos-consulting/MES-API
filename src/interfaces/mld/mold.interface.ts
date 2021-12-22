@@ -1,0 +1,20 @@
+export default interface IMldMold {
+  mold_id?: number,
+  factory_id?: number,
+	mold_cd?: string,
+	mold_nm?: string,
+	mold_no?: string,
+	cavity?: number,
+	guarantee_cnt?: number,
+	basic_cnt?: number,
+	manufacturer?: string | null, 
+	purchase_date?: Date | null,  
+	weight?: number | null,
+	size?: number | null,
+	use_fg?: boolean, 
+	created_at?: Date,
+  created_uid?: number,
+  updated_at?: Date,
+  updated_uid?: number,
+  uuid?: string
+}
