@@ -29,18 +29,17 @@ class AdmBomTypeRepo {
 	// 📒 Fn[create]: Default Create Function
 	public create = async(body: IAdmBomType[], uid: number, transaction?: Transaction) => {
 		try {
-			const bom_type = body.map((bom_type) => {
+			const bomType = body.map((bomType) => {
 				return {
-					bom_type_id: bom_type.bom_type_id,
-					bom_type_cd: bom_type.bom_type_cd,
-					bom_type_nm: bom_type.bom_type_nm,
-					sortby: bom_type.sortby,
+					bom_type_cd: bomType.bom_type_cd,
+					bom_type_nm: bomType.bom_type_nm,
+					sortby: bomType.sortby,
 					created_uid: uid,
 					updated_uid: uid,
 				}
 			});
 
-			const result = await this.repo.bulkCreate(bom_type, { individualHooks: true, transaction });
+			const result = await this.repo.bulkCreate(bomType, { individualHooks: true, transaction });
 
 			return convertBulkResult(result);
 		} catch (error) {
@@ -61,6 +60,7 @@ class AdmBomTypeRepo {
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
+					[ Sequelize.col('admBomType.uuid'), 'bom_type_uuid' ],
           'bom_type_cd',
           'bom_type_nm',
 					'sortby',
@@ -137,17 +137,16 @@ class AdmBomTypeRepo {
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let bom_type of body) {
+      for await (let bomType of body) {
         const result = await this.repo.update(
           {
-						bom_type_id: bom_type.bom_type_id != null? bom_type.bom_type_id : null,
-						bom_type_cd: bom_type.bom_type_cd != null? bom_type.bom_type_cd : null,
-						bom_type_nm: bom_type.bom_type_nm != null? bom_type.bom_type_nm : null,
-						sortby: bom_type.sortby != null ? bom_type.sortby : null,
+						bom_type_cd: bomType.bom_type_cd != null? bomType.bom_type_cd : null,
+						bom_type_nm: bomType.bom_type_nm != null? bomType.bom_type_nm : null,
+						sortby: bomType.sortby != null ? bomType.sortby : null,
             updated_uid: uid,
           } as any,
           { 
-            where: { uuid: bom_type.uuid },
+            where: { uuid: bomType.uuid },
             returning: true,
             individualHooks: true,
             transaction
@@ -176,17 +175,16 @@ class AdmBomTypeRepo {
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let bom_type of body) {
+      for await (let bomType of body) {
         const result = await this.repo.update(
           {
-						bom_type_id: bom_type.bom_type_id,
-						bom_type_cd: bom_type.bom_type_cd,
-						bom_type_nm: bom_type.bom_type_nm,
-						sortby: bom_type.sortby,
+						bom_type_cd: bomType.bom_type_cd,
+						bom_type_nm: bomType.bom_type_nm,
+						sortby: bomType.sortby,
             updated_uid: uid,
           },
           { 
-            where: { uuid: bom_type.uuid },
+            where: { uuid: bomType.uuid },
             returning: true,
             individualHooks: true,
             transaction
@@ -215,8 +213,8 @@ class AdmBomTypeRepo {
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let bom_type of body) {
-        count += await this.repo.destroy({ where: { uuid: bom_type.uuid }, transaction});
+      for await (let bomType of body) {
+        count += await this.repo.destroy({ where: { uuid: bomType.uuid }, transaction});
       };
 
       await new AdmLogRepo(this.tenant).create('delete', sequelize.models.AdmBomType.getTableName() as string, previousRaws, uid, transaction);

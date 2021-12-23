@@ -28,21 +28,21 @@ class AdmCompanyOptRepo {
 	// 📒 Fn[create]: Default Create Function
 	public create = async(body: IAdmCompanyOpt[], uid: number, transaction?: Transaction) => {
 		try {
-			const company_opt = body.map((company_opt) => {
+			const companyOpt = body.map((companyOpt) => {
 				return {
-					company_opt_id: company_opt.company_opt_id,
-					company_opt_cd: company_opt.company_opt_cd,
-					company_opt_nm: company_opt.company_opt_nm,
-					remark: company_opt.remark,
-					val: company_opt.val,
-					val_opt: company_opt.val_opt,
-					sortby: company_opt.sortby,
+					company_opt_id: companyOpt.company_opt_id,
+					company_opt_cd: companyOpt.company_opt_cd,
+					company_opt_nm: companyOpt.company_opt_nm,
+					remark: companyOpt.remark,
+					val: companyOpt.val,
+					val_opt: companyOpt.val_opt,
+					sortby: companyOpt.sortby,
 					created_uid: uid,
 					updated_uid: uid,
 				}
 			});
 
-			const result = await this.repo.bulkCreate(company_opt, { individualHooks: true, transaction });
+			const result = await this.repo.bulkCreate(companyOpt, { individualHooks: true, transaction });
 
 			return convertBulkResult(result);
 		} catch (error) {
@@ -63,6 +63,7 @@ class AdmCompanyOptRepo {
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
+					[ Sequelize.col('admCompanyOpt.uuid'), 'company_opt_uuid' ],
           'company_opt_cd',
           'company_opt_nm',
           'remark',
@@ -141,20 +142,19 @@ class AdmCompanyOptRepo {
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let company_opt of body) {
+      for await (let companyOpt of body) {
         const result = await this.repo.update(
           {
-            company_opt_id: company_opt.company_opt_id != null ? company_opt.company_opt_id : null,
-            company_opt_cd: company_opt.company_opt_cd != null ? company_opt.company_opt_cd : null,
-						company_opt_nm: company_opt.company_opt_nm != null ? company_opt.company_opt_nm : null,
-						remark: company_opt.remark != null ? company_opt.remark : null,
-						val: company_opt.val != null ? company_opt.val : null,
-						val_opt: company_opt.val_opt != null ? company_opt.val_opt : null,
-						sortby: company_opt.sortby != null ? company_opt.sortby : null,
+            company_opt_cd: companyOpt.company_opt_cd != null ? companyOpt.company_opt_cd : null,
+						company_opt_nm: companyOpt.company_opt_nm != null ? companyOpt.company_opt_nm : null,
+						remark: companyOpt.remark != null ? companyOpt.remark : null,
+						val: companyOpt.val != null ? companyOpt.val : null,
+						val_opt: companyOpt.val_opt != null ? companyOpt.val_opt : null,
+						sortby: companyOpt.sortby != null ? companyOpt.sortby : null,
             updated_uid: uid,
           } as any,
           { 
-            where: { uuid: company_opt.uuid },
+            where: { uuid: companyOpt.uuid },
             returning: true,
             individualHooks: true,
             transaction
@@ -183,20 +183,19 @@ class AdmCompanyOptRepo {
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let company_opt of body) {
+      for await (let companyOpt of body) {
         const result = await this.repo.update(
           {
-            company_opt_id: company_opt.company_opt_id,
-						company_opt_cd: company_opt.company_opt_cd,
-						company_opt_nm: company_opt.company_opt_nm,
-						remark: company_opt.remark,
-						val: company_opt.val,
-						val_opt: company_opt.val_opt,
-						sortby: company_opt.sortby,
+						company_opt_cd: companyOpt.company_opt_cd,
+						company_opt_nm: companyOpt.company_opt_nm,
+						remark: companyOpt.remark,
+						val: companyOpt.val,
+						val_opt: companyOpt.val_opt,
+						sortby: companyOpt.sortby,
             updated_uid: uid,
           },
           { 
-            where: { uuid: company_opt.uuid },
+            where: { uuid: companyOpt.uuid },
             returning: true,
             individualHooks: true,
             transaction
@@ -225,8 +224,8 @@ class AdmCompanyOptRepo {
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let company_opt of body) {
-        count += await this.repo.destroy({ where: { uuid: company_opt.uuid }, transaction});
+      for await (let companyOpt of body) {
+        count += await this.repo.destroy({ where: { uuid: companyOpt.uuid }, transaction});
       };
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.AdmCompanyOpt.getTableName() as string, previousRaws, uid, transaction);

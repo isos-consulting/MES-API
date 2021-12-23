@@ -28,18 +28,18 @@ class AdmPrdPlanTypeRepo {
 	// 📒 Fn[create]: Default Create Function
 	public create = async(body: IAdmPrdPlanType[], uid: number, transaction?: Transaction) => {
 		try {
-			const prd_plan_type = body.map((prd_plan_type) => {
+			const prdPlanType = body.map((prdPlanType) => {
 				return {
-					prd_plan_type_id: prd_plan_type.prd_plan_type_id,
-					prd_plan_type_cd: prd_plan_type.prd_plan_type_cd,
-					prd_plan_type_nm: prd_plan_type.prd_plan_type_nm,
-					sortby: prd_plan_type.sortby,
+					prd_plan_type_id: prdPlanType.prd_plan_type_id,
+					prd_plan_type_cd: prdPlanType.prd_plan_type_cd,
+					prd_plan_type_nm: prdPlanType.prd_plan_type_nm,
+					sortby: prdPlanType.sortby,
 					created_uid: uid,
 					updated_uid: uid,
 				}
 			});
 
-			const result = await this.repo.bulkCreate(prd_plan_type, { individualHooks: true, transaction });
+			const result = await this.repo.bulkCreate(prdPlanType, { individualHooks: true, transaction });
 
 			return convertBulkResult(result);
 		} catch (error) {
@@ -60,6 +60,7 @@ class AdmPrdPlanTypeRepo {
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
+					[ Sequelize.col('admPrdPlanType.uuid'), 'prd_plan_type_uuid' ],
           'prd_plan_type_cd',
           'prd_plan_type_nm',
 					'sortby',
@@ -135,17 +136,16 @@ class AdmPrdPlanTypeRepo {
 		try {
 			const previousRaws = await getPreviousRaws(body, this.repo);
 
-			for await (let prd_plan_type of body) {
+			for await (let prdPlanType of body) {
 				const result = await this.repo.update(
 					{
-						prd_plan_type_id: prd_plan_type.prd_plan_type_id != null ? prd_plan_type.prd_plan_type_id : null,
-						prd_plan_type_cd: prd_plan_type.prd_plan_type_cd != null ? prd_plan_type.prd_plan_type_cd : null,
-						prd_plan_type_nm: prd_plan_type.prd_plan_type_nm != null ? prd_plan_type.prd_plan_type_nm : null,
-						sortby: prd_plan_type.sortby != null ? prd_plan_type.sortby : null,
+						prd_plan_type_cd: prdPlanType.prd_plan_type_cd != null ? prdPlanType.prd_plan_type_cd : null,
+						prd_plan_type_nm: prdPlanType.prd_plan_type_nm != null ? prdPlanType.prd_plan_type_nm : null,
+						sortby: prdPlanType.sortby != null ? prdPlanType.sortby : null,
 						updated_uid: uid,
 					} as any,
 					{ 
-						where: { uuid: prd_plan_type.uuid },
+						where: { uuid: prdPlanType.uuid },
 						returning: true,
 						individualHooks: true,
 						transaction
@@ -174,17 +174,17 @@ class AdmPrdPlanTypeRepo {
 		try {
 			const previousRaws = await getPreviousRaws(body, this.repo);
 
-			for await (let prd_plan_type of body) {
+			for await (let prdPlanType of body) {
 				const result = await this.repo.update(
 					{
-						prd_plan_type_id: prd_plan_type.prd_plan_type_id,
-						prd_plan_type_cd: prd_plan_type.prd_plan_type_cd,
-						prd_plan_type_nm: prd_plan_type.prd_plan_type_nm,
-						sortby: prd_plan_type.sortby,
+						prd_plan_type_id: prdPlanType.prd_plan_type_id,
+						prd_plan_type_cd: prdPlanType.prd_plan_type_cd,
+						prd_plan_type_nm: prdPlanType.prd_plan_type_nm,
+						sortby: prdPlanType.sortby,
 						updated_uid: uid,
 					},
 					{ 
-						where: { uuid: prd_plan_type.uuid },
+						where: { uuid: prdPlanType.uuid },
 						returning: true,
 						individualHooks: true,
 						transaction
@@ -213,8 +213,8 @@ class AdmPrdPlanTypeRepo {
 		try {      
 			const previousRaws = await getPreviousRaws(body, this.repo);
 
-			for await (let prd_plan_type of body) {
-				count += await this.repo.destroy({ where: { uuid: prd_plan_type.uuid }, transaction});
+			for await (let prdPlanType of body) {
+				count += await this.repo.destroy({ where: { uuid: prdPlanType.uuid }, transaction});
 			};
 
 			await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.AdmPrdPlanType.getTableName() as string, previousRaws, uid, transaction);

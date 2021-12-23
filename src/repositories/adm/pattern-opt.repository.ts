@@ -28,21 +28,20 @@ class AdmPatternOptRepo {
 	// 📒 Fn[create]: Default Create Function
 	public create = async(body: IAdmPatternOpt[], uid: number, transaction?: Transaction) => {
 		try {
-			const pattern_opt = body.map((pattern_opt) => {
+			const patternOpt = body.map((patternOpt) => {
 				return {
-					pattern_opt_cd: pattern_opt.pattern_opt_cd,
-					pattern_opt_nm: pattern_opt.pattern_opt_nm,
-					table_nm: pattern_opt.table_nm,
-					auto_fg: pattern_opt.auto_fg,
-					col_nm: pattern_opt.col_nm,
-					pattern: pattern_opt.pattern,
-					sortby: pattern_opt.sortby,
+					pattern_opt_nm: patternOpt.pattern_opt_nm,
+					table_nm: patternOpt.table_nm,
+					auto_fg: patternOpt.auto_fg,
+					col_nm: patternOpt.col_nm,
+					pattern: patternOpt.pattern,
+					sortby: patternOpt.sortby,
 					created_uid: uid,
 					updated_uid: uid,
 				}
 			});
 
-			const result = await this.repo.bulkCreate(pattern_opt, { individualHooks: true, transaction });
+			const result = await this.repo.bulkCreate(patternOpt, { individualHooks: true, transaction });
 
 			return convertBulkResult(result);
 		} catch (error) {
@@ -167,20 +166,20 @@ class AdmPatternOptRepo {
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let pattern_opt of body) {
+      for await (let patternOpt of body) {
         const result = await this.repo.update(
           {
-            pattern_opt_cd: pattern_opt.pattern_opt_cd != null ? pattern_opt.pattern_opt_cd : null,
-            pattern_opt_nm: pattern_opt.pattern_opt_nm != null ? pattern_opt.pattern_opt_nm : null,
-						table_nm: pattern_opt.table_nm != null ? pattern_opt.table_nm : null,
-						auto_fg: pattern_opt.auto_fg != null ? pattern_opt.auto_fg : null,
-						col_nm: pattern_opt.col_nm != null ? pattern_opt.col_nm : null,
-						pattern: pattern_opt.pattern != null ? pattern_opt.pattern : null,
-						sortby: pattern_opt.sortby != null ? pattern_opt.sortby : null,
+            pattern_opt_cd: patternOpt.pattern_opt_cd != null ? patternOpt.pattern_opt_cd : null,
+            pattern_opt_nm: patternOpt.pattern_opt_nm != null ? patternOpt.pattern_opt_nm : null,
+						table_nm: patternOpt.table_nm != null ? patternOpt.table_nm : null,
+						auto_fg: patternOpt.auto_fg != null ? patternOpt.auto_fg : null,
+						col_nm: patternOpt.col_nm != null ? patternOpt.col_nm : null,
+						pattern: patternOpt.pattern != null ? patternOpt.pattern : null,
+						sortby: patternOpt.sortby != null ? patternOpt.sortby : null,
             updated_uid: uid,
           } as any,
           { 
-            where: { uuid: pattern_opt.uuid },
+            where: { uuid: patternOpt.uuid },
             returning: true,
             individualHooks: true,
             transaction
@@ -209,20 +208,20 @@ class AdmPatternOptRepo {
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let pattern_opt of body) {
+      for await (let patternOpt of body) {
         const result = await this.repo.update(
           {
-            pattern_opt_cd: pattern_opt.pattern_opt_cd,
-						pattern_opt_nm: pattern_opt.pattern_opt_nm,
-						table_nm: pattern_opt.table_nm,
-						auto_fg: pattern_opt.auto_fg,
-						col_nm: pattern_opt.col_nm,
-						pattern: pattern_opt.pattern,
-						sortby: pattern_opt.sortby,
+            pattern_opt_cd: patternOpt.pattern_opt_cd,
+						pattern_opt_nm: patternOpt.pattern_opt_nm,
+						table_nm: patternOpt.table_nm,
+						auto_fg: patternOpt.auto_fg,
+						col_nm: patternOpt.col_nm,
+						pattern: patternOpt.pattern,
+						sortby: patternOpt.sortby,
             updated_uid: uid,
           },
           { 
-            where: { uuid: pattern_opt.uuid },
+            where: { uuid: patternOpt.uuid },
             returning: true,
             individualHooks: true,
             transaction
@@ -251,8 +250,8 @@ class AdmPatternOptRepo {
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let pattern_opt of body) {
-        count += await this.repo.destroy({ where: { uuid: pattern_opt.uuid }, transaction});
+      for await (let patternOpt of body) {
+        count += await this.repo.destroy({ where: { uuid: patternOpt.uuid }, transaction});
       };
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.AdmPatternOpt.getTableName() as string, previousRaws, uid, transaction);

@@ -1,0 +1,125 @@
+# OUT_INCOME_TB
+
+# Columns
+mold_id:
+  type: object
+  properties:
+    mold_id:
+      description: 금형ID
+      type: number
+      format: int4
+
+factory_id:
+  type: object
+  properties:
+    factory_id:
+      description: 공장ID
+      type: number
+      format: int4
+
+mold_cd:
+  type: object
+  properties:
+    mold_cd:
+      description: 금형코드
+      type: string
+      format: varchar(20)
+
+mold_nm:
+  type: object
+  properties:
+    mold_nm:
+      description: 금형명
+      type: string
+      format: varchar(50)
+
+mold_no:
+  type: object
+  properties:
+    mold_no:
+      description: 금형번호
+      type: string
+      format: varchar(50)
+
+cavity:
+  type: object
+  properties:
+    cavity:
+      description: cavity
+      type: number
+      format: numeric(19, 6)
+
+guarantee_cnt:
+  type: object
+  properties:
+    guarantee_cnt:
+      description: 보증타수
+      type: number
+      format: numeric(19, 6)
+
+basic_cnt:
+  type: object
+  properties:
+    basic_cnt:
+      description: 기초타수
+      type: number
+      format: numeric(19, 6)
+
+manufacturer:
+  type: object
+  properties:
+    manufacturer:
+      description: 제조사
+      type: string
+      format: varchar(50)
+
+purchase_date:
+  type: object
+  properties:
+    purchase_date:
+      description: 구매 일자
+      type: string
+      format: date-time
+
+weight:
+  type: object
+  properties:
+    weight:
+      description: 금형무게
+      type: number
+      format: numeric(19,6)
+
+size:
+  type: object
+  properties:
+    size:
+      description: 금형크기
+      type: string
+      format: varchar(50)
+
+use_fg:
+  type: object
+  properties:
+    use_fg:
+      description: 금형유무
+      type: boolean
+      format: boolean
+
+mold_uuid:
+  type: object
+  properties:
+    mold_uuid:
+      description: 금형UUID
+      type: string
+      format: uuid
+
+# Uuids
+
+factory_uuid:
+  type: object
+  properties:
+    factory_uuid:
+      description: 공장UUID
+      type: string
+      format: uuid
+# Others

@@ -28,19 +28,18 @@ class AdmTransactionRepo {
 	// 📒 Fn[create]: Default Create Function
 	public create = async(body: IAdmTransaction[], uid: number, transaction?: Transaction) => {
 	try {
-		const amdtransaction = body.map((amdtransaction) => {
+		const amdTransaction = body.map((amdTransaction) => {
 			return {
-				tran_id: amdtransaction.tran_id,
-				tran_cd: amdtransaction.tran_cd,
-				tran_nm: amdtransaction.tran_nm,
-				sortby: amdtransaction.sortby,
-				remark: amdtransaction.remark,
+				tran_cd: amdTransaction.tran_cd,
+				tran_nm: amdTransaction.tran_nm,
+				sortby: amdTransaction.sortby,
+				remark: amdTransaction.remark,
 				created_uid: uid,
 				updated_uid: uid,
 			}
 		});
 
-		const result = await this.repo.bulkCreate(amdtransaction, { individualHooks: true, transaction });
+		const result = await this.repo.bulkCreate(amdTransaction, { individualHooks: true, transaction });
 
 		return convertBulkResult(result);
 	} catch (error) {
@@ -61,6 +60,7 @@ class AdmTransactionRepo {
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
+					[ Sequelize.col('admTransaction.uuid'), 'transaction_uuid' ],
           'tran_cd',
           'tran_nm',
 					'sortby',
@@ -137,7 +137,6 @@ class AdmTransactionRepo {
       for await (let tran of body) {
         const result = await this.repo.update(
           {
-            tran_id: tran.tran_id != null ? tran.tran_id : null,
             tran_cd: tran.tran_cd != null ? tran.tran_cd : null,
 						tran_nm: tran.tran_nm != null ? tran.tran_nm : null,
 						sortby: tran.sortby != null ? tran.sortby : null,
@@ -177,7 +176,6 @@ class AdmTransactionRepo {
       for await (let tran of body) {
         const result = await this.repo.update(
           {
-            tran_id: tran.tran_id,
 						tran_cd: tran.tran_cd,
 						tran_nm: tran.tran_nm,
 						sortby: tran.sortby,

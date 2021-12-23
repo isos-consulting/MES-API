@@ -28,19 +28,18 @@ class AdmStoreTypeRepo {
 	// 📒 Fn[create]: Default Create Function
 	public create = async(body: IAdmStoreType[], uid: number, transaction?: Transaction) => {
 		try {
-			const store_type = body.map((store_type) => {
+			const storeType = body.map((storeType) => {
 				return {
-					store_type_id: store_type.store_type_id,
-					store_type_cd: store_type.store_type_cd,
-					store_type_nm: store_type.store_type_nm,
-					parameter_nm: store_type.parameter_nm,
-					sortby: store_type.sortby,
+					store_type_cd: storeType.store_type_cd,
+					store_type_nm: storeType.store_type_nm,
+					parameter_nm: storeType.parameter_nm,
+					sortby: storeType.sortby,
 					created_uid: uid,
 					updated_uid: uid,
 				}
 			});
 
-			const result = await this.repo.bulkCreate(store_type, { individualHooks: true, transaction });
+			const result = await this.repo.bulkCreate(storeType, { individualHooks: true, transaction });
 
 			return convertBulkResult(result);
 		} catch (error) {
@@ -61,6 +60,7 @@ class AdmStoreTypeRepo {
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
+					[ Sequelize.col('admStoreType.uuid'), 'store_type_uuid' ],
           'store_type_cd',
           'store_type_nm',
           'parameter_nm',
@@ -138,18 +138,17 @@ class AdmStoreTypeRepo {
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let store_type of body) {
+      for await (let storeType of body) {
         const result = await this.repo.update(
           {
-            store_type_id: store_type.store_type_id != null ? store_type.store_type_id : null,
-            store_type_cd: store_type.store_type_cd != null ? store_type.store_type_cd : null,
-						store_type_nm: store_type.store_type_nm != null ? store_type.store_type_nm : null,
-						remark: store_type.parameter_nm != null ? store_type.parameter_nm : null,
-						sortby: store_type.sortby != null ? store_type.sortby : null,
+            store_type_cd: storeType.store_type_cd != null ? storeType.store_type_cd : null,
+						store_type_nm: storeType.store_type_nm != null ? storeType.store_type_nm : null,
+						remark: storeType.parameter_nm != null ? storeType.parameter_nm : null,
+						sortby: storeType.sortby != null ? storeType.sortby : null,
             updated_uid: uid,
           } as any,
           { 
-            where: { uuid: store_type.uuid },
+            where: { uuid: storeType.uuid },
             returning: true,
             individualHooks: true,
             transaction
@@ -178,18 +177,17 @@ class AdmStoreTypeRepo {
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let store_type of body) {
+      for await (let storeType of body) {
         const result = await this.repo.update(
           {
-            store_type_id: store_type.store_type_id,
-						store_type_cd: store_type.store_type_cd,
-						store_type_nm: store_type.store_type_nm,
-						parameter_nm: store_type.parameter_nm,
-						sortby: store_type.sortby,
+						store_type_cd: storeType.store_type_cd,
+						store_type_nm: storeType.store_type_nm,
+						parameter_nm: storeType.parameter_nm,
+						sortby: storeType.sortby,
             updated_uid: uid,
           },
           { 
-            where: { uuid: store_type.uuid },
+            where: { uuid: storeType.uuid },
             returning: true,
             individualHooks: true,
             transaction
@@ -218,8 +216,8 @@ class AdmStoreTypeRepo {
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let store_type of body) {
-        count += await this.repo.destroy({ where: { uuid: store_type.uuid }, transaction});
+      for await (let storeType of body) {
+        count += await this.repo.destroy({ where: { uuid: storeType.uuid }, transaction});
       };
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.AdmStoreType.getTableName() as string, previousRaws, uid, transaction);

@@ -10,7 +10,7 @@ get:
       description: Read OK
       content:
         application/json:
-          schema: 
+          schema:
             allOf:
               - $ref: ../../schemas/common/default-response.schema.yaml
               - type: object
@@ -23,7 +23,7 @@ get:
                         description: Enable
                         type: object
                         properties:
-                          count: 
+                          count:
                             description: 영향받은 데이터의 개수
                             type: number
                             format: int32
@@ -33,8 +33,101 @@ get:
                         type: array
                         items:
                           allOf:
+                            - $ref: ../../schemas/adm/insp-handling-type.schema.yaml#/insp_handling_type_uuid
                             - $ref: ../../schemas/adm/insp-handling-type.schema.yaml#/insp_handling_type_cd
                             - $ref: ../../schemas/adm/insp-handling-type.schema.yaml#/insp_handling_type_nm
+                            - $ref: ../../schemas/adm/insp-handling-type.schema.yaml#/sortby
                             - $ref: ../../schemas/common/timestamp.schema.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml
+
+post:
+  description: |
+    검사처리유형 데이터를 생성합니다.
+  summary: 검사처리유형 데이터 생성
+  tags:
+    - 검사처리유형(InspHandlingType)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - insp_handling_type_cd
+            - insp_handling_type_nm
+          allOf:
+            - $ref: ../../schemas/adm/insp-handling-type.schema.yaml#/insp_handling_type_cd
+            - $ref: ../../schemas/adm/insp-handling-type.schema.yaml#/insp_handling_type_nm
+            - $ref: ../../schemas/adm/insp-handling-type.schema.yaml#/sortby
+  responses:
+    201:
+      $ref: ../../responses/common/succeed-create.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml
+
+put:
+  description: |
+    검사처리유형 데이터를 행(Row) 단위로 수정합니다.
+  summary: 검사처리유형 데이터 수정
+  tags:
+    - 검사처리유형(InspHandlingType)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - insp_handling_type_uuid
+            - insp_handling_type_cd
+            - insp_handling_type_nm
+          allOf:
+            - $ref: ../../schemas/adm/insp-handling-type.schema.yaml#/insp_handling_type_uuid
+            - $ref: ../../schemas/adm/insp-handling-type.schema.yaml#/insp_handling_type_cd
+            - $ref: ../../schemas/adm/insp-handling-type.schema.yaml#/insp_handling_type_nm
+            - $ref: ../../schemas/adm/insp-handling-type.schema.yaml#/sortby
+  responses:
+    201:
+      $ref: ../../responses/common/succeed-update.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml
+
+patch:
+  description: |
+    검사처리유형 데이터를 개별 항목 단위로 수정합니다.
+  summary: 검사처리유형 데이터 수정
+  tags:
+    - 검사처리유형(InspHandlingType)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - insp_handling_type_uuid
+          allOf:
+            - $ref: ../../schemas/adm/insp-handling-type.schema.yaml#/insp_handling_type_uuid
+            - $ref: ../../schemas/adm/insp-handling-type.schema.yaml#/insp_handling_type_cd
+            - $ref: ../../schemas/adm/insp-handling-type.schema.yaml#/insp_handling_type_nm
+            - $ref: ../../schemas/adm/insp-handling-type.schema.yaml#/sortby
+  responses:
+    201:
+      $ref: ../../responses/common/succeed-update.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml
+
+delete:
+  description: |
+    검사처리유형 데이터를 삭제합니다.
+  summary: 검사처리유형 데이터 삭제
+  tags:
+    - 검사처리유형(InspHandlingType)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - insp_handling_type_uuid
+          allOf:
+            - $ref: ../../schemas/adm/insp-handling-type.schema.yaml#/insp_handling_type_uuid
+  responses:
+    200:
+      $ref: ../../responses/common/succeed-delete.response.yaml
     500:
       $ref: ../../responses/common/general-error.response.yaml

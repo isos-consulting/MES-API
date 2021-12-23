@@ -28,20 +28,19 @@ class AdmFileMgmtTypeRepo {
 	// 📒 Fn[create]: Default Create Function
 	public create = async(body: IAdmFileMgmtType[], uid: number, transaction?: Transaction) => {
 		try {
-			const file_mgmt_type = body.map((file_mgmt_type) => {
+			const fileMgmtType = body.map((fileMgmtType) => {
 				return {
-					file_mgmt_type_id: file_mgmt_type.file_mgmt_type_id,
-					file_mgmt_type_cd: file_mgmt_type.file_mgmt_type_cd,
-					file_mgmt_type_nm: file_mgmt_type.file_mgmt_type_nm,
-					table_nm: file_mgmt_type.table_nm,
-					id_nm: file_mgmt_type.id_nm,
-					sortby: file_mgmt_type.sortby,
+					file_mgmt_type_cd: fileMgmtType.file_mgmt_type_cd,
+					file_mgmt_type_nm: fileMgmtType.file_mgmt_type_nm,
+					table_nm: fileMgmtType.table_nm,
+					id_nm: fileMgmtType.id_nm,
+					sortby: fileMgmtType.sortby,
 					created_uid: uid,
 					updated_uid: uid,
 				}
 			});
 
-			const result = await this.repo.bulkCreate(file_mgmt_type, { individualHooks: true, transaction });
+			const result = await this.repo.bulkCreate(fileMgmtType, { individualHooks: true, transaction });
 
 			return convertBulkResult(result);
 		} catch (error) {
@@ -62,6 +61,7 @@ class AdmFileMgmtTypeRepo {
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
+					[ Sequelize.col('admFileMgmtType.uuid'), 'file_mgmt_type_uuid' ],
           'file_mgmt_type_cd',
           'file_mgmt_type_nm',
           'table_nm',
@@ -140,19 +140,18 @@ class AdmFileMgmtTypeRepo {
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let file_mgmt_type of body) {
+      for await (let fileMgmtType of body) {
         const result = await this.repo.update(
           {
-            file_mgmt_type_id: file_mgmt_type.file_mgmt_type_id != null ? file_mgmt_type.file_mgmt_type_id : null,
-            file_mgmt_type_cd: file_mgmt_type.file_mgmt_type_cd != null ? file_mgmt_type.file_mgmt_type_cd : null,
-						file_mgmt_type_nm: file_mgmt_type.file_mgmt_type_nm != null ? file_mgmt_type.file_mgmt_type_nm : null,
-						table_nm: file_mgmt_type.table_nm != null ? file_mgmt_type.table_nm : null,
-						id_nm: file_mgmt_type.id_nm != null ? file_mgmt_type.id_nm : null,
-						sortby: file_mgmt_type.sortby != null ? file_mgmt_type.sortby : null,
+            file_mgmt_type_cd: fileMgmtType.file_mgmt_type_cd != null ? fileMgmtType.file_mgmt_type_cd : null,
+						file_mgmt_type_nm: fileMgmtType.file_mgmt_type_nm != null ? fileMgmtType.file_mgmt_type_nm : null,
+						table_nm: fileMgmtType.table_nm != null ? fileMgmtType.table_nm : null,
+						id_nm: fileMgmtType.id_nm != null ? fileMgmtType.id_nm : null,
+						sortby: fileMgmtType.sortby != null ? fileMgmtType.sortby : null,
             updated_uid: uid,
           } as any,
           { 
-            where: { uuid: file_mgmt_type.uuid },
+            where: { uuid: fileMgmtType.uuid },
             returning: true,
             individualHooks: true,
             transaction
@@ -181,19 +180,18 @@ class AdmFileMgmtTypeRepo {
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let file_mgmt_type of body) {
+      for await (let fileMgmtType of body) {
         const result = await this.repo.update(
           {
-            file_mgmt_type_id: file_mgmt_type.file_mgmt_type_id,
-						file_mgmt_type_cd: file_mgmt_type.file_mgmt_type_cd,
-						file_mgmt_type_nm: file_mgmt_type.file_mgmt_type_nm,
-						table_nm: file_mgmt_type.table_nm,
-						id_nm: file_mgmt_type.id_nm,
-						sortby: file_mgmt_type.sortby,
+						file_mgmt_type_cd: fileMgmtType.file_mgmt_type_cd,
+						file_mgmt_type_nm: fileMgmtType.file_mgmt_type_nm,
+						table_nm: fileMgmtType.table_nm,
+						id_nm: fileMgmtType.id_nm,
+						sortby: fileMgmtType.sortby,
             updated_uid: uid,
           },
           { 
-            where: { uuid: file_mgmt_type.uuid },
+            where: { uuid: fileMgmtType.uuid },
             returning: true,
             individualHooks: true,
             transaction
@@ -222,8 +220,8 @@ class AdmFileMgmtTypeRepo {
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let file_mgmt_type of body) {
-        count += await this.repo.destroy({ where: { uuid: file_mgmt_type.uuid }, transaction});
+      for await (let fileMgmtType of body) {
+        count += await this.repo.destroy({ where: { uuid: fileMgmtType.uuid }, transaction});
       };
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.AdmFileMgmtType.getTableName() as string, previousRaws, uid, transaction);

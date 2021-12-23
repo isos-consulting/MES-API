@@ -28,18 +28,17 @@ class AdmReworkTypeRepo {
 	// 📒 Fn[create]: Default Create Function
 	public create = async(body: IAdmReworkType[], uid: number, transaction?: Transaction) => {
 		try {
-			const rework_type = body.map((rework_type) => {
+			const reworkType = body.map((reworkType) => {
 				return {
-					rework_type_id: rework_type.rework_type_id,
-					rework_type_cd: rework_type.rework_type_cd,
-					rework_type_nm: rework_type.rework_type_nm,
-					sortby: rework_type.sortby,
+					rework_type_cd: reworkType.rework_type_cd,
+					rework_type_nm: reworkType.rework_type_nm,
+					sortby: reworkType.sortby,
 					created_uid: uid,
 					updated_uid: uid,
 				}
 			});
 
-			const result = await this.repo.bulkCreate(rework_type, { individualHooks: true, transaction });
+			const result = await this.repo.bulkCreate(reworkType, { individualHooks: true, transaction });
 
 			return convertBulkResult(result);
 		} catch (error) {
@@ -60,6 +59,7 @@ class AdmReworkTypeRepo {
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
+					[ Sequelize.col('admReworkType.uuid'), 'rework_type_uuid' ],
           'rework_type_cd',
           'rework_type_nm',
 					'sortby',
@@ -135,17 +135,17 @@ class AdmReworkTypeRepo {
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let rework_type of body) {
+      for await (let reworkType of body) {
         const result = await this.repo.update(
           {
-            rework_type_id: rework_type.rework_type_id != null ? rework_type.rework_type_id : null,
-            rework_type_cd: rework_type.rework_type_cd != null ? rework_type.rework_type_cd : null,
-						rework_type_nm: rework_type.rework_type_nm != null ? rework_type.rework_type_nm : null,
-						sortby: rework_type.sortby != null ? rework_type.sortby : null,
+            rework_type_id: reworkType.rework_type_id != null ? reworkType.rework_type_id : null,
+            rework_type_cd: reworkType.rework_type_cd != null ? reworkType.rework_type_cd : null,
+						rework_type_nm: reworkType.rework_type_nm != null ? reworkType.rework_type_nm : null,
+						sortby: reworkType.sortby != null ? reworkType.sortby : null,
             updated_uid: uid,
           } as any,
           { 
-            where: { uuid: rework_type.uuid },
+            where: { uuid: reworkType.uuid },
             returning: true,
             individualHooks: true,
             transaction
@@ -174,17 +174,17 @@ class AdmReworkTypeRepo {
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let rework_type of body) {
+      for await (let reworkType of body) {
         const result = await this.repo.update(
           {
-            rework_type_id: rework_type.rework_type_id,
-						rework_type_cd: rework_type.rework_type_cd,
-						rework_type_nm: rework_type.rework_type_nm,
-						sortby: rework_type.sortby,
+            rework_type_id: reworkType.rework_type_id,
+						rework_type_cd: reworkType.rework_type_cd,
+						rework_type_nm: reworkType.rework_type_nm,
+						sortby: reworkType.sortby,
             updated_uid: uid,
           },
           { 
-            where: { uuid: rework_type.uuid },
+            where: { uuid: reworkType.uuid },
             returning: true,
             individualHooks: true,
             transaction
@@ -213,8 +213,8 @@ class AdmReworkTypeRepo {
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let rework_type of body) {
-        count += await this.repo.destroy({ where: { uuid: rework_type.uuid }, transaction});
+      for await (let reworkType of body) {
+        count += await this.repo.destroy({ where: { uuid: reworkType.uuid }, transaction});
       };
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.AdmReworkType.getTableName() as string, previousRaws, uid, transaction);
