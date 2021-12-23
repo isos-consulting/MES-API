@@ -11,7 +11,7 @@ class AdmPrdPlanTypeCtl extends BaseCtl {
     // this.fkIdInfos = [
     //   {
     //     key: 'table',
-    //     TRepo: new TableRepo(),
+    //     repo: new TableRepo(),
     //     idName: 'table_id',
     //     uuidName: 'table_uuid'
     //   }

@@ -1,0 +1,196 @@
+# OUT_RECEIVE_TB
+
+# Columns
+repair_history_id:
+  type: object
+  properties:
+    repair_history_id:
+      description: 금형 수리이력 관리ID
+      type: number
+      format: int4
+
+factory_id:
+  type: object
+  properties:
+    factory_id:
+      description: 공장ID
+      type: number
+      format: int4
+
+mold_id:
+  type: object
+  properties:
+    factory_id:
+      description: 금형ID
+      type: number
+      format: int4
+
+prod_id:
+  type: object
+  properties:
+    prod_id:
+      description: 품목ID
+      type: number
+      format: int4
+
+problem_id:
+  type: object
+  properties:
+    problem_id:
+      description: 금형 문제점ID
+      type: number
+      format: int4
+
+occur_date:
+  type: object
+  properties:
+    occur_date:
+      description: 발생 일자
+      type: string
+      format: date-time
+
+occur_emp_id:
+  type: object
+  properties:
+    occur_emp_id:
+      description: 발생확인자ID
+      type: number
+      format: int4
+
+repair_emp_id:
+  type: object
+  properties:
+    repair_emp_id:
+      description: 수리자ID
+      type: number
+      format: int4
+
+repair_partner:
+  type: object
+  properties:
+    repair_partner:
+      description: 수리업체
+      type: string
+      format: varchar(50)
+
+repair_no:
+  type: object
+  properties:
+    repair_no:
+      description: 수리업체
+      type: string
+      format: varchar(50)
+
+start_date:
+  type: object
+  properties:
+    start_date:
+      description: 수리시작일자
+      type: string
+      format: date-time
+
+end_date:
+  type: object
+  properties:
+    end_date:
+      description: 수리완료일자
+      type: string
+      format: date-time
+
+contents:
+  type: object
+  properties:
+    contents:
+      description: 수리내용
+      type: string
+      format: varchar(250)
+
+repair_history_uuid:
+  type: object
+  properties:
+    repair_history_uuid:
+      description: 금형 수리이력 관리UUID
+      type: string
+      format: uuid
+
+# Uuids
+mold_uuid:
+  type: object
+  properties:
+    mold_uuid:
+      description: 금형UUID
+      type: string
+      format: uuid
+
+factory_uuid:
+  type: object
+  properties:
+    factory_uuid:
+      description: 공장UUID
+      type: string
+      format: uuid
+
+prod_uuid:
+  type: object
+  properties:
+    prod_uuid:
+      description: 품목UUID
+      type: string
+      format: uuid
+
+problem_uuid:
+  type: object
+  properties:
+    problem_uuid:
+      description: 금형 문제점UUID
+      type: string
+      format: uuid
+
+occur_emp_uuid:
+  type: object
+  properties:
+    occur_emp_uuid:
+      description: 발생확인자UUID
+      type: string
+      format: uuid
+
+repair_emp_uuid:
+  type: object
+  properties:
+    repair_emp_uuid:
+      description: 수리자UUID
+      type: string
+      format: uuid
+
+# Others
+occur_emp_cd:
+  type: object
+  properties:
+    occurEmp_cd:
+      description: 발생확인자코드
+      type: string
+      format: varchar(20)
+
+occur_emp_nm:
+  type: object
+  properties:
+    occurEmp_nm:
+      description: 발생확인자명
+      type: string
+      format: varchar(50)
+
+repair_emp_cd:
+  type: object
+  properties:
+    repairEmp_cd:
+      description: 수리자코드
+      type: string
+      format: varchar(20)
+
+repair_emp_nm:
+  type: object
+  properties:
+    repairEmp_nm:
+      description: 수리자명
+      type: string
+      format: varchar(50)

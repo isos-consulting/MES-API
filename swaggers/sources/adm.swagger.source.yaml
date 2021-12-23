@@ -13,17 +13,17 @@
 
 # 일단 비슷한 API 요청이 여러개인 경우 path parameter로 받고 API 명세에는 구분해서 넣는 방식으로 (나중에 합치고)
 
-openapi: '3.0.2'
+openapi: "3.0.2"
 info:
   title: MES API Document
-  version: '1.0.0'
+  version: "1.0.0"
   license:
-    name: 'MIT'
-    url: 'https://spdx.org/licenses/MIT.html'
+    name: "MIT"
+    url: "https://spdx.org/licenses/MIT.html"
   contact:
-    name: 'KISOS'
-    url: 'https://www.kisos.net'
-    email: 'kisos@kisos.net'
+    name: "KISOS"
+    url: "https://www.kisos.net"
+    email: "kisos@kisos.net"
 servers:
   - url: https://isos.iptime.org:13221
     description: MES TEST SERVER
@@ -36,7 +36,7 @@ components:
       in: header
     petstore_auth:
       type: oauth2
-      flows: 
+      flows:
         implicit:
           authorizationUrl: http://example.org/api/oauth/dialog
           scopes:
@@ -45,42 +45,62 @@ components:
 
 paths:
   # ✅ BomType (BOM 구성 유형)
+  /adm/bom-type/{uuid}:
+    $ref: ../end-points/adm/bom-type.{uuid}.yaml
   /adm/bom-types:
     $ref: ../end-points/adm/bom-types.yaml
 
   # ✅ InspType (검사 유형)
+  /adm/insp-type/{uuid}:
+    $ref: ../end-points/adm/insp-type.{uuid}.yaml
   /adm/insp-types:
     $ref: ../end-points/adm/insp-types.yaml
 
   # ✅ InspHandlingType (검사처리 유형)
+  /adm/insp-handling-type/{uuid}:
+    $ref: ../end-points/adm/insp-handling-type.{uuid}.yaml
   /adm/insp-handling-types:
     $ref: ../end-points/adm/insp-handling-types.yaml
 
   # ✅ PrdPlanType (생산계획 유형)
+  /adm/prd-plan-type/{uuid}:
+    $ref: ../end-points/adm/prd-plan-type.{uuid}.yaml
   /adm/prd-plan-types:
     $ref: ../end-points/adm/prd-plan-types.yaml
 
   # ✅ InspDetailType (세부검사 유형)
+  /adm/insp-detail-type/{uuid}:
+    $ref: ../end-points/adm/insp-detail-type.{uuid}.yaml
   /adm/insp-detail-types:
     $ref: ../end-points/adm/insp-detail-types.yaml
 
   # ✅ Transaction (수불 유형)
+  /adm/transaction/{uuid}:
+    $ref: ../end-points/adm/transaction.{uuid}.yaml
   /adm/transactions:
     $ref: ../end-points/adm/transactions.yaml
 
   # ✅ DemandType (요청 유형)
+  /adm/demand-type/{uuid}:
+    $ref: ../end-points/adm/demand-type.{uuid}.yaml
   /adm/demand-types:
     $ref: ../end-points/adm/demand-types.yaml
 
   # ✅ PatternOpt (자동번호발행 옵션)
+  /adm/pattern-opt/{uuid}:
+    $ref: ../end-points/adm/pattern-opt.{uuid}.yaml
   /adm/pattern-opts:
     $ref: ../end-points/adm/pattern-opts.yaml
 
   # ✅ ReworkType (재작업 유형)
+  /adm/rework-type/{uuid}:
+    $ref: ../end-points/adm/rework-type.{uuid}.yaml
   /adm/rework-types:
     $ref: ../end-points/adm/rework-types.yaml
 
   # ✅ StoreType (창고 유형)
+  /adm/store-type/{uuid}:
+    $ref: ../end-points/adm/store-type.{uuid}.yaml
   /adm/store-types:
     $ref: ../end-points/adm/store-types.yaml
 
@@ -91,5 +111,13 @@ paths:
     $ref: ../end-points/adm/file-mgmts.yaml
 
   # ✅ CompanyOpt (회사 옵션)
+  /adm/company-opt/{uuid}:
+    $ref: ../end-points/adm/company-opt.{uuid}.yaml
   /adm/company-opts:
     $ref: ../end-points/adm/company-opts.yaml
+
+  # ✅ FileMgmtType (파일관리유형)
+  /adm/file-mgmt-type/{uuid}:
+    $ref: ../end-points/adm/file-mgmt-type.{uuid}.yaml
+  /adm/file-mgmt-types:
+    $ref: ../end-points/adm/file-mgmt-types.yaml

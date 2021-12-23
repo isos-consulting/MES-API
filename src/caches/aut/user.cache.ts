@@ -1,6 +1,18 @@
 import config from '../../configs/config';
 import AutUser from '../../models/aut/user.model';
+<<<<<<< HEAD
 import { getAsyncInRedis, setAsyncInRedis } from '../../utils/redisClient';
+=======
+import redis from 'redis';
+import bluebird from 'bluebird';
+
+declare module 'redis' {
+  export interface RedisClient extends NodeJS.EventEmitter {
+    setAsync(key:string, value:any): Promise<void>;
+    getAsync(key:string): Promise<any>;
+  }
+}
+>>>>>>> won
 
 class AutUserCache {
   tenant: string;

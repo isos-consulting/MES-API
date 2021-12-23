@@ -1,8 +1,8 @@
-import * as dotenv from 'dotenv';
-import * as createError from 'http-errors';
-import * as express from 'express';
-import * as cookieParser from 'cookie-parser';
-import * as cors from 'cors';
+import dotenv from 'dotenv';
+import createError from 'http-errors';
+import express from 'express';
+import cookieParser from 'cookie-parser';
+import cors from 'cors';
 import jwtMiddleware from './middlewares/jwt.middleware';
 import routers from './routes';
 import response from './utils/response';

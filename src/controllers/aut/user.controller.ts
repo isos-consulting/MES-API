@@ -1,6 +1,6 @@
-import * as express from 'express';
-import * as bcrypt from 'bcrypt'
-import * as createHttpError from 'http-errors'
+import express from 'express';
+import bcrypt from 'bcrypt'
+import createHttpError from 'http-errors'
 import response from '../../utils/response';
 import responseNew from '../../utils/response_new';
 import AutUserRepo from '../../repositories/aut/user.repository';

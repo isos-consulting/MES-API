@@ -7,5 +7,5 @@ export default interface IAdmDemandType {
   created_uid?: number,
   updated_at?: Date,
   updated_uid?: number,
-  tenant_uuid?: string
+  uuid?: string
 }

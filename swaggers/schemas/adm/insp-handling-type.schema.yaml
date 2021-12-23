@@ -1,26 +1,43 @@
 # ADM_INSP_HANDLING_TYPE_VW
 
 # Columns
-insp_handling_type_id: 
+insp_handling_type_id:
   type: object
-  properties: 
+  properties:
     insp_handling_type_id:
       description: 검사처리 유형ID
       type: number
       format: int4
 
-insp_handling_type_cd: 
+insp_handling_type_cd:
   type: object
-  properties: 
+  properties:
     insp_handling_type_cd:
       description: 검사처리 유형코드
       type: string
       format: varchar(20)
 
-insp_handling_type_nm: 
+insp_handling_type_nm:
   type: object
-  properties: 
+  properties:
     insp_handling_type_nm:
       description: 검사처리 유형명
       type: string
       format: varchar(50)
+
+sortby:
+  type: object
+  properties:
+    sortby:
+      description: 정렬
+      type: number
+      format: int4
+
+# Uuids
+insp_handling_type_uuid:
+  type: object
+  properties:
+    insp_handling_type_uuid:
+      description: 검사처리 유형UUID
+      type: string
+      format: uuid

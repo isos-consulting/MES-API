@@ -1,26 +1,43 @@
 # ADM_BOM_TYPE_VW
 
 # Columns
-bom_type_id: 
+bom_type_id:
   type: object
-  properties: 
+  properties:
     bom_type_id:
       description: BOM 구성유형ID
       type: number
       format: int4
 
-bom_type_cd: 
+bom_type_cd:
   type: object
-  properties: 
+  properties:
     bom_type_cd:
       description: BOM 구성유형코드
       type: string
       format: varchar(20)
 
-bom_type_nm: 
+bom_type_nm:
   type: object
-  properties: 
+  properties:
     bom_type_nm:
       description: BOM 구성유형명
       type: string
       format: varchar(50)
+
+sortby:
+  type: object
+  properties:
+    sortby:
+      description: 정렬
+      type: number
+      format: int4
+
+# Uuids
+bom_type_uuid:
+  type: object
+  properties:
+    bom_type_uuid:
+      description: BOM 구성유형UUID
+      type: string
+      format: uuid

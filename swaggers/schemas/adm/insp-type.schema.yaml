@@ -1,42 +1,59 @@
 # ADM_INSP_TYPE_VW
 
 # Columns
-insp_type_id: 
+insp_type_id:
   type: object
-  properties: 
+  properties:
     insp_type_id:
       description: 검사유형ID
       type: number
       format: int4
 
-insp_type_cd: 
+insp_type_cd:
   type: object
-  properties: 
+  properties:
     insp_type_cd:
       description: 검사유형코드
       type: string
       format: varchar(20)
 
-insp_type_nm: 
+insp_type_nm:
   type: object
-  properties: 
+  properties:
     insp_type_nm:
       description: 검사유형명
       type: string
       format: varchar(50)
 
-worker_fg: 
+worker_fg:
   type: object
-  properties: 
+  properties:
     worker_fg:
       description: 작업자 검사 여부
       type: boolean
       format: boolean
 
-inspector_fg: 
+inspector_fg:
   type: object
-  properties: 
+  properties:
     inspector_fg:
       description: 검사자 검사 여부
       type: boolean
       format: boolean
+
+sortby:
+  type: object
+  properties:
+    sortby:
+      description: 정렬
+      type: number
+      format: int4
+
+# Uuids
+insp_type_uuid:
+  type: object
+  properties:
+    insp_type_uuid:
+      description: 검사유형UUID
+      type: string
+      format: uuid

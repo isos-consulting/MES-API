@@ -8,12 +8,13 @@ class AdmCompanyOptCtl extends BaseCtl {
     super(AdmCompanyOptRepo);
 
     // ✅ CUD 연산이 실행되기 전 Fk Table 의 uuid 로 id 를 검색하여 request body 에 삽입하기 위하여 정보 Setting
+
     // this.fkIdInfos = [
     //   {
-    //     key: 'table',
-    //     TRepo: new TableRepo(),
-    //     idName: 'table_id',
-    //     uuidName: 'table_uuid'
+    //     key: 'admcompanyopt',
+    //     TRepo: AdmCompanyOptRepo,
+    //     idName: 'company_opt_id',
+    //     uuidName: 'company_opt_uuid'
     //   }
     // ];
   };

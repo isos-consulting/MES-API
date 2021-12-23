@@ -1,11 +1,12 @@
-import { Sequelize, Table, Column, Model, DataType, CreatedAt, UpdatedAt, BelongsTo, Unique } from 'sequelize-typescript'
+import { Sequelize, Table, Column, Model, DataType, CreatedAt, UpdatedAt, BelongsTo, Unique, ForeignKey } from 'sequelize-typescript'
 import IAdmInspDetailType from '../../interfaces/adm/insp-detail-type.interface';
 import AutUser from '../aut/user.model';
+import AdmInspType from './insp-type.model';
 
 @Table({
-  tableName: 'ADM_INSP_DETAIL_TYPE_VW',
+  tableName: 'ADM_INSP_DETAIL_TYPE_TB',
   modelName: 'AdmInspDetailType',
-  comment: '세부검사유형 정보 뷰',
+  comment: '세부검사유형 정보 테이블',
   timestamps: true,
   underscored: true,
 })
@@ -15,10 +16,12 @@ export default class AdmInspDetailType extends Model<IAdmInspDetailType> {
     type: DataType.INTEGER,
     allowNull: false,
     primaryKey: true,
+		autoIncrement: true,
+    autoIncrementIdentity: true,
   })
   insp_detail_type_id: number;
 
-  @Unique('adm_insp_detail_type_vw_insp_detail_type_cd_un')
+  @Unique('adm_insp_detail_type_tb_insp_detail_type_cd_un')
   @Column({
     comment: '세부검사유형코드',
     type: DataType.STRING(20),
@@ -33,12 +36,13 @@ export default class AdmInspDetailType extends Model<IAdmInspDetailType> {
   })
   insp_detail_type_nm: string;
 
+  @ForeignKey(() => AdmInspType)
   @Column({
-    comment: '검사유형코드',
-    type: DataType.STRING(50),
+    comment: '검사유형ID',
+    type: DataType.INTEGER,
     allowNull: false,
   })
-  insp_type_cd: string;
+  insp_type_id: number;
 
   @Column({
     comment: '작업자 여부',
@@ -90,12 +94,24 @@ export default class AdmInspDetailType extends Model<IAdmInspDetailType> {
   })
   updated_uid: number;
 
+	@Unique('adm_insp_detail_type_tb_uuid_un')
+  @Column({
+    comment: '세부검사유형UUID',
+    type: DataType.UUID,
+    allowNull: false,
+    defaultValue: Sequelize.fn('gen_random_uuid')
+  })
+  uuid: string;
+
   //#region ✅ Define Association
   // BelongTo
-  @BelongsTo(() => AutUser, { as: 'createUser', foreignKey: 'created_uid', targetKey: 'uid', constraints: false })
+  @BelongsTo(() => AutUser, { as: 'createUser', foreignKey: 'created_uid', targetKey: 'uid', onDelete: 'restrict', onUpdate: 'cascade' })
   createUser: AutUser;
-  @BelongsTo(() => AutUser, { as: 'updateUser', foreignKey: 'updated_uid', targetKey: 'uid', constraints: false })
+  @BelongsTo(() => AutUser, { as: 'updateUser', foreignKey: 'updated_uid', targetKey: 'uid', onDelete: 'restrict', onUpdate: 'cascade' })
   updateUser: AutUser;
+  
+	@BelongsTo(() => AdmInspType, { foreignKey: 'insp_type_id', targetKey: 'insp_type_id', onDelete: 'restrict', onUpdate: 'cascade' })
+  AdmInspType: AdmInspType;
 
   // HasMany
   //#endregion

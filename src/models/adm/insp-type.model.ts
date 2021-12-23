@@ -3,7 +3,7 @@ import IAdmInspType from '../../interfaces/adm/insp-type.interface';
 import AutUser from '../aut/user.model';
 
 @Table({
-  tableName: 'ADM_INSP_TYPE_VW',
+  tableName: 'ADM_INSP_TYPE_TB',
   modelName: 'AdmInspType',
   comment: '검사 유형 정보 뷰',
   timestamps: true,
@@ -15,10 +15,12 @@ export default class AdmInspType extends Model<IAdmInspType> {
     type: DataType.INTEGER,
     allowNull: false,
     primaryKey: true,
+		autoIncrement: true,
+    autoIncrementIdentity: true,
   })
   insp_type_id: number;
 
-  @Unique('adm_insp_type_vw_insp_type_cd_un')
+  @Unique('adm_insp_type_tb_insp_type_cd_un')
   @Column({
     comment: '검사 유형코드',
     type: DataType.STRING(20),
@@ -82,6 +84,15 @@ export default class AdmInspType extends Model<IAdmInspType> {
     allowNull: false,
   })
   updated_uid: number;
+
+	@Unique('adm_insp_type_tb_uuid_un')
+  @Column({
+    comment: '검사 유형UUID',
+    type: DataType.UUID,
+    allowNull: false,
+    defaultValue: Sequelize.fn('gen_random_uuid')
+  })
+  uuid: string;
 
   //#region ✅ Define Association
   // BelongTo

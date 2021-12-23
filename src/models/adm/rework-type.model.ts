@@ -3,7 +3,7 @@ import IAdmReworkType from '../../interfaces/adm/rework-type.interface';
 import AutUser from '../aut/user.model';
 
 @Table({
-  tableName: 'ADM_REWORK_TYPE_VW',
+  tableName: 'ADM_REWORK_TYPE_TB',
   modelName: 'AdmReworkType',
   comment: '재작업 유형 정보 뷰',
   timestamps: true,
@@ -15,10 +15,12 @@ export default class AdmReworkType extends Model<IAdmReworkType> {
     type: DataType.INTEGER,
     allowNull: false,
     primaryKey: true,
+		autoIncrement: true,
+    autoIncrementIdentity: true,
   })
   rework_type_id: number;
 
-  @Unique('adm_rework_type_vw_rework_type_cd_un')
+  @Unique('adm_rework_type_tb_rework_type_cd_un')
   @Column({
     comment: '재작업 유형코드',
     type: DataType.STRING(20),
@@ -70,6 +72,15 @@ export default class AdmReworkType extends Model<IAdmReworkType> {
     allowNull: false,
   })
   updated_uid: number;
+
+	@Unique('adm_rework_type_tb_uuid_un')
+  @Column({
+    comment: '재작업 유형UUID',
+    type: DataType.UUID,
+    allowNull: false,
+    defaultValue: Sequelize.fn('gen_random_uuid')
+  })
+  uuid: string;
 
   //#region ✅ Define Association
   // BelongTo

@@ -1,0 +1,52 @@
+# OUT_RECEIVE_DETAIL_TB
+
+# Columns
+problem_id:
+  type: object
+  properties:
+    problem_id:
+      description: 금형문제점ID
+      type: number
+      format: int4
+
+factory_id:
+  type: object
+  properties:
+    factory_id:
+      description: 공장ID
+      type: number
+      format: int4
+
+problem_cd:
+  type: object
+  properties:
+    problem_cd:
+      description: 금형 문제점 코드
+      type: string
+      format: varchar(20)
+
+problem_nm:
+  type: object
+  properties:
+    problem_nm:
+      description: 금형 문제점명
+      type: string
+      format: varchar(50)
+
+problem_uuid:
+  type: object
+  properties:
+    problem_uuid:
+      description: 금형문제점UUID
+      type: string
+      format: uuid
+
+# Uuids
+factory_uuid:
+  type: object
+  properties:
+    factory_uuid:
+      description: 공장UUID
+      type: string
+      format: uuid
+# Others

@@ -1,5 +1,5 @@
 import express = require('express');
-import * as createError from 'http-errors';
+import createError from 'http-errors';
 import response from './response';
 
 export default (err: createError.HttpError, res: express.Response) => {

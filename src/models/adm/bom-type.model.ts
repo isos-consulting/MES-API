@@ -3,9 +3,9 @@ import IAdmBomType from '../../interfaces/adm/bom-type.interface';
 import AutUser from '../aut/user.model';
 
 @Table({
-  tableName: 'ADM_BOM_TYPE_VW',
+  tableName: 'ADM_BOM_TYPE_TB',
   modelName: 'AdmBomType',
-  comment: 'BOM 유형 정보 뷰',
+  comment: 'BOM 유형 정보 테이블',
   timestamps: true,
   underscored: true,
 })
@@ -15,10 +15,12 @@ export default class AdmBomType extends Model<IAdmBomType> {
     type: DataType.INTEGER,
     allowNull: false,
     primaryKey: true,
+		autoIncrement: true,
+    autoIncrementIdentity: true,
   })
   bom_type_id: number;
 
-  @Unique('adm_bom_type_vw_bom_type_cd_un')
+  @Unique('adm_bom_type_tb_bom_type_cd_un')
   @Column({
     comment: 'BOM 유형코드',
     type: DataType.STRING(20),
@@ -71,18 +73,20 @@ export default class AdmBomType extends Model<IAdmBomType> {
   })
   updated_uid: number;
 
-  // @Column({
-  //   comment: 'Tenant UUID',
-  //   type: DataType.UUID,
-  //   allowNull: false,
-  // })
-  // tenant_uuid: string;
+	@Unique('adm_bom_type_tb_uuid_un')
+  @Column({
+    comment: 'BOM 유형UUID',
+    type: DataType.UUID,
+    allowNull: false,
+    defaultValue: Sequelize.fn('gen_random_uuid')
+  })
+  uuid: string;
 
   //#region ✅ Define Association
   // BelongTo
-  @BelongsTo(() => AutUser, { as: 'createUser', foreignKey: 'created_uid', targetKey: 'uid', constraints: false })
+	@BelongsTo(() => AutUser, { as: 'createUser', foreignKey: 'created_uid', targetKey: 'uid', onDelete: 'restrict', onUpdate: 'cascade' })
   createUser: AutUser;
-  @BelongsTo(() => AutUser, { as: 'updateUser', foreignKey: 'updated_uid', targetKey: 'uid', constraints: false })
+  @BelongsTo(() => AutUser, { as: 'updateUser', foreignKey: 'updated_uid', targetKey: 'uid', onDelete: 'restrict', onUpdate: 'cascade' })
   updateUser: AutUser;
 
   // HasMany
