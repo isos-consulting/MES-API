@@ -3,7 +3,8 @@ import IAdmCompanyOpt from '../../interfaces/adm/company-opt.interface';
 import AutUser from '../aut/user.model';
 
 @Table({
-  tableName: 'ADM_COMPANY_OPT_TB',
+  // tableName: 'ADM_COMPANY_OPT_TB',
+  tableName: 'ADM_COMPANY_OPT_VW',
   modelName: 'AdmCompanyOpt',
   comment: '회사 옵션 정보 테이블',
   timestamps: true,

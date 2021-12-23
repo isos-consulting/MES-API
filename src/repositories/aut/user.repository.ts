@@ -73,6 +73,7 @@ class AutUserRepo {
         attributes: [ 
           [ Sequelize.col('autUser.uuid'), 'user_uuid' ], 
           [ Sequelize.col('autGroup.uuid'), 'group_uuid' ], 
+          [ Sequelize.col('autGroup.group_nm'), 'group_nm' ], 
           'id', 
           'user_nm', 
           'email', 
@@ -103,6 +104,8 @@ class AutUserRepo {
         attributes: [ 
           [ Sequelize.col('autUser.uuid'), 'user_uuid' ], 
           [ Sequelize.col('autGroup.uuid'), 'group_uuid' ], 
+      
+          [ Sequelize.col('autGroup.group_nm'), 'group_nm' ], 
           'id', 
           'user_nm', 
           'email', 

@@ -62,9 +62,38 @@ class AutGroupPermissionCtl extends BaseCtl {
       if (!params.group_uuid) { throw new Error('잘못된 group_uuid(그룹UUID) 입력') };
       result = await repo.read(params);
 
-      // 💥 TreeView 형태 데이터 가공 로직 추가
+      let menuResult: any[] = [];
+      let firstMenu: any = undefined;
+      let secondMenu: any = undefined;
 
-      return response(res, result.raws, { count: result.count });
+      result.raws.forEach((raw: any) => {
+        switch (raw.lv) {
+          case 1:
+            if (firstMenu) { 
+              if (secondMenu) { firstMenu.sub_menu.push(secondMenu); }
+              menuResult.push(firstMenu); 
+            }  
+            firstMenu = raw;
+            firstMenu.sub_menu = [];
+            secondMenu = undefined;
+            break;
+          case 2:
+            if (secondMenu) { firstMenu.sub_menu.push(secondMenu); }
+            secondMenu = raw;
+            secondMenu.sub_menu = [];
+            break;
+          case 3:
+            secondMenu.sub_menu.push(raw);
+            break;
+        }
+      });
+      
+      if (firstMenu) { 
+        if (secondMenu) { firstMenu.sub_menu.push(secondMenu); }
+        menuResult.push(firstMenu) 
+      };
+
+      return response(res, menuResult, { count: result.count });
     } catch (e) {
       return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }
@@ -78,9 +107,10 @@ class AutGroupPermissionCtl extends BaseCtl {
   public update = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       req.body = await this.getFkId(req.tenant.uuid, req.body, this.fkIdInfos);
+      console.log(req.body);
 
       const sequelize = getSequelize(req.tenant.uuid);
-      const repo = new AutMenuRepo(req.tenant.uuid);
+      const repo = new AutGroupPermissionRepo(req.tenant.uuid);
       let result: ApiResult<any> = { count: 0, raws: [] };
 
       // 📌 신규 데이터, 수정 할 데이터 구분

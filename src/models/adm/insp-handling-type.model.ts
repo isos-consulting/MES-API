@@ -3,7 +3,8 @@ import IAdmInspHandlingType from '../../interfaces/adm/insp-handling-type.interf
 import AutUser from '../aut/user.model';
 
 @Table({
-  tableName: 'ADM_INSP_HANDLING_TYPE_TB',
+  // tableName: 'ADM_INSP_HANDLING_TYPE_TB',
+  tableName: 'ADM_INSP_HANDLING_TYPE_VW',
   modelName: 'AdmInspHandlingType',
   comment: '검사처리 유형 정보 뷰',
   timestamps: true,

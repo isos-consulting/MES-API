@@ -3,7 +3,8 @@ import IAdmInspType from '../../interfaces/adm/insp-type.interface';
 import AutUser from '../aut/user.model';
 
 @Table({
-  tableName: 'ADM_INSP_TYPE_TB',
+  // tableName: 'ADM_INSP_TYPE_TB',
+  tableName: 'ADM_INSP_TYPE_VW',
   modelName: 'AdmInspType',
   comment: '검사 유형 정보 뷰',
   timestamps: true,

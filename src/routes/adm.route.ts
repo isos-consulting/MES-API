@@ -59,7 +59,7 @@ router.route('/prd-plan-types').delete(prdPlanType.delete);
 
 //#region ✅ InspDetailType (세부검사 유형)
 const inspDetailType = new AdmInspDetailTypeCtl();
-router.route('/insp-detail-type/:uuid').get(admInspDetailTypeValidation.readByUuid, validationCallback, inspDetailType.read);
+router.route('/insp-detail-type/:uuid').get(admInspDetailTypeValidation.readByUuid, validationCallback, inspDetailType.readByUuid);
 router.route('/insp-detail-types').get(admInspDetailTypeValidation.read, validationCallback, inspDetailType.read);
 router.route('/insp-detail-types').post(admInspDetailTypeValidation.create, validationCallback, inspDetailType.create);
 router.route('/insp-detail-types').put(admInspDetailTypeValidation.update, validationCallback, inspDetailType.update);

@@ -4,7 +4,8 @@ import AutUser from '../aut/user.model';
 import AdmInspType from './insp-type.model';
 
 @Table({
-  tableName: 'ADM_INSP_DETAIL_TYPE_TB',
+  // tableName: 'ADM_INSP_DETAIL_TYPE_TB',
+  tableName: 'ADM_INSP_DETAIL_TYPE_VW',
   modelName: 'AdmInspDetailType',
   comment: '세부검사유형 정보 테이블',
   timestamps: true,

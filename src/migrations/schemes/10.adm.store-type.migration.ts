@@ -52,6 +52,16 @@ const seedDatas: IAdmStoreType[] = [
 		created_uid : 1,
 		updated_uid : 1,
 		uuid : "7fb91634-6e8c-49ed-8c4d-1f4a5fcab790"
+	},
+	{
+		store_type_id : 6,
+		store_type_cd : "outsourcing",
+		store_type_nm : "외주창고",
+		parameter_nm : "outsourcing",
+		sortby : 6,
+		created_uid : 1,
+		updated_uid : 1,
+		uuid : "58951510-b1a6-4286-a47d-a78405c3718b"
 	}
 ]
 

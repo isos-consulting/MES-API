@@ -103,7 +103,7 @@ export default class MldMold extends Model<IMldMold> {
 		allowNull: false,
     defaultValue: true,
   })
-  use_fg: string;
+  use_fg: boolean;
 
   @CreatedAt
   @Column({

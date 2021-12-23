@@ -3,7 +3,8 @@ import IAdmFileMgmtType from '../../interfaces/adm/file-mgmt-type.interface';
 import AutUser from '../aut/user.model';
 
 @Table({
-  tableName: 'ADM_FILE_MGMT_TYPE_TB',
+  // tableName: 'ADM_FILE_MGMT_TYPE_TB',
+  tableName: 'ADM_FILE_MGMT_TYPE_VW',
   modelName: 'AdmFileMgmtType',
   comment: '파일 관리 유형 테이블',
   timestamps: true,

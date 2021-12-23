@@ -99,6 +99,7 @@ class AutUserPermissionRepo {
           [ Sequelize.col('autMenu.uuid'), 'menu_uuid' ],
           [ Sequelize.col('autMenu.menu_nm'), 'menu_nm' ],
           [ Sequelize.col('firstMenu.menu_nm'), 'first_menu_nm' ],
+          'lv',
           'sortby',
           [ Sequelize.col('autMenu.autMenuType.uuid'), 'menu_type_uuid' ],
           [ Sequelize.col('autMenu.autMenuType.menu_type_nm'), 'menu_type_nm' ],

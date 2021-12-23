@@ -3,7 +3,8 @@ import IAdmBomType from '../../interfaces/adm/bom-type.interface';
 import AutUser from '../aut/user.model';
 
 @Table({
-  tableName: 'ADM_BOM_TYPE_TB',
+  // tableName: 'ADM_BOM_TYPE_TB',
+  tableName: 'ADM_BOM_TYPE_VW',
   modelName: 'AdmBomType',
   comment: 'BOM 유형 정보 테이블',
   timestamps: true,

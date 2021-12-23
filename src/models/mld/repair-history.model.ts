@@ -108,7 +108,7 @@ export default class MldRepairHistory extends Model<IMldRepairHistory> {
     comment: '수리 내용',
     type: DataType.STRING(250),
   })
-  contents: Date;
+  contents: string;
 
   @CreatedAt
   @Column({

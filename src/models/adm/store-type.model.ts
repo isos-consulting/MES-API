@@ -3,7 +3,8 @@ import IAdmStoreType from '../../interfaces/adm/store-type.interface';
 import AutUser from '../aut/user.model';
 
 @Table({
-  tableName: 'ADM_STORE_TYPE_TB',
+  // tableName: 'ADM_STORE_TYPE_TB',
+  tableName: 'ADM_STORE_TYPE_VW',
   modelName: 'AdmStoreType',
   comment: '창고 유형 정보 뷰',
   timestamps: true,
