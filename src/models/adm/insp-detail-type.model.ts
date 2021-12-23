@@ -21,7 +21,7 @@ export default class AdmInspDetailType extends Model<IAdmInspDetailType> {
   })
   insp_detail_type_id: number;
 
-  @Unique('adm_insp_detail_type_vw_insp_detail_type_cd_un')
+  @Unique('adm_insp_detail_type_tb_insp_detail_type_cd_un')
   @Column({
     comment: '세부검사유형코드',
     type: DataType.STRING(20),
