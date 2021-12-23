@@ -1,4 +1,4 @@
-# ADM_INSP_HANDLING_TYPE_VW
+# ADM_INSP_HANDLING_TYPE_TB
 
 # Columns
 insp_handling_type_id:
@@ -33,11 +33,12 @@ sortby:
       type: number
       format: int4
 
-# Uuids
-insp_handling_type_uuid:
+uuid:
   type: object
   properties:
-    insp_handling_type_uuid:
+    uuid:
       description: 검사처리 유형UUID
       type: string
       format: uuid
+# Uuids
+

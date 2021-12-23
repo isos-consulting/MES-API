@@ -33,7 +33,7 @@ get:
                         type: array
                         items:
                           allOf:
-                            - $ref: ../../schemas/mld/mold.schema.yaml#/mold_uuid
+                            - $ref: ../../schemas/mld/mold.schema.yaml#/uuid
                             - $ref: ../../schemas/mld/mold.schema.yaml#/factory_uuid
                             - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
                             - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
@@ -70,6 +70,7 @@ post:
             - cavity
             - guarantee_cnt
             - basic_cnt
+            - use_fg
           allOf:
             - $ref: ../../schemas/mld/mold.schema.yaml#/factory_uuid
             - $ref: ../../schemas/mld/mold.schema.yaml#/mold_cd
@@ -100,7 +101,7 @@ put:
       application/json:
         schema:
           required:
-            - mold_uuid
+            - uuid
             - factory_uuid
             - mold_cd
             - mold_nm
@@ -108,8 +109,9 @@ put:
             - cavity
             - guarantee_cnt
             - basic_cnt
+            - use_fg
           allOf:
-            - $ref: ../../schemas/mld/mold.schema.yaml#/mold_uuid
+            - $ref: ../../schemas/mld/mold.schema.yaml#/uuid
             - $ref: ../../schemas/mld/mold.schema.yaml#/factory_uuid
             - $ref: ../../schemas/mld/mold.schema.yaml#/mold_cd
             - $ref: ../../schemas/mld/mold.schema.yaml#/mold_nm
@@ -139,9 +141,9 @@ patch:
       application/json:
         schema:
           required:
-            - mold_uuid
+            - uuid
           allOf:
-            - $ref: ../../schemas/mld/mold.schema.yaml#/mold_uuid
+            - $ref: ../../schemas/mld/mold.schema.yaml#/uuid
             - $ref: ../../schemas/mld/mold.schema.yaml#/factory_uuid
             - $ref: ../../schemas/mld/mold.schema.yaml#/mold_cd
             - $ref: ../../schemas/mld/mold.schema.yaml#/mold_nm
@@ -171,9 +173,9 @@ delete:
       application/json:
         schema:
           required:
-            - mold_uuid
+            - uuid
           allOf:
-            - $ref: ../../schemas/mld/mold.schema.yaml#/mold_uuid
+            - $ref: ../../schemas/mld/mold.schema.yaml#/uuid
   responses:
     200:
       $ref: ../../responses/common/succeed-delete.response.yaml

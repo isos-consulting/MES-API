@@ -1,4 +1,4 @@
-# ADM_INSP_TYPE_VW
+# ADM_INSP_TYPE_TB
 
 # Columns
 insp_type_id:
@@ -49,11 +49,12 @@ sortby:
       type: number
       format: int4
 
-# Uuids
-insp_type_uuid:
+uuid:
   type: object
   properties:
-    insp_type_uuid:
+    uuid:
       description: 검사유형UUID
       type: string
       format: uuid
+# Uuids
+

@@ -1,4 +1,4 @@
-# ADM_STORE_TYPE_VW
+# ADM_STORE_TYPE_TB
 
 # Columns
 store_type_id:
@@ -41,11 +41,12 @@ sortby:
       type: number
       format: int4
 
-# Uuids
-store_type_uuid:
+uuid:
   type: object
   properties:
-    store_type_uuid:
+    uuid:
       description: 창고유형UUID
       type: string
       format: uuid
+# Uuids
+

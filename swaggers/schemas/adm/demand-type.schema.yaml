@@ -1,4 +1,4 @@
-# ADM_DEMAND_TYPE_VW
+# ADM_DEMAND_TYPE_TB
 
 # Columns
 demand_type_id:
@@ -33,11 +33,12 @@ sortby:
       type: number
       format: int4
 
-# Uuids
-demand_type_uuid:
+uuid:
   type: object
   properties:
-    demand_type_uuid:
+    uuid:
       description: 요청유형UUID
       type: string
       format: uuid
+# Uuids
+

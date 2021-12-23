@@ -33,7 +33,7 @@ get:
                         type: array
                         items:
                           allOf:
-                            - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/pattern_opt_uuid
+                            - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/uuid
                             - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/pattern_opt_cd
                             - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/pattern_opt_nm
                             - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/table_nm
@@ -83,11 +83,11 @@ put:
       application/json:
         schema:
           required:
-            - pattern_opt_uuid
+            - uuid
             - pattern_opt_cd
             - pattern_opt_nm
           allOf:
-            - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/pattern_opt_uuid
+            - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/uuid
             - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/pattern_opt_cd
             - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/pattern_opt_nm
             - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/table_nm
@@ -112,9 +112,9 @@ patch:
       application/json:
         schema:
           required:
-            - pattern_opt_uuid
+            - uuid
           allOf:
-            - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/pattern_opt_uuid
+            - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/uuid
             - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/pattern_opt_cd
             - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/pattern_opt_nm
             - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/table_nm
@@ -139,9 +139,9 @@ delete:
       application/json:
         schema:
           required:
-            - pattern_opt_uuid
+            - uuid
           allOf:
-            - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/pattern_opt_uuid
+            - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/uuid
   responses:
     200:
       $ref: ../../responses/common/succeed-delete.response.yaml

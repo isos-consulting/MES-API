@@ -1,4 +1,4 @@
-# ADM_COMPANY_OPT_VW
+# ADM_COMPANY_OPT_TB
 
 # Columns
 tran_id:
@@ -22,7 +22,7 @@ tran_nm:
   properties:
     tran_nm:
       description: 수불유형명
-      type: string
+      type: string1
       format: varchar(50)
 
 remark:
@@ -41,11 +41,12 @@ sortby:
       type: number
       format: int4
 
-# Uuids
-tran_uuid:
+uuid:
   type: object
   properties:
-    tran_uuid:
+    uuid:
       description: 수불유형UUID
       type: string
       format: uuid
+# Uuids
+

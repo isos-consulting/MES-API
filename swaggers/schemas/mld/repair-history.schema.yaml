@@ -1,4 +1,4 @@
-# OUT_RECEIVE_TB
+# MLD_REPAIR_HISTORY_TB
 
 # Columns
 repair_history_id:
@@ -105,10 +105,10 @@ contents:
       type: string
       format: varchar(250)
 
-repair_history_uuid:
+uuid:
   type: object
   properties:
-    repair_history_uuid:
+    uuid:
       description: 금형 수리이력 관리UUID
       type: string
       format: uuid

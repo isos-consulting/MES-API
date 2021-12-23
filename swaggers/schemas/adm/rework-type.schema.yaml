@@ -1,4 +1,4 @@
-# ADM_REWORK_TYPE_VW
+# ADM_REWORK_TYPE_TB
 
 # Columns
 rework_type_id:
@@ -33,11 +33,12 @@ sortby:
       type: number
       format: int4
 
-# Uuids
-rework_type_uuid:
+uuid:
   type: object
   properties:
-    rework_type_uuid:
+    uuid:
       description: 재작업유형UUID
       type: string
       format: uuid
+# Uuids
+

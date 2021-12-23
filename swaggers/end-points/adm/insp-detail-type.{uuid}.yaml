@@ -41,9 +41,12 @@ get:
                         type: array
                         items:
                           allOf:
-                            - $ref: ../../schemas/adm/insp-detail-type.schema.yaml#/insp_detail_type_uuid
+                            - $ref: ../../schemas/adm/insp-detail-type.schema.yaml#/uuid
                             - $ref: ../../schemas/adm/insp-detail-type.schema.yaml#/insp_detail_type_cd
                             - $ref: ../../schemas/adm/insp-detail-type.schema.yaml#/insp_detail_type_nm
+                            - $ref: ../../schemas/adm/insp-detail-type.schema.yaml#/insp_type_uuid
+                            - $ref: ../../schemas/adm/insp-type.schema.yaml#/insp_type_cd
+                            - $ref: ../../schemas/adm/insp-type.schema.yaml#/insp_type_nm
                             - $ref: ../../schemas/adm/insp-detail-type.schema.yaml#/worker_fg
                             - $ref: ../../schemas/adm/insp-detail-type.schema.yaml#/inspector_fg
                             - $ref: ../../schemas/adm/insp-detail-type.schema.yaml#/sortby
