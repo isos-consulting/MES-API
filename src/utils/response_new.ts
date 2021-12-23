@@ -9,10 +9,12 @@ type TResultInfo = {
 };
 
 type TLogInfo = {
-  state_tag: string,
-  state_no: string,
-  type: 'SUCCESS' | 'ERROR'
+  state_tag?: string,
+  state_no?: string,
+  type?: 'SUCCESS' | 'ERROR'
 };
+
+type TServiceResult = { result_info?: TResultInfo, log_info?: TLogInfo };
 
 type TResponse = {
   success: boolean,
@@ -62,5 +64,5 @@ const response = (
   return res.status(resultInfo.status ?? httpStatus.OK).json(result);
 };
 
-export { TResultInfo, TLogInfo }
+export { TResultInfo, TLogInfo, TServiceResult }
 export default response;

@@ -36,14 +36,13 @@ export default class AdmInspDetailType extends Model<IAdmInspDetailType> {
   })
   insp_detail_type_nm: string;
 
-	@Unique('adm_insp_detail_type_tb_insp_type_id_un')
   @ForeignKey(() => AdmInspType)
   @Column({
-    comment: '검사유형코드',
+    comment: '검사유형ID',
     type: DataType.INTEGER,
     allowNull: false,
   })
-  insp_type_id: string;
+  insp_type_id: number;
 
   @Column({
     comment: '작업자 여부',
@@ -110,6 +109,7 @@ export default class AdmInspDetailType extends Model<IAdmInspDetailType> {
   createUser: AutUser;
   @BelongsTo(() => AutUser, { as: 'updateUser', foreignKey: 'updated_uid', targetKey: 'uid', onDelete: 'restrict', onUpdate: 'cascade' })
   updateUser: AutUser;
+  
 	@BelongsTo(() => AdmInspType, { foreignKey: 'insp_type_id', targetKey: 'insp_type_id', onDelete: 'restrict', onUpdate: 'cascade' })
   AdmInspType: AdmInspType;
 

@@ -20,7 +20,7 @@ const successState: TSuccessState = {
 }
 
 type TErrorState = { 
-  NO_DATA: '0000',                            // 📌 조회된 데이터가 없음
+  NO_DATA: '0000',                            // 📌 영향받은 데이터가 없음
   NO_INPUT_REQUIRED_PARAM: '0001',            // 📌 데이터 조회시 필수 Parameter 값이 입력되지 않음
   INVALID_READ_PARAM: '0002',                 // 📌 데이터 조회시 잘못된 Parameter 값이 입력 되었음
   NO_INPUT_REQUIRED_VALUE: '0003',            // 📌 데이터 생성, 수정, 삭제시 필수 값이 입력되지 않음
@@ -35,7 +35,7 @@ type TErrorState = {
   NOT_EXPIRED_ACCESS_TOKEN: '0012',           // 📌 Access 토큰정보가 만료되지 않았음
 }
 const errorState: TErrorState = { 
-  NO_DATA: '0000',                            // 📌 조회된 데이터가 없음
+  NO_DATA: '0000',                            // 📌 영향받은 데이터가 없음
   NO_INPUT_REQUIRED_PARAM: '0001',            // 📌 데이터 조회시 필수 Parameter 값이 입력되지 않음
   INVALID_READ_PARAM: '0002',                 // 📌 데이터 조회시 잘못된 Parameter 값이 입력 되었음
   NO_INPUT_REQUIRED_VALUE: '0003',            // 📌 데이터 생성, 수정, 삭제시 필수 값이 입력되지 않음

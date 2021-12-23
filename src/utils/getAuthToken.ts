@@ -1,4 +1,4 @@
-import * as request from 'supertest'
+import request from 'supertest'
 import app from '../app'
 import config from '../configs/config';
 import encrypt from './encrypt';

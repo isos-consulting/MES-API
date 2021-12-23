@@ -28,21 +28,20 @@ class AdmInspDetailTypeRepo {
 	// 📒 Fn[create]: Default Create Function
 	public create = async(body: IAdmInspDetailType[], uid: number, transaction?: Transaction) => {
 		try {
-			const insp_detail_type = body.map((insp_detail_type) => {
+			const inspDetailTypes = body.map((inspDetailType) => {
 				return {
-					insp_detail_type_id: insp_detail_type.insp_detail_type_id,
-					insp_detail_type_cd: insp_detail_type.insp_detail_type_cd,
-					insp_detail_type_nm: insp_detail_type.insp_detail_type_nm,
-					insp_type_id: insp_detail_type.insp_type_id,
-					sortby: insp_detail_type.sortby,
-					worker_fg: insp_detail_type.worker_fg,
-					inspector_fg: insp_detail_type.inspector_fg,
+					insp_detail_type_cd: inspDetailType.insp_detail_type_cd,
+					insp_detail_type_nm: inspDetailType.insp_detail_type_nm,
+					insp_type_id: inspDetailType.insp_type_id,
+					sortby: inspDetailType.sortby,
+					worker_fg: inspDetailType.worker_fg,
+					inspector_fg: inspDetailType.inspector_fg,
 					created_uid: uid,
 					updated_uid: uid,
 				}
 			});
 
-			const result = await this.repo.bulkCreate(insp_detail_type, { individualHooks: true, transaction });
+			const result = await this.repo.bulkCreate(inspDetailTypes, { individualHooks: true, transaction });
 
 			return convertBulkResult(result);
 		} catch (error) {
@@ -69,6 +68,7 @@ class AdmInspDetailTypeRepo {
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
+          [ Sequelize.col('admInspDetailType.uuid'), 'insp_detail_type_uuid' ],
           'insp_detail_type_cd',
           'insp_detail_type_nm',
           [ Sequelize.col('admInspType.uuid'), 'insp_type_uuid' ],
@@ -157,20 +157,19 @@ class AdmInspDetailTypeRepo {
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let insp_detail_type of body) {
+      for await (let inspDetailType of body) {
         const result = await this.repo.update(
           {
-            insp_detail_type_id: insp_detail_type.insp_detail_type_id != null ? insp_detail_type.insp_detail_type_id : null,
-            insp_detail_type_cd: insp_detail_type.insp_detail_type_cd != null ? insp_detail_type.insp_detail_type_cd : null,
-						insp_detail_type_nm: insp_detail_type.insp_detail_type_nm != null ? insp_detail_type.insp_detail_type_nm : null,
-						insp_type_id: insp_detail_type.insp_type_id != null ? insp_detail_type.insp_type_id : null,
-						sortby: insp_detail_type.sortby != null ? insp_detail_type.sortby : null,
-						worker_fg: insp_detail_type.worker_fg != null ? insp_detail_type.worker_fg : null,
-						inspector_fg: insp_detail_type.inspector_fg != null ? insp_detail_type.inspector_fg : null,
+            insp_detail_type_cd: inspDetailType.insp_detail_type_cd != null ? inspDetailType.insp_detail_type_cd : null,
+						insp_detail_type_nm: inspDetailType.insp_detail_type_nm != null ? inspDetailType.insp_detail_type_nm : null,
+						insp_type_id: inspDetailType.insp_type_id != null ? inspDetailType.insp_type_id : null,
+						sortby: inspDetailType.sortby != null ? inspDetailType.sortby : null,
+						worker_fg: inspDetailType.worker_fg != null ? inspDetailType.worker_fg : null,
+						inspector_fg: inspDetailType.inspector_fg != null ? inspDetailType.inspector_fg : null,
             updated_uid: uid,
           } as any,
           { 
-            where: { uuid: insp_detail_type.uuid },
+            where: { uuid: inspDetailType.uuid },
             returning: true,
             individualHooks: true,
             transaction
@@ -199,20 +198,20 @@ class AdmInspDetailTypeRepo {
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let insp_detail_type of body) {
+      for await (let inspDetailType of body) {
         const result = await this.repo.update(
           {
-            insp_detail_type_id: insp_detail_type.insp_detail_type_id,
-						insp_detail_type_cd: insp_detail_type.insp_detail_type_cd,
-						insp_detail_type_nm: insp_detail_type.insp_detail_type_nm,
-						insp_type_id: insp_detail_type.insp_type_id,
-						sortby: insp_detail_type.sortby,
-						worker_fg: insp_detail_type.worker_fg,
-						inspector_fg: insp_detail_type.inspector_fg,
+            insp_detail_type_id: inspDetailType.insp_detail_type_id,
+						insp_detail_type_cd: inspDetailType.insp_detail_type_cd,
+						insp_detail_type_nm: inspDetailType.insp_detail_type_nm,
+						insp_type_id: inspDetailType.insp_type_id,
+						sortby: inspDetailType.sortby,
+						worker_fg: inspDetailType.worker_fg,
+						inspector_fg: inspDetailType.inspector_fg,
             updated_uid: uid,
           },
           { 
-            where: { uuid: insp_detail_type.uuid },
+            where: { uuid: inspDetailType.uuid },
             returning: true,
             individualHooks: true,
             transaction
@@ -241,8 +240,8 @@ class AdmInspDetailTypeRepo {
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let insp_detail_type of body) {
-        count += await this.repo.destroy({ where: { uuid: insp_detail_type.uuid }, transaction});
+      for await (let inspDetailType of body) {
+        count += await this.repo.destroy({ where: { uuid: inspDetailType.uuid }, transaction});
       };
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.StdFactory.getTableName() as string, previousRaws, uid, transaction);

@@ -10,7 +10,7 @@ import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
-import * as moment from 'moment';
+import moment from 'moment';
 
 class StdVendorPriceRepo {
   repo: Repository<StdVendorPrice>;

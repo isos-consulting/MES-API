@@ -12,6 +12,8 @@ import AdmTransactionCtl from '../controllers/adm/transaction.controller';
 import AdmFileMgmtCtl from '../controllers/adm/file-mgmt.controller';
 import AdmFileMgmtTypeCtl from '../controllers/adm/file-mgmt-type.controller';
 import AdmInspHandlingTypeCtl from '../controllers/adm/insp-handling-type.controller';
+import admInspDetailTypeValidation from '../validations/adm/insp-detail-type.validation';
+import validationCallback from '../utils/validationCallback';
 
 const router = express.Router();
 
@@ -57,12 +59,12 @@ router.route('/prd-plan-types').delete(prdPlanType.delete);
 
 //#region ✅ InspDetailType (세부검사 유형)
 const inspDetailType = new AdmInspDetailTypeCtl();
-router.route('/insp-detail-type/:uuid').get(inspDetailType.read);
-router.route('/insp-detail-types').get(inspDetailType.read);
-router.route('/insp-detail-types').post(inspDetailType.create);
-router.route('/insp-detail-types').put(inspDetailType.update);
-router.route('/insp-detail-types').patch(inspDetailType.patch);
-router.route('/insp-detail-types').delete(inspDetailType.delete);
+router.route('/insp-detail-type/:uuid').get(admInspDetailTypeValidation.readByUuid, validationCallback, inspDetailType.read);
+router.route('/insp-detail-types').get(admInspDetailTypeValidation.read, validationCallback, inspDetailType.read);
+router.route('/insp-detail-types').post(admInspDetailTypeValidation.create, validationCallback, inspDetailType.create);
+router.route('/insp-detail-types').put(admInspDetailTypeValidation.update, validationCallback, inspDetailType.update);
+router.route('/insp-detail-types').patch(admInspDetailTypeValidation.patch, validationCallback, inspDetailType.patch);
+router.route('/insp-detail-types').delete(admInspDetailTypeValidation.delete, validationCallback, inspDetailType.delete);
 //#endregion
 
 //#region ✅ Transaction (수불 유형)

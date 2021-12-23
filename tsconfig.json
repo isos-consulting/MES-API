@@ -14,6 +14,7 @@
     "outDir": "./dist",
     "moduleResolution": "node",
     //"isolatedModules": true,
+    "esModuleInterop": true,
     "noImplicitAny": true,
     "noImplicitReturns": true,
   },

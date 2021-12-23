@@ -1,6 +1,6 @@
 import AutUser from '../../models/aut/user.model';
-import * as redis from 'redis';
-import * as bluebird from 'bluebird';
+import redis from 'redis';
+import bluebird from 'bluebird';
 
 declare module 'redis' {
   export interface RedisClient extends NodeJS.EventEmitter {
