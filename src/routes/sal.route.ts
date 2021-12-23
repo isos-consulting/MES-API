@@ -76,6 +76,7 @@ router.route('/releases').delete(release.delete);
 
 //#region ✅ OutgoOrder (제품출하지시)
 const outgoOrder = new SalOutgoOrderCtl();
+router.route('/outgo-orders/report').get(outgoOrder.readReport);
 router.route('/outgo-order/:uuid').get(outgoOrder.read);
 router.route('/outgo-order/:uuid/include-details').get(outgoOrder.readIncludeDetails);
 router.route('/outgo-order/:uuid/details').get(outgoOrder.readDetails);

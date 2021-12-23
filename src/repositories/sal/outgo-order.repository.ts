@@ -9,6 +9,7 @@ import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
 import SalOutgoOrder from '../../models/sal/outgo-order.model';
 import ISalOutgoOrder from '../../interfaces/sal/outgo-order.interface';
+import { readOutgoOrderReport } from '../../queries/sal/outgo-order-report.query';
 
 class SalOutgoOrderRepo {
   repo: Repository<SalOutgoOrder>;
@@ -163,6 +164,17 @@ class SalOutgoOrderRepo {
   public readRawByUuid = async(uuid: string) => {
     const result = await this.repo.findOne({ where: { uuid } });
     return convertReadResult(result);
+  };
+
+  // 📒 Fn[readReport]: Read Outgo Repot Function
+  public readReport = async(params?: any) => {
+    try {
+      const result = await this.sequelize.query(readOutgoOrderReport(params));
+
+      return convertReadResult(result[0]);
+    } catch (error) {
+      throw error;
+    }
   };
 
   //#endregion

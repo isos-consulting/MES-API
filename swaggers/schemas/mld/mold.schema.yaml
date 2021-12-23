@@ -1,4 +1,4 @@
-# OUT_INCOME_TB
+# MLD_MOLD_TB
 
 # Columns
 mold_id:
@@ -101,20 +101,19 @@ use_fg:
   type: object
   properties:
     use_fg:
-      description: 금형유무
+      description: 사용유무
       type: boolean
       format: boolean
 
-mold_uuid:
+uuid:
   type: object
   properties:
-    mold_uuid:
+    uuid:
       description: 금형UUID
       type: string
       format: uuid
 
 # Uuids
-
 factory_uuid:
   type: object
   properties:

@@ -60,4 +60,4 @@ paths:
   /mld/repair-history/{uuid}:
     $ref: ../end-points/mld/repair-history.{uuid}.yaml
   /mld/repair-historys:
-    $ref: ../end-points/mld/repair-historys.yaml
+    $ref: ../end-points/mld/repair-histories.yaml

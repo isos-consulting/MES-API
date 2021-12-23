@@ -1,4 +1,4 @@
-# ADM_PATTERN_OPT_VW
+# ADM_PATTERN_OPT_TB
 
 # Columns
 pattern_opt_id:
@@ -65,11 +65,12 @@ sortby:
       type: number
       format: int4
 
-# Uuids
-pattern_opt_uuid:
+uuid:
   type: object
   properties:
-    pattern_opt_uuid:
+    uuid:
       description: 자동발행옵션UUID
       type: string
       format: uuid
+# Uuids
+
