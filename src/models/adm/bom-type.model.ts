@@ -20,7 +20,7 @@ export default class AdmBomType extends Model<IAdmBomType> {
   })
   bom_type_id: number;
 
-  @Unique('adm_bom_type_vw_bom_type_cd_un')
+  @Unique('adm_bom_type_tb_bom_type_cd_un')
   @Column({
     comment: 'BOM 유형코드',
     type: DataType.STRING(20),
