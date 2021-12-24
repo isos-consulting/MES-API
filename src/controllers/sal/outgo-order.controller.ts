@@ -183,6 +183,24 @@ class SalOutgoOrderCtl extends BaseCtl {
     }
   };
 
+  // 📒 Fn[readReport]: 출하지시현황 데이터 조회
+  public readReport = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      const repo = new SalOutgoOrderRepo(req.tenant.uuid);
+
+      const params = Object.assign(req.query, req.params);
+
+      const sort_type = params.sort_type as string;
+      if (![ 'partner', 'prod', 'date' ].includes(sort_type)) { throw new Error('잘못된 sort_type(정렬) 입력') }
+
+      const result = await repo.readReport(params);
+      
+      return response(res, result.raws, { count: result.count });
+    } catch (e) {
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+    }
+  };
+
   //#endregion
 
   //#region 🟡 Update Functions
