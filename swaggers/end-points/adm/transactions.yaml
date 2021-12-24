@@ -33,7 +33,7 @@ get:
                         type: array
                         items:
                           allOf:
-                            - $ref: ../../schemas/adm/transaction.schema.yaml#/tran_uuid
+                            - $ref: ../../schemas/adm/transaction.schema.yaml#/uuid
                             - $ref: ../../schemas/adm/transaction.schema.yaml#/tran_cd
                             - $ref: ../../schemas/adm/transaction.schema.yaml#/tran_nm
                             - $ref: ../../schemas/adm/transaction.schema.yaml#/remark
@@ -77,11 +77,11 @@ put:
       application/json:
         schema:
           required:
-            - tran_uuid
+            - uuid
             - tran_cd
             - tran_nm
           allOf:
-            - $ref: ../../schemas/adm/transaction.schema.yaml#/tran_uuid
+            - $ref: ../../schemas/adm/transaction.schema.yaml#/uuid
             - $ref: ../../schemas/adm/transaction.schema.yaml#/tran_cd
             - $ref: ../../schemas/adm/transaction.schema.yaml#/tran_nm
             - $ref: ../../schemas/adm/transaction.schema.yaml#/remark
@@ -103,9 +103,9 @@ patch:
       application/json:
         schema:
           required:
-            - tran_uuid
+            - uuid
           allOf:
-            - $ref: ../../schemas/adm/transaction.schema.yaml#/tran_uuid
+            - $ref: ../../schemas/adm/transaction.schema.yaml#/uuid
             - $ref: ../../schemas/adm/transaction.schema.yaml#/tran_cd
             - $ref: ../../schemas/adm/transaction.schema.yaml#/tran_nm
             - $ref: ../../schemas/adm/transaction.schema.yaml#/remark
@@ -127,9 +127,9 @@ delete:
       application/json:
         schema:
           required:
-            - tran_uuid
+            - uuid
           allOf:
-            - $ref: ../../schemas/adm/transaction.schema.yaml#/tran_uuid
+            - $ref: ../../schemas/adm/transaction.schema.yaml#/uuid
   responses:
     200:
       $ref: ../../responses/common/succeed-delete.response.yaml

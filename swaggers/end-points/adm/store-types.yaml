@@ -33,7 +33,7 @@ get:
                         type: array
                         items:
                           allOf:
-                            - $ref: ../../schemas/adm/store-type.schema.yaml#/store_type_uuid
+                            - $ref: ../../schemas/adm/store-type.schema.yaml#/uuid
                             - $ref: ../../schemas/adm/store-type.schema.yaml#/store_type_cd
                             - $ref: ../../schemas/adm/store-type.schema.yaml#/store_type_nm
                             - $ref: ../../schemas/adm/store-type.schema.yaml#/parameter_nm
@@ -77,11 +77,11 @@ put:
       application/json:
         schema:
           required:
-            - store_type_uuid
+            - uuid
             - store_type_cd
             - store_type_nm
           allOf:
-            - $ref: ../../schemas/adm/store-type.schema.yaml#/store_type_uuid
+            - $ref: ../../schemas/adm/store-type.schema.yaml#/uuid
             - $ref: ../../schemas/adm/store-type.schema.yaml#/store_type_cd
             - $ref: ../../schemas/adm/store-type.schema.yaml#/store_type_nm
             - $ref: ../../schemas/adm/store-type.schema.yaml#/parameter_nm
@@ -103,9 +103,9 @@ patch:
       application/json:
         schema:
           required:
-            - store_type_uuid
+            - uuid
           allOf:
-            - $ref: ../../schemas/adm/store-type.schema.yaml#/store_type_uuid
+            - $ref: ../../schemas/adm/store-type.schema.yaml#/uuid
             - $ref: ../../schemas/adm/store-type.schema.yaml#/store_type_cd
             - $ref: ../../schemas/adm/store-type.schema.yaml#/store_type_nm
             - $ref: ../../schemas/adm/store-type.schema.yaml#/parameter_nm
@@ -127,9 +127,9 @@ delete:
       application/json:
         schema:
           required:
-            - store_type_uuid
+            - uuid
           allOf:
-            - $ref: ../../schemas/adm/store-type.schema.yaml#/store_type_uuid
+            - $ref: ../../schemas/adm/store-type.schema.yaml#/uuid
   responses:
     200:
       $ref: ../../responses/common/succeed-delete.response.yaml

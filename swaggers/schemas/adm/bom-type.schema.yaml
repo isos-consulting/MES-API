@@ -1,4 +1,4 @@
-# ADM_BOM_TYPE_VW
+# ADM_BOM_TYPE_TB
 
 # Columns
 bom_type_id:
@@ -33,11 +33,12 @@ sortby:
       type: number
       format: int4
 
-# Uuids
-bom_type_uuid:
+uuid:
   type: object
   properties:
-    bom_type_uuid:
+    uuid:
       description: BOM 구성유형UUID
       type: string
       format: uuid
+# Uuids
+

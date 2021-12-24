@@ -41,7 +41,7 @@ get:
                         type: array
                         items:
                           allOf:
-                            - $ref: ../../schemas/mld/mold.schema.yaml#/mold_uuid
+                            - $ref: ../../schemas/mld/mold.schema.yaml#/uuid
                             - $ref: ../../schemas/mld/mold.schema.yaml#/factory_uuid
                             - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
                             - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm

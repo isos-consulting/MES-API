@@ -33,7 +33,7 @@ get:
                         type: array
                         items:
                           allOf:
-                            - $ref: ../../schemas/mld/problem.schema.yaml#/problem_uuid
+                            - $ref: ../../schemas/mld/problem.schema.yaml#/uuid
                             - $ref: ../../schemas/mld/problem.schema.yaml#/factory_uuid
                             - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
                             - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
@@ -78,12 +78,12 @@ put:
       application/json:
         schema:
           required:
-            - problem_uuid
+            - uuid
             - factory_uuid
             - problem_cd
             - problem_nm
           allOf:
-            - $ref: ../../schemas/mld/problem.schema.yaml#/problem_uuid
+            - $ref: ../../schemas/mld/problem.schema.yaml#/uuid
             - $ref: ../../schemas/mld/problem.schema.yaml#/factory_uuid
             - $ref: ../../schemas/mld/problem.schema.yaml#/problem_cd
             - $ref: ../../schemas/mld/problem.schema.yaml#/problem_nm
@@ -104,9 +104,9 @@ patch:
       application/json:
         schema:
           required:
-            - problem_uuid
+            - uuid
           allOf:
-            - $ref: ../../schemas/mld/problem.schema.yaml#/problem_uuid
+            - $ref: ../../schemas/mld/problem.schema.yaml#/uuid
             - $ref: ../../schemas/mld/problem.schema.yaml#/factory_uuid
             - $ref: ../../schemas/mld/problem.schema.yaml#/problem_cd
             - $ref: ../../schemas/mld/problem.schema.yaml#/problem_nm
@@ -127,9 +127,9 @@ delete:
       application/json:
         schema:
           required:
-            - problem_uuid
+            - uuid
           allOf:
-            - $ref: ../../schemas/mld/problem.schema.yaml#/problem_uuid
+            - $ref: ../../schemas/mld/problem.schema.yaml#/uuid
   responses:
     200:
       $ref: ../../responses/common/succeed-delete.response.yaml

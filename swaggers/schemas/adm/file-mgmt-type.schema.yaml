@@ -1,4 +1,4 @@
-# ADM_FILE_MGMT_TB
+# ADM_FILE_MGMT_TYPE_TB
 
 # Columns
 file_mgmt_type_id:
@@ -49,11 +49,12 @@ sortby:
       type: number
       format: int4
 
-# Uuids
-file_mgmt_type_uuid:
+uuid:
   type: object
   properties:
-    file_mgmt_type_uuid:
+    uuid:
       description: 파일관리유형UUID
       type: string
       format: uuid
+# Uuids
+

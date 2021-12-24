@@ -41,7 +41,7 @@ get:
                         type: array
                         items:
                           allOf:
-                            - $ref: ../../schemas/adm/transaction.schema.yaml#/tran_uuid
+                            - $ref: ../../schemas/adm/transaction.schema.yaml#/uuid
                             - $ref: ../../schemas/adm/transaction.schema.yaml#/tran_cd
                             - $ref: ../../schemas/adm/transaction.schema.yaml#/tran_nm
                             - $ref: ../../schemas/adm/transaction.schema.yaml#/remark

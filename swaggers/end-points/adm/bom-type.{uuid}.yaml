@@ -41,7 +41,7 @@ get:
                         type: array
                         items:
                           allOf:
-                            - $ref: ../../schemas/adm/bom-type.schema.yaml#/bom_type_uuid
+                            - $ref: ../../schemas/adm/bom-type.schema.yaml#/uuid
                             - $ref: ../../schemas/adm/bom-type.schema.yaml#/bom_type_cd
                             - $ref: ../../schemas/adm/bom-type.schema.yaml#/bom_type_nm
                             - $ref: ../../schemas/adm/bom-type.schema.yaml#/sortby

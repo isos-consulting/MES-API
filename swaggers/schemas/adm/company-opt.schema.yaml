@@ -1,4 +1,4 @@
-# ADM_COMPANY_OPT_VW
+# ADM_COMPANY_OPT_TB
 
 # Columns
 company_opt_id:
@@ -57,11 +57,12 @@ sortby:
       type: number
       format: int4
 
-# Uuids
-company_opt_uuid:
+uuid:
   type: object
   properties:
-    company_opt_uuid:
+    uuid:
       description: 회사옵션UUID
       type: string
       format: uuid
+# Uuids
+
