@@ -41,7 +41,7 @@ get:
                         type: array
                         items:
                           allOf:
-                            - $ref: ../../schemas/adm/file-mgmt-type.schema.yaml#/file_mgmt_type_uuid
+                            - $ref: ../../schemas/adm/file-mgmt-type.schema.yaml#/uuid
                             - $ref: ../../schemas/adm/file-mgmt-type.schema.yaml#/file_mgmt_type_cd
                             - $ref: ../../schemas/adm/file-mgmt-type.schema.yaml#/file_mgmt_type_nm
                             - $ref: ../../schemas/adm/file-mgmt-type.schema.yaml#/table_nm

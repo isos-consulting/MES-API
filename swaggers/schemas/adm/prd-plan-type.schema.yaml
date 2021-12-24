@@ -1,4 +1,4 @@
-# ADM_PRD_PLAN_TYPE_VW
+# ADM_PRD_PLAN_TYPE_TB
 
 # Columns
 prd_plan_type_id:
@@ -33,11 +33,12 @@ sortby:
       type: number
       format: int4
 
-# Uuids
-prd_plan_type_uuid:
+uuid:
   type: object
   properties:
-    prd_plan_type_uuid:
+    uuid:
       description: 생산계획유형UUID
       type: string
       format: uuid
+# Uuids
+

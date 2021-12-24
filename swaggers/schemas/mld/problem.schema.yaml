@@ -1,4 +1,4 @@
-# OUT_RECEIVE_DETAIL_TB
+# MLD_PROBLEM_TB
 
 # Columns
 problem_id:
@@ -33,10 +33,10 @@ problem_nm:
       type: string
       format: varchar(50)
 
-problem_uuid:
+uuid:
   type: object
   properties:
-    problem_uuid:
+    uuid:
       description: 금형문제점UUID
       type: string
       format: uuid

@@ -98,7 +98,7 @@ export default class MldMold extends Model<IMldMold> {
   size: string;
 
 	@Column({
-    comment: '금형유무',
+    comment: '사용유무',
     type: DataType.BOOLEAN,
 		allowNull: false,
     defaultValue: true,
