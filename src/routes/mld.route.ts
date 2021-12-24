@@ -28,11 +28,11 @@ router.route('/problems').delete(problem.delete);
 //#region ✅ RepairHistory (금형수리이력관리)
 const repairHistory = new MldRepairHistoryCtl();
 router.route('/repair-history/:uuid').get(repairHistory.read);
-router.route('/repair-historys').get(repairHistory.read);
-router.route('/repair-historys').post(repairHistory.create);
-router.route('/repair-historys').put(repairHistory.update);
-router.route('/repair-historys').patch(repairHistory.patch);
-router.route('/repair-historys').delete(repairHistory.delete);
+router.route('/repair-histories').get(repairHistory.read);
+router.route('/repair-histories').post(repairHistory.create);
+router.route('/repair-histories').put(repairHistory.update);
+router.route('/repair-histories').patch(repairHistory.patch);
+router.route('/repair-histories').delete(repairHistory.delete);
 //#endregion
 
 export default router;

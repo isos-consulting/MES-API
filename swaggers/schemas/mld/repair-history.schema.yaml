@@ -77,7 +77,7 @@ repair_no:
   type: object
   properties:
     repair_no:
-      description: 수리업체
+      description: 수리번호
       type: string
       format: varchar(50)
 
@@ -166,7 +166,7 @@ repair_emp_uuid:
 occur_emp_cd:
   type: object
   properties:
-    occurEmp_cd:
+    occur_emp_cd:
       description: 발생확인자코드
       type: string
       format: varchar(20)
@@ -174,7 +174,7 @@ occur_emp_cd:
 occur_emp_nm:
   type: object
   properties:
-    occurEmp_nm:
+    occur_emp_nm:
       description: 발생확인자명
       type: string
       format: varchar(50)
@@ -182,7 +182,7 @@ occur_emp_nm:
 repair_emp_cd:
   type: object
   properties:
-    repairEmp_cd:
+    repair_emp_cd:
       description: 수리자코드
       type: string
       format: varchar(20)
@@ -190,7 +190,7 @@ repair_emp_cd:
 repair_emp_nm:
   type: object
   properties:
-    repairEmp_nm:
+    repair_emp_nm:
       description: 수리자명
       type: string
       format: varchar(50)
