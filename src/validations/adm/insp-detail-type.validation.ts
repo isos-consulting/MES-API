@@ -5,7 +5,6 @@ import createValidationError from '../../utils/createValidationError';
 const stateTag = 'admInspDetailType';
 
 const admInspDetailTypeValidation = {
-  // .notEmpty().withMessage(value => example(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '세부검사유형UUID'))
   read: [ 
     query('insp_type_uuid').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'insp_type_uuid', '검사유형UUID'))
