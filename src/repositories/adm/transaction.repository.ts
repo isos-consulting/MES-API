@@ -60,7 +60,7 @@ class AdmTransactionRepo {
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
-					[ Sequelize.col('admTransaction.uuid'), 'transaction_uuid' ],
+					// [ Sequelize.col('admTransaction.uuid'), 'transaction_uuid' ],
           'tran_cd',
           'tran_nm',
 					'sortby',
@@ -88,7 +88,7 @@ class AdmTransactionRepo {
 					{ model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
 				],
 				attributes: [
-					[ Sequelize.col('admTransaction.uuid'), 'transaction_uuid' ],
+					// [ Sequelize.col('admTransaction.uuid'), 'transaction_uuid' ],
 					'tran_cd',
           'tran_nm',
 					'sortby',

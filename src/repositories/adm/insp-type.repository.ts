@@ -61,7 +61,7 @@ class AdmInspTypeRepo {
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
-					[ Sequelize.col('admInspType.uuid'), 'insp_type_uuid' ],
+					// [ Sequelize.col('admInspType.uuid'), 'insp_type_uuid' ],
           'insp_type_cd',
           'insp_type_nm',
           'worker_fg',
@@ -91,7 +91,7 @@ class AdmInspTypeRepo {
 					{ model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
 				],
 				attributes: [
-					[ Sequelize.col('admInspType.uuid'), 'insp_type_uuid' ],
+					// [ Sequelize.col('admInspType.uuid'), 'insp_type_uuid' ],
 					'insp_type_cd',
           'insp_type_nm',
           'worker_fg',

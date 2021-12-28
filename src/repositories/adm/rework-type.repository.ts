@@ -59,7 +59,7 @@ class AdmReworkTypeRepo {
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
-					[ Sequelize.col('admReworkType.uuid'), 'rework_type_uuid' ],
+					// [ Sequelize.col('admReworkType.uuid'), 'rework_type_uuid' ],
           'rework_type_cd',
           'rework_type_nm',
 					'sortby',
@@ -88,7 +88,7 @@ class AdmReworkTypeRepo {
 					{ model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
 				],
 				attributes: [
-					[ Sequelize.col('admReworkType.uuid'), 'rework_type_uuid' ],
+					// [ Sequelize.col('admReworkType.uuid'), 'rework_type_uuid' ],
 					'rework_type_cd',
           'rework_type_nm',
           'sortby',
