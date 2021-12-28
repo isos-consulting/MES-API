@@ -60,7 +60,7 @@ class AdmPrdPlanTypeRepo {
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
-					[ Sequelize.col('admPrdPlanType.uuid'), 'prd_plan_type_uuid' ],
+					// [ Sequelize.col('admPrdPlanType.uuid'), 'prd_plan_type_uuid' ],
           'prd_plan_type_cd',
           'prd_plan_type_nm',
 					'sortby',
@@ -89,7 +89,7 @@ class AdmPrdPlanTypeRepo {
 					{ model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
 				],
 				attributes: [
-					[ Sequelize.col('admPrdPlanType.uuid'), 'prd_plan_type_uuid' ],
+					// [ Sequelize.col('admPrdPlanType.uuid'), 'prd_plan_type_uuid' ],
 					'prd_plan_type_cd',
 					'prd_plan_type_nm',
 					'sortby',

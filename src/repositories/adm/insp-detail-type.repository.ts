@@ -62,16 +62,16 @@ class AdmInspDetailTypeRepo {
             model: this.sequelize.models.AdmInspType, 
             attributes: [], 
             required: true, 
-            where: { uuid: params.insp_type_uuid ? params.insp_type_uuid : { [Op.ne]: null } }
+            // where: { uuid: params.insp_type_uuid ? params.insp_type_uuid : { [Op.ne]: null } }
           },
           { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
-          [ Sequelize.col('admInspDetailType.uuid'), 'insp_detail_type_uuid' ],
+          // [ Sequelize.col('admInspDetailType.uuid'), 'insp_detail_type_uuid' ],
           'insp_detail_type_cd',
           'insp_detail_type_nm',
-          [ Sequelize.col('admInspType.uuid'), 'insp_type_uuid' ],
+          // [ Sequelize.col('admInspType.uuid'), 'insp_type_uuid' ],
           [ Sequelize.col('admInspType.insp_type_cd'), 'insp_type_cd' ],
           [ Sequelize.col('admInspType.insp_type_nm'), 'insp_type_nm' ],
           'worker_fg',
@@ -106,10 +106,10 @@ class AdmInspDetailTypeRepo {
 					{ model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
 				],
 				attributes: [
-					[ Sequelize.col('admInspDetailType.uuid'), 'insp_detail_type_uuid' ],
+					// [ Sequelize.col('admInspDetailType.uuid'), 'insp_detail_type_uuid' ],
 					'insp_detail_type_cd',
           'insp_detail_type_nm',
-          [ Sequelize.col('admInspType.uuid'), 'insp_type_uuid' ],
+          // [ Sequelize.col('admInspType.uuid'), 'insp_type_uuid' ],
           [ Sequelize.col('admInspType.insp_type_cd'), 'insp_type_cd' ],
           [ Sequelize.col('admInspType.insp_type_nm'), 'insp_type_nm' ],
           'worker_fg',

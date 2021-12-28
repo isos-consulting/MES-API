@@ -159,6 +159,6 @@ complete_state:
   type: object
   properties: 
     complete_state:
-      description: 구매 완료여부(완료, 미완료)
+      description: 판매 완료여부(완료, 미완료)
       type: string
       format: varchar
