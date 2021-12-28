@@ -12,7 +12,9 @@ import AdmTransactionCtl from '../controllers/adm/transaction.controller';
 import AdmFileMgmtCtl from '../controllers/adm/file-mgmt.controller';
 import AdmFileMgmtTypeCtl from '../controllers/adm/file-mgmt-type.controller';
 import AdmInspHandlingTypeCtl from '../controllers/adm/insp-handling-type.controller';
+import AdmCycleUnitCtl from '../controllers/adm/cycle-unit.controller';
 import admInspDetailTypeValidation from '../validations/adm/insp-detail-type.validation';
+import admCycleUnitValidation from '../validations/adm/cycle-unit.validation';
 import validationCallback from '../utils/validationCallback';
 
 const router = express.Router();
@@ -145,6 +147,16 @@ router.route('/company-opts').post(companyOpt.create);
 router.route('/company-opts').put(companyOpt.update);
 router.route('/company-opts').patch(companyOpt.patch);
 router.route('/company-opts').delete(companyOpt.delete);
+//#endregion
+
+//#region ✅ CycleUnit (주기단위)
+const cycleUnit = new AdmCycleUnitCtl();
+router.route('/cycle-unit/:uuid').get(admCycleUnitValidation.readByUuid,validationCallback,cycleUnit.readByUuid);
+router.route('/cycle-units').get(admCycleUnitValidation.read,validationCallback,cycleUnit.read);
+router.route('/cycle-units').post(admCycleUnitValidation.create,validationCallback,cycleUnit.create);
+router.route('/cycle-units').put(admCycleUnitValidation.update,validationCallback,cycleUnit.update);
+router.route('/cycle-units').patch(admCycleUnitValidation.patch,validationCallback,cycleUnit.patch);
+router.route('/cycle-units').delete(admCycleUnitValidation.delete,validationCallback,cycleUnit.delete);
 //#endregion
 
 export default router;

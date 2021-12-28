@@ -121,3 +121,9 @@ paths:
     $ref: ../end-points/adm/file-mgmt-type.{uuid}.yaml
   /adm/file-mgmt-types:
     $ref: ../end-points/adm/file-mgmt-types.yaml
+
+  # ✅ CycleUnit (주기단위)
+  /adm/cycle_unit/{uuid}:
+    $ref: ../end-points/adm/cycle-unit.{uuid}.yaml
+  /adm/cycle-units:
+    $ref: ../end-points/adm/cycle-units.yaml
