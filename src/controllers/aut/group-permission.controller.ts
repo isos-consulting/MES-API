@@ -55,12 +55,11 @@ class AutGroupPermissionCtl extends BaseCtl {
   // 📒 Fn[read] (✅ Inheritance): Default Read Function
   public read = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      const repo = new AutMenuRepo(req.tenant.uuid);
-      let result: ApiResult<any> = { count: 0, raws: [] };
+      const repo = new AutGroupPermissionRepo(req.tenant.uuid);
 
       const params = Object.assign(req.query, req.params);
       if (!params.group_uuid) { throw new Error('잘못된 group_uuid(그룹UUID) 입력') };
-      result = await repo.read(params);
+      const result = await repo.read(params);
 
       return response(res, result.raws, { count: result.count });
     } catch (e) {
