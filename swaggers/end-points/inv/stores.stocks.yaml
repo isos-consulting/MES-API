@@ -16,6 +16,7 @@ get:
         [return]: 반출 재고 조회 <br/>
         [outgo]: 출하 재고 조회 <br/>
         [finalIsnp]: 최종검사 재고 조회 <br/>
+        [outsourcing]: 외주 재고 조회
       schema:
         type: string
         format: string

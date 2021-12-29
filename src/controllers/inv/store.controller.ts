@@ -87,7 +87,7 @@ class InvStoreCtl extends BaseCtl {
       'qmsRework', 'qmsDisposal', 'qmsReturn', 'qmsDisassemble', 'qmsDisassembleIncome', 'qmsDisassembleReturn',
       'etcIncome', 'etcRelease'
     ];
-    this.stockTypes = [ 'all', 'available', 'reject', 'return', 'outgo', 'finalInsp' ];
+    this.stockTypes = [ 'all', 'available', 'reject', 'return', 'outgo', 'finalInsp', 'outsourcing' ];
     this.groupedTypes = [ 'all', 'factory', 'store', 'lotNo', 'location' ];   
     this.priceTypes = [ 'all', 'purchase', 'sales' ];
   };
