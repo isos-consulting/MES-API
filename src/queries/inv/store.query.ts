@@ -1,7 +1,7 @@
 const readStocks = (
   params: {
     reg_date: string,
-    stock_type: 'all' | 'available' | 'reject' | 'return' | 'outgo' | 'finalInsp',
+    stock_type: 'all' | 'available' | 'reject' | 'return' | 'outgo' | 'finalInsp' | 'outsourcing',
     grouped_type: 'all' | 'factory' | 'store' | 'lotNo' | 'location',
     price_type?: 'purchase' | 'sales',
     exclude_zero_fg?: boolean,
@@ -26,25 +26,14 @@ const readStocks = (
 
   let searchStoreQuery: string = '';
   switch (params.stock_type) {
-    case 'all':
-      break;
-    case 'available':
-      searchStoreQuery = 'AND s_s.available_store_fg = TRUE'
-      break;
-    case 'reject':
-      searchStoreQuery = 'AND s_s.reject_store_fg = TRUE'
-      break;
-    case 'return':
-      searchStoreQuery = 'AND s_s.return_store_fg = TRUE'
-      break;
-    case 'outgo':
-      searchStoreQuery = 'AND s_s.outgo_store_fg = TRUE'
-      break;
-    case 'finalInsp':
-      searchStoreQuery = 'AND s_s.final_insp_store_fg = TRUE'
-      break;
-    default:
-      break;
+    case 'all': break;
+    case 'available': searchStoreQuery = 'AND s_s.available_store_fg = TRUE'; break;
+    case 'reject': searchStoreQuery = 'AND s_s.reject_store_fg = TRUE'; break;
+    case 'return': searchStoreQuery = 'AND s_s.return_store_fg = TRUE'; break;
+    case 'outgo': searchStoreQuery = 'AND s_s.outgo_store_fg = TRUE'; break;
+    case 'finalInsp': searchStoreQuery = 'AND s_s.final_insp_store_fg = TRUE'; break;
+    case 'outsourcing': searchStoreQuery = 'AND s_s.outsourcing_store_fg = TRUE'; break;
+    default: break;
   }
 
   // 📌 공장(Factory), 창고(Store), 위치(Location), 품목(Prod), LotNo를 기준으로 재고를 가지고 있는 기준 임시 테이블 생성

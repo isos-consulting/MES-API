@@ -2,7 +2,7 @@ const readStoreTotalInventory = (
   params: {
     start_date: string,
     end_date: string,
-    stock_type: 'all' | 'available' | 'reject' | 'return' | 'outgo' | 'finalInsp',
+    stock_type: 'all' | 'available' | 'reject' | 'return' | 'outgo' | 'finalInsp' | 'outsourcing',
     grouped_type: 'all' | 'factory' | 'store' | 'lotNo' | 'location',
     reject_fg?: boolean,
     factory_uuid?: string,
@@ -22,6 +22,7 @@ const readStoreTotalInventory = (
     case 'return': searchStoreQuery = 'AND s_s.return_store_fg = TRUE'; break;
     case 'outgo': searchStoreQuery = 'AND s_s.outgo_store_fg = TRUE'; break;
     case 'finalInsp': searchStoreQuery = 'AND s_s.final_insp_store_fg = TRUE'; break;
+    case 'outsourcing': searchStoreQuery = 'AND s_s.outsourcing_store_fg = TRUE'; break;
     default: break;
   }
 
