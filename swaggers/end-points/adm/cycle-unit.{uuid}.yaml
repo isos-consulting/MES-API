@@ -1,0 +1,51 @@
+get:
+  description: |
+    하나의 주기단위 데이터를 조회합니다.
+  summary: 주기단위 데이터 단일 조회
+  tags:
+    - 주기단위(CycleUnit)
+  parameters:
+    - name: uuid
+      in: path
+      description: 주기단위의 UUID 를 입력합니다.
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+  responses:
+    200:
+      description: Read OK
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: ../../schemas/common/default-response.schema.yaml
+              - type: object
+                properties:
+                  datas:
+                    description: Enable
+                    type: object
+                    properties:
+                      value:
+                        description: Enable
+                        type: object
+                        properties:
+                          count:
+                            description: 영향받은 데이터의 개수
+                            type: number
+                            format: int32
+                            minimum: 0
+                      raws:
+                        description: 주기단위 데이터 목록
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: ../../schemas/adm/cycle-unit.schema.yaml#/uuid
+                            - $ref: ../../schemas/adm/cycle-unit.schema.yaml#/cycle_unit_cd
+                            - $ref: ../../schemas/adm/cycle-unit.schema.yaml#/cycle_unit_nm
+                            - $ref: ../../schemas/adm/cycle-unit.schema.yaml#/format
+                            - $ref: ../../schemas/adm/cycle-unit.schema.yaml#/sortby
+                            - $ref: ../../schemas/common/timestamp.schema.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml
