@@ -33,6 +33,14 @@ format:
       type: string
       format: varchar(20)
 
+sortby:
+  type: object
+  properties:
+    sortby:
+      description: 정렬
+      type: number
+      format: int4
+
 uuid:
   type: object
   properties:

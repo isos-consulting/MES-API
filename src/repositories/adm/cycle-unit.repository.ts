@@ -34,6 +34,7 @@ class AdmCycleUnitRepo {
 					cycle_unit_cd: cycleUnit.cycle_unit_cd,
 					cycle_unit_nm: cycleUnit.cycle_unit_nm,
 					format: cycleUnit.format,
+					sortby: cycleUnit.sortby,
 					created_uid: uid,
 					updated_uid: uid,
 				}
@@ -64,13 +65,14 @@ class AdmCycleUnitRepo {
           'cycle_unit_cd',
           'cycle_unit_nm',
 					'format',
+					'sortby',
           'created_at',
           [ Sequelize.col('createUser.user_nm'), 'created_nm' ],
           'updated_at',
           [ Sequelize.col('updateUser.user_nm'), 'updated_nm' ]
         ],
         where: params.cycle_unit_cd ? { cycle_unit_cd: params.cycle_unit_cd } : {},
-        order: [ 'cycle_unit_cd' ],
+        order: [ 'sortby' ],
       })
       return convertReadResult(result);
     } catch (error) {
@@ -93,6 +95,7 @@ class AdmCycleUnitRepo {
           'cycle_unit_cd',
           'cycle_unit_nm',
 					'format',
+					'sortby',
           'created_at',
 					[ Sequelize.col('createUser.user_nm'), 'created_nm' ],
 					'updated_at',
@@ -139,9 +142,10 @@ class AdmCycleUnitRepo {
       for await (let cycleUnit of body) {
         const result = await this.repo.update(
           {
-						cycle_unit_cd: cycleUnit.cycle_unit_cd != null? cycleUnit.cycle_unit_cd : null,
-						cycle_unit_nm: cycleUnit.cycle_unit_nm != null? cycleUnit.cycle_unit_nm : null,
-						format: cycleUnit.format != null? cycleUnit.format : null,
+						cycle_unit_cd: cycleUnit.cycle_unit_cd ?? null,
+						cycle_unit_nm: cycleUnit.cycle_unit_nm ?? null,
+						format: cycleUnit.format ?? null,
+						sortby: cycleUnit.sortby ?? null,
             updated_uid: uid,
           } as any,
           { 
@@ -180,6 +184,7 @@ class AdmCycleUnitRepo {
 						cycle_unit_cd: cycleUnit.cycle_unit_cd,
 						cycle_unit_nm: cycleUnit.cycle_unit_nm,
 						format: cycleUnit.format,
+						sortby: cycleUnit.sortby,
             updated_uid: uid,
           },
           { 

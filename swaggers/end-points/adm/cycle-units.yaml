@@ -37,6 +37,7 @@ get:
                             - $ref: ../../schemas/adm/cycle-unit.schema.yaml#/cycle_unit_cd
                             - $ref: ../../schemas/adm/cycle-unit.schema.yaml#/cycle_unit_nm
                             - $ref: ../../schemas/adm/cycle-unit.schema.yaml#/format
+                            - $ref: ../../schemas/adm/cycle-unit.schema.yaml#/sortby
                             - $ref: ../../schemas/common/timestamp.schema.yaml
     500:
       $ref: ../../responses/common/general-error.response.yaml
@@ -59,6 +60,7 @@ post:
             - $ref: ../../schemas/adm/cycle-unit.schema.yaml#/cycle_unit_cd
             - $ref: ../../schemas/adm/cycle-unit.schema.yaml#/cycle_unit_nm
             - $ref: ../../schemas/adm/cycle-unit.schema.yaml#/format
+            - $ref: ../../schemas/adm/cycle-unit.schema.yaml#/sortby
   responses:
     201:
       $ref: ../../responses/common/succeed-create.response.yaml
@@ -85,6 +87,7 @@ put:
             - $ref: ../../schemas/adm/cycle-unit.schema.yaml#/cycle_unit_cd
             - $ref: ../../schemas/adm/cycle-unit.schema.yaml#/cycle_unit_nm
             - $ref: ../../schemas/adm/cycle-unit.schema.yaml#/format
+            - $ref: ../../schemas/adm/cycle-unit.schema.yaml#/sortby
   responses:
     201:
       $ref: ../../responses/common/succeed-update.response.yaml

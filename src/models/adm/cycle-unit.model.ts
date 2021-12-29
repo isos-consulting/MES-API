@@ -41,6 +41,12 @@ export default class AdmCycleUnit extends Model<IAdmCycleUnit> {
     allowNull: false,
   })
   format: string;
+  
+	@Column({
+    comment: '정렬',
+    type: DataType.INTEGER
+  })
+  sortby: number;
 
   @CreatedAt
   @Column({
