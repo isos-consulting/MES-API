@@ -1,0 +1,204 @@
+# EQM_REPAIR_HISTORY_TB
+
+# Columns
+repair_history_id:
+  type: object
+  properties:
+    repair_history_id:
+      description: 설비 수리이력ID
+      type: number
+      format: int4
+
+factory_id:
+  type: object
+  properties:
+    factory_id:
+      description: 공장ID
+      type: number
+      format: int4
+
+equip_id:
+  type: object
+  properties:
+    equip_id:
+      description: 설비ID
+      type: number
+      format: int4
+
+occur_start_date:
+  type: object
+  properties:
+    occur_start_date:
+      description: 발생시작일시
+      type: string
+      format: date-time
+
+occur_end_date:
+  type: object
+  properties:
+    occur_end_date:
+      description: 발생종료일시
+      type: string
+      format: date-time
+
+occur_emp_id:
+  type: object
+  properties:
+    occur_emp_id:
+      description: 발생확인자ID
+      type: number
+      format: int4
+
+occur_reason:
+  type: object
+  properties:
+    occur_reason:
+      description: 발생원인
+      type: string
+      format: varchar(250)
+
+occur_contents:
+  type: object
+  properties:
+    occur_contents:
+      description: 발생내용
+      type: string
+      format: varchar(250)
+  
+repair_start_date:
+  type: object
+  properties:
+    repair_start_date:
+      description: 수리시작일시
+      type: string
+      format: date-time
+
+repair_end_date:
+  type: object
+  properties:
+    repair_end_date:
+      description: 수리종료일시
+      type: string
+      format: date-time
+
+repair_time:
+  type: object
+  properties:
+    repair_time:
+      description: 수리시간
+      type: number
+      format: numeric(19, 6)
+
+repair_place:
+  type: object
+  properties:
+    repair_place:
+      description: 수리장소
+      type: string
+      format: varchar(50)
+
+repair_price:
+  type: object
+  properties:
+    repair_price:
+      description: 수리금액
+      type: number
+      format: numeric(19, 6)
+
+check_date:
+  type: object
+  properties:
+    check_date:
+      description: 점검일시
+      type: string
+      format: date-time
+
+check_emp_id:
+  type: object
+  properties:
+    check_emp_id:
+      description: 점검자ID
+      type: number
+      format: int4
+
+uuid:
+  type: object
+  properties:
+    uuid:
+      description: 설비 수리이력UUID
+      type: string
+      format: uuid
+
+# Uuids
+repair_history_uuid:
+  type: object
+  properties:
+    repair_history_uuid:
+      description: 설비 수리이력UUID
+      type: string
+      format: uuid
+
+factory_uuid:
+  type: object
+  properties:
+    factory_uuid:
+      description: 공장UUID
+      type: string
+      format: uuid
+
+equip_uuid:
+  type: object
+  properties:
+    equip_uuid:
+      description: 설비UUID
+      type: string
+      format: uuid
+
+occur_emp_uuid:
+  type: object
+  properties:
+    occur_emp_uuid:
+      description: 발생확인자UUID
+      type: string
+      format: uuid
+
+check_emp_uuid:
+  type: object
+  properties:
+    check_emp_uuid:
+      description: 점검자UUID
+      type: string
+      format: uuid
+
+# Others
+occur_emp_cd:
+  type: object
+  properties:
+    occur_emp_cd:
+      description: 발생확인자코드
+      type: string
+      format: varchar(20)
+
+occur_emp_nm:
+  type: object
+  properties:
+    occur_emp_nm:
+      description: 발생확인자명
+      type: string
+      format: varchar(50)
+
+check_emp_cd:
+  type: object
+  properties:
+    check_emp_cd:
+      description: 점검자코드
+      type: string
+      format: varchar(20)
+
+check_emp_nm:
+  type: object
+  properties:
+    check_emp_nm:
+      description: 점검자명
+      type: string
+      format: varchar(50)

@@ -159,10 +159,10 @@ post:
           required:
             - factory_uuid
             - reg_date
-            - order_no
             - proc_uuid
             - workings_uuid
             - prod_uuid
+            - qty
             - shift_uuid
           allOf:
             - $ref: ../../schemas/prd/order.schema.yaml#/factory_uuid
