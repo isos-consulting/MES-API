@@ -103,13 +103,22 @@ router.route('/qms').get(redoc.default({
 }));
 //#endregion
 
-//#region ✅ Mls (Quality Management Systems: 금형)
+//#region ✅ Mld (Mold: 금형)
 router.route('/mld.swagger.yaml').get((req, res) => {
   res.sendFile('mld.swagger.build.yaml', { root: './swaggers/builds' });
 });
 router.route('/mld').get(redoc.default({
   title: 'API Docs - Mld(금형)',
   specUrl: 'mld.swagger.yaml'
+}));
+
+//#region ✅ Eqm (Equipment: 금형)
+router.route('/eqm.swagger.yaml').get((req, res) => {
+  res.sendFile('eqm.swagger.build.yaml', { root: './swaggers/builds' });
+});
+router.route('/eqm').get(redoc.default({
+  title: 'API Docs - Eqm(설비)',
+  specUrl: 'eqm.swagger.yaml'
 }));
 //#endregion
 

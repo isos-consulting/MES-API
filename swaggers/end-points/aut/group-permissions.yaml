@@ -44,6 +44,7 @@ get:
                             - $ref: ../../schemas/aut/menu.schema.yaml#/menu_uuid
                             - $ref: ../../schemas/aut/menu.schema.yaml#/menu_nm
                             - $ref: ../../schemas/aut/menu.schema.yaml#/first_menu_nm
+                            - $ref: ../../schemas/aut/menu.schema.yaml#/lv
                             - $ref: ../../schemas/aut/menu.schema.yaml#/sortby
                             - $ref: ../../schemas/aut/menu.schema.yaml#/menu_type_uuid
                             - $ref: ../../schemas/aut/menu-type.schema.yaml#/menu_type_nm

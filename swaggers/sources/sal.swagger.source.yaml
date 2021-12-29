@@ -99,6 +99,8 @@ paths:
     $ref: ../end-points/sal/releases.yaml
 
   # ✅ OutgoOrder (제품출하지시)
+  /sal/outgo-orders/report:
+    $ref: ../end-points/sal/outgo-orders.report.yaml
   /sal/outgo-order/{uuid}:
     $ref: ../end-points/sal/outgo-order.{uuid}.yaml
   /sal/outgo-order/{uuid}/details:

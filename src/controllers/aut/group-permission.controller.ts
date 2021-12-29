@@ -55,45 +55,13 @@ class AutGroupPermissionCtl extends BaseCtl {
   // 📒 Fn[read] (✅ Inheritance): Default Read Function
   public read = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      const repo = new AutMenuRepo(req.tenant.uuid);
-      let result: ApiResult<any> = { count: 0, raws: [] };
+      const repo = new AutGroupPermissionRepo(req.tenant.uuid);
 
       const params = Object.assign(req.query, req.params);
       if (!params.group_uuid) { throw new Error('잘못된 group_uuid(그룹UUID) 입력') };
-      result = await repo.read(params);
+      const result = await repo.read(params);
 
-      let menuResult: any[] = [];
-      let firstMenu: any = undefined;
-      let secondMenu: any = undefined;
-
-      result.raws.forEach((raw: any) => {
-        switch (raw.lv) {
-          case 1:
-            if (firstMenu) { 
-              if (secondMenu) { firstMenu.sub_menu.push(secondMenu); }
-              menuResult.push(firstMenu); 
-            }  
-            firstMenu = raw;
-            firstMenu.sub_menu = [];
-            secondMenu = undefined;
-            break;
-          case 2:
-            if (secondMenu) { firstMenu.sub_menu.push(secondMenu); }
-            secondMenu = raw;
-            secondMenu.sub_menu = [];
-            break;
-          case 3:
-            secondMenu.sub_menu.push(raw);
-            break;
-        }
-      });
-      
-      if (firstMenu) { 
-        if (secondMenu) { firstMenu.sub_menu.push(secondMenu); }
-        menuResult.push(firstMenu) 
-      };
-
-      return response(res, menuResult, { count: result.count });
+      return response(res, result.raws, { count: result.count });
     } catch (e) {
       return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
     }

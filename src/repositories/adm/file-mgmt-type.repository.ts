@@ -61,7 +61,7 @@ class AdmFileMgmtTypeRepo {
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
-					[ Sequelize.col('admFileMgmtType.uuid'), 'file_mgmt_type_uuid' ],
+					// [ Sequelize.col('admFileMgmtType.uuid'), 'file_mgmt_type_uuid' ],
           'file_mgmt_type_cd',
           'file_mgmt_type_nm',
           'table_nm',
@@ -91,7 +91,7 @@ class AdmFileMgmtTypeRepo {
 					{ model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
 				],
 				attributes: [
-					[ Sequelize.col('admFileMgmtType.uuid'), 'file_mgmt_type_uuid' ],
+					// [ Sequelize.col('admFileMgmtType.uuid'), 'file_mgmt_type_uuid' ],
 					'file_mgmt_type_cd',
           'file_mgmt_type_nm',
           'table_nm',

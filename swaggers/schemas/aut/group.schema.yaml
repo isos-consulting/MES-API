@@ -14,8 +14,8 @@ group_nm:
   properties: 
     group_nm:
       description: 권한그룹명
-      type: number
-      format: int4
+      type: string
+      format: varchar(50)
 
 uuid:
   type: object

@@ -59,7 +59,7 @@ public create = async(body: IAdmDemandType[], uid: number, transaction?: Transac
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
-					[ Sequelize.col('admDemandType.uuid'), 'demand_type_uuid' ],
+					// [ Sequelize.col('admDemandType.uuid'), 'demand_type_uuid' ],
           'demand_type_cd',
           'demand_type_nm',
 					'sortby',
@@ -88,7 +88,7 @@ public create = async(body: IAdmDemandType[], uid: number, transaction?: Transac
 					{ model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
 				],
 				attributes: [
-					[ Sequelize.col('admDemandType.uuid'), 'demand_type_uuid' ],
+					// [ Sequelize.col('admDemandType.uuid'), 'demand_type_uuid' ],
 					'demand_type_cd',
           'demand_type_nm',
           'sortby',

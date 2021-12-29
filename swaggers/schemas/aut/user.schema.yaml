@@ -65,6 +65,14 @@ admin_fg:
       type: boolean
       format: boolean
 
+super_admin_fg: 
+  type: object
+  properties: 
+    super_admin_fg:
+      description: 개발 관리자 유무([true] 관리자, [false] 일반)
+      type: boolean
+      format: boolean
+
 uuid:
   type: object
   properties: 

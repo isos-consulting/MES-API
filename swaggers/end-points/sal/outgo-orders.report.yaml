@@ -1,13 +1,13 @@
 get:
   description: |
-    제품출하현황을 조회합니다.
-  summary: 제품출하현황 데이터 조회
+    제품출하지시현황을 조회합니다.
+  summary: 제품출하지시현황 데이터 조회
   tags:
-    - 제품출하(Outgo)
+    - 제품출하지시(OutgoOrder)
   parameters:
     - name: factory_uuid
       in: query
-      description: 공장의 UUID를 입력하여 공장에 따라 제품출하현황 데이터를 조회합니다. [전체 조회시 입력하지 않습니다.]
+      description: 공장의 UUID를 입력하여 공장에 따라 제품출하지시현황 데이터를 조회합니다. [전체 조회시 입력하지 않습니다.]
       schema:
         type: string
         format: uuid
@@ -16,10 +16,10 @@ get:
       in: query
       required: true
       description: |
-        출하현황을 기준에 따라 정렬하여 조회합니다.<br/>
+        출하지시현황을 기준에 따라 정렬하여 조회합니다.<br/>
         [partner] 거래처 기준 정렬 조회 <br/>
         [prod] 품목 기준 정렬 조회 <br/>
-        [date] 출하일자 기준 정렬 조회 <br/>
+        [date] 출하지시일자 기준 정렬 조회 <br/>
       schema:
         type: string
         format: string
@@ -27,7 +27,7 @@ get:
     - name: start_date
       in: query
       description: |
-        출하현황을 조회할 기준 시작일자를 입력합니다. [전체 조회시 입력하지 않습니다.] <br/>
+        출하지시현황을 조회할 기준 시작일자를 입력합니다. [전체 조회시 입력하지 않습니다.] <br/>
         ❗ 기준일자 검색 조건은 시작, 종료일자가 모두 입력되어야 동작됩니다.
       schema:
         type: string
@@ -36,7 +36,7 @@ get:
     - name: end_date
       in: query
       description: |
-        출하현황을 조회할 기준 종료일자를 입력합니다. [전체 조회시 입력하지 않습니다.] <br/>
+        출하지시현황을 조회할 기준 종료일자를 입력합니다. [전체 조회시 입력하지 않습니다.] <br/>
         ❗ 기준일자 검색 조건은 시작, 종료일자가 모두 입력되어야 동작됩니다.
       schema:
         type: string
@@ -66,19 +66,19 @@ get:
                             format: int32
                             minimum: 0
                       raws:
-                        description: 제품출하현황 데이터 조회
+                        description: 제품출하지시현황 데이터 조회
                         type: array
                         items:
                           allOf:
-                            - $ref: ../../schemas/sal/outgo-detail.schema.yaml#/outgo_detail_uuid
+                            - $ref: ../../schemas/sal/outgo-order-detail.schema.yaml#/outgo_order_detail_uuid
                             - $ref: ../../schemas/sal/outgo.schema.yaml#/factory_uuid
                             - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
                             - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
-                            - $ref: ../../schemas/sal/outgo.schema.yaml#/reg_date
-                            - $ref: ../../schemas/sal/outgo.schema.yaml#/partner_uuid
+                            - $ref: ../../schemas/sal/outgo-order.schema.yaml#/reg_date
+                            - $ref: ../../schemas/sal/outgo-order.schema.yaml#/partner_uuid
                             - $ref: ../../schemas/std/partner.schema.yaml#/partner_cd
                             - $ref: ../../schemas/std/partner.schema.yaml#/partner_nm
-                            - $ref: ../../schemas/sal/outgo-detail.schema.yaml#/prod_uuid
+                            - $ref: ../../schemas/sal/outgo-order-detail.schema.yaml#/prod_uuid
                             - $ref: ../../schemas/std/prod.schema.yaml#/prod_no
                             - $ref: ../../schemas/std/prod.schema.yaml#/prod_nm
                             - $ref: ../../schemas/std/prod.schema.yaml#/item_type_uuid
@@ -95,24 +95,11 @@ get:
                             - $ref: ../../schemas/std/prod.schema.yaml#/unit_uuid
                             - $ref: ../../schemas/std/unit.schema.yaml#/unit_cd
                             - $ref: ../../schemas/std/unit.schema.yaml#/unit_nm
-                            - $ref: ../../schemas/sal/outgo-detail.schema.yaml#/order_qty
-                            - $ref: ../../schemas/sal/outgo.schema.yaml#/outgo_order_qty
-                            - $ref: ../../schemas/sal/outgo-detail.schema.yaml#/lot_no
-                            - $ref: ../../schemas/sal/outgo-detail.schema.yaml#/qty
-                            - $ref: ../../schemas/sal/outgo-detail.schema.yaml#/price
-                            - $ref: ../../schemas/sal/return-detail.schema.yaml#/money_unit_uuid
-                            - $ref: ../../schemas/std/money-unit.schema.yaml#/money_unit_cd
-                            - $ref: ../../schemas/std/money-unit.schema.yaml#/money_unit_nm
-                            - $ref: ../../schemas/sal/return-detail.schema.yaml#/exchange
-                            - $ref: ../../schemas/sal/return.schema.yaml#/supply_price
-                            - $ref: ../../schemas/sal/return.schema.yaml#/tax
-                            - $ref: ../../schemas/sal/return.schema.yaml#/total_price
-                            - $ref: ../../schemas/sal/outgo-detail.schema.yaml#/from_store_uuid
-                            - $ref: ../../schemas/std/store.schema.yaml#/from_store_cd
-                            - $ref: ../../schemas/std/store.schema.yaml#/from_store_nm
-                            - $ref: ../../schemas/sal/outgo-detail.schema.yaml#/from_location_uuid
-                            - $ref: ../../schemas/std/location.schema.yaml#/from_location_cd
-                            - $ref: ../../schemas/std/location.schema.yaml#/from_location_nm
+                            - $ref: ../../schemas/sal/outgo-order-detail.schema.yaml#/order_qty
+                            - $ref: ../../schemas/sal/outgo.schema.yaml#/outgo_qty
+                            - $ref: ../../schemas/sal/outgo-order-detail.schema.yaml#/qty
+                            - $ref: ../../schemas/sal/order.schema.yaml#/balance
+                            - $ref: ../../schemas/sal/order.schema.yaml#/complete_state
                             - $ref: ../../schemas/sal/outgo.schema.yaml#/remark
                             - $ref: ../../schemas/common/timestamp.schema.yaml
     500:

@@ -44,20 +44,8 @@ components:
             read:pets: read your pets
 
 paths:
-  # ✅ Mold (금형관리)
-  /mld/mold/{uuid}:
-    $ref: ../end-points/mld/mold.{uuid}.yaml
-  /mld/molds:
-    $ref: ../end-points/mld/molds.yaml
-
-  # ✅ Problem (금형 문제점 관리)
-  /mld/problem/{uuid}:
-    $ref: ../end-points/mld/problem.{uuid}.yaml
-  /mld/problems:
-    $ref: ../end-points/mld/problems.yaml
-
   # ✅ RepairHistory (금형 수리이력 관리)
-  /mld/repair-history/{uuid}:
-    $ref: ../end-points/mld/repair-history.{uuid}.yaml
-  /mld/repair-histories:
-    $ref: ../end-points/mld/repair-histories.yaml
+  /eqm/repair-history/{uuid}:
+    $ref: ../end-points/eqm/repair-history.{uuid}.yaml
+  /eqm/repair-histories:
+    $ref: ../end-points/eqm/repair-histories.yaml

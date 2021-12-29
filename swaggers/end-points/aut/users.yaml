@@ -34,11 +34,13 @@ get:
                           allOf:
                             - $ref: ../../schemas/aut/user.schema.yaml#/user_uuid
                             - $ref: ../../schemas/aut/user.schema.yaml#/group_uuid
+                            - $ref: ../../schemas/aut/group.schema.yaml#/group_nm
                             - $ref: ../../schemas/aut/user.schema.yaml#/id
                             - $ref: ../../schemas/aut/user.schema.yaml#/user_nm
                             - $ref: ../../schemas/aut/user.schema.yaml#/email
                             - $ref: ../../schemas/aut/user.schema.yaml#/pwd_fg
                             - $ref: ../../schemas/aut/user.schema.yaml#/admin_fg
+                            - $ref: ../../schemas/aut/user.schema.yaml#/super_admin_fg
                             - $ref: ../../schemas/common/timestamp.schema.yaml
     500:
       $ref: ../../responses/common/general-error.response.yaml
