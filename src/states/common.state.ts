@@ -33,6 +33,7 @@ type TErrorState = {
   EXPIRED_ACCESS_TOKEN: '0010',               // 📌 Access 토큰정보가 만료되었음
   EXPIRED_REFRESH_TOKEN: '0011',              // 📌 Refresh 토큰정보가 만료되었음
   NOT_EXPIRED_ACCESS_TOKEN: '0012',           // 📌 Access 토큰정보가 만료되지 않았음
+  INVALID_DIFF_DATE: '0013',                  // 📌 시작일자 데이터가 종료일자 데이터보다 늦음
 }
 const errorState: TErrorState = { 
   NO_DATA: '0000',                            // 📌 영향받은 데이터가 없음
@@ -48,6 +49,7 @@ const errorState: TErrorState = {
   EXPIRED_ACCESS_TOKEN: '0010',               // 📌 Access 토큰정보가 만료되었음
   EXPIRED_REFRESH_TOKEN: '0011',              // 📌 Refresh 토큰정보가 만료되었음
   NOT_EXPIRED_ACCESS_TOKEN: '0012',           // 📌 Access 토큰정보가 만료되지 않았음
+  INVALID_DIFF_DATE: '0013',                  // 📌 시작일자가 종료일자보다 
 }
 
 export { successState, errorState };

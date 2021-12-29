@@ -3,9 +3,11 @@ import EqmRepairHistoryRepo from "../../repositories/eqm/repair-history.reposito
 import StdEmpRepo from "../../repositories/std/emp.repository";
 import StdEquipRepo from "../../repositories/std/equip.repository";
 import StdFactoryRepo from "../../repositories/std/factory.repository";
-import { successState } from "../../states/common.state";
+import { errorState, successState } from "../../states/common.state";
+import createApiError from "../../utils/createApiError";
 import createApiResult from "../../utils/createApiResult";
 import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
+import getSubtractTwoDates from "../../utils/getSubtractTwoDates";
 
 class EqmRepairHistoryService {
   tenant: string;
@@ -102,6 +104,49 @@ class EqmRepairHistoryService {
     try {
       const result = await this.repo.delete(datas, uid, tran);
       return createApiResult(result, 200, '데이터 삭제 성공', this.stateTag, successState.DELETE);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  public validateDateDiff = (datas: any[]) => {
+    try {
+      const result = datas.map((data: any) => {
+        // 📌 발생일시 데이터 검증
+        if (data.occur_start_date && data.occur_end_date) {
+          const occurTime = getSubtractTwoDates(data.occur_start_date, data.occur_end_date);
+          if (occurTime <= 0) { 
+            throw createApiError(
+              400, 
+              `잘못된 발생시작일시(occur_start_date) 및 발생종료일시(occur_end_date)가 입력되었습니다. [${data.occur_start_date}, ${data.occur_end_date}]`, 
+              this.stateTag, 
+              errorState.INVALID_DIFF_DATE
+            );
+          }
+        }
+
+        // 📌 수리일시 데이터 검증
+        // 📌 수리시간 데이터 초기 Setting(수리 시작일시, 종료일시가 모두 입력되지 않은경우 null로 입력)
+        data.repair_time = null;
+        if (data.repair_start_date && data.repair_end_date) {
+          const repairTime = getSubtractTwoDates(data.repair_start_date, data.repair_end_date);
+
+          if (repairTime <= 0) { 
+            throw createApiError(
+              400, 
+              `잘못된 수리시작일시(repair_start_date) 및 수리종료일시(repair_end_date)가 입력되었습니다. [${data.repair_start_date}, ${data.repair_end_date}]`, 
+              this.stateTag, 
+              errorState.INVALID_DIFF_DATE
+            );
+          }
+          
+          data.repair_time = repairTime;
+        }
+
+        return data;
+      });
+
+      return result;
     } catch (error) {
       throw error;
     }
