@@ -26,7 +26,7 @@ post:
             - $ref: ../../schemas/std/equip.schema.yaml#/equip_model
             - $ref: ../../schemas/std/equip.schema.yaml#/equip_std
             - $ref: ../../schemas/std/equip.schema.yaml#/equip_spec
-            - $ref: ../../schemas/std/equip.schema.yaml#/manufactuer
+            - $ref: ../../schemas/std/equip.schema.yaml#/manufacturer
             - $ref: ../../schemas/std/equip.schema.yaml#/purchase_partner
             - $ref: ../../schemas/std/equip.schema.yaml#/purchase_date
             - $ref: ../../schemas/std/equip.schema.yaml#/purchase_tel
