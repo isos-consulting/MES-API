@@ -56,6 +56,8 @@ get:
                             - $ref: ../../schemas/std/insp-item.schema.yaml#/insp_method_uuid
                             - $ref: ../../schemas/std/insp-method.schema.yaml#/insp_method_cd
                             - $ref: ../../schemas/std/insp-method.schema.yaml#/insp_method_nm
+                            - $ref: ../../schemas/std/insp-item.schema.yaml#/eqm_fg
+                            - $ref: ../../schemas/std/insp-item.schema.yaml#/qms_fg
                             - $ref: ../../schemas/common/timestamp.schema.yaml
     500:
       $ref: ../../responses/common/general-error.response.yaml
