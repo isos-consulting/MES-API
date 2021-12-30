@@ -87,7 +87,7 @@ export default class StdEquip extends Model<IStdEquip> {
     comment: '구매일자',
     type: DataType.DATEONLY,
   })
-  purchase_date: Date;
+  purchase_date: string;
 
 	@Column({
     comment: '구매업체 연락처',
