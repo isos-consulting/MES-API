@@ -5,7 +5,7 @@ const readOrders = (
     order_uuid?: string,
     factory_uuid?: string,
     sal_order_detail_uuid?: string,
-    order_state?: 'all' | 'notProgressing' | 'wait' | 'ongoing' | 'complete'
+    order_state?: 'all' | 'wait' | 'ongoing' | 'complete'
   }) => {
   let searchQuery: string = '';
 
@@ -63,6 +63,7 @@ const readOrders = (
       t_sl.location_nm as to_location_nm,
       p_o.plan_qty,
       p_o.qty,
+      p_w.qty as accumulated_qty,
       p_o.seq,
       s_sf.uuid as shift_uuid,
       s_sf.shift_nm,
@@ -77,8 +78,7 @@ const readOrders = (
       p_o.work_fg,
       p_o.complete_fg,
       CASE WHEN p_o.complete_fg = TRUE THEN '마감' ELSE 
-      CASE WHEN p_o.work_fg = TRUE THEN '작업중' ELSE 
-      CASE WHEN COALESCE(p_w.cnt,0) = 0 THEN '미진행' ELSE '대기' END END END AS order_state,
+      CASE WHEN p_o.work_fg = TRUE THEN '작업중' ELSE '대기' END END AS order_state,
       p_o.complete_date,
       p_o.remark,
       p_o.created_at,
@@ -103,7 +103,7 @@ const readOrders = (
     LEFT JOIN std_worker_group_tb s_wg ON s_wg.worker_group_id = p_o.worker_group_id
     LEFT JOIN sal_order_detail_tb s_od ON s_od.order_detail_id = p_o.sal_order_detail_id
     LEFT JOIN sal_order_tb s_o ON s_o.order_id = s_od.order_id
-    LEFT JOIN (	SELECT p_w.order_id, count(p_w.*) AS cnt 
+    LEFT JOIN (	SELECT p_w.order_id, sum(COALESCE(p_w.qty, 0)) AS qty
           FROM prd_work_tb p_w
           GROUP BY p_w.order_id ) p_w ON p_w.order_id = p_o.order_id
     LEFT JOIN (	SELECT p_ow.order_id, count(p_ow.*) AS cnt 
@@ -123,7 +123,6 @@ const readOrders = (
   searchQuery = '';
   switch (params.order_state) {
     case 'all': break;
-    case 'notProgressing': searchQuery = `WHERE t_o.order_state = '미진행'`; break;
     case 'wait': searchQuery = `WHERE t_o.order_state = '대기'`; break;
     case 'ongoing': searchQuery = `WHERE t_o.order_state = '진행중'`; break;
     case 'complete': searchQuery = `WHERE t_o.order_state = '마감'`; break;
