@@ -75,7 +75,7 @@ export default class StdEquip extends Model<IStdEquip> {
     comment: '제조사',
     type: DataType.STRING(50),
   })
-  manufactuer: string;
+  manufacturer: string;
 
 	@Column({
     comment: '구매업체',

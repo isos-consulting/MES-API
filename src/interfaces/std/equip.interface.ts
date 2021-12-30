@@ -7,7 +7,7 @@ export default interface IStdEquip {
 	equip_model?: string | null,
 	equip_std?: string | null,
 	equip_spec?: string | null,
-	manufactuer?: string | null,
+	manufacturer?: string | null,
 	purchase_partner?: string | null,
 	purchase_date?: string | null,
 	purchase_tel?: string | null,
