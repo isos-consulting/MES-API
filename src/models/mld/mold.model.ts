@@ -81,9 +81,9 @@ export default class MldMold extends Model<IMldMold> {
 
 	@Column({
     comment: '구매일자',
-    type: DataType.DATE,
+    type: DataType.DATEONLY,
   })
-  purchase_date: Date;
+  purchase_date: string;
 
 	@Column({
     comment: '금형무게',
