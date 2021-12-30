@@ -29,7 +29,7 @@ const stdEquipValidation = {
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'equip_std', '설비규격')),
     body('*.equip_spec', '설비제원').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'equip_spec', '설비제원')),
-    body('*.manufactuer', '제조사').optional({ nullable: true })
+    body('*.manufacturer', '제조사').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'equip_spec', '제조사')),
     body('*.purchase_partner', '구매업체').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'purchase_partner', '구매업체')),
@@ -66,7 +66,7 @@ const stdEquipValidation = {
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'equip_std', '설비규격')),
     body('*.equip_spec', '설비제원').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'equip_spec', '설비제원')),
-    body('*.manufactuer', '제조사').optional({ nullable: true })
+    body('*.manufacturer', '제조사').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'equip_spec', '제조사')),
     body('*.purchase_partner', '구매업체').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'purchase_partner', '구매업체')),
@@ -101,7 +101,7 @@ const stdEquipValidation = {
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'equip_std', '설비규격')),
     body('*.equip_spec', '설비제원').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'equip_spec', '설비제원')),
-    body('*.manufactuer', '제조사').optional({ nullable: true })
+    body('*.manufacturer', '제조사').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'equip_spec', '제조사')),
     body('*.purchase_partner', '구매업체').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'purchase_partner', '구매업체')),

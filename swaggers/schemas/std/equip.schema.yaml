@@ -65,10 +65,10 @@ equip_spec:
       type: string
       format: varchar(50)
 
-manufactuer:
+manufacturer:
   type: object
   properties:
-    manufactuer:
+    manufacturer:
       description: 제조사
       type: string
       format: varchar(50)
