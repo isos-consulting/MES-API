@@ -40,5 +40,13 @@ uuid:
       description: 일상점검주기UUID
       type: string
       format: uuid
+
 # Uuids
+daily_insp_cycle_uuid:
+  type: object
+  properties:
+    daily_insp_cycle_uuid:
+      description: 일상점검주기UUID
+      type: string
+      format: uuid
 

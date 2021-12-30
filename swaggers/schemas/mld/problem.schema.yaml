@@ -42,6 +42,14 @@ uuid:
       format: uuid
 
 # Uuids
+problem_uuid:
+  type: object
+  properties:
+    problem_uuid:
+      description: 금형문제점UUID
+      type: string
+      format: uuid
+
 factory_uuid:
   type: object
   properties:
@@ -49,4 +57,5 @@ factory_uuid:
       description: 공장UUID
       type: string
       format: uuid
+
 # Others
