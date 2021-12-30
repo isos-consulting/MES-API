@@ -43,6 +43,8 @@ import StdWorkerGroupWorkerCtl from '../controllers/std/worker-group-worker.cont
 import StdWorkerGroupCtl from '../controllers/std/worker-group.controller';
 import StdWorkerCtl from '../controllers/std/worker.controller';
 import StdWorkingsCtl from '../controllers/std/workings.controller';
+import validationCallback from '../utils/validationCallback';
+import stdInspItemValidation from '../validations/std/insp-item.validation';
 
 const router = express.Router();
 
@@ -125,13 +127,12 @@ router.route('/insp-item-types').delete(inspItemType.delete);
 
 //#region ✅ InspItem (검사항목)
 const inspItem = new StdInspItemCtl();
-router.route('/insp-items/excel-upload').post(inspItem.upsertBulkDatasFromExcel);
-router.route('/insp-item/:uuid').get(inspItem.read);
-router.route('/insp-items').get(inspItem.read);
-router.route('/insp-items').post(inspItem.create);
-router.route('/insp-items').put(inspItem.update);
-router.route('/insp-items').patch(inspItem.patch);
-router.route('/insp-items').delete(inspItem.delete);
+router.route('/insp-item/:uuid').get(stdInspItemValidation.readByUuid, validationCallback, inspItem.read);
+router.route('/insp-items').get(stdInspItemValidation.read, validationCallback, inspItem.read);
+router.route('/insp-items').post(stdInspItemValidation.create, validationCallback, inspItem.create);
+router.route('/insp-items').put(stdInspItemValidation.update, validationCallback, inspItem.update);
+router.route('/insp-items').patch(stdInspItemValidation.patch, validationCallback, inspItem.patch);
+router.route('/insp-items').delete(stdInspItemValidation.delete, validationCallback, inspItem.delete);
 //#endregion
 
 //#region ✅ CustomerPrice (고객사 단가)

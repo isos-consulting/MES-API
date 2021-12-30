@@ -25,7 +25,6 @@ export default class StdInspItem extends Model<IStdInspItem> {
   insp_item_id: number;
 
   @Unique('std_insp_item_tb_factory_id_insp_item_cd_un')
-  @Unique('std_insp_item_tb_factory_id_insp_item_nm_un')
   @ForeignKey(() => StdFactory)
   @Column({
     comment: '공장ID',
@@ -38,7 +37,6 @@ export default class StdInspItem extends Model<IStdInspItem> {
   @Column({
     comment: '검사항목 유형ID',
     type: DataType.INTEGER,
-    allowNull: false,
   })
   insp_item_type_id: number;
 
@@ -70,6 +68,22 @@ export default class StdInspItem extends Model<IStdInspItem> {
     type: DataType.INTEGER,
   })
   insp_method_id: number;
+
+  @Column({
+    comment: '설비검사항목 여부',
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
+  })
+  eqm_fg: boolean;
+
+  @Column({
+    comment: '품질검사항목 여부',
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false
+  })
+  qms_fg: boolean;
 
   @CreatedAt
   @Column({

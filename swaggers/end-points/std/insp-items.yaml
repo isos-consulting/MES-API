@@ -19,6 +19,18 @@ get:
         type: string
         format: uuid
 
+    - name: type
+      in: query
+      required: true
+      description: |
+        데이터 조회시 작업지시 진행상태 유형을 입력합니다. <br/> 
+        [all]: 검사항목 전체 조회 <br/>
+        [eqm]: 설비검사항목 조회 <br/>
+        [qms]: 품질검사항목 조회
+      schema:
+        type: string
+        format: string
+
   responses:
     200:
       description: Read OK
@@ -62,6 +74,8 @@ get:
                             - $ref: ../../schemas/std/insp-item.schema.yaml#/insp_method_uuid
                             - $ref: ../../schemas/std/insp-method.schema.yaml#/insp_method_cd
                             - $ref: ../../schemas/std/insp-method.schema.yaml#/insp_method_nm
+                            - $ref: ../../schemas/std/insp-item.schema.yaml#/eqm_fg
+                            - $ref: ../../schemas/std/insp-item.schema.yaml#/qms_fg
                             - $ref: ../../schemas/common/timestamp.schema.yaml
     500:
       $ref: ../../responses/common/general-error.response.yaml
@@ -80,6 +94,8 @@ post:
             - factory_uuid
             - insp_item_cd
             - insp_item_nm
+            - eqm_fg
+            - qms_fg
           allOf:
             - $ref: ../../schemas/std/insp-item.schema.yaml#/factory_uuid
             - $ref: ../../schemas/std/insp-item.schema.yaml#/insp_item_type_uuid
@@ -87,6 +103,8 @@ post:
             - $ref: ../../schemas/std/insp-item.schema.yaml#/insp_item_nm
             - $ref: ../../schemas/std/insp-item.schema.yaml#/insp_tool_uuid
             - $ref: ../../schemas/std/insp-item.schema.yaml#/insp_method_uuid
+            - $ref: ../../schemas/std/insp-item.schema.yaml#/eqm_fg
+            - $ref: ../../schemas/std/insp-item.schema.yaml#/qms_fg
   responses:
     201:
       $ref: ../../responses/common/succeed-create.response.yaml
@@ -107,6 +125,8 @@ put:
             - uuid
             - insp_item_cd
             - insp_item_nm
+            - eqm_fg
+            - qms_fg
           allOf:
             - $ref: ../../schemas/std/insp-item.schema.yaml#/uuid
             - $ref: ../../schemas/std/insp-item.schema.yaml#/insp_item_type_uuid
@@ -114,6 +134,8 @@ put:
             - $ref: ../../schemas/std/insp-item.schema.yaml#/insp_item_nm
             - $ref: ../../schemas/std/insp-item.schema.yaml#/insp_tool_uuid
             - $ref: ../../schemas/std/insp-item.schema.yaml#/insp_method_uuid
+            - $ref: ../../schemas/std/insp-item.schema.yaml#/eqm_fg
+            - $ref: ../../schemas/std/insp-item.schema.yaml#/qms_fg
   responses:
     201:
       $ref: ../../responses/common/succeed-update.response.yaml
@@ -139,6 +161,8 @@ patch:
             - $ref: ../../schemas/std/insp-item.schema.yaml#/insp_item_nm
             - $ref: ../../schemas/std/insp-item.schema.yaml#/insp_tool_uuid
             - $ref: ../../schemas/std/insp-item.schema.yaml#/insp_method_uuid
+            - $ref: ../../schemas/std/insp-item.schema.yaml#/eqm_fg
+            - $ref: ../../schemas/std/insp-item.schema.yaml#/qms_fg
   responses:
     201:
       $ref: ../../responses/common/succeed-update.response.yaml
