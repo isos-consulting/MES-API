@@ -255,7 +255,23 @@ accumulated_qty:
   type: object
   properties: 
     accumulated_qty:
-      description: 누적수량
+      description: 누적 양품수량
+      type: number
+      format: numeric(19, 6)
+
+accumulated_reject_qty: 
+  type: object
+  properties: 
+    accumulated_reject_qty:
+      description: 누적 부적합수량
+      type: number
+      format: numeric(19, 6)
+
+accumulated_total_qty: 
+  type: object
+  properties: 
+    accumulated_total_qty:
+      description: 누적 생산수량
       type: number
       format: numeric(19, 6)
 

@@ -64,6 +64,8 @@ const readOrders = (
       p_o.plan_qty,
       p_o.qty,
       p_w.qty as accumulated_qty,
+      p_w.reject_qty as accumulated_reject_qty,
+      p_w.qty + p_w.reject_qty as accumulated_total_qty,
       p_o.seq,
       s_sf.uuid as shift_uuid,
       s_sf.shift_nm,
@@ -103,7 +105,7 @@ const readOrders = (
     LEFT JOIN std_worker_group_tb s_wg ON s_wg.worker_group_id = p_o.worker_group_id
     LEFT JOIN sal_order_detail_tb s_od ON s_od.order_detail_id = p_o.sal_order_detail_id
     LEFT JOIN sal_order_tb s_o ON s_o.order_id = s_od.order_id
-    LEFT JOIN (	SELECT p_w.order_id, sum(COALESCE(p_w.qty, 0)) AS qty
+    LEFT JOIN (	SELECT p_w.order_id, sum(COALESCE(p_w.qty, 0)) AS qty, sum(COALESCE(p_w.reject_qty, 0)) AS reject_qty
           FROM prd_work_tb p_w
           GROUP BY p_w.order_id ) p_w ON p_w.order_id = p_o.order_id
     LEFT JOIN (	SELECT p_ow.order_id, count(p_ow.*) AS cnt 

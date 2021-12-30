@@ -126,6 +126,9 @@ get:
                             - $ref: ../../schemas/prd/work.schema.yaml#/work_time
                             - $ref: ../../schemas/prd/work.schema.yaml#/shift_uuid
                             - $ref: ../../schemas/std/shift.schema.yaml#/shift_nm
+                            - $ref: ../../schemas/prd/order.schema.yaml#/worker_group_uuid
+                            - $ref: ../../schemas/std/worker-group.schema.yaml#/worker_group_cd
+                            - $ref: ../../schemas/std/worker-group.schema.yaml#/worker_group_nm
                             - $ref: ../../schemas/prd/work.schema.yaml#/worker_cnt
                             - $ref: ../../schemas/std/worker.schema.yaml#/worker_nm
                             - $ref: ../../schemas/prd/work.schema.yaml#/complete_state
