@@ -79,7 +79,7 @@ purchase_date:
     purchase_date:
       description: 구매 일자
       type: string
-      format: date-time
+      format: date
 
 weight:
   type: object
