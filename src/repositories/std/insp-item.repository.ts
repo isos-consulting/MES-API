@@ -105,7 +105,7 @@ class StdInspItemRepo {
         where: {
           [Op.or]: [
             { eqm_fg: params.eqm_fg ?? false },
-            { prd_fg: params.prd_fg ?? false }
+            { qms_fg: params.qms_fg ?? false }
           ]
         },
         order: [ 'factory_id', 'insp_item_type_id', 'insp_item_id' ],
