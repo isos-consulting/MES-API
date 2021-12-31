@@ -145,7 +145,20 @@ const seedDatas: IAdmPatternOpt[] = [
 		created_uid : 1,
 		updated_uid : 1,
 		uuid : "8fa7fc3b-c4f2-437d-96c2-9ff7637b8c98"
-	}
+	},
+	{
+		pattern_opt_id : 12,
+		pattern_opt_cd : "EQM_INSP_INSP_NO",
+		pattern_opt_nm : "설비검사기준서번호",
+		table_nm : "EQM_INSP_TB",
+		auto_fg : true,
+		col_nm : "insp_no",
+		pattern : "{YYYY}{MM}{DD}{0000}",
+		sortby : 12,
+		created_uid : 1,
+		updated_uid : 1,
+		uuid : "cc9d3b37-5af9-44c5-8bea-4c6a94a9484f"
+	},
 ]
 
 const baseMigration = new BaseMigration('AdmPatternOpt', 'pattern_opt_id', seedDatas);
