@@ -81,6 +81,9 @@ get:
                             - $ref: ../../schemas/std/location.schema.yaml#/to_location_nm
                             - $ref: ../../schemas/prd/order.schema.yaml#/plan_qty
                             - $ref: ../../schemas/prd/order.schema.yaml#/qty
+                            - $ref: ../../schemas/prd/order.schema.yaml#/accumulated_qty
+                            - $ref: ../../schemas/prd/order.schema.yaml#/accumulated_reject_qty
+                            - $ref: ../../schemas/prd/order.schema.yaml#/accumulated_total_qty
                             - $ref: ../../schemas/prd/order.schema.yaml#/seq
                             - $ref: ../../schemas/prd/order.schema.yaml#/shift_uuid
                             - $ref: ../../schemas/std/shift.schema.yaml#/shift_nm

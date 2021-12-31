@@ -1,65 +1,129 @@
 # STD_EQUIP_TB
 
 # Columns
-equip_id: 
+equip_id:
   type: object
-  properties: 
+  properties:
     equip_id:
       description: 설비ID
       type: number
       format: int4
 
-factory_id: 
+factory_id:
   type: object
-  properties: 
+  properties:
     factory_id:
       description: 공장ID
       type: number
       format: int4
 
-equip_type_id: 
+equip_type_id:
   type: object
-  properties: 
+  properties:
     equip_type_id:
       description: 설비유형ID
       type: number
       format: int4
-      
-equip_cd: 
+
+equip_cd:
   type: object
-  properties: 
+  properties:
     equip_cd:
       description: 설비코드
       type: string
       format: varchar(20)
 
-equip_nm: 
+equip_nm:
   type: object
-  properties: 
+  properties:
     equip_nm:
       description: 설비명
       type: string
       format: varchar(50)
 
-use_fg: 
+equip_model:
   type: object
-  properties: 
+  properties:
+    equip_model:
+      description: 설비모델명
+      type: string
+      format: varchar(50)
+
+equip_std:
+  type: object
+  properties:
+    equip_std:
+      description: 설비규격
+      type: string
+      format: varchar(50)
+
+equip_spec:
+  type: object
+  properties:
+    equip_spec:
+      description: 설비제원
+      type: string
+      format: varchar(50)
+
+manufacturer:
+  type: object
+  properties:
+    manufacturer:
+      description: 제조사
+      type: string
+      format: varchar(50)
+
+purchase_partner:
+  type: object
+  properties:
+    purchase_partner:
+      description: 구매업체
+      type: string
+      format: varchar(50)
+
+purchase_date:
+  type: object
+  properties:
+    purchase_date:
+      description: 구매일자
+      type: string
+      format: date
+
+purchase_tel:
+  type: object
+  properties:
+    purchase_tel:
+      description: 구매업체연락처
+      type: string
+      format: varchar(50)
+
+purchase_price:
+  type: object
+  properties:
+    purchase_price:
+      description: 구매금액
+      type: number
+      format: numeric(19, 6)
+
+use_fg:
+  type: object
+  properties:
     use_fg:
       description: 사용여부
       type: boolean
       format: boolean
 
-prd_fg: 
+prd_fg:
   type: object
-  properties: 
+  properties:
     prd_fg:
       description: 생산설비여부
       type: boolean
       format: boolean
 
-remark: 
+remark:
   type: object
-  properties: 
+  properties:
     remark:
       description: 비고
       type: string
@@ -67,7 +131,7 @@ remark:
 
 uuid:
   type: object
-  properties: 
+  properties:
     uuid:
       description: 설비UUID
       type: string
@@ -76,7 +140,7 @@ uuid:
 # Uuids
 equip_uuid:
   type: object
-  properties: 
+  properties:
     equip_uuid:
       description: 설비UUID
       type: string
@@ -84,7 +148,7 @@ equip_uuid:
 
 factory_uuid:
   type: object
-  properties: 
+  properties:
     factory_uuid:
       description: 공장UUID
       type: string
@@ -92,7 +156,7 @@ factory_uuid:
 
 equip_type_uuid:
   type: object
-  properties: 
+  properties:
     equip_type_uuid:
       description: 설비유형UUID
       type: string

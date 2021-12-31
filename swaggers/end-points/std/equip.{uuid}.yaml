@@ -18,7 +18,7 @@ get:
       description: Read OK
       content:
         application/json:
-          schema: 
+          schema:
             allOf:
               - $ref: ../../schemas/common/default-response.schema.yaml
               - type: object
@@ -31,7 +31,7 @@ get:
                         description: Enable
                         type: object
                         properties:
-                          count: 
+                          count:
                             description: 영향받은 데이터의 개수
                             type: number
                             format: int32
@@ -50,6 +50,14 @@ get:
                             - $ref: ../../schemas/std/equip-type.schema.yaml#/equip_type_nm
                             - $ref: ../../schemas/std/equip.schema.yaml#/equip_cd
                             - $ref: ../../schemas/std/equip.schema.yaml#/equip_nm
+                            - $ref: ../../schemas/std/equip.schema.yaml#/equip_model
+                            - $ref: ../../schemas/std/equip.schema.yaml#/equip_std
+                            - $ref: ../../schemas/std/equip.schema.yaml#/equip_spec
+                            - $ref: ../../schemas/std/equip.schema.yaml#/manufacturer
+                            - $ref: ../../schemas/std/equip.schema.yaml#/purchase_partner
+                            - $ref: ../../schemas/std/equip.schema.yaml#/purchase_date
+                            - $ref: ../../schemas/std/equip.schema.yaml#/purchase_tel
+                            - $ref: ../../schemas/std/equip.schema.yaml#/purchase_price
                             - $ref: ../../schemas/std/equip.schema.yaml#/use_fg
                             - $ref: ../../schemas/std/equip.schema.yaml#/prd_fg
                             - $ref: ../../schemas/std/equip.schema.yaml#/remark

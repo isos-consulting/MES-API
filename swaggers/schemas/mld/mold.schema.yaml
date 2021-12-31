@@ -114,6 +114,14 @@ uuid:
       format: uuid
 
 # Uuids
+mold_uuid:
+  type: object
+  properties:
+    mold_uuid:
+      description: 금형UUID
+      type: string
+      format: uuid
+
 factory_uuid:
   type: object
   properties:
@@ -121,4 +129,5 @@ factory_uuid:
       description: 공장UUID
       type: string
       format: uuid
+
 # Others

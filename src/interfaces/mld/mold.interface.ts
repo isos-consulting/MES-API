@@ -8,7 +8,7 @@ export default interface IMldMold {
 	guarantee_cnt?: number,
 	basic_cnt?: number,
 	manufacturer?: string | null, 
-	purchase_date?: Date | null,  
+	purchase_date?: string | null,  
 	weight?: number | null,
 	size?: number | null,
 	use_fg?: boolean, 

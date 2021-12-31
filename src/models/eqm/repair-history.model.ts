@@ -34,7 +34,7 @@ export default class EqmRepairHistory extends Model<IEqmRepairHistory> {
 
 	@Unique('eqm_repair_history_tb_factory_id_equip_id_occur_start_date_un')
 	@ForeignKey(() => StdEquip)
-  @Column({
+  @Column({ 
     comment: '설비ID',
     type: DataType.INTEGER,
     allowNull: false,
