@@ -32,8 +32,6 @@ const eqmRepairHistoryValidation = {
       .isISO8601().toDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'repair_start_date', '수리시작일시')),
     body('*.repair_end_date', '수리종료일시').optional({ nullable: true })
       .isISO8601().toDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'repair_end_date', '수리종료일시')),
-    body('*.repair_time', '수리시간').optional({ nullable: true })
-      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'repair_time', '수리시간')),
     body('*.repair_place', '수리장소').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'repair_place', '수리장소')),
     body('*.repair_price', '수리금액').optional({ nullable: true })
@@ -65,8 +63,6 @@ const eqmRepairHistoryValidation = {
       .isISO8601().toDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'repair_start_date', '수리시작일시')),
     body('*.repair_end_date', '수리종료일시').optional({ nullable: true })
       .isISO8601().toDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'repair_end_date', '수리종료일시')),
-    body('*.repair_time', '수리시간').optional({ nullable: true })
-      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'repair_time', '수리시간')),
     body('*.repair_place', '수리장소').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'repair_place', '수리장소')),
     body('*.repair_price', '수리금액').optional({ nullable: true })
@@ -96,8 +92,6 @@ const eqmRepairHistoryValidation = {
       .isISO8601().toDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'repair_start_date', '수리시작일시')),
     body('*.repair_end_date', '수리종료일시').optional({ nullable: true })
       .isISO8601().toDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'repair_end_date', '수리종료일시')),
-    body('*.repair_time', '수리시간').optional({ nullable: true })
-      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'repair_time', '수리시간')),
     body('*.repair_place', '수리장소').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'repair_place', '수리장소')),
     body('*.repair_price', '수리금액').optional({ nullable: true })
