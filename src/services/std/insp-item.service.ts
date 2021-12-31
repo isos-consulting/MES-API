@@ -63,6 +63,13 @@ class StdInspItemService {
 
   public read = async (params: any) => {
     try {
+      switch (params.type) {
+        case 'all': break;
+        case 'eqm': params.eqm_fg = true; break;
+        case 'qms': params.qms_fg = true; break;
+        default: break;
+      }
+
       const result = await this.repo.read(params);
       return createApiResult(result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
     } catch (error) {

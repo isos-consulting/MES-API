@@ -1,11 +1,19 @@
-import { body, param } from 'express-validator';
+import { body, param, query } from 'express-validator';
 import { errorState } from '../../states/common.state';
 import createValidationError from '../../utils/createValidationError';
 
 const stateTag = 'stdInspItem';
 
 const stdInspItemValidation = {
-  read: [],
+  read: [
+    query('factory_uuid', '공장UUID').optional({ nullable: true })
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'factory_uuid', '공장UUID')),
+    query('insp_item_type_uuid', '검사항목유형UUID').optional({ nullable: true })
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'insp_item_type_uuid', '검사항목유형UUID')),
+    query('type', '검사항목구분')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'type', '검사항목구분'))
+      .isIn(['all', 'eqm', 'qms']).withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'type', '검사항목구분')),
+  ],
   readByUuid: [ 
     param('uuid', '검사항목UUID')
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'uuid', '검사항목UUID'))
