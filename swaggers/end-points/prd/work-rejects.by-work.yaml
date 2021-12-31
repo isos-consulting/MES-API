@@ -1,0 +1,75 @@
+get:
+  description: |
+    생산실적 기준 공정별 부적합 List 및 현재 등록되어있는 부적합 조회
+  summary: 실적-부적합 및 공정별 부적합 목록 조회
+  tags:
+    - 실적-부적합(WorkReject)
+  parameters:
+    - name: work_uuid
+      in: query
+      required: true
+      description: |
+        생산실적의 UUID를 입력하여 생산실적에 따라 실적별 부적합 데이터를 조회합니다.
+      schema:
+        type: string
+        format: uuid
+
+  responses:
+    200:
+      description: Read OK
+      content:
+        application/json:
+          schema: 
+            allOf:
+              - $ref: ../../schemas/common/default-response.schema.yaml
+              - type: object
+                properties:
+                  datas:
+                    description: Enable
+                    type: object
+                    properties:
+                      value:
+                        description: Enable
+                        type: object
+                        properties:
+                          count: 
+                            description: 영향받은 데이터의 개수
+                            type: number
+                            format: int32
+                            minimum: 0
+                      raws:
+                        description: 실적 부적합 및 공정별 부적합 목록
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: ../../schemas/prd/work-reject.schema.yaml#/work_reject_uuid
+                            - $ref: ../../schemas/prd/work-reject.schema.yaml#/factory_uuid
+                            - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
+                            - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
+                            - $ref: ../../schemas/prd/work-reject.schema.yaml#/work_uuid
+                            - $ref: ../../schemas/std/proc.schema.yaml#/proc_uuid
+                            - $ref: ../../schemas/std/proc.schema.yaml#/proc_cd
+                            - $ref: ../../schemas/std/proc.schema.yaml#/proc_nm
+                            - $ref: ../../schemas/std/workings.schema.yaml#/workings_uuid
+                            - $ref: ../../schemas/std/workings.schema.yaml#/workings_cd
+                            - $ref: ../../schemas/std/workings.schema.yaml#/workings_nm
+                            - $ref: ../../schemas/std/equip.schema.yaml#/equip_uuid
+                            - $ref: ../../schemas/std/equip.schema.yaml#/equip_cd
+                            - $ref: ../../schemas/std/equip.schema.yaml#/equip_nm
+                            - $ref: ../../schemas/prd/work-reject.schema.yaml#/reject_uuid
+                            - $ref: ../../schemas/std/reject.schema.yaml#/reject_cd
+                            - $ref: ../../schemas/std/reject.schema.yaml#/reject_nm
+                            - $ref: ../../schemas/std/reject.schema.yaml#/reject_type_uuid
+                            - $ref: ../../schemas/std/reject-type.schema.yaml#/reject_type_cd
+                            - $ref: ../../schemas/std/reject-type.schema.yaml#/reject_type_nm
+                            - $ref: ../../schemas/prd/work-reject.schema.yaml#/qty
+                            - $ref: ../../schemas/prd/work-reject.schema.yaml#/to_store_uuid
+                            - $ref: ../../schemas/std/store.schema.yaml#/to_store_cd
+                            - $ref: ../../schemas/std/store.schema.yaml#/to_store_nm
+                            - $ref: ../../schemas/prd/work-reject.schema.yaml#/to_location_uuid
+                            - $ref: ../../schemas/std/location.schema.yaml#/to_location_cd
+                            - $ref: ../../schemas/std/location.schema.yaml#/to_location_nm
+                            - $ref: ../../schemas/prd/work-reject.schema.yaml#/remark
+                            - $ref: ../../schemas/common/timestamp.schema.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

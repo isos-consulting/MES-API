@@ -10,6 +10,7 @@ import { getSequelize } from '../../utils/getSequelize';
 import PrdWorkReject from '../../models/prd/work-reject.model';
 import IPrdWorkReject from '../../interfaces/prd/work-reject.interface';
 import { readWorkRejectReport } from '../../queries/prd/work-reject-report.query';
+import { readWorkRejectsByWork } from '../../queries/prd/work-reject-by-work.query';
 
 class PrdWorkRejectRepo {
   repo: Repository<PrdWorkReject>;
@@ -261,6 +262,17 @@ class PrdWorkRejectRepo {
     converted.raws.forEach((raw: any) => { workRejectIds.push(raw.work_reject_id); });
 
     return workRejectIds;
+  };
+
+  // 📒 Fn[readByWork]: 생산실적 기준 공정별 부적합 List 및 현재 등록되어있는 부적합 조회
+  public readByWork = async(params?: any) => {
+    try {
+      const result = await this.sequelize.query(readWorkRejectsByWork(params));
+
+      return convertReadResult(result[0]);
+    } catch (error) {
+      throw error;
+    }
   };
 
   //#endregion
