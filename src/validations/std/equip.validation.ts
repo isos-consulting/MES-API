@@ -1,0 +1,128 @@
+
+import { body, param } from 'express-validator';
+import { errorState } from '../../states/common.state';
+import createValidationError from '../../utils/createValidationError';
+
+const stateTag = 'stdEquip';
+   
+const stdEquipValidation = {
+  read: [],
+  readByUuid: [ 
+    param('uuid', '설비UUID')
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'uuid', '설비UUID'))
+  ],
+  create: [
+    body('*.factory_uuid', '공장UUID')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'factory_uuid', '공장UUID'))
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'factory_uuid', '공장UUID')),
+    body('*.equip_type_uuid', '설비유형UUID').optional({ nullable: true })
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'equip_type_uuid', '설비유형UUID')),
+    body('*.equip_cd', '설비코드')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'equip_cd', '설비코드'))
+      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'equip_cd', '설비코드')),
+    body('*.equip_nm', '설비명')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'equip_nm', '설비명'))
+      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'equip_nm', '설비명')),
+    body('*.equip_model', '설비모델명').optional({ nullable: true })
+      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'equip_model', '설비모델명')),
+    body('*.equip_std', '설비규격').optional({ nullable: true })
+      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'equip_std', '설비규격')),
+    body('*.equip_spec', '설비제원').optional({ nullable: true })
+      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'equip_spec', '설비제원')),
+    body('*.manufacturer', '제조사').optional({ nullable: true })
+      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'equip_spec', '제조사')),
+    body('*.purchase_partner', '구매업체').optional({ nullable: true })
+      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'purchase_partner', '구매업체')),
+    body('*.purchase_date', '구매일자').optional({ nullable: true })
+      .isDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'purchase_partner', '구매일자')),
+    body('*.purchase_tel', '구매업체연락처').optional({ nullable: true })
+      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'purchase_tel', '구매업체연락처')),
+    body('*.purchase_price', '구매금액').optional({ nullable: true })
+      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'purchase_price', '구매금액')),
+    body('*.use_fg', '사용유무')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'use_fg', '사용유무'))
+      .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'use_fg', '사용유무')),
+    body('*.prd_fg', '생산설비여부')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'prd_fg', '생산설비여부'))
+      .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'prd_fg', '생산설비여부')),
+    body('*.remark', '비고').optional({ nullable: true })
+      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'remark', '비고'))
+  ],
+  update: [
+    body('*.uuid', '설비UUID')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '설비UUID'))
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '설비UUID')),
+    body('*.equip_type_uuid', '설비유형UUID').optional({ nullable: true })
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'equip_type_uuid', '설비유형UUID')),
+    body('*.equip_cd', '설비코드')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'equip_cd', '설비코드'))
+      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'equip_cd', '설비코드')),
+    body('*.equip_nm', '설비명')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'equip_nm', '설비명'))
+      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'equip_nm', '설비명')),
+    body('*.equip_model', '설비모델명').optional({ nullable: true })
+      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'equip_model', '설비모델명')),
+    body('*.equip_std', '설비규격').optional({ nullable: true })
+      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'equip_std', '설비규격')),
+    body('*.equip_spec', '설비제원').optional({ nullable: true })
+      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'equip_spec', '설비제원')),
+    body('*.manufacturer', '제조사').optional({ nullable: true })
+      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'equip_spec', '제조사')),
+    body('*.purchase_partner', '구매업체').optional({ nullable: true })
+      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'purchase_partner', '구매업체')),
+    body('*.purchase_date', '구매일자').optional({ nullable: true })
+      .isDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'purchase_partner', '구매일자')),
+    body('*.purchase_tel', '구매업체연락처').optional({ nullable: true })
+      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'purchase_tel', '구매업체연락처')),
+    body('*.purchase_price', '구매금액').optional({ nullable: true })
+      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'purchase_price', '구매금액')),
+    body('*.use_fg', '사용유무')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'use_fg', '사용유무'))
+      .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'use_fg', '사용유무')),
+    body('*.prd_fg', '생산설비여부')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'prd_fg', '생산설비여부'))
+      .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'prd_fg', '생산설비여부')),
+    body('*.remark', '비고').optional({ nullable: true })
+      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'remark', '비고'))
+  ],
+  patch: [
+    body('*.uuid', '설비UUID')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '설비UUID'))
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '설비UUID')),
+    body('*.equip_type_uuid', '설비유형UUID').optional({ nullable: true })
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'equip_type_uuid', '설비유형UUID')),
+    body('*.equip_cd', '설비코드').optional({ nullable: true })
+      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'equip_cd', '설비코드')),
+    body('*.equip_nm', '설비명').optional({ nullable: true })
+      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'equip_nm', '설비명')),
+    body('*.equip_model', '설비모델명').optional({ nullable: true })
+      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'equip_model', '설비모델명')),
+    body('*.equip_std', '설비규격').optional({ nullable: true })
+      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'equip_std', '설비규격')),
+    body('*.equip_spec', '설비제원').optional({ nullable: true })
+      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'equip_spec', '설비제원')),
+    body('*.manufacturer', '제조사').optional({ nullable: true })
+      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'equip_spec', '제조사')),
+    body('*.purchase_partner', '구매업체').optional({ nullable: true })
+      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'purchase_partner', '구매업체')),
+    body('*.purchase_date', '구매일자').optional({ nullable: true })
+      .isDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'purchase_partner', '구매일자')),
+    body('*.purchase_tel', '구매업체연락처').optional({ nullable: true })
+      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'purchase_tel', '구매업체연락처')),
+    body('*.purchase_price', '구매금액').optional({ nullable: true })
+      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'purchase_price', '구매금액')),
+    body('*.use_fg', '사용유무').optional({ nullable: true })
+      .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'use_fg', '사용유무')),
+    body('*.prd_fg', '생산설비여부').optional({ nullable: true })
+      .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'prd_fg', '생산설비여부')),
+    body('*.remark', '비고').optional({ nullable: true })
+      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'remark', '비고'))
+    ],
+  delete: [
+    body('*.uuid', '설비UUID')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '설비UUID'))
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '설비UUID')),
+  ],
+};
+
+export default stdEquipValidation;

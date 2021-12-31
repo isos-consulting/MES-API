@@ -69,6 +69,9 @@ const readWorks = (
       p_w.work_time,
       s_sf.uuid as shift_uuid,
       s_sf.shift_nm,
+      s_wg.uuid as worker_group_uuid,
+      s_wg.worker_group_cd,
+      s_wg.worker_group_nm,
       CAST(COALESCE(p_ww.cnt,0) AS int) as worker_cnt,
       p_ww1.worker_nm,
       CASE WHEN p_w.complete_fg = TRUE THEN '완료' ELSE '미완료' END as complete_state,
@@ -89,6 +92,7 @@ const readWorks = (
       a_uu.user_nm as updated_nm
     FROM prd_work_tb p_w
     JOIN prd_order_tb p_o ON p_o.order_id = p_w.order_id
+    LEFT JOIN std_worker_group_tb s_wg ON s_wg.worker_group_id = p_o.worker_group_id
     JOIN std_factory_tb s_f ON s_f.factory_id = p_w.factory_id
     JOIN std_proc_tb s_pc ON s_pc.proc_id = p_w.proc_id
     JOIN std_workings_tb s_ws ON s_ws.workings_id = p_w.workings_id

@@ -43,6 +43,9 @@ import StdWorkerGroupWorkerCtl from '../controllers/std/worker-group-worker.cont
 import StdWorkerGroupCtl from '../controllers/std/worker-group.controller';
 import StdWorkerCtl from '../controllers/std/worker.controller';
 import StdWorkingsCtl from '../controllers/std/workings.controller';
+import validationCallback from '../utils/validationCallback';
+import stdEquipValidation from '../validations/std/equip.validation';
+import stdInspItemValidation from '../validations/std/insp-item.validation';
 
 const router = express.Router();
 
@@ -125,13 +128,12 @@ router.route('/insp-item-types').delete(inspItemType.delete);
 
 //#region ✅ InspItem (검사항목)
 const inspItem = new StdInspItemCtl();
-router.route('/insp-items/excel-upload').post(inspItem.upsertBulkDatasFromExcel);
-router.route('/insp-item/:uuid').get(inspItem.read);
-router.route('/insp-items').get(inspItem.read);
-router.route('/insp-items').post(inspItem.create);
-router.route('/insp-items').put(inspItem.update);
-router.route('/insp-items').patch(inspItem.patch);
-router.route('/insp-items').delete(inspItem.delete);
+router.route('/insp-item/:uuid').get(stdInspItemValidation.readByUuid, validationCallback, inspItem.read);
+router.route('/insp-items').get(stdInspItemValidation.read, validationCallback, inspItem.read);
+router.route('/insp-items').post(stdInspItemValidation.create, validationCallback, inspItem.create);
+router.route('/insp-items').put(stdInspItemValidation.update, validationCallback, inspItem.update);
+router.route('/insp-items').patch(stdInspItemValidation.patch, validationCallback, inspItem.patch);
+router.route('/insp-items').delete(stdInspItemValidation.delete, validationCallback, inspItem.delete);
 //#endregion
 
 //#region ✅ CustomerPrice (고객사 단가)
@@ -345,13 +347,13 @@ router.route('/equip-types').delete(equipType.delete);
 
 //#region ✅ Equip (설비)
 const equip = new StdEquipCtl();
-router.route('/equips/excel-upload').post(equip.upsertBulkDatasFromExcel);
-router.route('/equip/:uuid').get(equip.read);
-router.route('/equips').get(equip.read);
-router.route('/equips').post(equip.create);
-router.route('/equips').put(equip.update);
-router.route('/equips').patch(equip.patch);
-router.route('/equips').delete(equip.delete);
+// router.route('/equips/excel-upload').post(equip.upsertBulkDatasFromExcel);
+router.route('/equip/:uuid').get(stdEquipValidation.readByUuid, validationCallback, equip.readByUuid);
+router.route('/equips').get(stdEquipValidation.read, validationCallback, equip.read);
+router.route('/equips').post(stdEquipValidation.create, validationCallback, equip.create);
+router.route('/equips').put(stdEquipValidation.update, validationCallback, equip.update);
+router.route('/equips').patch(stdEquipValidation.patch, validationCallback, equip.patch);
+router.route('/equips').delete(stdEquipValidation.delete, validationCallback, equip.delete);
 //#endregion
 
 //#region ✅ Location (위치)

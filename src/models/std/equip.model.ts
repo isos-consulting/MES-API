@@ -54,12 +54,60 @@ export default class StdEquip extends Model<IStdEquip> {
   equip_nm: string;
 
   @Column({
+    comment: '설비모델명',
+    type: DataType.STRING(50),
+  })
+  equip_model: string;
+
+	@Column({
+    comment: '설비규격',
+    type: DataType.STRING(50),
+  })
+  equip_std: string;
+
+	@Column({
+    comment: '설비제원',
+    type: DataType.STRING(50),
+  })
+  equip_spec: string;
+
+	@Column({
+    comment: '제조사',
+    type: DataType.STRING(50),
+  })
+  manufacturer: string;
+
+	@Column({
+    comment: '구매업체',
+    type: DataType.STRING(50),
+  })
+  purchase_partner: string;
+
+	@Column({
+    comment: '구매일자',
+    type: DataType.DATEONLY,
+  })
+  purchase_date: Date;
+
+	@Column({
+    comment: '구매업체 연락처',
+    type: DataType.STRING(50),
+  })
+  purchase_tel: string;
+
+	@Column({
+    comment: '구매금액',
+    type: DataType.DECIMAL(19, 6),
+  })
+  purchase_price: number;
+  
+  @Column({
     comment: '사용여부',
     type: DataType.BOOLEAN,
     allowNull: false,
     defaultValue: true
   })
-  use_fg: string;
+  use_fg: boolean;
 
   @Column({
     comment: '생산설비여부',
@@ -67,7 +115,7 @@ export default class StdEquip extends Model<IStdEquip> {
     allowNull: false,
     defaultValue: true
   })
-  prd_fg: string;
+  prd_fg: boolean;
 
   @Column({
     comment: '비고',

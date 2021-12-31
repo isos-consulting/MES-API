@@ -1,0 +1,138 @@
+get:
+  description: |
+    주기단위 데이터 목록을 조회합니다.
+  summary: 주기단위 데이터 조회
+  tags:
+    - 주기단위(CycleUnit)
+
+  responses:
+    200:
+      description: Read OK
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: ../../schemas/common/default-response.schema.yaml
+              - type: object
+                properties:
+                  datas:
+                    description: Enable
+                    type: object
+                    properties:
+                      value:
+                        description: Enable
+                        type: object
+                        properties:
+                          count:
+                            description: 영향받은 데이터의 개수
+                            type: number
+                            format: int32
+                            minimum: 0
+                      raws:
+                        description: 주기단위 데이터 목록
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: ../../schemas/adm/cycle-unit.schema.yaml#/cycle_unit_uuid
+                            - $ref: ../../schemas/adm/cycle-unit.schema.yaml#/cycle_unit_cd
+                            - $ref: ../../schemas/adm/cycle-unit.schema.yaml#/cycle_unit_nm
+                            - $ref: ../../schemas/adm/cycle-unit.schema.yaml#/format
+                            - $ref: ../../schemas/adm/cycle-unit.schema.yaml#/sortby
+                            - $ref: ../../schemas/common/timestamp.schema.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml
+
+post:
+  description: |
+    주기단위 데이터를 생성합니다.
+  summary: 주기단위 데이터 생성
+  tags:
+    - 주기단위(CycleUnit)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - cycle_unit_cd
+            - cycle_unit_nm
+            - format
+          allOf:
+            - $ref: ../../schemas/adm/cycle-unit.schema.yaml#/cycle_unit_cd
+            - $ref: ../../schemas/adm/cycle-unit.schema.yaml#/cycle_unit_nm
+            - $ref: ../../schemas/adm/cycle-unit.schema.yaml#/format
+            - $ref: ../../schemas/adm/cycle-unit.schema.yaml#/sortby
+  responses:
+    201:
+      $ref: ../../responses/common/succeed-create.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml
+
+put:
+  description: |
+    주기단위 데이터를 행(Row) 단위로 수정합니다.
+  summary: 주기단위 데이터 수정
+  tags:
+    - 주기단위(CycleUnit)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - uuid
+            - cycle_unit_cd
+            - cycle_unit_nm
+            - format
+          allOf:
+            - $ref: ../../schemas/adm/cycle-unit.schema.yaml#/uuid
+            - $ref: ../../schemas/adm/cycle-unit.schema.yaml#/cycle_unit_cd
+            - $ref: ../../schemas/adm/cycle-unit.schema.yaml#/cycle_unit_nm
+            - $ref: ../../schemas/adm/cycle-unit.schema.yaml#/format
+            - $ref: ../../schemas/adm/cycle-unit.schema.yaml#/sortby
+  responses:
+    201:
+      $ref: ../../responses/common/succeed-update.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml
+
+patch:
+  description: |
+    주기단위 데이터를 개별 항목 단위로 수정합니다.
+  summary: 주기단위 데이터 수정
+  tags:
+    - 주기단위(CycleUnit)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - uuid
+          allOf:
+            - $ref: ../../schemas/adm/cycle-unit.schema.yaml#/uuid
+            - $ref: ../../schemas/adm/cycle-unit.schema.yaml#/cycle_unit_cd
+            - $ref: ../../schemas/adm/cycle-unit.schema.yaml#/cycle_unit_nm
+            - $ref: ../../schemas/adm/cycle-unit.schema.yaml#/format
+  responses:
+    201:
+      $ref: ../../responses/common/succeed-update.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml
+
+delete:
+  description: |
+    주기단위 데이터를 삭제합니다.
+  summary: 주기단위 데이터 삭제
+  tags:
+    - 주기단위(CycleUnit)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - uuid
+          allOf:
+            - $ref: ../../schemas/adm/cycle-unit.schema.yaml#/uuid
+  responses:
+    200:
+      $ref: ../../responses/common/succeed-delete.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

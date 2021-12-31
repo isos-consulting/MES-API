@@ -1,0 +1,60 @@
+# ADM_CYCLE_UNIT_TB
+
+# Columns
+cycle_unit_id:
+  type: object
+  properties:
+    cycle_unit_id:
+      description: 주기단위ID
+      type: number
+      format: int4
+
+cycle_unit_cd:
+  type: object
+  properties:
+    cycle_unit_cd:
+      description: 주기단위코드
+      type: string
+      format: varchar(20)
+
+cycle_unit_nm:
+  type: object
+  properties:
+    cycle_unit_nm:
+      description: 주기단위명
+      type: string
+      format: varchar(50)
+
+format:
+  type: object
+  properties:
+    format:
+      description: 주기변환포맷
+      type: string
+      format: varchar(20)
+
+sortby:
+  type: object
+  properties:
+    sortby:
+      description: 정렬
+      type: number
+      format: int4
+
+uuid:
+  type: object
+  properties:
+    uuid:
+      description: 주기단위UUID
+      type: string
+      format: uuid
+
+# Uuids
+cycle_unit_uuid:
+  type: object
+  properties:
+    cycle_unit_uuid:
+      description: 주기단위UUID
+      type: string
+      format: uuid
+

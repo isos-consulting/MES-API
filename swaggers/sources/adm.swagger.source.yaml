@@ -86,6 +86,12 @@ paths:
   /adm/demand-types:
     $ref: ../end-points/adm/demand-types.yaml
 
+  # ✅ DailyInspCycle (일상점검주기)
+  /adm/daily-insp-cycle/{uuid}:
+    $ref: ../end-points/adm/daily-insp-cycle.{uuid}.yaml
+  /adm/daily-insp-cycles:
+    $ref: ../end-points/adm/daily-insp-cycles.yaml
+
   # ✅ PatternOpt (자동번호발행 옵션)
   /adm/pattern-opt/{uuid}:
     $ref: ../end-points/adm/pattern-opt.{uuid}.yaml
@@ -97,6 +103,12 @@ paths:
     $ref: ../end-points/adm/rework-type.{uuid}.yaml
   /adm/rework-types:
     $ref: ../end-points/adm/rework-types.yaml
+
+  # ✅ CycleUnit (주기유형)
+  /adm/cycle-unit/{uuid}:
+    $ref: ../end-points/adm/cycle-unit.{uuid}.yaml
+  /adm/cycle-units:
+    $ref: ../end-points/adm/cycle-units.yaml
 
   # ✅ StoreType (창고 유형)
   /adm/store-type/{uuid}:
@@ -110,14 +122,14 @@ paths:
   /adm/file-mgmts:
     $ref: ../end-points/adm/file-mgmts.yaml
 
-  # ✅ CompanyOpt (회사 옵션)
-  /adm/company-opt/{uuid}:
-    $ref: ../end-points/adm/company-opt.{uuid}.yaml
-  /adm/company-opts:
-    $ref: ../end-points/adm/company-opts.yaml
-
   # ✅ FileMgmtType (파일관리유형)
   /adm/file-mgmt-type/{uuid}:
     $ref: ../end-points/adm/file-mgmt-type.{uuid}.yaml
   /adm/file-mgmt-types:
     $ref: ../end-points/adm/file-mgmt-types.yaml
+
+  # ✅ CompanyOpt (회사 옵션)
+  /adm/company-opt/{uuid}:
+    $ref: ../end-points/adm/company-opt.{uuid}.yaml
+  /adm/company-opts:
+    $ref: ../end-points/adm/company-opts.yaml

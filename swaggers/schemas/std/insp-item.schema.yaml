@@ -57,6 +57,22 @@ insp_method_id:
       type: number
       format: int4
 
+eqm_fg: 
+  type: object
+  properties: 
+    eqm_fg:
+      description: 설비검사항목 여부
+      type: boolean
+      format: boolean
+
+qms_fg: 
+  type: object
+  properties: 
+    qms_fg:
+      description: 품질검사항목 여부
+      type: boolean
+      format: boolean
+
 uuid:
   type: object
   properties: 

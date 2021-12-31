@@ -1,0 +1,52 @@
+# ADM_DAILY_INSP_CYCLE_TB
+
+# Columns
+daily_insp_cycle_id:
+  type: object
+  properties:
+    daily_insp_cycle_id:
+      description: 일상점검주기ID
+      type: number
+      format: int4
+
+daily_insp_cycle_cd:
+  type: object
+  properties:
+    daily_insp_cycle_cd:
+      description: 일상점검주기코드
+      type: string
+      format: varchar(20)
+
+daily_insp_cycle_nm:
+  type: object
+  properties:
+    daily_insp_cycle_nm:
+      description: 일상점검주기명
+      type: string
+      format: varchar(50)
+
+sortby:
+  type: object
+  properties:
+    sortby:
+      description: 정렬
+      type: number
+      format: int4
+
+uuid:
+  type: object
+  properties:
+    uuid:
+      description: 일상점검주기UUID
+      type: string
+      format: uuid
+
+# Uuids
+daily_insp_cycle_uuid:
+  type: object
+  properties:
+    daily_insp_cycle_uuid:
+      description: 일상점검주기UUID
+      type: string
+      format: uuid
+

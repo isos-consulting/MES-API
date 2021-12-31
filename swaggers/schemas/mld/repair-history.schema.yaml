@@ -114,6 +114,14 @@ uuid:
       format: uuid
 
 # Uuids
+repair_history_uuid:
+  type: object
+  properties:
+    repair_history_uuid:
+      description: 금형 수리이력 관리UUID
+      type: string
+      format: uuid
+
 mold_uuid:
   type: object
   properties:

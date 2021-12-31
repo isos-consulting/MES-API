@@ -57,6 +57,8 @@ paths:
     $ref: ../end-points/prd/works.yaml
 
   # ✅ WorkReject (실적-부적합)
+  /prd/work-rejects/by-work:
+    $ref: ../end-points/prd/work-rejects.by-work.yaml
   /prd/work-rejects/report:
     $ref: ../end-points/prd/work-rejects.report.yaml
   /prd/work-reject/{uuid}:
