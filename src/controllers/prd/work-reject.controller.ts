@@ -141,6 +141,20 @@ class PrdWorkRejectCtl extends BaseCtl {
     }
   };
 
+  // 📒 Fn[readByWork]: 생산실적 기준 공정별 부적합 List 및 현재 등록되어있는 부적합 조회
+  public readByWork = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      const repo = new PrdWorkRejectRepo(req.tenant.uuid);
+      const params = Object.assign(req.query, req.params);
+
+      const result = await repo.readByWork(params);
+      
+      return response(res, result.raws, { count: result.count });
+    } catch (e) {
+      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+    }
+  };
+
   //#endregion
 
   //#region 🟡 Update Functions

@@ -38,6 +38,7 @@ router.route('/work-routings').patch(workRouting.patch);
 
 //#region ✅ WorkReject (실적-부적합)
 const workReject = new PrdWorkRejectCtl();
+router.route('/work-rejects/by-work').get(workReject.readByWork);
 router.route('/work-rejects/report').get(workReject.readReport);
 router.route('/work-reject/:uuid').get(workReject.read);
 router.route('/work-rejects').get(workReject.read);
