@@ -87,7 +87,7 @@ purchase_date:
     purchase_date:
       description: 구매일자
       type: string
-      format: date-time
+      format: date
 
 purchase_tel:
   type: object

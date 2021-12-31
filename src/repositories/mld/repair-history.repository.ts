@@ -74,7 +74,7 @@ class MldRepairHistoryRepo {
 					{ 
             model: this.sequelize.models.StdProd, 
             attributes: [], 
-            required: true,
+            required: false,
             include: [
               { model: this.sequelize.models.StdItemType, attributes: [], required: false },
               { model: this.sequelize.models.StdProdType, attributes: [], required: false },
@@ -154,7 +154,7 @@ class MldRepairHistoryRepo {
 					{ 
             model: this.sequelize.models.StdProd, 
             attributes: [], 
-            required: true,
+            required: false,
             include: [
               { model: this.sequelize.models.StdItemType, attributes: [], required: false },
               { model: this.sequelize.models.StdProdType, attributes: [], required: false },
