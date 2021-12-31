@@ -93,7 +93,6 @@ post:
             - $ref: ../../schemas/eqm/repair-history.schema.yaml#/occur_contents
             - $ref: ../../schemas/eqm/repair-history.schema.yaml#/repair_start_date
             - $ref: ../../schemas/eqm/repair-history.schema.yaml#/repair_end_date
-            - $ref: ../../schemas/eqm/repair-history.schema.yaml#/repair_time
             - $ref: ../../schemas/eqm/repair-history.schema.yaml#/repair_place
             - $ref: ../../schemas/eqm/repair-history.schema.yaml#/repair_price
             - $ref: ../../schemas/eqm/repair-history.schema.yaml#/check_date
@@ -128,7 +127,6 @@ put:
             - $ref: ../../schemas/eqm/repair-history.schema.yaml#/occur_contents
             - $ref: ../../schemas/eqm/repair-history.schema.yaml#/repair_start_date
             - $ref: ../../schemas/eqm/repair-history.schema.yaml#/repair_end_date
-            - $ref: ../../schemas/eqm/repair-history.schema.yaml#/repair_time
             - $ref: ../../schemas/eqm/repair-history.schema.yaml#/repair_place
             - $ref: ../../schemas/eqm/repair-history.schema.yaml#/repair_price
             - $ref: ../../schemas/eqm/repair-history.schema.yaml#/check_date
@@ -161,7 +159,6 @@ patch:
             - $ref: ../../schemas/eqm/repair-history.schema.yaml#/occur_contents
             - $ref: ../../schemas/eqm/repair-history.schema.yaml#/repair_start_date
             - $ref: ../../schemas/eqm/repair-history.schema.yaml#/repair_end_date
-            - $ref: ../../schemas/eqm/repair-history.schema.yaml#/repair_time
             - $ref: ../../schemas/eqm/repair-history.schema.yaml#/repair_place
             - $ref: ../../schemas/eqm/repair-history.schema.yaml#/repair_price
             - $ref: ../../schemas/eqm/repair-history.schema.yaml#/check_date
