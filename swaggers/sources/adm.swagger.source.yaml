@@ -104,7 +104,7 @@ paths:
   /adm/rework-types:
     $ref: ../end-points/adm/rework-types.yaml
 
-  # ✅ CycleUnit (주기유형)
+  # ✅ CycleUnit (주기 단위)
   /adm/cycle-unit/{uuid}:
     $ref: ../end-points/adm/cycle-unit.{uuid}.yaml
   /adm/cycle-units:
