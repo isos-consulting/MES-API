@@ -1,11 +1,14 @@
-import { body, param } from 'express-validator';
+import { body, param, query } from 'express-validator';
 import { errorState } from '../../states/common.state';
 import createValidationError from '../../utils/createValidationError';
 
 const stateTag = 'mldRepairHistory';
 
 const mldRepairHistoryValidation = {
-  read: [],
+  read: [
+		query('factory_uuid', '공장UUID').optional({ nullable: true })
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'factory_uuid', '공장UUID')),
+	],
   readByUuid: [ 
     param('uuid', '금형수리이력UUID')
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'uuid', '금형수리이력UUID'))
