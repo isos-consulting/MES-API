@@ -48,5 +48,13 @@ uuid:
       description: 주기단위UUID
       type: string
       format: uuid
+
 # Uuids
+cycle_unit_uuid:
+  type: object
+  properties:
+    cycle_unit_uuid:
+      description: 주기단위UUID
+      type: string
+      format: uuid
 

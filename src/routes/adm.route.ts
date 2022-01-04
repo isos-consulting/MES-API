@@ -15,6 +15,8 @@ import AdmInspHandlingTypeCtl from '../controllers/adm/insp-handling-type.contro
 import AdmCycleUnitCtl from '../controllers/adm/cycle-unit.controller';
 import admInspDetailTypeValidation from '../validations/adm/insp-detail-type.validation';
 import admCycleUnitValidation from '../validations/adm/cycle-unit.validation';
+import AdmDailyInspCycleCtl from '../controllers/adm/daily-insp-cycle.controller';
+import admDailyInspCycleValidation from '../validations/adm/daily-insp-cycle.validation';
 import validationCallback from '../utils/validationCallback';
 
 const router = express.Router();
@@ -157,6 +159,15 @@ router.route('/cycle-units').post(admCycleUnitValidation.create,validationCallba
 router.route('/cycle-units').put(admCycleUnitValidation.update,validationCallback,cycleUnit.update);
 router.route('/cycle-units').patch(admCycleUnitValidation.patch,validationCallback,cycleUnit.patch);
 router.route('/cycle-units').delete(admCycleUnitValidation.delete,validationCallback,cycleUnit.delete);
+
+//#region ✅ DailyInspCycle (일상점검주기)
+const dailyInspCycle = new AdmDailyInspCycleCtl();
+router.route('/daily-insp-cycle/:uuid').get(admDailyInspCycleValidation.readByUuid, validationCallback, dailyInspCycle.readByUuid);
+router.route('/daily-insp-cycles').get(admDailyInspCycleValidation.read, validationCallback, dailyInspCycle.read);
+router.route('/daily-insp-cycles').post(admDailyInspCycleValidation.create, validationCallback, dailyInspCycle.create);
+router.route('/daily-insp-cycles').put(admDailyInspCycleValidation.update, validationCallback, dailyInspCycle.update);
+router.route('/daily-insp-cycles').patch(admDailyInspCycleValidation.patch, validationCallback, dailyInspCycle.patch);
+router.route('/daily-insp-cycles').delete(admDailyInspCycleValidation.delete, validationCallback, dailyInspCycle.delete);
 //#endregion
 
 export default router;

@@ -29,7 +29,6 @@ get:
       description: |
         데이터 조회시 작업지시 진행상태 유형을 입력합니다. <br/> 
         [all]: 지시내역 전체 조회 <br/>
-        [notProgressing]: 미진행된 지시내역 조회 <br/>
         [wait]: 대기중인 지시내역 조회 <br/>
         [ongoing]: 생산 진행중인 지시내역 조회 <br/>
         [complete]: 마감된 지시내역 조회
@@ -125,6 +124,9 @@ get:
                             - $ref: ../../schemas/std/location.schema.yaml#/to_location_nm
                             - $ref: ../../schemas/prd/order.schema.yaml#/plan_qty
                             - $ref: ../../schemas/prd/order.schema.yaml#/qty
+                            - $ref: ../../schemas/prd/order.schema.yaml#/accumulated_qty
+                            - $ref: ../../schemas/prd/order.schema.yaml#/accumulated_reject_qty
+                            - $ref: ../../schemas/prd/order.schema.yaml#/accumulated_total_qty
                             - $ref: ../../schemas/prd/order.schema.yaml#/seq
                             - $ref: ../../schemas/prd/order.schema.yaml#/shift_uuid
                             - $ref: ../../schemas/std/shift.schema.yaml#/shift_nm

@@ -33,7 +33,7 @@ get:
                         type: array
                         items:
                           allOf:
-                            - $ref: ../../schemas/mld/repair-history.schema.yaml#/uuid
+                            - $ref: ../../schemas/mld/repair-history.schema.yaml#/repair_history_uuid
                             - $ref: ../../schemas/mld/repair-history.schema.yaml#/factory_uuid
                             - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
                             - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
@@ -122,13 +122,11 @@ put:
         schema:
           required:
             - uuid
-            - factory_uuid
             - mold_uuid
             - problem_uuid
             - start_date
           allOf:
             - $ref: ../../schemas/mld/repair-history.schema.yaml#/uuid
-            - $ref: ../../schemas/mld/repair-history.schema.yaml#/factory_uuid
             - $ref: ../../schemas/mld/repair-history.schema.yaml#/mold_uuid
             - $ref: ../../schemas/mld/repair-history.schema.yaml#/prod_uuid
             - $ref: ../../schemas/mld/repair-history.schema.yaml#/problem_uuid
@@ -160,7 +158,6 @@ patch:
             - uuid
           allOf:
             - $ref: ../../schemas/mld/repair-history.schema.yaml#/uuid
-            - $ref: ../../schemas/mld/repair-history.schema.yaml#/factory_uuid
             - $ref: ../../schemas/mld/repair-history.schema.yaml#/mold_uuid
             - $ref: ../../schemas/mld/repair-history.schema.yaml#/prod_uuid
             - $ref: ../../schemas/mld/repair-history.schema.yaml#/problem_uuid

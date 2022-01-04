@@ -251,11 +251,35 @@ sal_order_detail_uuid:
       format: uuid
 
 # Others
+accumulated_qty: 
+  type: object
+  properties: 
+    accumulated_qty:
+      description: 누적 양품수량
+      type: number
+      format: numeric(19, 6)
+
+accumulated_reject_qty: 
+  type: object
+  properties: 
+    accumulated_reject_qty:
+      description: 누적 부적합수량
+      type: number
+      format: numeric(19, 6)
+
+accumulated_total_qty: 
+  type: object
+  properties: 
+    accumulated_total_qty:
+      description: 누적 생산수량
+      type: number
+      format: numeric(19, 6)
+
 order_state: 
   type: object
   properties: 
     order_state:
-      description: 작업지시 진행상태[미진행, 대기, 진행중, 마감]
+      description: 작업지시 진행상태[대기, 진행중, 마감]
       type: string
       format: varchar
 

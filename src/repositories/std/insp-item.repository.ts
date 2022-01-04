@@ -38,6 +38,8 @@ class StdInspItemRepo {
           insp_item_nm: inspItem.insp_item_nm,
           insp_tool_id: inspItem.insp_tool_id,
           insp_method_id: inspItem.insp_method_id,
+          eqm_fg: inspItem.eqm_fg,
+          qms_fg: inspItem.qms_fg,
           created_uid: uid,
           updated_uid: uid,
         }
@@ -93,11 +95,19 @@ class StdInspItemRepo {
           [ Sequelize.col('stdInspMethod.uuid'), 'insp_method_uuid' ],
           [ Sequelize.col('stdInspMethod.insp_method_cd'), 'insp_method_cd' ],
           [ Sequelize.col('stdInspMethod.insp_method_nm'), 'insp_method_nm' ],
+          'eqm_fg',
+          'qms_fg',
           'created_at',
           [ Sequelize.col('createUser.user_nm'), 'created_nm' ],
           'updated_at',
           [ Sequelize.col('updateUser.user_nm'), 'updated_nm' ]
         ],
+        where: {
+          [Op.or]: [
+            { eqm_fg: params.eqm_fg != null ? params.eqm_fg : { [Op.ne]: null } },
+            { qms_fg: params.qms_fg != null ? params.qms_fg : { [Op.ne]: null } }
+          ]
+        },
         order: [ 'factory_id', 'insp_item_type_id', 'insp_item_id' ],
       });
 
@@ -135,6 +145,8 @@ class StdInspItemRepo {
           [ Sequelize.col('stdInspMethod.uuid'), 'insp_method_uuid' ],
           [ Sequelize.col('stdInspMethod.insp_method_cd'), 'insp_method_cd' ],
           [ Sequelize.col('stdInspMethod.insp_method_nm'), 'insp_method_nm' ],
+          'eqm_fg',
+          'qms_fg',
           'created_at',
           [ Sequelize.col('createUser.user_nm'), 'created_nm' ],
           'updated_at',
@@ -190,11 +202,13 @@ class StdInspItemRepo {
       for await (let inspItem of body) {
         const result = await this.repo.update(
           {
-            insp_item_type_id: inspItem.insp_item_type_id != null ? inspItem.insp_item_type_id : null,
-            insp_item_cd: inspItem.insp_item_cd != null ? inspItem.insp_item_cd : null,
-            insp_item_nm: inspItem.insp_item_nm != null ? inspItem.insp_item_nm : null,
-            insp_tool_id: inspItem.insp_tool_id != null ? inspItem.insp_tool_id : null,
-            insp_method_id: inspItem.insp_method_id != null ? inspItem.insp_method_id : null,
+            insp_item_type_id: inspItem.insp_item_type_id ?? null,
+            insp_item_cd: inspItem.insp_item_cd ?? null,
+            insp_item_nm: inspItem.insp_item_nm ?? null,
+            insp_tool_id: inspItem.insp_tool_id ?? null,
+            insp_method_id: inspItem.insp_method_id ?? null,
+            eqm_fg: inspItem.eqm_fg ?? null,
+            qms_fg: inspItem.qms_fg ?? null,
             updated_uid: uid,
           } as any,
           { 
@@ -235,6 +249,8 @@ class StdInspItemRepo {
             insp_item_nm: inspItem.insp_item_nm,
             insp_tool_id: inspItem.insp_tool_id,
             insp_method_id: inspItem.insp_method_id,
+            eqm_fg: inspItem.eqm_fg,
+            qms_fg: inspItem.qms_fg,
             updated_uid: uid,
           },
           { 

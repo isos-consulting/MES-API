@@ -33,7 +33,7 @@ get:
                         type: array
                         items:
                           allOf:
-                            - $ref: ../../schemas/mld/problem.schema.yaml#/uuid
+                            - $ref: ../../schemas/mld/problem.schema.yaml#/problem_uuid
                             - $ref: ../../schemas/mld/problem.schema.yaml#/factory_uuid
                             - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
                             - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
@@ -79,12 +79,10 @@ put:
         schema:
           required:
             - uuid
-            - factory_uuid
             - problem_cd
             - problem_nm
           allOf:
             - $ref: ../../schemas/mld/problem.schema.yaml#/uuid
-            - $ref: ../../schemas/mld/problem.schema.yaml#/factory_uuid
             - $ref: ../../schemas/mld/problem.schema.yaml#/problem_cd
             - $ref: ../../schemas/mld/problem.schema.yaml#/problem_nm
   responses:
@@ -107,7 +105,6 @@ patch:
             - uuid
           allOf:
             - $ref: ../../schemas/mld/problem.schema.yaml#/uuid
-            - $ref: ../../schemas/mld/problem.schema.yaml#/factory_uuid
             - $ref: ../../schemas/mld/problem.schema.yaml#/problem_cd
             - $ref: ../../schemas/mld/problem.schema.yaml#/problem_nm
   responses:

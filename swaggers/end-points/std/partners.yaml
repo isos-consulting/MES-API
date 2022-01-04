@@ -130,6 +130,7 @@ put:
             - partner_type_uuid
             - use_fg
           allOf:
+            - $ref: ../../schemas/std/partner.schema.yaml#/uuid
             - $ref: ../../schemas/std/partner.schema.yaml#/partner_cd
             - $ref: ../../schemas/std/partner.schema.yaml#/partner_nm
             - $ref: ../../schemas/std/partner.schema.yaml#/partner_type_uuid
@@ -165,6 +166,7 @@ patch:
           required:
             - uuid
           allOf:
+            - $ref: ../../schemas/std/partner.schema.yaml#/uuid
             - $ref: ../../schemas/std/partner.schema.yaml#/partner_cd
             - $ref: ../../schemas/std/partner.schema.yaml#/partner_nm
             - $ref: ../../schemas/std/partner.schema.yaml#/partner_type_uuid
