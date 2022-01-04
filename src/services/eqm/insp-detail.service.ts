@@ -7,8 +7,8 @@ import StdFactoryRepo from "../../repositories/std/factory.repository";
 import StdInspItemRepo from "../../repositories/std/insp-item.repository";
 import StdInspMethodRepo from "../../repositories/std/insp-method.repository";
 import StdInspToolRepo from "../../repositories/std/insp-tool.repository";
-import { successState } from "../../states/common.state";
-import createApiResult from "../../utils/createApiResult";
+import { errorState } from "../../states/common.state";
+import createApiError from "../../utils/createApiError";
 import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
 
 class EqmInspDetailService {
@@ -74,54 +74,89 @@ class EqmInspDetailService {
   }
 
   public create = async (datas: any[], uid: number, tran: Transaction) => {
-    try {
-      const result = await this.repo.create(datas, uid, tran);
-      return createApiResult(result, 201, '데이터 생성 성공', this.stateTag, successState.CREATE);
-    } catch (error) {
-      throw error;
-    }
+    try { return await this.repo.create(datas, uid, tran); } 
+    catch (error) { throw error; }
   }
 
   public read = async (params: any) => {
-    try {
-      const result = await this.repo.read(params);
-      return createApiResult(result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
-    } catch (error) {
-      throw error;
-    }
+    try { return await this.repo.read(params); } 
+    catch (error) { throw error; }
   };
   
   public readByUuid = async (uuid: string) => {
-    try {
-      const result = await this.repo.readByUuid(uuid);
-      return createApiResult(result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
-    } catch (error) {
-      throw error;
-    }
+    try { return await this.repo.readByUuid(uuid); } 
+    catch (error) { throw error; }
   };
 
   public update = async (datas: any[], uid: number, tran: Transaction) => {
-    try {
-      const result = await this.repo.update(datas, uid, tran);
-      return createApiResult(result, 200, '데이터 수정 성공', this.stateTag, successState.UPDATE);
-    } catch (error) {
-      throw error;
-    }
+    try { return await this.repo.update(datas, uid, tran); } 
+    catch (error) { throw error; }
   }
 
   public patch = async (datas: any[], uid: number, tran: Transaction) => {
-    try {
-      const result = await this.repo.patch(datas, uid, tran);
-      return createApiResult(result, 200, '데이터 수정 성공', this.stateTag, successState.PATCH);
-    } catch (error) {
-      throw error;
-    }
+    try { return await this.repo.patch(datas, uid, tran); } 
+    catch (error) { throw error; }
   }
 
   public delete = async (datas: any[], uid: number, tran: Transaction) => {
+    try { return await this.repo.delete(datas, uid, tran); } 
+    catch (error) { throw error; }
+  }
+
+  /**
+   * 입력한 기준서에 해당하는 상세기준서의 개수 조회
+   * @param inspId 기준서의 ID
+   * @param tran DB Transaction
+   * @returns 상세기준서의 개수
+   */
+   public getCountInInsp = async (inspId: number, tran?: Transaction) => {
+    try { return await this.repo.getCountInInsp(inspId, tran); } 
+    catch (error) { throw error; }
+  }
+
+  /**
+   * 입력한 기준서에 해당하는 상세기준서의 Max Sequence 조회
+   * @param inspId 기준서의 ID
+   * @param tran DB Transaction
+   * @returns Sequence
+   */
+   public getMaxSeq = async (inspId: number, tran?: Transaction) => {
+    try { return await this.repo.getMaxSeq(inspId, tran); } 
+    catch (error) { throw error; }
+  }
+
+  /**
+   * 설비점검 상세기준서의 유형(정기, 일상)에 따라 필요한 Data의 여부 검증  
+   * periodicity_fg: true (정기점검) [base_date, cycle_unit_id, cycle]  
+   * periodicity_fg: false (일상점검) [daily_insp_cycle_id]
+   * @param datas 설비점검 상세기준서 Data Array
+   * @returns 검증 성공시 true, 실패시 Throw Error
+   */
+   public validatePeriodicity = (datas: any[]) => {
     try {
-      const result = await this.repo.delete(datas, uid, tran);
-      return createApiResult(result, 200, '데이터 삭제 성공', this.stateTag, successState.DELETE);
+      datas.forEach((data: any) => {
+        // 📌 정기점검 기준서
+        if (data.periodicity_fg && !(data.base_date && data.cycle_unit_id && data.cycle)) {
+          throw createApiError(
+            400, 
+            `설비정기점검에 필요한 요소가 입력되지 않았습니다. [base_date, cycle_unit_uuid, cycle]`, 
+            this.stateTag, 
+            errorState.NO_INPUT_REQUIRED_VALUE
+          );
+        }
+
+        // 📌 일상점검 기준서
+        if (!data.periodicity_fg && !data.daily_insp_cycle_id) {
+          throw createApiError(
+            400, 
+            `설비일상점검에 필요한 요소가 입력되지 않았습니다. [daily_insp_cycle_uuid]`, 
+            this.stateTag, 
+            errorState.NO_INPUT_REQUIRED_VALUE
+          );
+        }
+      });
+
+      return true;
     } catch (error) {
       throw error;
     }

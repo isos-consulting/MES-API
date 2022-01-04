@@ -4,7 +4,7 @@ import createValidationError from '../../utils/createValidationError';
 
 const stateTag = 'eqmInsp';
 
-const mldMoldValidation = {
+const eqmInspValidation = {
   read: [
     query('factory_uuid', '공장UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'factory_uuid', '공장UUID')),
@@ -23,7 +23,7 @@ const mldMoldValidation = {
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'uuid', '설비검사기준서UUID')),
     query('insp_type', '기준서유형')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'insp_type', '기준서유형'))
-      .isIn([ 'all, daily, periodicity' ]).withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'insp_type', '기준서유형'))
+      .isIn([ 'all', 'daily', 'periodicity' ]).withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'insp_type', '기준서유형'))
   ],
   readIncludeDetails: [
     param('uuid', '설비검사기준서UUID')
@@ -31,7 +31,7 @@ const mldMoldValidation = {
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'uuid', '설비검사기준서UUID')),
     query('insp_type', '기준서유형')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'insp_type', '기준서유형'))
-      .isIn([ 'all, daily, periodicity' ]).withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'insp_type', '기준서유형'))
+      .isIn([ 'all', 'daily', 'periodicity' ]).withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'insp_type', '기준서유형'))
   ],
   create: [
     body('header.uuid', '설비검사기준서UUID').optional({ nullable: true })
@@ -47,6 +47,10 @@ const mldMoldValidation = {
     body('header.reg_date', '기준서 등록일시')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'reg_date', '기준서 등록일시'))
       .isDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'reg_date', '기준서 등록일시')),
+    body('header.apply_fg', '기준서 적용여부').optional({ nullable: true })
+      .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'apply_fg', '기준서 적용여부')),
+    body('header.apply_date', '기준서 적용일시').optional({ nullable: true })
+      .isDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'apply_date', '기준서 적용일시')),
     body('header.contents', '개정내역').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'contents', '개정내역')),
     body('header.remark', '비고').optional({ nullable: true })
@@ -60,13 +64,16 @@ const mldMoldValidation = {
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'insp_item_uuid', '검사항목UUID')),
     body('details.*.insp_item_desc', '검사항목 상세내용').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'insp_item_desc', '검사항목 상세내용')),
+    body('details.*.periodicity_fg', '정기점검 여부')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'periodicity_fg', '정기점검 여부'))
+      .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'periodicity_fg', '정기점검 여부')),
     body('details.*.spec_std', '검사 기준')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'spec_std', '검사 기준'))
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'spec_std', '검사 기준')),
     body('details.*.spec_min', '최소 값').optional({ nullable: true })
-      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'spec_min', '최소 값')),
+      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'spec_min', '최소 값')),
     body('details.*.spec_max', '최대 값').optional({ nullable: true })
-      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'spec_max', '최대 값')),
+      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'spec_max', '최대 값')),
     body('details.*.insp_tool_uuid', '검사구UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'insp_tool_uuid', '검사구UUID')),
     body('details.*.insp_method_uuid', '검사방법UUID').optional({ nullable: true })
@@ -85,12 +92,12 @@ const mldMoldValidation = {
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'remark', '비고'))
   ],
   updateApply: [
-    body('*.uuid', '설비검사기준서UUID')
+    body('uuid', '설비검사기준서UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '설비검사기준서UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '설비검사기준서UUID'))
   ],
   updateCancelApply: [
-    body('*.uuid', '설비검사기준서UUID')
+    body('uuid', '설비검사기준서UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '설비검사기준서UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '설비검사기준서UUID'))
   ],
@@ -98,7 +105,8 @@ const mldMoldValidation = {
     body('header.uuid', '설비검사기준서UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '설비검사기준서UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '설비검사기준서UUID')),
-    body('header.insp_no', '기준서번호').optional({ nullable: true })
+    body('header.insp_no', '기준서번호')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'insp_no', '기준서번호'))
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'insp_no', '기준서번호')),
     body('header.reg_date', '기준서 등록일시')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'reg_date', '기준서 등록일시'))
@@ -113,13 +121,16 @@ const mldMoldValidation = {
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '설비검사기준서상세UUID')),
     body('details.*.insp_item_desc', '검사항목 상세내용').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'insp_item_desc', '검사항목 상세내용')),
+    body('details.*.periodicity_fg', '정기점검 여부')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'periodicity_fg', '정기점검 여부'))
+      .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'periodicity_fg', '정기점검 여부')),
     body('details.*.spec_std', '검사 기준')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'spec_std', '검사 기준'))
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'spec_std', '검사 기준')),
     body('details.*.spec_min', '최소 값').optional({ nullable: true })
-      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'spec_min', '최소 값')),
+      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'spec_min', '최소 값')),
     body('details.*.spec_max', '최대 값').optional({ nullable: true })
-      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'spec_max', '최대 값')),
+      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'spec_max', '최대 값')),
     body('details.*.insp_tool_uuid', '검사구UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'insp_tool_uuid', '검사구UUID')),
     body('details.*.insp_method_uuid', '검사방법UUID').optional({ nullable: true })
@@ -155,12 +166,14 @@ const mldMoldValidation = {
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '설비검사기준서상세UUID')),
     body('details.*.insp_item_desc', '검사항목 상세내용').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'insp_item_desc', '검사항목 상세내용')),
+    body('details.*.periodicity_fg', '정기점검 여부').optional({ nullable: true })
+      .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'periodicity_fg', '정기점검 여부')),
     body('details.*.spec_std', '검사 기준').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'spec_std', '검사 기준')),
     body('details.*.spec_min', '최소 값').optional({ nullable: true })
-      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'spec_min', '최소 값')),
+      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'spec_min', '최소 값')),
     body('details.*.spec_max', '최대 값').optional({ nullable: true })
-      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'spec_max', '최대 값')),
+      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'spec_max', '최대 값')),
     body('details.*.insp_tool_uuid', '검사구UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'insp_tool_uuid', '검사구UUID')),
     body('details.*.insp_method_uuid', '검사방법UUID').optional({ nullable: true })
@@ -189,4 +202,4 @@ const mldMoldValidation = {
   ]
 };
 
-export default mldMoldValidation;
+export default eqmInspValidation;

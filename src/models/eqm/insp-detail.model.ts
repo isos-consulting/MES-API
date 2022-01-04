@@ -106,18 +106,18 @@ export default class EqmInspDetail extends Model<IEqmInspDetail> {
   })
   insp_method_id: number;
 
-  @Column({
-    comment: '주기 기준일',
-    type: DataType.DATEONLY,
-  })
-  base_date: string;
-
   @ForeignKey(() => AdmDailyInspCycle)
   @Column({
     comment: '일상점검주기ID',
     type: DataType.INTEGER
   })
   daily_insp_cycle_id: number;
+
+  @Column({
+    comment: '주기 기준일 (정기점검에서 사용)',
+    type: DataType.DATEONLY,
+  })
+  base_date: string;
 
   @ForeignKey(() => AdmCycleUnit)
   @Column({

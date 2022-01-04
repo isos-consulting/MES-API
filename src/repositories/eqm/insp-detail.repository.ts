@@ -397,7 +397,7 @@ class EqmInspDetailRepo {
    * @param transaction Transaction
    * @returns 기준서단위의 상세전표 개수
    */
-  getCount = async(inspId: number, transaction?: Transaction) => {
+  getCountInInsp = async(inspId: number, transaction?: Transaction) => {
     try {
       const result = await this.repo.findOne({ 
         attributes: [
