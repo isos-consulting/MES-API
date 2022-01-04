@@ -27,7 +27,10 @@ class MldRepairHistoryCtl {
       let result: TServiceResult = { result_info: {}, log_info: {} };
       const service = new MldRepairHistoryService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
-      const datas = await service.convertFk(Object.values(matched));
+      let datas = await service.convertFk(Object.values(matched));
+			console.log(datas)
+			// 📌 Date Diff Interlock
+      datas = service.validateDateDiff(datas);
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
         result = await service.create(datas, req.user?.uid as number, tran)
@@ -101,6 +104,14 @@ class MldRepairHistoryCtl {
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
         result = await service.update(datas, req.user?.uid as number, tran)
+
+				// 📌 Date Diff Interlock
+				const validated = service.validateDateDiff(result.result_info?.raws as any[]);
+        const patchedResult = await service.patch(validated, req.user?.uid as number, tran);
+        result.result_info = {
+          ...result.result_info, 
+          raws: patchedResult.result_info?.raws
+        };
       });
 
       return response(res, result.result_info, result.log_info);
@@ -128,6 +139,14 @@ class MldRepairHistoryCtl {
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
         result = await service.patch(datas, req.user?.uid as number, tran)
+
+				// 📌 Date Diff Interlock
+        const validated = service.validateDateDiff(result.result_info?.raws as any[]);
+        const patchedResult = await service.patch(validated, req.user?.uid as number, tran);
+        result.result_info = {
+          ...result.result_info, 
+          raws: patchedResult.result_info?.raws
+        };
       });
 
       return response(res, result.result_info, result.log_info);
