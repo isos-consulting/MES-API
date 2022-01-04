@@ -5,9 +5,11 @@ import MldRepairHistoryRepo from "../../repositories/mld/repair-history.reposito
 import StdEmpRepo from "../../repositories/std/emp.repository";
 import StdFactoryRepo from "../../repositories/std/factory.repository";
 import StdProdRepo from "../../repositories/std/prod.repository";
-import { successState } from "../../states/common.state";
+import { errorState, successState } from "../../states/common.state";
+import createApiError from "../../utils/createApiError";
 import createApiResult from "../../utils/createApiResult";
 import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
+import getSubtractTwoDates from "../../utils/getSubtractTwoDates";
 
 class MldRepairHistoryService {
   tenant: string;
@@ -116,6 +118,30 @@ class MldRepairHistoryService {
     try {
       const result = await this.repo.delete(datas, uid, tran);
       return createApiResult(result, 200, '데이터 삭제 성공', this.stateTag, successState.DELETE);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  public validateDateDiff = (datas: any[]) => {
+    try {
+      const result = datas.map((data: any) => {
+        // 📌 발생일시 데이터 검증
+        if (data.start_date && data.end_date) {
+          const occurTime = getSubtractTwoDates(data.start_date, data.end_date);
+          if (occurTime < 0) { 
+            throw createApiError(
+              400, 
+              `잘못된 수리시작일시(start_date) 및 수리완료일시(end_date)가 입력되었습니다. [${data.start_date}, ${data.end_date}]`, 
+              this.stateTag, 
+              errorState.INVALID_DIFF_DATE
+            );
+          }
+        }
+        return data;
+      });
+
+      return result;
     } catch (error) {
       throw error;
     }

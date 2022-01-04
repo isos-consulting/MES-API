@@ -102,7 +102,6 @@ put:
         schema:
           required:
             - uuid
-            - factory_uuid
             - mold_cd
             - mold_nm
             - mold_no
@@ -112,7 +111,6 @@ put:
             - use_fg
           allOf:
             - $ref: ../../schemas/mld/mold.schema.yaml#/uuid
-            - $ref: ../../schemas/mld/mold.schema.yaml#/factory_uuid
             - $ref: ../../schemas/mld/mold.schema.yaml#/mold_cd
             - $ref: ../../schemas/mld/mold.schema.yaml#/mold_nm
             - $ref: ../../schemas/mld/mold.schema.yaml#/mold_no
@@ -144,7 +142,6 @@ patch:
             - uuid
           allOf:
             - $ref: ../../schemas/mld/mold.schema.yaml#/uuid
-            - $ref: ../../schemas/mld/mold.schema.yaml#/factory_uuid
             - $ref: ../../schemas/mld/mold.schema.yaml#/mold_cd
             - $ref: ../../schemas/mld/mold.schema.yaml#/mold_nm
             - $ref: ../../schemas/mld/mold.schema.yaml#/mold_no
