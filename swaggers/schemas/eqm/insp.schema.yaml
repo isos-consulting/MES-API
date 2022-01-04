@@ -1,0 +1,116 @@
+# EQM_INSP_TB
+
+# Columns
+insp_id: 
+  type: object
+  properties: 
+    insp_id:
+      description: 설비검사 기준서ID
+      type: number
+      format: int4
+
+factory_id: 
+  type: object
+  properties: 
+    factory_id:
+      description: 공장ID
+      type: number
+      format: int4
+
+insp_no: 
+  type: object
+  properties: 
+    insp_no:
+      description: 설비검사 기준서 번호
+      type: string
+      format: varchar(20)
+
+equip_id: 
+  type: object
+  properties: 
+    equip_id:
+      description: 설비ID
+      type: number
+      format: int4
+
+reg_date: 
+  type: object
+  properties: 
+    reg_date:
+      description: 기준서 등록 일시
+      type: string
+      format: date-time
+
+apply_date: 
+  type: object
+  properties: 
+    apply_date:
+      description: 기준서 적용 일시
+      type: string
+      format: date-time
+
+apply_fg: 
+  type: object
+  properties: 
+    apply_fg:
+      description: 기준서 적용 여부
+      type: boolean
+      format: boolean
+
+contents: 
+  type: object
+  properties: 
+    contents:
+      description: 개정내역
+      type: string
+      format: varchar(250)
+
+remark: 
+  type: object
+  properties: 
+    remark:
+      description: 비고
+      type: string
+      format: varchar(250)
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 설비검사 기준서UUID
+      type: string
+      format: uuid
+
+# Uuids
+insp_uuid:
+  type: object
+  properties: 
+    insp_uuid:
+      description: 설비검사 기준서UUID
+      type: string
+      format: uuid
+
+factory_uuid:
+  type: object
+  properties: 
+    factory_uuid:
+      description: 공장UUID
+      type: string
+      format: uuid
+
+equip_uuid:
+  type: object
+  properties: 
+    equip_uuid:
+      description: 설비UUID
+      type: string
+      format: uuid
+
+# Others
+apply_state: 
+  type: object
+  properties: 
+    apply_state:
+      description: 기준서 적용여부(적용, 미적용)
+      type: string
+      format: varchar

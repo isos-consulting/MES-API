@@ -49,3 +49,23 @@ paths:
     $ref: ../end-points/eqm/repair-history.{uuid}.yaml
   /eqm/repair-histories:
     $ref: ../end-points/eqm/repair-histories.yaml
+
+  # ✅ Insp (설비검사기준서)
+  /eqm/insps/apply:
+    $ref: ../end-points/eqm/insp.apply.yaml
+  /eqm/insps/cancel-apply:
+    $ref: ../end-points/eqm/insp.cancel-apply.yaml
+  /eqm/insp/{uuid}:
+    $ref: ../end-points/eqm/insp.{uuid}.yaml
+  /eqm/insp/{uuid}/details:
+    $ref: ../end-points/eqm/insp.{uuid}.details.yaml
+  /eqm/insp/{uuid}/include-details:
+    $ref: ../end-points/eqm/insp.{uuid}.include-details.yaml
+  /eqm/insps:
+    $ref: ../end-points/eqm/insps.yaml
+
+  # ✅ InspDetail (설비검사기준서상세)
+  /eqm/insp-detail/{uuid}:
+    $ref: ../end-points/eqm/insp-detail.{uuid}.yaml
+  /eqm/insp-details:
+    $ref: ../end-points/eqm/insp-details.yaml

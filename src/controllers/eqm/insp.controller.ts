@@ -13,7 +13,6 @@ import { successState } from '../../states/common.state';
 import ApiResult from '../../interfaces/common/api-result.interface';
 import AdmPatternHistoryCtl from '../adm/pattern-history.controller';
 import moment from 'moment';
-// import EqmInspDetailService from '../../services/eqm/insp-detail.service';
 
 class EqmInspCtl {
   stateTag: string
