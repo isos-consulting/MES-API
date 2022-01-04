@@ -28,7 +28,7 @@ class MldRepairHistoryCtl {
       const service = new MldRepairHistoryService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
       let datas = await service.convertFk(Object.values(matched));
-			console.log(datas)
+	
 			// 📌 Date Diff Interlock
       datas = service.validateDateDiff(datas);
 
