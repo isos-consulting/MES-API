@@ -1,28 +1,28 @@
 import { Sequelize, Table, Column, Model, DataType, CreatedAt, UpdatedAt, BelongsTo, Unique, ForeignKey } from 'sequelize-typescript'
-import IStdEquip from '../../interfaces/std/equip.interface';
+import IEqmInsp from '../../interfaces/eqm/insp.interface';
 import AutUser from '../aut/user.model';
-import StdEquipType from './equip-type.model';
-import StdFactory from './factory.model';
+import StdFactory from '../std/factory.model';
+import StdEquip from '../std/equip.model';
 
 @Table({
-  tableName: 'STD_EQUIP_TB',
-  modelName: 'StdEquip',
-  comment: '설비 정보 테이블',
+  tableName: 'EQM_INSP_TB',
+  modelName: 'EqmInsp',
+  comment: '설비검사 기준서 정보 테이블',
   timestamps: true,
   underscored: true,
 })
-export default class StdEquip extends Model<IStdEquip> {
+export default class EqmInsp extends Model<IEqmInsp> {
   @Column({
-    comment: '설비ID',
+    comment: '설비검사 기준서ID',
     primaryKey: true,
     autoIncrement: true,
     autoIncrementIdentity: true,
     type: DataType.INTEGER,
     allowNull: false,
   })
-  equip_id: number;
+  insp_id: number;
 
-  @Unique('std_equip_tb_factory_id_equip_cd_un')
+  @Unique('eqm_insp_tb_factory_id_insp_no_un')
   @ForeignKey(() => StdFactory)
   @Column({
     comment: '공장ID',
@@ -31,91 +31,48 @@ export default class StdEquip extends Model<IStdEquip> {
   })
   factory_id: number;
 
-  @ForeignKey(() => StdEquipType)
+  @Unique('eqm_insp_tb_factory_id_insp_no_un')
   @Column({
-    comment: '설비유형ID',
-    type: DataType.INTEGER,
-  })
-  equip_type_id: number;
-
-  @Unique('std_equip_tb_factory_id_equip_cd_un')
-  @Column({
-    comment: '설비코드',
+    comment: '설비검사 기준서 번호',
     type: DataType.STRING(20),
     allowNull: false,
   })
-  equip_cd: string;
+  insp_no: string;
 
+  @ForeignKey(() => StdEquip)
   @Column({
-    comment: '설비명',
-    type: DataType.STRING(50),
+    comment: '설비ID',
+    type: DataType.INTEGER,
     allowNull: false,
   })
-  equip_nm: string;
+  equip_id: number;
 
   @Column({
-    comment: '설비모델명',
-    type: DataType.STRING(50),
+    comment: '기준서 등록 일시',
+    type: DataType.DATE,
+    allowNull: false,
   })
-  equip_model: string;
+  reg_date: string;
 
-	@Column({
-    comment: '설비규격',
-    type: DataType.STRING(50),
-  })
-  equip_std: string;
-
-	@Column({
-    comment: '설비제원',
-    type: DataType.STRING(50),
-  })
-  equip_spec: string;
-
-	@Column({
-    comment: '제조사',
-    type: DataType.STRING(50),
-  })
-  manufacturer: string;
-
-	@Column({
-    comment: '구매업체',
-    type: DataType.STRING(50),
-  })
-  purchase_partner: string;
-
-	@Column({
-    comment: '구매일자',
-    type: DataType.DATEONLY,
-  })
-  purchase_date: string;
-
-	@Column({
-    comment: '구매업체 연락처',
-    type: DataType.STRING(50),
-  })
-  purchase_tel: string;
-
-	@Column({
-    comment: '구매금액',
-    type: DataType.DECIMAL(19, 6),
-  })
-  purchase_price: number;
-  
   @Column({
-    comment: '사용여부',
+    comment: '기준서 적용 일시',
+    type: DataType.DATE,
+  })
+  apply_date: string;
+
+  @Column({
+    comment: '기준서 적용 여부',
     type: DataType.BOOLEAN,
     allowNull: false,
-    defaultValue: true
+    defaultValue: false,
   })
-  use_fg: boolean;
+  apply_fg: boolean;
 
   @Column({
-    comment: '생산설비여부',
-    type: DataType.BOOLEAN,
-    allowNull: false,
-    defaultValue: true
+    comment: '개정 내역',
+    type: DataType.STRING(250),
   })
-  prd_fg: boolean;
+  contents: string;
 
   @Column({
     comment: '비고',
@@ -155,9 +112,9 @@ export default class StdEquip extends Model<IStdEquip> {
   })
   updated_uid: number;
 
-  @Unique('std_equip_tb_uuid_un')
+  @Unique('eqm_insp_tb_uuid_un')
   @Column({
-    comment: '설비UUID',
+    comment: '설비검사 기준서UUID',
     type: DataType.UUID,
     allowNull: false,
     defaultValue: Sequelize.fn('gen_random_uuid')
@@ -174,8 +131,8 @@ export default class StdEquip extends Model<IStdEquip> {
   @BelongsTo(() => StdFactory, { foreignKey: 'factory_id', targetKey: 'factory_id', onDelete: 'restrict', onUpdate: 'cascade' })
   stdFactory: StdFactory;
 
-  @BelongsTo(() => StdEquipType, { foreignKey: 'equip_type_id', targetKey: 'equip_type_id', onDelete: 'restrict', onUpdate: 'cascade' })
-  stdEquipType: StdEquipType;
+  @BelongsTo(() => StdEquip, { foreignKey: 'equip_id', targetKey: 'equip_id', onDelete: 'restrict', onUpdate: 'cascade' })
+  stdEquip: StdEquip;
 
   // HasMany
   //#endregion

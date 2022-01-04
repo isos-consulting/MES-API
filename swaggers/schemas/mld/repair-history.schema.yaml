@@ -47,7 +47,7 @@ occur_date:
     occur_date:
       description: 발생 일자
       type: string
-      format: date-time
+      format: date
 
 occur_emp_id:
   type: object
@@ -87,7 +87,7 @@ start_date:
     start_date:
       description: 수리시작일자
       type: string
-      format: date-time
+      format: date
 
 end_date:
   type: object
@@ -95,7 +95,7 @@ end_date:
     end_date:
       description: 수리완료일자
       type: string
-      format: date-time
+      format: date
 
 contents:
   type: object

@@ -25,7 +25,7 @@ const getSequelize = (tenant: string) => {
           models: [__dirname + '/../models/**/*.model.js'],
           repositoryMode: true,
           quoteIdentifiers: false,
-          logging: false
+          logging: console.log
         }
       );
     }

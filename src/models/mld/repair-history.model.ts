@@ -59,10 +59,10 @@ export default class MldRepairHistory extends Model<IMldRepairHistory> {
   problem_id: number;
 
 	@Column({
-    comment: '발생일시',
-    type: DataType.DATE,
+    comment: '발생일자',
+    type: DataType.DATEONLY,
   })
-  occur_date: Date;
+  occur_date: string;
 
 	@ForeignKey(() => StdEmp)
   @Column({
@@ -92,17 +92,17 @@ export default class MldRepairHistory extends Model<IMldRepairHistory> {
 
 	@Unique('mld_repair_history_tb_factory_id_mold_id_start_date_un')
 	@Column({
-    comment: '수리 시작일시',
-    type: DataType.DATE,
+    comment: '수리 시작일자',
+    type: DataType.DATEONLY,
 		allowNull: false,
   })
-  start_date: Date;
+  start_date: string;
 
 	@Column({
-    comment: '수리 완료일시',
-    type: DataType.DATE,
+    comment: '수리 완료일자',
+    type: DataType.DATEONLY,
   })
-  end_date: Date;
+  end_date: string;
 
 	@Column({
     comment: '수리 내용',
