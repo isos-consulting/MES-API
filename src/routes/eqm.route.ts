@@ -1,9 +1,11 @@
 import * as express from 'express';
 import EqmInspDetailCtl from '../controllers/eqm/insp-detail.controller';
+import EqmInspResultCtl from '../controllers/eqm/insp-result.controller';
 import EqmInspCtl from '../controllers/eqm/insp.controller';
 import EqmRepairHistoryCtl from '../controllers/eqm/repair-history.controller';
 import validationCallback from '../utils/validationCallback';
 import eqmInspDetailValidation from '../validations/eqm/insp-detail.validation';
+import eqmInspResultValidation from '../validations/eqm/insp-result.validation';
 import eqmInspValidation from '../validations/eqm/insp.validation';
 import eqmRepairHistoryValidation from '../validations/eqm/repair-history.validation';
 
@@ -27,6 +29,16 @@ router.route('/insps').delete(eqmInspValidation.delete, validationCallback, insp
 const inspDetail = new EqmInspDetailCtl();
 router.route('/insp-detail/:uuid').get(eqmInspDetailValidation.readByUuid, validationCallback, inspDetail.readByUuid);
 router.route('/insp-details').get(eqmInspDetailValidation.read, validationCallback, inspDetail.read);
+//#endregion
+
+//#region ✅ InspResult (설비검사성적서)
+const inspResult = new EqmInspResultCtl();
+router.route('/insp-result/:uuid').get(eqmInspResultValidation.readByUuid, validationCallback, inspResult.readByUuid);
+router.route('/insp-results').get(eqmInspResultValidation.read, validationCallback, inspResult.read);
+router.route('/insp-results').post(eqmInspResultValidation.create, validationCallback, inspResult.create);
+router.route('/insp-results').put(eqmInspResultValidation.update, validationCallback, inspResult.update);
+router.route('/insp-results').patch(eqmInspResultValidation.patch, validationCallback, inspResult.patch);
+router.route('/insp-results').delete(eqmInspResultValidation.delete, validationCallback, inspResult.delete);
 //#endregion
 
 //#region ✅ RepairHistory (설비수리이력관리)

@@ -1,39 +1,17 @@
 get:
   description: |
-    설비검사기준서 상세 목록을 조회합니다. 
-  summary: 설비검사기준서 상세 데이터 조회
+    하나의 설비검사성적서 데이터 목록을 조회합니다. 
+  summary: 설비검사성적서 데이터 단일 조회
   tags:
-    - 설비검사기준서상세(InspDetail)
-  parameters:    
-    - name: factory_uuid
-      in: query
-      description: |
-        공장의 UUID를 입력하여 공장에 따라 설비검사기준서 상세 데이터를 조회합니다. <br/>
-        [전체 조회시 입력하지 않습니다.]
-      schema:
-        type: string
-        format: uuid
-
-    - name: insp_uuid
-      in: query
-      description: |
-        설비검사기준서의 UUID를 입력하여 설비검사기준서에 따라 설비검사기준서 상세 데이터를 조회합니다. <br/>
-        [전체 조회시 입력하지 않습니다.]
-      schema:
-        type: string
-        format: uuid
-
-    - name: insp_type
-      in: query
+    - 설비검사성적서(InspResult)
+  parameters:
+    - name: uuid
+      in: path
       required: true
-      description: |
-        기준서 조회시 세부검사유형을 입력합니다. <br/> 
-        [all]: 전체 조회 <br/>
-        [daily]: 일상점검 기준서 조회 <br/>
-        [periodicity]: 정기점검 기준서 조회
+      description: 설비검사성적서의 UUID 를 입력합니다.
       schema:
         type: string
-        format: string
+        format: uuid
 
   responses:
     200:
@@ -59,19 +37,17 @@ get:
                             format: int32
                             minimum: 0
                       raws:
-                        description: 설비검사기준서 상세 데이터 목록
+                        description: 설비검사성적서 데이터 목록
                         type: array
                         items:
-                          type: object
-                          allOf:        
-                            - $ref: ../../schemas/eqm/insp-detail.schema.yaml#/insp_detail_uuid
-                            - $ref: ../../schemas/eqm/insp-detail.schema.yaml#/insp_uuid
-                            - $ref: ../../schemas/eqm/insp-detail.schema.yaml#/seq
-                            - $ref: ../../schemas/eqm/insp.schema.yaml#/insp_no
-                            - $ref: ../../schemas/eqm/insp-detail.schema.yaml#/insp_no_sub
-                            - $ref: ../../schemas/eqm/insp-detail.schema.yaml#/factory_uuid
+                          allOf:
+                            - $ref: ../../schemas/eqm/insp-result.schema.yaml#/insp_result_uuid
+                            - $ref: ../../schemas/eqm/insp-result.schema.yaml#/factory_uuid
                             - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
                             - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
+                            - $ref: ../../schemas/eqm/insp.schema.yaml#/insp_no
+                            - $ref: ../../schemas/eqm/insp-result.schema.yaml#/insp_detail_uuid
+                            - $ref: ../../schemas/eqm/insp-detail.schema.yaml#/insp_no_sub
                             - $ref: ../../schemas/std/insp-item.schema.yaml#/insp_item_type_uuid
                             - $ref: ../../schemas/std/insp-item-type.schema.yaml#/insp_item_type_cd
                             - $ref: ../../schemas/std/insp-item-type.schema.yaml#/insp_item_type_nm
@@ -89,16 +65,28 @@ get:
                             - $ref: ../../schemas/eqm/insp-detail.schema.yaml#/insp_method_uuid
                             - $ref: ../../schemas/std/insp-method.schema.yaml#/insp_method_cd
                             - $ref: ../../schemas/std/insp-method.schema.yaml#/insp_method_nm
-                            - $ref: ../../schemas/eqm/insp-detail.schema.yaml#/base_date
                             - $ref: ../../schemas/eqm/insp-detail.schema.yaml#/daily_insp_cycle_uuid
                             - $ref: ../../schemas/adm/daily-insp-cycle.schema.yaml#/daily_insp_cycle_cd
                             - $ref: ../../schemas/adm/daily-insp-cycle.schema.yaml#/daily_insp_cycle_nm
                             - $ref: ../../schemas/eqm/insp-detail.schema.yaml#/cycle_unit_uuid
                             - $ref: ../../schemas/adm/cycle-unit.schema.yaml#/cycle_unit_cd
                             - $ref: ../../schemas/adm/cycle-unit.schema.yaml#/cycle_unit_nm
+                            - $ref: ../../schemas/eqm/insp-detail.schema.yaml#/base_date
                             - $ref: ../../schemas/eqm/insp-detail.schema.yaml#/cycle
-                            - $ref: ../../schemas/eqm/insp-detail.schema.yaml#/sortby
-                            - $ref: ../../schemas/eqm/insp-detail.schema.yaml#/remark
+                            - $ref: ../../schemas/std/equip.schema.yaml#/equip_type_uuid
+                            - $ref: ../../schemas/std/equip-type.schema.yaml#/equip_type_cd
+                            - $ref: ../../schemas/std/equip-type.schema.yaml#/equip_type_nm
+                            - $ref: ../../schemas/eqm/insp-result.schema.yaml#/equip_uuid
+                            - $ref: ../../schemas/std/equip.schema.yaml#/equip_cd
+                            - $ref: ../../schemas/std/equip.schema.yaml#/equip_nm
+                            - $ref: ../../schemas/eqm/insp-result.schema.yaml#/emp_uuid
+                            - $ref: ../../schemas/std/emp.schema.yaml#/emp_cd
+                            - $ref: ../../schemas/std/emp.schema.yaml#/emp_nm
+                            - $ref: ../../schemas/eqm/insp-result.schema.yaml#/reg_date
+                            - $ref: ../../schemas/eqm/insp-result.schema.yaml#/insp_value
+                            - $ref: ../../schemas/eqm/insp-result.schema.yaml#/insp_result_fg
+                            - $ref: ../../schemas/eqm/insp-result.schema.yaml#/insp_result_state
+                            - $ref: ../../schemas/eqm/insp-result.schema.yaml#/remark
                             - $ref: ../../schemas/common/timestamp.schema.yaml
     500:
       $ref: ../../responses/common/general-error.response.yaml

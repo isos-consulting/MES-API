@@ -18,7 +18,7 @@ get:
       required: true
       description: |
         기준서 조회시 세부검사유형을 입력합니다. <br/> 
-        [all]: 자주검사 성적서 조회 <br/>
+        [all]: 전체 조회 <br/>
         [daily]: 일상점검 기준서 조회 <br/>
         [periodicity]: 정기점검 기준서 조회
       schema:

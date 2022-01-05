@@ -110,8 +110,8 @@ base_date:
   properties: 
     base_date:
       description: 주기 기준일 [정기점검에서 사용]
-      type: number
-      format: int4
+      type: string
+      format: date
 
 cycle_unit_id: 
   type: object

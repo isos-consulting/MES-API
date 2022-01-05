@@ -79,7 +79,14 @@ class EqmInspDetailService {
   }
 
   public read = async (params: any) => {
-    try { return await this.repo.read(params); } 
+    try { 
+      switch (params.insp_type) {
+        case 'periodicity': params.periodicity_fg = true; break;
+        case 'daily': params.periodicity_fg = false; break;
+        default: params.periodicity_fg = null; break;
+      }
+      return await this.repo.read(params); 
+    } 
     catch (error) { throw error; }
   };
   

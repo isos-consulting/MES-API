@@ -44,16 +44,10 @@ components:
             read:pets: read your pets
 
 paths:
-  # ✅ RepairHistory (금형 수리이력 관리)
-  /eqm/repair-history/{uuid}:
-    $ref: ../end-points/eqm/repair-history.{uuid}.yaml
-  /eqm/repair-histories:
-    $ref: ../end-points/eqm/repair-histories.yaml
-
   # ✅ Insp (설비검사기준서)
-  /eqm/insps/apply:
+  /eqm/insp/apply:
     $ref: ../end-points/eqm/insp.apply.yaml
-  /eqm/insps/cancel-apply:
+  /eqm/insp/cancel-apply:
     $ref: ../end-points/eqm/insp.cancel-apply.yaml
   /eqm/insp/{uuid}:
     $ref: ../end-points/eqm/insp.{uuid}.yaml
@@ -69,3 +63,15 @@ paths:
     $ref: ../end-points/eqm/insp-detail.{uuid}.yaml
   /eqm/insp-details:
     $ref: ../end-points/eqm/insp-details.yaml
+
+  # ✅ InspResult (설비검사성적서)
+  /eqm/insp-result/{uuid}:
+    $ref: ../end-points/eqm/insp-result.{uuid}.yaml
+  /eqm/insp-results:
+    $ref: ../end-points/eqm/insp-results.yaml
+
+  # ✅ RepairHistory (설비 수리이력 관리)
+  /eqm/repair-history/{uuid}:
+    $ref: ../end-points/eqm/repair-history.{uuid}.yaml
+  /eqm/repair-histories:
+    $ref: ../end-points/eqm/repair-histories.yaml
