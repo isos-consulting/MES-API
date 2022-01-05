@@ -8,6 +8,8 @@ const mldMoldValidation = {
   read: [
 		query('factory_uuid', '공장UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'factory_uuid', '공장UUID')),
+		query('use_fg', '사용여부').optional({ nullable: true })
+      .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'use_fg', '사용여부')),
 	],
   readByUuid: [ 
     param('uuid', '금형UUID')

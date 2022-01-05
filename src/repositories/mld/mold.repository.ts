@@ -95,8 +95,8 @@ class MldMoldRepo {
           'updated_at',
           [ Sequelize.col('updateUser.user_nm'), 'updated_nm' ]
         ],
-        where: params.mold_cd ? { mold_cd: params.mold_cd } : {},
-        order: [ 'mold_cd' ],
+        where: { use_fg: params.use_fg ?? { [Op.ne]: null } },
+        order: [ 'mold_cd' ]
       });
 
       return convertReadResult(result);
