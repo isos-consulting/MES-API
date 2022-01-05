@@ -6,6 +6,7 @@ export default interface IPrdOrder {
   proc_id?: number,
   workings_id?: number,
   equip_id?: number | null,
+  mold_id?: number | null,
   prod_id?: number,
   plan_qty?: number | null,
   qty?: number,

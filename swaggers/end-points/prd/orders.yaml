@@ -99,6 +99,11 @@ get:
                             - $ref: ../../schemas/prd/order.schema.yaml#/equip_uuid
                             - $ref: ../../schemas/std/equip.schema.yaml#/equip_cd
                             - $ref: ../../schemas/std/equip.schema.yaml#/equip_nm
+                            - $ref: ../../schemas/prd/order.schema.yaml#/mold_uuid
+                            - $ref: ../../schemas/mld/mold.schema.yaml#/mold_cd
+                            - $ref: ../../schemas/mld/mold.schema.yaml#/mold_nm
+                            - $ref: ../../schemas/mld/mold.schema.yaml#/mold_no
+                            - $ref: ../../schemas/mld/mold.schema.yaml#/mold_cavity
                             - $ref: ../../schemas/prd/order.schema.yaml#/prod_uuid
                             - $ref: ../../schemas/std/prod.schema.yaml#/prod_no
                             - $ref: ../../schemas/std/prod.schema.yaml#/prod_nm
@@ -173,6 +178,7 @@ post:
             - $ref: ../../schemas/prd/order.schema.yaml#/proc_uuid
             - $ref: ../../schemas/prd/order.schema.yaml#/workings_uuid
             - $ref: ../../schemas/prd/order.schema.yaml#/equip_uuid
+            - $ref: ../../schemas/prd/order.schema.yaml#/mold_uuid
             - $ref: ../../schemas/prd/order.schema.yaml#/prod_uuid
             - $ref: ../../schemas/prd/order.schema.yaml#/plan_qty
             - $ref: ../../schemas/prd/order.schema.yaml#/qty
@@ -208,6 +214,7 @@ put:
             - $ref: ../../schemas/prd/order.schema.yaml#/order_no
             - $ref: ../../schemas/prd/order.schema.yaml#/workings_uuid
             - $ref: ../../schemas/prd/order.schema.yaml#/equip_uuid
+            - $ref: ../../schemas/prd/order.schema.yaml#/mold_uuid
             - $ref: ../../schemas/prd/order.schema.yaml#/qty
             - $ref: ../../schemas/prd/order.schema.yaml#/seq
             - $ref: ../../schemas/prd/order.schema.yaml#/shift_uuid
@@ -238,6 +245,7 @@ patch:
             - $ref: ../../schemas/prd/order.schema.yaml#/order_no
             - $ref: ../../schemas/prd/order.schema.yaml#/workings_uuid
             - $ref: ../../schemas/prd/order.schema.yaml#/equip_uuid
+            - $ref: ../../schemas/prd/order.schema.yaml#/mold_uuid
             - $ref: ../../schemas/prd/order.schema.yaml#/qty
             - $ref: ../../schemas/prd/order.schema.yaml#/seq
             - $ref: ../../schemas/prd/order.schema.yaml#/shift_uuid

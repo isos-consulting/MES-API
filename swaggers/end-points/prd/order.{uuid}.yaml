@@ -56,6 +56,11 @@ get:
                             - $ref: ../../schemas/prd/order.schema.yaml#/equip_uuid
                             - $ref: ../../schemas/std/equip.schema.yaml#/equip_cd
                             - $ref: ../../schemas/std/equip.schema.yaml#/equip_nm
+                            - $ref: ../../schemas/prd/order.schema.yaml#/mold_uuid
+                            - $ref: ../../schemas/mld/mold.schema.yaml#/mold_cd
+                            - $ref: ../../schemas/mld/mold.schema.yaml#/mold_nm
+                            - $ref: ../../schemas/mld/mold.schema.yaml#/mold_no
+                            - $ref: ../../schemas/mld/mold.schema.yaml#/mold_cavity
                             - $ref: ../../schemas/prd/order.schema.yaml#/prod_uuid
                             - $ref: ../../schemas/std/prod.schema.yaml#/prod_no
                             - $ref: ../../schemas/std/prod.schema.yaml#/prod_nm

@@ -1,6 +1,7 @@
 import { Sequelize, Table, Column, Model, DataType, CreatedAt, UpdatedAt, BelongsTo, Unique, ForeignKey } from 'sequelize-typescript'
 import IPrdOrder from '../../interfaces/prd/order.interface';
 import AutUser from '../aut/user.model';
+import MldMold from '../mld/mold.model';
 import SalOrderDetail from '../sal/order-detail.model';
 import StdEquip from '../std/equip.model';
 import StdFactory from '../std/factory.model';
@@ -9,8 +10,6 @@ import StdProd from '../std/prod.model';
 import StdShift from '../std/shift.model';
 import StdWorkerGroup from '../std/worker-group.model';
 import StdWorkings from '../std/workings.model';
-
-// 마감 관련 Column 가지고 Unique 잡으면 좋을 것 같음
 
 @Table({
   tableName: 'PRD_ORDER_TB',
@@ -76,6 +75,13 @@ export default class PrdOrder extends Model<IPrdOrder> {
     type: DataType.INTEGER,
   })
   equip_id: number;
+
+  @ForeignKey(() => MldMold)
+  @Column({
+    comment: '금형ID',
+    type: DataType.INTEGER,
+  })
+  mold_id: number;
 
   @ForeignKey(() => StdProd)
   @Column({
@@ -225,6 +231,9 @@ export default class PrdOrder extends Model<IPrdOrder> {
 
   @BelongsTo(() => StdEquip, { foreignKey: 'equip_id', targetKey: 'equip_id', onDelete: 'restrict', onUpdate: 'cascade' })
   stdEquip: StdEquip;
+
+  @BelongsTo(() => MldMold, { foreignKey: 'mold_id', targetKey: 'mold_id', onDelete: 'restrict', onUpdate: 'cascade' })
+  mldMold: MldMold;
 
   @BelongsTo(() => StdProd, { foreignKey: 'prod_id', targetKey: 'prod_id', onDelete: 'restrict', onUpdate: 'cascade' })
   stdProd: StdProd;

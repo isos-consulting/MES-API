@@ -57,6 +57,14 @@ equip_id:
       type: number
       format: int4
 
+mold_id: 
+  type: object
+  properties: 
+    mold_id:
+      description: 금형ID
+      type: number
+      format: int4
+
 prod_id: 
   type: object
   properties: 
@@ -207,6 +215,14 @@ equip_uuid:
   properties: 
     equip_uuid:
       description: 설비UUID
+      type: string
+      format: uuid
+
+mold_uuid:
+  type: object
+  properties: 
+    mold_uuid:
+      description: 금형UUID
       type: string
       format: uuid
 
