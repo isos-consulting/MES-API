@@ -4,6 +4,7 @@ export default interface IStdRoutingResource {
   routing_id?: number,
   resource_type?: string,
   equip_id?: number | null,
+  mold_id?: number | null,
   emp_cnt?: number | null,
   cycle_time?: number | null,
   uph?: number | null,

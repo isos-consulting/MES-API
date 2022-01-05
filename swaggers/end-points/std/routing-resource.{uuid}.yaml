@@ -50,9 +50,14 @@ get:
                             - $ref: ../../schemas/std/routing-resource.schema.yaml#/equip_uuid
                             - $ref: ../../schemas/std/equip.schema.yaml#/equip_cd
                             - $ref: ../../schemas/std/equip.schema.yaml#/equip_nm
+                            - $ref: ../../schemas/std/routing-resource.schema.yaml#/mold_uuid
+                            - $ref: ../../schemas/mld/mold.schema.yaml#/mold_cd
+                            - $ref: ../../schemas/mld/mold.schema.yaml#/mold_nm
+                            - $ref: ../../schemas/mld/mold.schema.yaml#/mold_no
+                            - $ref: ../../schemas/mld/mold.schema.yaml#/mold_cavity
                             - $ref: ../../schemas/std/routing-resource.schema.yaml#/emp_cnt
                             - $ref: ../../schemas/std/routing-resource.schema.yaml#/cycle_time
-                            - $ref: ../../schemas/std/routing.schema.yaml#/uph
+                            - $ref: ../../schemas/std/routing-resource.schema.yaml#/uph
                             - $ref: ../../schemas/common/timestamp.schema.yaml
     500:
       $ref: ../../responses/common/general-error.response.yaml
