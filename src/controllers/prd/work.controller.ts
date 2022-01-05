@@ -34,6 +34,7 @@ import testErrorHandlingHelper from '../../utils/testErrorHandlingHelper';
 import unsealArray from '../../utils/unsealArray';
 import BaseCtl from '../base.controller';
 import config from '../../configs/config';
+import MldMoldRepo from '../../repositories/mld/mold.repository';
 
 class PrdWorkCtl extends BaseCtl {
   //#region ✅ Constructor
@@ -78,6 +79,12 @@ class PrdWorkCtl extends BaseCtl {
         TRepo: StdEquipRepo,
         idName: 'equip_id',
         uuidName: 'equip_uuid'
+      },
+      {
+        key: 'mold',
+        TRepo: MldMoldRepo,
+        idName: 'mold_id',
+        uuidName: 'mold_uuid'
       },
       {
         key: 'prod',
@@ -125,6 +132,7 @@ class PrdWorkCtl extends BaseCtl {
       const orderRepo = new PrdOrderRepo(req.tenant.uuid);
       const orderWorkerRepo = new PrdOrderWorkerRepo(req.tenant.uuid);
       const orderRoutingRepo = new PrdOrderRoutingRepo(req.tenant.uuid);
+      const moldRepo = new MldMoldRepo(req.tenant.uuid);
       let result: ApiResult<any> = { raws: [], count: 0 };
 
       // ❗ 작업지시가 마감되어 있는 경우 Interlock
@@ -136,6 +144,15 @@ class PrdWorkCtl extends BaseCtl {
 
       await sequelize.transaction(async(tran) => { 
         for await (const data of req.body) {
+          // 📌 작업지시에 등록되어있는 금형정보 초기 값 입력
+          const order = await orderRepo.readByUuid(data.order_uuid);
+          const moldUuid = order.raws[0].mold_uuid;
+          if (moldUuid) {
+            const mold = await moldRepo.readRawByUuid(moldUuid);
+            data.mold_id = mold.raws[0].mold_id;
+            data.mold_cavity = mold.raws[0].cavity;
+          }
+
           // 📌 작업지시 단위 최대 순번 조회
           const maxSeq = await repo.getMaxSeq(data.order_id, tran);
           data.seq = maxSeq + 1;

@@ -1,6 +1,7 @@
 import { Sequelize, Table, Column, Model, DataType, CreatedAt, UpdatedAt, BelongsTo, Unique, ForeignKey } from 'sequelize-typescript'
 import IPrdWork from '../../interfaces/prd/work.interface';
 import AutUser from '../aut/user.model';
+import MldMold from '../mld/mold.model';
 import StdEquip from '../std/equip.model';
 import StdFactory from '../std/factory.model';
 import StdLocation from '../std/location.model';
@@ -80,6 +81,19 @@ export default class PrdWork extends Model<IPrdWork> {
     type: DataType.INTEGER,
   })
   equip_id: number;
+
+  @ForeignKey(() => MldMold)
+  @Column({
+    comment: '금형ID',
+    type: DataType.INTEGER,
+  })
+  mold_id: number;
+
+  @Column({
+    comment: '금형 Cavity',
+    type: DataType.INTEGER,
+  })
+  mold_cavity: number;
 
   @ForeignKey(() => StdProd)
   @Column({
@@ -227,6 +241,9 @@ export default class PrdWork extends Model<IPrdWork> {
 
   @BelongsTo(() => StdEquip, { foreignKey: 'equip_id', targetKey: 'equip_id', onDelete: 'restrict', onUpdate: 'cascade' })
   stdEquip: StdEquip;
+
+  @BelongsTo(() => MldMold, { foreignKey: 'mold_id', targetKey: 'mold_id', onDelete: 'restrict', onUpdate: 'cascade' })
+  mldMold: MldMold;
 
   @BelongsTo(() => StdProd, { foreignKey: 'prod_id', targetKey: 'prod_id', onDelete: 'restrict', onUpdate: 'cascade' })
   stdProd: StdProd;
