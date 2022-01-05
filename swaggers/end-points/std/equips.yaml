@@ -7,17 +7,39 @@ get:
   parameters:
     - name: factory_uuid
       in: query
-      description: 공장의 UUID를 입력하여 공장에 따라 설비를 조회합니다. [전체 조회시 입력하지 않습니다.]
+      description: |
+        공장의 UUID를 입력하여 공장에 따라 설비를 조회합니다. <br/> 
+        [전체 조회시 입력하지 않습니다.]
       schema:
         type: string
         format: uuid
 
     - name: equip_type_uuid
       in: query
-      description: 설비 유형의 UUID를 입력하여 설비 유형에 따라 설비를 조회합니다. [전체 조회시 입력하지 않습니다.]
+      description: |
+        설비 유형의 UUID를 입력하여 설비 유형에 따라 설비를 조회합니다. <br/> 
+        [전체 조회시 입력하지 않습니다.]
       schema:
         type: string
         format: uuid
+
+    - name: use_fg
+      in: query
+      description: |
+        설비의 사용여부에 따라 설비를 조회합니다. <br/> 
+        [전체 조회시 입력하지 않습니다.]
+      schema:
+        type: boolean
+        format: boolean
+
+    - name: prd_fg
+      in: query
+      description: |
+        설비의 생산설비여부에따라 설비를 조회합니다. <br/> 
+        [전체 조회시 입력하지 않습니다.]
+      schema:
+        type: boolean
+        format: boolean
 
   responses:
     200:

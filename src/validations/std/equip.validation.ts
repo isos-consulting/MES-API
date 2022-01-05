@@ -1,12 +1,21 @@
 
-import { body, param } from 'express-validator';
+import { body, param, query } from 'express-validator';
 import { errorState } from '../../states/common.state';
 import createValidationError from '../../utils/createValidationError';
 
 const stateTag = 'stdEquip';
    
 const stdEquipValidation = {
-  read: [],
+  read: [
+    query('facotry_uuid', '공장UUID').optional({ nullable: true })
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'facotry_uuid', '공장UUID')),
+    query('equip_type_uuid', '설비유형UUID').optional({ nullable: true })
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'equip_type_uuid', '설비유형UUID')),
+    query('use_fg', '사용여부').optional({ nullable: true })
+      .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'use_fg', '사용여부')),
+    query('prd_fg', '생산설비여부').optional({ nullable: true })
+      .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'prd_fg', '생산설비여부'))
+  ],
   readByUuid: [ 
     param('uuid', '설비UUID')
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'uuid', '설비UUID'))

@@ -111,6 +111,12 @@ class StdEquipRepo {
           'updated_at',
           [ Sequelize.col('updateUser.user_nm'), 'updated_nm' ]
         ],
+        where: { 
+          [Op.and]: [
+            { use_fg: params.use_fg != null ? params.use_fg : { [Op.ne]: null } },
+            { prd_fg: params.prd_fg != null ? params.prd_fg : { [Op.ne]: null } }
+          ]
+        },
         order: [ 'factory_id', 'equip_type_id', 'equip_id' ],
       });
 
