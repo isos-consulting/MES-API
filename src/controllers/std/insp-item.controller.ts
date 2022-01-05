@@ -6,7 +6,10 @@ import createDatabaseError from '../../utils/createDatabaseError';
 import createUnknownError from '../../utils/createUnknownError';
 import { sequelizes } from '../../utils/getSequelize';
 import isServiceResult from '../../utils/isServiceResult';
-import response, { TServiceResult } from '../../utils/response_new';
+import response from '../../utils/response_new';
+import createApiResult from '../../utils/createApiResult_new';
+import { successState } from '../../states/common.state';
+import ApiResult from '../../interfaces/common/api-result.interface';
 
 class StdInspItemCtl {
   stateTag: string
@@ -24,7 +27,7 @@ class StdInspItemCtl {
   // 📒 Fn[create] (✅ Inheritance): Default Create Function
   public create = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      let result: TServiceResult = { result_info: {}, log_info: {} };
+      let result: ApiResult<any> = { count:0, raws: [] };
       const service = new StdInspItemService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
       const datas = await service.convertFk(Object.values(matched));
@@ -33,7 +36,7 @@ class StdInspItemCtl {
         result = await service.create(datas, req.user?.uid as number, tran)
       });
 
-      return response(res, result.result_info, result.log_info);
+      return createApiResult(res, result, 201, '데이터 생성 성공', this.stateTag , successState.CREATE);
     } catch (error) {
       if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
 
@@ -51,13 +54,13 @@ class StdInspItemCtl {
   // 📒 Fn[read] (✅ Inheritance): Default Read Function
   public read = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      let result: TServiceResult = { result_info: {}, log_info: {} };
+      let result: ApiResult<any> = { count:0, raws: [] };
       const service = new StdInspItemService(req.tenant.uuid);
       const params = matchedData(req, { locations: [ 'query', 'params' ] });
 
       result = await service.read(params);
 
-      return response(res, result.result_info, result.log_info);
+      return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
     } catch (error) {
       if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
       
@@ -71,12 +74,12 @@ class StdInspItemCtl {
   // 📒 Fn[readByUuid] (✅ Inheritance): Default ReadByUuid Function
   public readByUuid = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      let result: TServiceResult = { result_info: {}, log_info: {} };
+      let result: ApiResult<any> = { count:0, raws: [] };
       const service = new StdInspItemService(req.tenant.uuid);
 
       result = await service.readByUuid(req.params.uuid);
 
-      return response(res, result.result_info, result.log_info);
+      return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
     } catch (error) {
       if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
 
@@ -94,7 +97,7 @@ class StdInspItemCtl {
   // 📒 Fn[update] (✅ Inheritance): Default Update Function
   public update = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      let result: TServiceResult = { result_info: {}, log_info: {} };
+      let result: ApiResult<any> = { count:0, raws: [] };
       const service = new StdInspItemService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
       const datas = await service.convertFk(Object.values(matched));
@@ -103,7 +106,7 @@ class StdInspItemCtl {
         result = await service.update(datas, req.user?.uid as number, tran)
       });
 
-      return response(res, result.result_info, result.log_info);
+      return createApiResult(res, result, 200, '데이터 수정 성공', this.stateTag, successState.UPDATE);
     } catch (error) {
       if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
 
@@ -121,7 +124,7 @@ class StdInspItemCtl {
   // 📒 Fn[patch] (✅ Inheritance): Default Patch Function
   public patch = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      let result: TServiceResult = { result_info: {}, log_info: {} };
+      let result: ApiResult<any> = { count:0, raws: [] };
       const service = new StdInspItemService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
       const datas = await service.convertFk(Object.values(matched));
@@ -130,7 +133,7 @@ class StdInspItemCtl {
         result = await service.patch(datas, req.user?.uid as number, tran)
       });
 
-      return response(res, result.result_info, result.log_info);
+      return createApiResult(res, result, 200, '데이터 수정 성공', this.stateTag, successState.PATCH);
     } catch (error) {
       if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
 
@@ -148,7 +151,7 @@ class StdInspItemCtl {
   // 📒 Fn[delete] (✅ Inheritance): Default Delete Function
   public delete = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      let result: TServiceResult = { result_info: {}, log_info: {} };
+      let result: ApiResult<any> = { count:0, raws: [] };
       const service = new StdInspItemService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
       const datas = Object.values(matched);
@@ -157,7 +160,7 @@ class StdInspItemCtl {
         result = await service.delete(datas, req.user?.uid as number, tran)
       });
 
-      return response(res, result.result_info, result.log_info);
+      return createApiResult(res, result, 200, '데이터 삭제 성공', this.stateTag, successState.DELETE);
     } catch (error) {
       if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
 
