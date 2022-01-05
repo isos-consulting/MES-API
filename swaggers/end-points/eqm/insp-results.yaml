@@ -153,7 +153,8 @@ get:
 
 post:
   description: |
-    설비검사성적서 데이터를 생성합니다.
+    설비검사성적서 데이터를 생성합니다. <br/>
+    ❗️ 검사 값(insp_value)는 숫자형태의 값을 입력해야 합니다.
   summary: 설비검사성적서 데이터 생성
   tags:
     - 설비검사성적서(InspResult)
@@ -186,7 +187,8 @@ post:
 
 put:
   description: |
-    설비검사성적서 데이터를 행(Row) 단위로 수정합니다.
+    설비검사성적서 데이터를 행(Row) 단위로 수정합니다. <br/>
+    ❗️ 검사 값(insp_value)는 숫자형태의 값을 입력해야 합니다.
   summary: 설비검사성적서 데이터 수정
   tags:
     - 설비검사성적서(InspResult)
@@ -215,7 +217,8 @@ put:
 
 patch:
   description: |
-    설비검사성적서 데이터를 개별 항목 단위로 수정합니다.
+    설비검사성적서 데이터를 개별 항목 단위로 수정합니다. <br/>
+    ❗️ 검사 값(insp_value)는 숫자형태의 값을 입력해야 합니다.
   summary: 설비검사성적서 데이터 수정
   tags:
     - 설비검사성적서(InspResult)

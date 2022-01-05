@@ -85,8 +85,12 @@ post:
   description: |
     설비검사기준서 기준서 신규생성 및 상세기준서를 추가 생성합니다. <br/>
     상세기준서 추가 생성시 header에 기준서의 uuid를 입력해야 합니다. <br/>
+    ✅ 기준서 적용여부(apply_fg)를 true로 입력 할 경우 해당 설비에 기존에 적용중이였던 기준서가 해제되고 신규 기준서가 적용됩니다. <br/>
+    ✅ 기준서의 적용일시를 입력하지 않으면 등록 당시의 시간이 입력됩니다. <br/>
     ❗️ 설비정기점검(periodicity_fg: true)의 경우 주기 기준일(base_date), 주기단위UUID(cycle_unit_uuid), 점검주기(cycle) 항목을 필수 입력해야 합니다. <br/>
-    ❗️ 설비일상점검(periodicity_fg: false)의 경우 일상점검주기UUID(daily_insp_cycle_uuid) 항목을 필수 입력해야 합니다.
+    ❗️ 설비일상점검(periodicity_fg: false)의 경우 일상점검주기UUID(daily_insp_cycle_uuid) 항목을 필수 입력해야 합니다. <br/>
+    ❗️ 기준서 번호 자동발행 옵션이 입력되어있으면 기준서 번호(insp_no)를 입력하지 않습니다. <br/>
+    ❗️ 기준서의 등록일시는 적용일시보다 늦을 수 없습니다.
   summary: 설비검사기준서 데이터 생성
   tags:
     - 설비검사기준서(Insp)
@@ -153,7 +157,8 @@ put:
   description: |
     설비검사기준서 기준서 및 하위 상세기준서 데이터를 수정합니다. <br/>
     ❗️ 설비정기점검(periodicity_fg: true)의 경우 주기 기준일(base_date), 주기단위UUID(cycle_unit_uuid), 점검주기(cycle) 항목을 필수 입력해야 합니다. <br/>
-    ❗️ 설비일상점검(periodicity_fg: false)의 경우 일상점검주기UUID(daily_insp_cycle_uuid) 항목을 필수 입력해야 합니다.
+    ❗️ 설비일상점검(periodicity_fg: false)의 경우 일상점검주기UUID(daily_insp_cycle_uuid) 항목을 필수 입력해야 합니다. <br/>
+    ❗️ 기준서의 등록일시는 적용일시보다 늦을 수 없습니다.
   summary: 설비검사기준서 데이터 수정
   tags:
     - 설비검사기준서(Insp)
@@ -212,7 +217,9 @@ put:
 patch:
   description: |
     설비검사기준서 기준서 및 하위 상세기준서 데이터를 부분 수정합니다. <br/>
-    ❗ 공정검사 기준서는 해당 품번의 생산이 진행중일 경우 기준서 적용이 불가능합니다.
+    ❗️ 설비정기점검(periodicity_fg: true)의 경우 주기 기준일(base_date), 주기단위UUID(cycle_unit_uuid), 점검주기(cycle) 항목을 필수 입력해야 합니다. <br/>
+    ❗️ 설비일상점검(periodicity_fg: false)의 경우 일상점검주기UUID(daily_insp_cycle_uuid) 항목을 필수 입력해야 합니다. <br/>
+    ❗️ 기준서의 등록일시는 적용일시보다 늦을 수 없습니다.
   summary: 설비검사기준서 데이터 수정
   tags:
     - 설비검사기준서(Insp)
