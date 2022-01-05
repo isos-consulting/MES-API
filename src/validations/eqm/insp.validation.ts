@@ -46,11 +46,11 @@ const eqmInspValidation = {
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'equip_uuid', '설비UUID')),
     body('header.reg_date', '기준서 등록일시')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'reg_date', '기준서 등록일시'))
-      .isDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'reg_date', '기준서 등록일시')),
+      .isISO8601().toDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'reg_date', '기준서 등록일시')),
     body('header.apply_fg', '기준서 적용여부').optional({ nullable: true })
       .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'apply_fg', '기준서 적용여부')),
     body('header.apply_date', '기준서 적용일시').optional({ nullable: true })
-      .isDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'apply_date', '기준서 적용일시')),
+      .isISO8601().toDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'apply_date', '기준서 적용일시')),
     body('header.contents', '개정내역').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'contents', '개정내역')),
     body('header.remark', '비고').optional({ nullable: true })
@@ -110,7 +110,7 @@ const eqmInspValidation = {
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'insp_no', '기준서번호')),
     body('header.reg_date', '기준서 등록일시')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'reg_date', '기준서 등록일시'))
-      .isDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'reg_date', '기준서 등록일시')),
+      .isISO8601().toDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'reg_date', '기준서 등록일시')),
     body('header.contents', '개정내역').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'contents', '개정내역')),
     body('header.remark', '비고').optional({ nullable: true })
@@ -155,7 +155,7 @@ const eqmInspValidation = {
     body('header.insp_no', '기준서번호').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'insp_no', '기준서번호')),
     body('header.reg_date', '기준서 등록일시').optional({ nullable: true })
-      .isDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'reg_date', '기준서 등록일시')),
+      .isISO8601().toDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'reg_date', '기준서 등록일시')),
     body('header.contents', '개정내역').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'contents', '개정내역')),
     body('header.remark', '비고').optional({ nullable: true })
