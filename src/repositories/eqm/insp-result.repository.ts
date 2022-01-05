@@ -94,7 +94,7 @@ class EqmInspResultRepo {
             where: { 
               [Op.and]: [
                 { uuid: params.insp_detail_uuid ? params.insp_detail_uuid : { [Op.ne]: null } },
-                { periodicity_fg: params.periodicity_fg ? params.periodicity_fg : { [Op.ne]: null } },
+                { periodicity_fg: params.periodicity_fg != null ? params.periodicity_fg : { [Op.ne]: null } },
               ]
             }
           },
