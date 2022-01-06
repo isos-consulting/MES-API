@@ -238,7 +238,7 @@ class PrdOrderCtl extends BaseCtl {
 
       // 📌 지시대비 실적이 저장된 경우 수정되면 안되는 데이터를 수정 할 때의 Interlock
       req.body.forEach((data: any) => {
-        if (Object.keys(data).includes('order_no' || 'workings_id' || 'equip_id' || 'mold_id' || 'qty' || 'seq' || 'shift_id')) {
+        if (Object.keys(data).includes('order_no' || 'workings_id' || 'equip_id' || 'qty' || 'seq' || 'shift_id')) {
           orderUuids.push(data.order_uuid);
         }
       });
@@ -364,7 +364,7 @@ class PrdOrderCtl extends BaseCtl {
 
       // 📌 지시대비 실적이 저장된 경우 수정되면 안되는 데이터를 수정 할 때의 Interlock
       req.body.forEach((data: any) => {
-        if (Object.keys(data).includes('order_no' || 'workings_id' || 'equip_id' || 'mold_id' || 'qty' || 'seq' || 'shift_id')) {
+        if (Object.keys(data).includes('order_no' || 'workings_id' || 'equip_id' || 'qty' || 'seq' || 'shift_id')) {
           orderUuids.push(data.order_uuid);
         }
       });
