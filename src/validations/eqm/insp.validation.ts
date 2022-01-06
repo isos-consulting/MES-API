@@ -79,7 +79,7 @@ const eqmInspValidation = {
     body('details.*.insp_method_uuid', '검사방법UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'insp_method_uuid', '검사방법UUID')),
     body('details.*.base_date', '주기 기준일').optional({ nullable: true })
-      .isDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'base_date', '주기 기준일')),
+      .isISO8601().toDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'base_date', '주기 기준일')),
     body('details.*.daily_insp_cycle_uuid', '일상점검주기UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'daily_insp_cycle_uuid', '일상점검주기UUID')),
     body('details.*.cycle_unit_uuid', '주기단위UUID').optional({ nullable: true })
@@ -136,7 +136,7 @@ const eqmInspValidation = {
     body('details.*.insp_method_uuid', '검사방법UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'insp_method_uuid', '검사방법UUID')),
     body('details.*.base_date', '주기 기준일').optional({ nullable: true })
-      .isDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'base_date', '주기 기준일')),
+      .isISO8601().toDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'base_date', '주기 기준일')),
     body('details.*.daily_insp_cycle_uuid', '일상점검주기UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'daily_insp_cycle_uuid', '일상점검주기UUID')),
     body('details.*.cycle_unit_uuid', '주기단위UUID').optional({ nullable: true })
@@ -179,7 +179,7 @@ const eqmInspValidation = {
     body('details.*.insp_method_uuid', '검사방법UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'insp_method_uuid', '검사방법UUID')),
     body('details.*.base_date', '주기 기준일').optional({ nullable: true })
-      .isDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'base_date', '주기 기준일')),
+      .isISO8601().toDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'base_date', '주기 기준일')),
     body('details.*.daily_insp_cycle_uuid', '일상점검주기UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'daily_insp_cycle_uuid', '일상점검주기UUID')),
     body('details.*.cycle_unit_uuid', '주기단위UUID').optional({ nullable: true })
