@@ -44,6 +44,7 @@ import StdWorkerGroupCtl from '../controllers/std/worker-group.controller';
 import StdWorkerCtl from '../controllers/std/worker.controller';
 import StdWorkingsCtl from '../controllers/std/workings.controller';
 import validationCallback from '../utils/validationCallback';
+import stdDowntimeValidation from '../validations/std/downtime.validation';
 import stdEquipValidation from '../validations/std/equip.validation';
 import stdInspItemValidation from '../validations/std/insp-item.validation';
 import stdRoutingResourceValidation from '../validations/std/routing-resource.validation';
@@ -305,13 +306,12 @@ router.route('/downtime-types').delete(downtimeType.delete);
 
 //#region ✅ Downtime (비가동)
 const downtime = new StdDowntimeCtl();
-router.route('/downtimes/excel-upload').post(downtime.upsertBulkDatasFromExcel);
-router.route('/downtime/:uuid').get(downtime.read);
-router.route('/downtimes').get(downtime.read);
-router.route('/downtimes').post(downtime.create);
-router.route('/downtimes').put(downtime.update);
-router.route('/downtimes').patch(downtime.patch);
-router.route('/downtimes').delete(downtime.delete);
+router.route('/downtime/:uuid').get(stdDowntimeValidation.readByUuid, validationCallback, downtime.readByUuid);
+router.route('/downtimes').get(stdDowntimeValidation.read, validationCallback, downtime.read);
+router.route('/downtimes').post(stdDowntimeValidation.create, validationCallback, downtime.create);
+router.route('/downtimes').put(stdDowntimeValidation.update, validationCallback, downtime.update);
+router.route('/downtimes').patch(stdDowntimeValidation.patch, validationCallback, downtime.patch);
+router.route('/downtimes').delete(stdDowntimeValidation.delete, validationCallback, downtime.delete);
 //#endregion
 
 //#region ✅ Emp (사원)

@@ -7,17 +7,30 @@ get:
   parameters:
     - name: factory_uuid
       in: query
-      description: 공장의 UUID를 입력하여 공장에 따라 비가동을 조회합니다. [전체 조회시 입력하지 않습니다.]
+      description: |
+        공장의 UUID를 입력하여 공장에 따라 비가동을 조회합니다. <br/>
+        [전체 조회시 입력하지 않습니다.]
       schema:
         type: string
         format: uuid
     
     - name: downtime_type_uuid
       in: query
-      description: 비가동 유형의 UUID를 입력하여 비가동 유형에 따라 비가동을 조회합니다. [전체 조회시 입력하지 않습니다.]
+      description: |
+        비가동 유형의 UUID를 입력하여 비가동 유형에 따라 비가동을 조회합니다. <br/>
+        [전체 조회시 입력하지 않습니다.]
       schema:
         type: string
         format: uuid
+
+    - name: eqm_failure_fg
+      in: query
+      description: |
+        설비고장여부에 따라 비가동을 조회합니다. <br/>
+        [전체 조회시 입력하지 않습니다.]
+      schema:
+        type: boolean
+        format: boolean
 
   responses:
     200:
@@ -56,6 +69,7 @@ get:
                             - $ref: ../../schemas/std/downtime-type.schema.yaml#/downtime_type_nm
                             - $ref: ../../schemas/std/downtime.schema.yaml#/downtime_cd
                             - $ref: ../../schemas/std/downtime.schema.yaml#/downtime_nm
+                            - $ref: ../../schemas/std/downtime.schema.yaml#/eqm_failure_fg
                             - $ref: ../../schemas/common/timestamp.schema.yaml
     500:
       $ref: ../../responses/common/general-error.response.yaml
@@ -74,11 +88,13 @@ post:
             - factory_uuid
             - downtime_cd
             - downtime_nm
+            - eqm_failure_fg
           allOf:
             - $ref: ../../schemas/std/factory.schema.yaml#/factory_uuid
             - $ref: ../../schemas/std/downtime.schema.yaml#/downtime_type_uuid
             - $ref: ../../schemas/std/downtime.schema.yaml#/downtime_cd
             - $ref: ../../schemas/std/downtime.schema.yaml#/downtime_nm
+            - $ref: ../../schemas/std/downtime.schema.yaml#/eqm_failure_fg
   responses:
     201:
       $ref: ../../responses/common/succeed-create.response.yaml
@@ -99,11 +115,13 @@ put:
             - uuid
             - downtime_cd
             - downtime_nm
+            - eqm_failure_fg
           allOf:
             - $ref: ../../schemas/std/downtime.schema.yaml#/uuid
             - $ref: ../../schemas/std/downtime.schema.yaml#/downtime_type_uuid
             - $ref: ../../schemas/std/downtime.schema.yaml#/downtime_cd
             - $ref: ../../schemas/std/downtime.schema.yaml#/downtime_nm
+            - $ref: ../../schemas/std/downtime.schema.yaml#/eqm_failure_fg
   responses:
     201:
       $ref: ../../responses/common/succeed-update.response.yaml
@@ -127,6 +145,7 @@ patch:
             - $ref: ../../schemas/std/downtime.schema.yaml#/downtime_type_uuid
             - $ref: ../../schemas/std/downtime.schema.yaml#/downtime_cd
             - $ref: ../../schemas/std/downtime.schema.yaml#/downtime_nm
+            - $ref: ../../schemas/std/downtime.schema.yaml#/eqm_failure_fg
   responses:
     201:
       $ref: ../../responses/common/succeed-update.response.yaml

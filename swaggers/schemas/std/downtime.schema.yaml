@@ -41,6 +41,14 @@ downtime_nm:
       type: string
       format: varchar(50)
 
+eqm_failure_fg: 
+  type: object
+  properties: 
+    eqm_failure_fg:
+      description: 설비고장여부
+      type: boolean
+      format: boolean
+
 uuid:
   type: object
   properties: 

@@ -36,6 +36,7 @@ class StdDowntimeRepo {
           downtime_type_id: downtime.downtime_type_id,
           downtime_cd: downtime.downtime_cd,
           downtime_nm: downtime.downtime_nm,
+          eqm_failure_fg: downtime.eqm_failure_fg,
           created_uid: uid,
           updated_uid: uid,
         }
@@ -68,6 +69,7 @@ class StdDowntimeRepo {
           { 
             model: this.sequelize.models.StdDowntimeType, 
             attributes: [],
+            required: false,
             where: { uuid: params.downtime_type_uuid ? params.downtime_type_uuid : { [Op.ne]: null } }
           },
           { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
@@ -83,11 +85,13 @@ class StdDowntimeRepo {
           [ Sequelize.col('stdDowntimeType.uuid'), 'downtime_type_uuid' ],
           [ Sequelize.col('stdDowntimeType.downtime_type_cd'), 'downtime_type_cd' ],
           [ Sequelize.col('stdDowntimeType.downtime_type_nm'), 'downtime_type_nm' ],
+          'eqm_failure_fg',
           'created_at',
           [ Sequelize.col('createUser.user_nm'), 'created_nm' ],
           'updated_at',
           [ Sequelize.col('updateUser.user_nm'), 'updated_nm' ]
         ],
+        where: { eqm_failure_fg: params.eqm_failure_fg ?? { [Op.ne]: null } },
         order: [ 'factory_id', 'downtime_type_id', 'downtime_id' ],
       });
 
@@ -117,6 +121,7 @@ class StdDowntimeRepo {
           [ Sequelize.col('stdDowntimeType.uuid'), 'downtime_type_uuid' ],
           [ Sequelize.col('stdDowntimeType.downtime_type_cd'), 'downtime_type_cd' ],
           [ Sequelize.col('stdDowntimeType.downtime_type_nm'), 'downtime_type_nm' ],
+          'eqm_failure_fg',
           'created_at',
           [ Sequelize.col('createUser.user_nm'), 'created_nm' ],
           'updated_at',
@@ -172,9 +177,10 @@ class StdDowntimeRepo {
       for await (let downtime of body) {
         const result = await this.repo.update(
           {
-            downtime_type_id: downtime.downtime_type_id != null ? downtime.downtime_type_id : null,
-            downtime_cd: downtime.downtime_cd != null ? downtime.downtime_cd : null,
-            downtime_nm: downtime.downtime_nm != null ? downtime.downtime_nm : null,
+            downtime_type_id: downtime.downtime_type_id ?? null,
+            downtime_cd: downtime.downtime_cd ?? null,
+            downtime_nm: downtime.downtime_nm ?? null,
+            eqm_failure_fg: downtime.eqm_failure_fg ?? null,
             updated_uid: uid,
           } as any,
           { 
@@ -213,6 +219,7 @@ class StdDowntimeRepo {
             downtime_type_id: downtime.downtime_type_id,
             downtime_cd: downtime.downtime_cd,
             downtime_nm: downtime.downtime_nm,
+            eqm_failure_fg: downtime.eqm_failure_fg,
             updated_uid: uid,
           },
           { 

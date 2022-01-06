@@ -35,7 +35,6 @@ export default class StdDowntime extends Model<IStdDowntime> {
   @Column({
     comment: '비가동 유형ID',
     type: DataType.INTEGER,
-    allowNull: false,
   })
   downtime_type_id: number;
 
@@ -53,6 +52,14 @@ export default class StdDowntime extends Model<IStdDowntime> {
     allowNull: false,
   })
   downtime_nm: string;
+
+  @Column({
+    comment: '설비고장여부',
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  eqm_failure_fg: boolean;
 
   @CreatedAt
   @Column({

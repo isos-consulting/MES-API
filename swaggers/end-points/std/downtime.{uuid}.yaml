@@ -50,6 +50,7 @@ get:
                             - $ref: ../../schemas/std/downtime-type.schema.yaml#/downtime_type_nm
                             - $ref: ../../schemas/std/downtime.schema.yaml#/downtime_cd
                             - $ref: ../../schemas/std/downtime.schema.yaml#/downtime_nm
+                            - $ref: ../../schemas/std/downtime.schema.yaml#/eqm_failure_fg
                             - $ref: ../../schemas/common/timestamp.schema.yaml
     500:
       $ref: ../../responses/common/general-error.response.yaml
