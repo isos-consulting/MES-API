@@ -131,3 +131,10 @@ factory_uuid:
       format: uuid
 
 # Others
+mold_cavity:
+  type: object
+  properties:
+    mold_cavity:
+      description: cavity
+      type: number
+      format: numeric(19, 6)

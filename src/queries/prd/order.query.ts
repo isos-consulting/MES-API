@@ -38,6 +38,11 @@ const readOrders = (
       s_e.uuid as equip_uuid,
       s_e.equip_cd,
       s_e.equip_nm,
+      m_m.uuid as mold_uuid,
+      m_m.mold_cd,
+      m_m.mold_nm,
+      m_m.mold_no,
+      m_m.cavity as mold_cavity,
       s_p.uuid as prod_uuid,
       s_p.prod_no,
       s_p.prod_nm,
@@ -94,6 +99,7 @@ const readOrders = (
     JOIN std_proc_tb s_pc ON s_pc.proc_id = p_o.proc_id
     JOIN std_workings_tb s_ws ON s_ws.workings_id = p_o.workings_id
     LEFT JOIN std_equip_tb s_e ON s_e.equip_id = p_o.equip_id
+    LEFT JOIN mld_mold_tb m_m ON m_m.mold_id = p_o.mold_id
     JOIN std_prod_tb s_p ON s_p.prod_id = p_o.prod_id
     LEFT JOIN std_item_type_tb s_it ON s_it.item_type_id = s_p.item_type_id
     LEFT JOIN std_prod_type_tb s_pt ON s_pt.prod_type_id = s_p.prod_type_id

@@ -1,6 +1,7 @@
 import { Sequelize, Table, Column, Model, DataType, CreatedAt, UpdatedAt, BelongsTo, Unique, ForeignKey } from 'sequelize-typescript'
 import IStdRoutingResource from '../../interfaces/std/routing-resource.interface';
 import AutUser from '../aut/user.model';
+import MldMold from '../mld/mold.model';
 import StdEquip from './equip.model';
 import StdFactory from './factory.model';
 import StdRouting from './routing.model';
@@ -56,6 +57,13 @@ export default class StdRoutingResource extends Model<IStdRoutingResource> {
     type: DataType.INTEGER,
   })
   equip_id: number;
+
+  @ForeignKey(() => MldMold)
+  @Column({
+    comment: '금형ID (자원이 금형일 경우)',
+    type: DataType.INTEGER,
+  })
+  mold_id: number;
 
   @Column({
     comment: '인원 (자원이 사람일 경우)',
@@ -132,6 +140,9 @@ export default class StdRoutingResource extends Model<IStdRoutingResource> {
 
   @BelongsTo(() => StdEquip, { foreignKey: 'equip_id', targetKey: 'equip_id', onDelete: 'restrict', onUpdate: 'cascade' })
   stdEquip: StdEquip;
+
+  @BelongsTo(() => MldMold, { foreignKey: 'mold_id', targetKey: 'mold_id', onDelete: 'restrict', onUpdate: 'cascade' })
+  mldMold: MldMold;
 
   // HasMany
   //#endregion

@@ -46,6 +46,7 @@ import StdWorkingsCtl from '../controllers/std/workings.controller';
 import validationCallback from '../utils/validationCallback';
 import stdEquipValidation from '../validations/std/equip.validation';
 import stdInspItemValidation from '../validations/std/insp-item.validation';
+import stdRoutingResourceValidation from '../validations/std/routing-resource.validation';
 
 const router = express.Router();
 
@@ -326,12 +327,12 @@ router.route('/emps').delete(emp.delete);
 
 //#region ✅ RoutingResource (생산 자원)
 const routingResource = new StdRoutingResourceCtl();
-router.route('/routing-resource/:uuid').get(routingResource.read);
-router.route('/routing-resources').get(routingResource.read);
-router.route('/routing-resources').post(routingResource.create);
-router.route('/routing-resources').put(routingResource.update);
-router.route('/routing-resources').patch(routingResource.patch);
-router.route('/routing-resources').delete(routingResource.delete);
+router.route('/routing-resource/:uuid').get(stdRoutingResourceValidation.readByUuid, validationCallback, routingResource.readByUuid);
+router.route('/routing-resources').get(stdRoutingResourceValidation.read, validationCallback, routingResource.read);
+router.route('/routing-resources').post(stdRoutingResourceValidation.create, validationCallback, routingResource.create);
+router.route('/routing-resources').put(stdRoutingResourceValidation.update, validationCallback, routingResource.update);
+router.route('/routing-resources').patch(stdRoutingResourceValidation.patch, validationCallback, routingResource.patch);
+router.route('/routing-resources').delete(stdRoutingResourceValidation.delete, validationCallback, routingResource.delete);
 //#endregion
 
 //#region ✅ EquipType (설비 유형)

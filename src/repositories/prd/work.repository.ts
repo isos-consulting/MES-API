@@ -41,6 +41,8 @@ class PrdWorkRepo {
           proc_id: work.proc_id,
           workings_id: work.workings_id,
           equip_id: work.equip_id,
+          mold_id: work.mold_id,
+          mold_cavity: work.mold_cavity,
           prod_id: work.prod_id, 
           lot_no: work.lot_no,
           qty: work.qty,
@@ -134,6 +136,8 @@ class PrdWorkRepo {
           'workings_id',
           'equip_id',
           'prod_id',
+          'mold_id',
+          'mold_cavity',
           'lot_no',
           'qty',
           'reject_qty',
@@ -173,6 +177,8 @@ class PrdWorkRepo {
           'proc_id',
           'workings_id',
           'equip_id',
+          'mold_id',
+          'mold_cavity',
           'prod_id',
           'lot_no',
           'qty',
@@ -271,12 +277,14 @@ class PrdWorkRepo {
       for await (let work of body) {
         const result = await this.repo.update(
           {
-            qty: work.qty != null ? work.qty : null,
-            start_date: work.start_date != null ? work.start_date : null,
-            end_date: work.end_date != null ? work.end_date : null,
-            to_store_id: work.to_store_id != null ? work.to_store_id : null,
-            to_location_id: work.to_location_id != null ? work.to_location_id : null,
-            remark: work.remark != null ? work.remark : null,
+            mold_id: work.mold_id ?? null,
+            mold_cavity: work.mold_cavity ?? null,
+            qty: work.qty ?? null,
+            start_date: work.start_date ?? null,
+            end_date: work.end_date ?? null,
+            to_store_id: work.to_store_id ?? null,
+            to_location_id: work.to_location_id ?? null,
+            remark: work.remark ?? null,
             updated_uid: uid,
           } as any,
           { 
@@ -379,6 +387,8 @@ class PrdWorkRepo {
       for await (let work of body) {
         const result = await this.repo.update(
           {
+            mold_id: work.mold_id,
+            mold_cavity: work.mold_cavity,
             qty: work.qty,
             start_date: work.start_date,
             end_date: work.end_date,

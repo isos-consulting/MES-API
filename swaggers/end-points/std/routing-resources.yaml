@@ -12,7 +12,8 @@ get:
         생산자원유형에 따라 생산자원을 조회합니다. <br/> 
         [all]: 전체 조회 <br/>
         [equip]: 설비 자원 조회 <br/>
-        [emp]: 인원 자원 조회 <br/>
+        [mold]: 금형 자원 조회 <br/>
+        [emp]: 인원 자원 조회
       schema:
         type: string
         format: string
@@ -72,16 +73,24 @@ get:
                             - $ref: ../../schemas/std/routing-resource.schema.yaml#/equip_uuid
                             - $ref: ../../schemas/std/equip.schema.yaml#/equip_cd
                             - $ref: ../../schemas/std/equip.schema.yaml#/equip_nm
+                            - $ref: ../../schemas/std/routing-resource.schema.yaml#/mold_uuid
+                            - $ref: ../../schemas/mld/mold.schema.yaml#/mold_cd
+                            - $ref: ../../schemas/mld/mold.schema.yaml#/mold_nm
+                            - $ref: ../../schemas/mld/mold.schema.yaml#/mold_no
+                            - $ref: ../../schemas/mld/mold.schema.yaml#/mold_cavity
                             - $ref: ../../schemas/std/routing-resource.schema.yaml#/emp_cnt
                             - $ref: ../../schemas/std/routing-resource.schema.yaml#/cycle_time
-                            - $ref: ../../schemas/std/routing.schema.yaml#/uph
+                            - $ref: ../../schemas/std/routing-resource.schema.yaml#/uph
                             - $ref: ../../schemas/common/timestamp.schema.yaml
     500:
       $ref: ../../responses/common/general-error.response.yaml
 
 post:
   description: |
-    생산자원 정보 데이터를 생성합니다.
+    생산자원 정보 데이터를 생성합니다. <br/>
+    ❗️ 설비자원(resource_type: 설비)의 경우 equip_uuid(설비UUID) 항목을 필수 입력해야 합니다. <br/>
+    ❗️ 금형자원(resource_type: 금형)의 경우 mold_uuid(금형UUID) 항목을 필수 입력해야 합니다. <br/>
+    ❗️ 인원자원(resource_type: 인원)의 경우 emp_cnt(인원UUID) 항목을 필수 입력해야 합니다.
   summary: 생산자원 정보 데이터 생성
   tags:
     - 생산자원 정보(RoutingResource)
@@ -99,9 +108,10 @@ post:
             - $ref: ../../schemas/std/routing-resource.schema.yaml#/routing_uuid
             - $ref: ../../schemas/std/routing-resource.schema.yaml#/resource_type
             - $ref: ../../schemas/std/routing-resource.schema.yaml#/equip_uuid
+            - $ref: ../../schemas/std/routing-resource.schema.yaml#/mold_uuid
             - $ref: ../../schemas/std/routing-resource.schema.yaml#/emp_cnt
             - $ref: ../../schemas/std/routing-resource.schema.yaml#/cycle_time
-            - $ref: ../../schemas/std/routing.schema.yaml#/uph
+            - $ref: ../../schemas/std/routing-resource.schema.yaml#/uph
   responses:
     201:
       $ref: ../../responses/common/succeed-create.response.yaml
@@ -110,7 +120,10 @@ post:
 
 put:
   description: |
-    생산자원 정보 데이터를 행(Row) 단위로 수정합니다.
+    생산자원 정보 데이터를 행(Row) 단위로 수정합니다. <br/>
+    ❗️ 설비자원(resource_type: 설비)의 경우 equip_uuid(설비UUID) 항목을 필수 입력해야 합니다. <br/>
+    ❗️ 금형자원(resource_type: 금형)의 경우 mold_uuid(금형UUID) 항목을 필수 입력해야 합니다. <br/>
+    ❗️ 인원자원(resource_type: 인원)의 경우 emp_cnt(인원UUID) 항목을 필수 입력해야 합니다.
   summary: 생산자원 정보 데이터 수정
   tags:
     - 생산자원 정보(RoutingResource)
@@ -126,9 +139,10 @@ put:
             - $ref: ../../schemas/std/routing-resource.schema.yaml#/uuid
             - $ref: ../../schemas/std/routing-resource.schema.yaml#/resource_type
             - $ref: ../../schemas/std/routing-resource.schema.yaml#/equip_uuid
+            - $ref: ../../schemas/std/routing-resource.schema.yaml#/mold_uuid
             - $ref: ../../schemas/std/routing-resource.schema.yaml#/emp_cnt
             - $ref: ../../schemas/std/routing-resource.schema.yaml#/cycle_time
-            - $ref: ../../schemas/std/routing.schema.yaml#/uph
+            - $ref: ../../schemas/std/routing-resource.schema.yaml#/uph
   responses:
     201:
       $ref: ../../responses/common/succeed-update.response.yaml
@@ -137,7 +151,10 @@ put:
 
 patch:
   description: |
-    생산자원 정보 데이터를 개별 항목 단위로 수정합니다.
+    생산자원 정보 데이터를 개별 항목 단위로 수정합니다. <br/>
+    ❗️ 설비자원(resource_type: 설비)의 경우 equip_uuid(설비UUID) 항목을 필수 입력해야 합니다. <br/>
+    ❗️ 금형자원(resource_type: 금형)의 경우 mold_uuid(금형UUID) 항목을 필수 입력해야 합니다. <br/>
+    ❗️ 인원자원(resource_type: 인원)의 경우 emp_cnt(인원UUID) 항목을 필수 입력해야 합니다.
   summary: 생산자원 정보 데이터 수정
   tags:
     - 생산자원 정보(RoutingResource)
@@ -151,9 +168,10 @@ patch:
             - $ref: ../../schemas/std/routing-resource.schema.yaml#/uuid
             - $ref: ../../schemas/std/routing-resource.schema.yaml#/resource_type
             - $ref: ../../schemas/std/routing-resource.schema.yaml#/equip_uuid
+            - $ref: ../../schemas/std/routing-resource.schema.yaml#/mold_uuid
             - $ref: ../../schemas/std/routing-resource.schema.yaml#/emp_cnt
             - $ref: ../../schemas/std/routing-resource.schema.yaml#/cycle_time
-            - $ref: ../../schemas/std/routing.schema.yaml#/uph
+            - $ref: ../../schemas/std/routing-resource.schema.yaml#/uph
   responses:
     201:
       $ref: ../../responses/common/succeed-update.response.yaml

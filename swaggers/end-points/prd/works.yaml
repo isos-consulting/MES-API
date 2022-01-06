@@ -99,6 +99,11 @@ get:
                             - $ref: ../../schemas/prd/work.schema.yaml#/equip_uuid
                             - $ref: ../../schemas/std/equip.schema.yaml#/equip_cd
                             - $ref: ../../schemas/std/equip.schema.yaml#/equip_nm
+                            - $ref: ../../schemas/prd/work.schema.yaml#/mold_uuid
+                            - $ref: ../../schemas/mld/mold.schema.yaml#/mold_cd
+                            - $ref: ../../schemas/mld/mold.schema.yaml#/mold_nm
+                            - $ref: ../../schemas/mld/mold.schema.yaml#/mold_no
+                            - $ref: ../../schemas/prd/work.schema.yaml#/mold_cavity
                             - $ref: ../../schemas/prd/work.schema.yaml#/prod_uuid
                             - $ref: ../../schemas/std/prod.schema.yaml#/prod_no
                             - $ref: ../../schemas/std/prod.schema.yaml#/prod_nm
@@ -149,6 +154,7 @@ post:
   description: |
     생산실적 데이터를 생성합니다. <br/>
     작업지시 기준 실적 관련 하위 데이터[자재투입, 작업자투입, 공정순서 정보]를 함께 생성합니다. <br/>
+    ✅ 작업지시에 긍형이 등록되어있는 경우 작업지시의 금형정보를 기초로 입력합니다. <br/>
     ❗ 지시가 이미 마감된 경우 데이터의 생성이 불가능합니다.
   summary: 생산실적 데이터 생성
   tags:
@@ -177,6 +183,8 @@ post:
             - $ref: ../../schemas/prd/work.schema.yaml#/proc_uuid
             - $ref: ../../schemas/prd/work.schema.yaml#/workings_uuid
             - $ref: ../../schemas/prd/work.schema.yaml#/equip_uuid
+            - $ref: ../../schemas/prd/work.schema.yaml#/mold_uuid
+            - $ref: ../../schemas/prd/work.schema.yaml#/mold_cavity
             - $ref: ../../schemas/prd/work.schema.yaml#/prod_uuid
             - $ref: ../../schemas/prd/work.schema.yaml#/lot_no
             - $ref: ../../schemas/prd/work.schema.yaml#/qty
@@ -210,6 +218,8 @@ put:
             - to_store_uuid
           allOf:
             - $ref: ../../schemas/prd/work.schema.yaml#/uuid
+            - $ref: ../../schemas/prd/work.schema.yaml#/mold_uuid
+            - $ref: ../../schemas/prd/work.schema.yaml#/mold_cavity
             - $ref: ../../schemas/prd/work.schema.yaml#/qty
             - $ref: ../../schemas/prd/work.schema.yaml#/start_date
             - $ref: ../../schemas/prd/work.schema.yaml#/end_date
@@ -237,6 +247,8 @@ patch:
             - uuid
           allOf:
             - $ref: ../../schemas/prd/work.schema.yaml#/uuid
+            - $ref: ../../schemas/prd/work.schema.yaml#/mold_uuid
+            - $ref: ../../schemas/prd/work.schema.yaml#/mold_cavity
             - $ref: ../../schemas/prd/work.schema.yaml#/qty
             - $ref: ../../schemas/prd/work.schema.yaml#/start_date
             - $ref: ../../schemas/prd/work.schema.yaml#/end_date

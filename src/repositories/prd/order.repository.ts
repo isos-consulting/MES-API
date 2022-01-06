@@ -39,6 +39,7 @@ class PrdOrderRepo {
           proc_id: order.proc_id,
           workings_id: order.workings_id,
           equip_id: order.equip_id,
+          mold_id: order.mold_id,
           prod_id: order.prod_id,
           plan_qty: order.plan_qty,
           qty: order.qty,
@@ -119,8 +120,7 @@ class PrdOrderRepo {
           FROM prd_work_tb p_w
           GROUP BY order_id
         ) p_w ON p_w.order_id = p_o.order_id
-        WHERE DATE(p_o.reg_date) = '2021-10-01';
-        --WHERE DATE(p_o.reg_date) = '${params.reg_date}';
+        WHERE DATE(p_o.reg_date) = '${params.reg_date}';
       `);
 
       return convertReadResult(result[0]);
@@ -143,15 +143,16 @@ class PrdOrderRepo {
       for await (let order of body) {
         const result = await this.repo.update(
           {
-            order_no: order.order_no != null ? order.order_no : null,
-            workings_id: order.workings_id != null ? order.workings_id : null,
-            equip_id: order.equip_id != null ? order.equip_id : null,
-            qty: order.qty != null ? order.qty : null,
-            seq: order.seq != null ? order.seq : null,
-            shift_id: order.shift_id != null ? order.shift_id : null,
-            start_date: order.start_date != null ? order.start_date : null,
-            end_date: order.end_date != null ? order.end_date : null,
-            remark: order.remark != null ? order.remark : null,
+            order_no: order.order_no ?? null,
+            workings_id: order.workings_id ?? null,
+            equip_id: order.equip_id ?? null,
+            mold_id: order.mold_id ?? null,
+            qty: order.qty ?? null,
+            seq: order.seq ?? null,
+            shift_id: order.shift_id ?? null,
+            start_date: order.start_date ?? null,
+            end_date: order.end_date ?? null,
+            remark: order.remark ?? null,
             updated_uid: uid,
           } as any,
           { 
@@ -285,6 +286,7 @@ class PrdOrderRepo {
             order_no: order.order_no,
             workings_id: order.workings_id,
             equip_id: order.equip_id,
+            mold_id: order.mold_id,
             qty: order.qty,
             seq: order.seq,
             shift_id: order.shift_id,

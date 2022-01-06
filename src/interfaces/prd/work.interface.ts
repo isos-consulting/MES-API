@@ -7,6 +7,8 @@ export default interface IPrdWork {
   proc_id?: number,
   workings_id?: number,
   equip_id?: number | null,
+  mold_id?: number | null,
+  mold_cavity?: number | null,
   prod_id?: number,
   lot_no?: string,
   qty?: number,
