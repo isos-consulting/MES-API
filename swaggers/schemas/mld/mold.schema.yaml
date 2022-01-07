@@ -138,3 +138,67 @@ mold_cavity:
       description: cavity
       type: number
       format: numeric(19, 6)
+
+work_cnt:
+  type: object
+  properties:
+    work_cnt:
+      description: 생산타수
+      type: number
+      format: int4
+
+accumulated_cnt:
+  type: object
+  properties:
+    accumulated_cnt:
+      description: 누적 생산타수 (기초타수 + 생산타수)
+      type: number
+      format: int4
+
+remained_cnt:
+  type: object
+  properties:
+    remained_cnt:
+      description: 잔여타수 (보증타수 + 누적 생산타수)
+      type: number
+      format: int4
+
+guarantee_qty:
+  type: object
+  properties:
+    guarantee_qty:
+      description: 보증수량 (cavity * 보증타수)
+      type: number
+      format: int4
+
+basic_qty:
+  type: object
+  properties:
+    basic_qty:
+      description: 기초수량 (cavity * 기초타수)
+      type: number
+      format: int4
+
+work_qty:
+  type: object
+  properties:
+    work_qty:
+      description: 생산수량 (생산실적수량 / 생산cavity)
+      type: number
+      format: int4
+
+remained_qty:
+  type: object
+  properties:
+    remained_qty:
+      description: 잔여수량 (보증수량 - (기초수량 + 생산수량))
+      type: number
+      format: int4
+
+mold_rate:
+  type: object
+  properties:
+    mold_rate:
+      description: 타수율 ((기초수량 + 생산수량) / 보증수량)
+      type: number
+      format: int4

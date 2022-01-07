@@ -1,0 +1,70 @@
+get:
+  description: |
+    금형의 타수현황을 조회합니다.
+  summary: 금형 타수현황 조회
+  tags:
+    - 금형관리(Mold)
+  parameters:
+    - name: reg_date
+      in: query
+      description: 금형의 타수현황을 조회 할 기준일자를 입력합니다.
+      required: true
+      schema:
+        type: string
+        format: date
+
+    - name: use_fg
+      in: query
+      description: |
+        금형의 사용여부를 입력합니다. <br/>
+        [전체 조회시 입력하지 않습니다.]
+      schema:
+        type: boolean
+        format: boolean
+
+  responses:
+    200:
+      description: Read OK
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: ../../schemas/common/default-response.schema.yaml
+              - type: object
+                properties:
+                  datas:
+                    description: Enable
+                    type: object
+                    properties:
+                      value:
+                        description: Enable
+                        type: object
+                        properties:
+                          count:
+                            description: 영향받은 데이터의 개수
+                            type: number
+                            format: int32
+                            minimum: 0
+                      raws:
+                        description: 금형 타수현황 데이터 목록
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: ../../schemas/mld/mold.schema.yaml#/mold_uuid
+                            - $ref: ../../schemas/mld/mold.schema.yaml#/mold_cd
+                            - $ref: ../../schemas/mld/mold.schema.yaml#/mold_nm
+                            - $ref: ../../schemas/mld/mold.schema.yaml#/mold_no
+                            - $ref: ../../schemas/mld/mold.schema.yaml#/cavity
+                            - $ref: ../../schemas/mld/mold.schema.yaml#/guarantee_cnt
+                            - $ref: ../../schemas/mld/mold.schema.yaml#/basic_cnt
+                            - $ref: ../../schemas/mld/mold.schema.yaml#/work_cnt
+                            - $ref: ../../schemas/mld/mold.schema.yaml#/accumulated_cnt
+                            - $ref: ../../schemas/mld/mold.schema.yaml#/remained_cnt
+                            - $ref: ../../schemas/mld/mold.schema.yaml#/guarantee_qty
+                            - $ref: ../../schemas/mld/mold.schema.yaml#/basic_qty
+                            - $ref: ../../schemas/mld/mold.schema.yaml#/work_qty
+                            - $ref: ../../schemas/mld/mold.schema.yaml#/remained_qty
+                            - $ref: ../../schemas/mld/mold.schema.yaml#/mold_rate
+                            - $ref: ../../schemas/common/timestamp.schema.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

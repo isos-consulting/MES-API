@@ -10,6 +10,7 @@ import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
+import { readMoldReport } from '../../queries/mld/mold-report.query';
 
 class MldMoldRepo {
   repo: Repository<MldMold>;
@@ -145,6 +146,16 @@ class MldMoldRepo {
 			throw error;
 		}
 	};
+
+  public readReport = async(params?: any) => {
+    try {
+      const result = await this.sequelize.query(readMoldReport(params));
+
+      return convertReadResult(result[0]);
+    } catch (error) {
+      throw error;
+    }
+  };
 
 	// 📒 Fn[readRawsByUuids]: Id 를 포함한 Raw Datas Read Function
 	public readRawsByUuids = async(uuids: string[]) => {

@@ -45,6 +45,8 @@ components:
 
 paths:
   # ✅ Mold (금형관리)
+  /mld/molds/report:
+    $ref: ../end-points/mld/molds.report.yaml
   /mld/mold/{uuid}:
     $ref: ../end-points/mld/mold.{uuid}.yaml
   /mld/molds:
