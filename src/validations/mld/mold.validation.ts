@@ -15,6 +15,13 @@ const mldMoldValidation = {
     param('uuid', '금형UUID')
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'uuid', '금형UUID'))
   ],
+  readReport: [
+		query('reg_date', '기준일자')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'reg_date', '기준일자'))
+      .isDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'reg_date', '기준일자')),
+		query('use_fg', '사용여부').optional({ nullable: true })
+      .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'use_fg', '사용여부')),
+	],
   create: [
     body('*.factory_uuid', '공장UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'factory_uuid', '공장UUID'))
