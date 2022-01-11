@@ -98,7 +98,12 @@ class PrdWorkDowntimeRepo {
               required: false,
               where: params.downtime_type_uuid ? { uuid: params.downtime_type_uuid } : {}
             }],
-            where: params.downtime_uuid ? { uuid: params.downtime_uuid } : {}
+            where: {
+              [Op.and]: [
+                { uuid: params.downtime_uuid ?? { [Op.ne]: null }},
+                { eqm_failure_fg: params.eqm_failure_fg ?? { [Op.ne]: null }},
+              ]
+            }
           },
           { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
@@ -149,6 +154,17 @@ class PrdWorkDowntimeRepo {
           'updated_at',
           [ Sequelize.col('updateUser.user_nm'), 'updated_nm' ]
         ],
+        where: {
+          [Op.and]: [
+            params.start_date && params.end_date ? 
+            {
+              [Op.and]: [
+                Sequelize.where(Sequelize.fn('date', Sequelize.col('prdWorkDowntime.start_date')), '>=', params.start_date),
+                Sequelize.where(Sequelize.fn('date', Sequelize.col('prdWorkDowntime.start_date')), '<=', params.end_date),
+              ]
+            } : {}
+          ]
+        },
         order: [ 'factory_id', 'work_id', Sequelize.col('stdDowntime.downtime_type_id') ]
       });
 
