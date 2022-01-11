@@ -188,10 +188,15 @@ put:
           required:
             - uuid
             - qty
+            - to_store_uuid
           allOf:
             - $ref: ../../schemas/prd/demand.schema.yaml#/uuid
+            - $ref: ../../schemas/prd/demand.schema.yaml#/proc_uuid
+            - $ref: ../../schemas/prd/demand.schema.yaml#/equip_uuid
             - $ref: ../../schemas/prd/demand.schema.yaml#/qty
             - $ref: ../../schemas/prd/demand.schema.yaml#/due_date
+            - $ref: ../../schemas/prd/demand.schema.yaml#/to_store_uuid
+            - $ref: ../../schemas/prd/demand.schema.yaml#/to_location_uuid
             - $ref: ../../schemas/prd/demand.schema.yaml#/remark
   responses:
     201:
@@ -213,8 +218,12 @@ patch:
             - uuid
           allOf:
             - $ref: ../../schemas/prd/demand.schema.yaml#/uuid
+            - $ref: ../../schemas/prd/demand.schema.yaml#/proc_uuid
+            - $ref: ../../schemas/prd/demand.schema.yaml#/equip_uuid
             - $ref: ../../schemas/prd/demand.schema.yaml#/qty
             - $ref: ../../schemas/prd/demand.schema.yaml#/due_date
+            - $ref: ../../schemas/prd/demand.schema.yaml#/to_store_uuid
+            - $ref: ../../schemas/prd/demand.schema.yaml#/to_location_uuid
             - $ref: ../../schemas/prd/demand.schema.yaml#/remark
   responses:
     201:

@@ -124,9 +124,13 @@ class PrdDemandRepo {
       for await (let demand of body) {
         const result = await this.repo.update(
           {
-            qty: demand.qty != null ? demand.qty : null,
-            due_date: demand.due_date != null ? demand.due_date : null,
-            remark: demand.remark != null ? demand.remark : null,
+            proc_id: demand.proc_id ?? null,
+            equip_id: demand.equip_id ?? null,
+            qty: demand.qty ?? null,
+            due_date: demand.due_date ?? null,
+            to_store_id: demand.to_store_id ?? null,
+            to_location_id: demand.to_location_id ?? null,
+            remark: demand.remark ?? null,
             updated_uid: uid,
           } as any,
           { 
@@ -194,9 +198,13 @@ class PrdDemandRepo {
       for await (let demand of body) {
         const result = await this.repo.update(
           {
+            proc_id: demand.proc_id,
+            equip_id: demand.equip_id,
             qty: demand.qty,
             complete_fg: demand.complete_fg,
             due_date: demand.due_date,
+            to_store_id: demand.to_store_id,
+            to_location_id: demand.to_location_id,
             remark: demand.remark,
             updated_uid: uid,
           },
