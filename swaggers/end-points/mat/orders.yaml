@@ -169,6 +169,7 @@ put:
                   - price
                   - money_unit_uuid
                   - exchange
+                  - complete_fg
                 type: object
                 allOf:        
                   - $ref: ../../schemas/mat/order-detail.schema.yaml#/uuid

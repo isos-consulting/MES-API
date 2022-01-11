@@ -117,9 +117,9 @@ class SalOutgoOrderDetailRepo {
       for await (let outgoOrderDetail of body) {
         const result = await this.repo.update(
           {
-            qty: outgoOrderDetail.qty != null ? outgoOrderDetail.qty : null,
-            complete_fg: outgoOrderDetail.complete_fg != null ? outgoOrderDetail.complete_fg : null,
-            remark: outgoOrderDetail.remark != null ? outgoOrderDetail.remark : null,
+            qty: outgoOrderDetail.qty ?? null,
+            complete_fg: outgoOrderDetail.complete_fg ?? null,
+            remark: outgoOrderDetail.remark ?? null,
             updated_uid: uid,
           } as any,
           { 

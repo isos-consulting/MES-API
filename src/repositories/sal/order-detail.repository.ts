@@ -201,14 +201,15 @@ class SalOrderDetailRepo {
       for await (let orderDetail of body) {
         const result = await this.repo.update(
           {
-            qty: orderDetail.qty != null ? orderDetail.qty : null,
-            price: orderDetail.price != null ? orderDetail.price : null,
-            money_unit_id: orderDetail.money_unit_id != null ? orderDetail.money_unit_id : null,
-            exchange: orderDetail.exchange != null ? orderDetail.exchange : null,
-            total_price: orderDetail.total_price != null ? orderDetail.total_price : null,
-            unit_qty: orderDetail.unit_qty != null ? orderDetail.unit_qty : null,
-            due_date: orderDetail.due_date != null ? orderDetail.due_date : null,
-            remark: orderDetail.remark != null ? orderDetail.remark : null,
+            qty: orderDetail.qty ?? null,
+            price: orderDetail.price ?? null,
+            money_unit_id: orderDetail.money_unit_id ?? null,
+            exchange: orderDetail.exchange ?? null,
+            total_price: orderDetail.total_price ?? null,
+            unit_qty: orderDetail.unit_qty ?? null,
+            due_date: orderDetail.due_date ?? null,
+            complete_fg: orderDetail.complete_fg ?? null,
+            remark: orderDetail.remark ?? null,
             updated_uid: uid,
           } as any,
           { 
@@ -283,6 +284,7 @@ class SalOrderDetailRepo {
             total_price: orderDetail.total_price,
             unit_qty: orderDetail.unit_qty,
             due_date: orderDetail.due_date,
+            complete_fg: orderDetail.complete_fg,
             remark: orderDetail.remark,
             updated_uid: uid,
           },

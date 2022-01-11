@@ -127,15 +127,15 @@ class MatOrderDetailRepo {
       for await (let orderDetail of body) {
         const result = await this.repo.update(
           {
-            qty: orderDetail.qty != null ? orderDetail.qty : null,
-            price: orderDetail.price != null ? orderDetail.price : null,
-            money_unit_id: orderDetail.money_unit_id != null ? orderDetail.money_unit_id : null,
-            exchange: orderDetail.exchange != null ? orderDetail.exchange : null,
-            total_price: orderDetail.total_price != null ? orderDetail.total_price : null,
-            unit_qty: orderDetail.unit_qty != null ? orderDetail.unit_qty : null,
-            due_date: orderDetail.due_date != null ? orderDetail.due_date : null,
-            complete_fg: orderDetail.complete_fg != null ? orderDetail.complete_fg : false,     //❗❗ complete_fg는 not null이기 때문에 null로 들어왔을때는 false로 넣어야함.
-            remark: orderDetail.remark != null ? orderDetail.remark : null,
+            qty: orderDetail.qty ?? null,
+            price: orderDetail.price ?? null,
+            money_unit_id: orderDetail.money_unit_id ?? null,
+            exchange: orderDetail.exchange ?? null,
+            total_price: orderDetail.total_price ?? null,
+            unit_qty: orderDetail.unit_qty ?? null,
+            due_date: orderDetail.due_date ?? null,
+            complete_fg: orderDetail.complete_fg ?? null,
+            remark: orderDetail.remark ?? null,
             updated_uid: uid,
           } as any,
           { 

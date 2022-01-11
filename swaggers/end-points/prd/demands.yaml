@@ -188,6 +188,7 @@ put:
           required:
             - uuid
             - qty
+            - complete_fg
             - to_store_uuid
           allOf:
             - $ref: ../../schemas/prd/demand.schema.yaml#/uuid
@@ -195,6 +196,7 @@ put:
             - $ref: ../../schemas/prd/demand.schema.yaml#/equip_uuid
             - $ref: ../../schemas/prd/demand.schema.yaml#/qty
             - $ref: ../../schemas/prd/demand.schema.yaml#/due_date
+            - $ref: ../../schemas/prd/demand.schema.yaml#/complete_fg
             - $ref: ../../schemas/prd/demand.schema.yaml#/to_store_uuid
             - $ref: ../../schemas/prd/demand.schema.yaml#/to_location_uuid
             - $ref: ../../schemas/prd/demand.schema.yaml#/remark
@@ -222,6 +224,7 @@ patch:
             - $ref: ../../schemas/prd/demand.schema.yaml#/equip_uuid
             - $ref: ../../schemas/prd/demand.schema.yaml#/qty
             - $ref: ../../schemas/prd/demand.schema.yaml#/due_date
+            - $ref: ../../schemas/prd/demand.schema.yaml#/complete_fg
             - $ref: ../../schemas/prd/demand.schema.yaml#/to_store_uuid
             - $ref: ../../schemas/prd/demand.schema.yaml#/to_location_uuid
             - $ref: ../../schemas/prd/demand.schema.yaml#/remark

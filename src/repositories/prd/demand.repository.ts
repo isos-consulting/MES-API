@@ -127,6 +127,7 @@ class PrdDemandRepo {
             proc_id: demand.proc_id ?? null,
             equip_id: demand.equip_id ?? null,
             qty: demand.qty ?? null,
+            complete_fg: demand.complete_fg ?? null,
             due_date: demand.due_date ?? null,
             to_store_id: demand.to_store_id ?? null,
             to_location_id: demand.to_location_id ?? null,

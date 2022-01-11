@@ -163,10 +163,12 @@ put:
                 required:
                   - uuid
                   - qty
+                  - complete_fg
                 type: object
                 allOf:        
                   - $ref: ../../schemas/sal/outgo-order-detail.schema.yaml#/uuid
                   - $ref: ../../schemas/sal/outgo-order-detail.schema.yaml#/qty
+                  - $ref: ../../schemas/sal/outgo-order-detail.schema.yaml#/complete_fg
                   - $ref: ../../schemas/sal/outgo-order-detail.schema.yaml#/remark
   responses:
     201:
@@ -208,6 +210,7 @@ patch:
                 allOf:        
                   - $ref: ../../schemas/sal/outgo-order-detail.schema.yaml#/uuid
                   - $ref: ../../schemas/sal/outgo-order-detail.schema.yaml#/qty
+                  - $ref: ../../schemas/sal/outgo-order-detail.schema.yaml#/complete_fg
                   - $ref: ../../schemas/sal/outgo-order-detail.schema.yaml#/remark
   responses:
     201:
