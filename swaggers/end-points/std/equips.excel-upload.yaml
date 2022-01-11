@@ -23,9 +23,15 @@ post:
             - $ref: ../../schemas/std/equip-type.schema.yaml#/equip_type_cd
             - $ref: ../../schemas/std/equip.schema.yaml#/equip_cd
             - $ref: ../../schemas/std/equip.schema.yaml#/equip_nm
+            - $ref: ../../schemas/std/equip.schema.yaml#/workings_uuid
+            - $ref: ../../schemas/std/equip.schema.yaml#/manager_emp_uuid
+            - $ref: ../../schemas/std/equip.schema.yaml#/sub_manager_emp_uuid
+            - $ref: ../../schemas/std/equip.schema.yaml#/equip_no
+            - $ref: ../../schemas/std/equip.schema.yaml#/equip_grade
             - $ref: ../../schemas/std/equip.schema.yaml#/equip_model
             - $ref: ../../schemas/std/equip.schema.yaml#/equip_std
             - $ref: ../../schemas/std/equip.schema.yaml#/equip_spec
+            - $ref: ../../schemas/std/equip.schema.yaml#/voltage
             - $ref: ../../schemas/std/equip.schema.yaml#/manufacturer
             - $ref: ../../schemas/std/equip.schema.yaml#/purchase_partner
             - $ref: ../../schemas/std/equip.schema.yaml#/purchase_date

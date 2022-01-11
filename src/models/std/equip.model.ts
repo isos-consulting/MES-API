@@ -1,8 +1,10 @@
 import { Sequelize, Table, Column, Model, DataType, CreatedAt, UpdatedAt, BelongsTo, Unique, ForeignKey } from 'sequelize-typescript'
 import IStdEquip from '../../interfaces/std/equip.interface';
 import AutUser from '../aut/user.model';
+import StdEmp from './emp.model';
 import StdEquipType from './equip-type.model';
 import StdFactory from './factory.model';
+import StdWorkings from './workings.model';
 
 @Table({
   tableName: 'STD_EQUIP_TB',
@@ -53,23 +55,62 @@ export default class StdEquip extends Model<IStdEquip> {
   })
   equip_nm: string;
 
+  @ForeignKey(() => StdWorkings)
+  @Column({
+    comment: '작업장ID',
+    type: DataType.INTEGER,
+  })
+  workings_id: number;
+
+  @ForeignKey(() => StdEmp)
+  @Column({
+    comment: '관리자(정)ID',
+    type: DataType.INTEGER,
+  })
+  manager_emp_id: number;
+
+  @ForeignKey(() => StdEmp)
+  @Column({
+    comment: '관리자(부)ID',
+    type: DataType.INTEGER,
+  })
+  sub_manager_emp_id: number;
+  
+  @Column({
+    comment: '설비관리번호',
+    type: DataType.STRING(25),
+  })
+  equip_no: string;
+  
+  @Column({
+    comment: '설비등급',
+    type: DataType.STRING(10),
+  })
+  equip_grade: string;
+  
   @Column({
     comment: '설비모델명',
     type: DataType.STRING(50),
   })
   equip_model: string;
-
+  
 	@Column({
     comment: '설비규격',
     type: DataType.STRING(50),
   })
   equip_std: string;
-
+  
 	@Column({
     comment: '설비제원',
     type: DataType.STRING(50),
   })
   equip_spec: string;
+
+  @Column({
+    comment: '전압',
+    type: DataType.STRING(10),
+  })
+  voltage: string;
 
 	@Column({
     comment: '제조사',
@@ -176,6 +217,15 @@ export default class StdEquip extends Model<IStdEquip> {
 
   @BelongsTo(() => StdEquipType, { foreignKey: 'equip_type_id', targetKey: 'equip_type_id', onDelete: 'restrict', onUpdate: 'cascade' })
   stdEquipType: StdEquipType;
+
+  @BelongsTo(() => StdWorkings, { foreignKey: 'workings_id', targetKey: 'workings_id', onDelete: 'restrict', onUpdate: 'cascade' })
+  stdWorkings: StdWorkings;
+
+  @BelongsTo(() => StdEmp, { as: 'managerEmp', foreignKey: 'manager_emp_id', targetKey: 'emp_id', onDelete: 'restrict', onUpdate: 'cascade' })
+  managerEmp: StdEmp;
+
+  @BelongsTo(() => StdEmp, { as: 'subManagerEmp', foreignKey: 'sub_manager_emp_id', targetKey: 'emp_id', onDelete: 'restrict', onUpdate: 'cascade' })
+  subManagerEmp: StdEmp;
 
   // HasMany
   //#endregion

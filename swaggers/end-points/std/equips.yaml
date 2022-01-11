@@ -23,6 +23,15 @@ get:
         type: string
         format: uuid
 
+    - name: workings_uuid
+      in: query
+      description: |
+        작업장의 UUID를 입력하여 작업장에 따라 설비를 조회합니다. <br/> 
+        [전체 조회시 입력하지 않습니다.]
+      schema:
+        type: string
+        format: uuid
+
     - name: use_fg
       in: query
       description: |
@@ -78,9 +87,21 @@ get:
                             - $ref: ../../schemas/std/equip-type.schema.yaml#/equip_type_nm
                             - $ref: ../../schemas/std/equip.schema.yaml#/equip_cd
                             - $ref: ../../schemas/std/equip.schema.yaml#/equip_nm
+                            - $ref: ../../schemas/std/equip.schema.yaml#/workings_uuid
+                            - $ref: ../../schemas/std/workings.schema.yaml#/workings_cd
+                            - $ref: ../../schemas/std/workings.schema.yaml#/workings_nm
+                            - $ref: ../../schemas/std/equip.schema.yaml#/manager_emp_uuid
+                            - $ref: ../../schemas/std/equip.schema.yaml#/manager_emp_cd
+                            - $ref: ../../schemas/std/equip.schema.yaml#/manager_emp_nm
+                            - $ref: ../../schemas/std/equip.schema.yaml#/sub_manager_emp_uuid
+                            - $ref: ../../schemas/std/equip.schema.yaml#/sub_manager_emp_cd
+                            - $ref: ../../schemas/std/equip.schema.yaml#/sub_manager_emp_nm
+                            - $ref: ../../schemas/std/equip.schema.yaml#/equip_no
+                            - $ref: ../../schemas/std/equip.schema.yaml#/equip_grade
                             - $ref: ../../schemas/std/equip.schema.yaml#/equip_model
                             - $ref: ../../schemas/std/equip.schema.yaml#/equip_std
                             - $ref: ../../schemas/std/equip.schema.yaml#/equip_spec
+                            - $ref: ../../schemas/std/equip.schema.yaml#/voltage
                             - $ref: ../../schemas/std/equip.schema.yaml#/manufacturer
                             - $ref: ../../schemas/std/equip.schema.yaml#/purchase_partner
                             - $ref: ../../schemas/std/equip.schema.yaml#/purchase_date
@@ -114,9 +135,15 @@ post:
             - $ref: ../../schemas/std/equip.schema.yaml#/equip_type_uuid
             - $ref: ../../schemas/std/equip.schema.yaml#/equip_cd
             - $ref: ../../schemas/std/equip.schema.yaml#/equip_nm
+            - $ref: ../../schemas/std/equip.schema.yaml#/workings_uuid
+            - $ref: ../../schemas/std/equip.schema.yaml#/manager_emp_uuid
+            - $ref: ../../schemas/std/equip.schema.yaml#/sub_manager_emp_uuid
+            - $ref: ../../schemas/std/equip.schema.yaml#/equip_no
+            - $ref: ../../schemas/std/equip.schema.yaml#/equip_grade
             - $ref: ../../schemas/std/equip.schema.yaml#/equip_model
             - $ref: ../../schemas/std/equip.schema.yaml#/equip_std
             - $ref: ../../schemas/std/equip.schema.yaml#/equip_spec
+            - $ref: ../../schemas/std/equip.schema.yaml#/voltage
             - $ref: ../../schemas/std/equip.schema.yaml#/manufacturer
             - $ref: ../../schemas/std/equip.schema.yaml#/purchase_partner
             - $ref: ../../schemas/std/equip.schema.yaml#/purchase_date
@@ -152,9 +179,15 @@ put:
             - $ref: ../../schemas/std/equip.schema.yaml#/equip_type_uuid
             - $ref: ../../schemas/std/equip.schema.yaml#/equip_cd
             - $ref: ../../schemas/std/equip.schema.yaml#/equip_nm
+            - $ref: ../../schemas/std/equip.schema.yaml#/workings_uuid
+            - $ref: ../../schemas/std/equip.schema.yaml#/manager_emp_uuid
+            - $ref: ../../schemas/std/equip.schema.yaml#/sub_manager_emp_uuid
+            - $ref: ../../schemas/std/equip.schema.yaml#/equip_no
+            - $ref: ../../schemas/std/equip.schema.yaml#/equip_grade
             - $ref: ../../schemas/std/equip.schema.yaml#/equip_model
             - $ref: ../../schemas/std/equip.schema.yaml#/equip_std
             - $ref: ../../schemas/std/equip.schema.yaml#/equip_spec
+            - $ref: ../../schemas/std/equip.schema.yaml#/voltage
             - $ref: ../../schemas/std/equip.schema.yaml#/manufacturer
             - $ref: ../../schemas/std/equip.schema.yaml#/purchase_partner
             - $ref: ../../schemas/std/equip.schema.yaml#/purchase_date
@@ -186,9 +219,15 @@ patch:
             - $ref: ../../schemas/std/equip.schema.yaml#/equip_type_uuid
             - $ref: ../../schemas/std/equip.schema.yaml#/equip_cd
             - $ref: ../../schemas/std/equip.schema.yaml#/equip_nm
+            - $ref: ../../schemas/std/equip.schema.yaml#/workings_uuid
+            - $ref: ../../schemas/std/equip.schema.yaml#/manager_emp_uuid
+            - $ref: ../../schemas/std/equip.schema.yaml#/sub_manager_emp_uuid
+            - $ref: ../../schemas/std/equip.schema.yaml#/equip_no
+            - $ref: ../../schemas/std/equip.schema.yaml#/equip_grade
             - $ref: ../../schemas/std/equip.schema.yaml#/equip_model
             - $ref: ../../schemas/std/equip.schema.yaml#/equip_std
             - $ref: ../../schemas/std/equip.schema.yaml#/equip_spec
+            - $ref: ../../schemas/std/equip.schema.yaml#/voltage
             - $ref: ../../schemas/std/equip.schema.yaml#/manufacturer
             - $ref: ../../schemas/std/equip.schema.yaml#/purchase_partner
             - $ref: ../../schemas/std/equip.schema.yaml#/purchase_date
