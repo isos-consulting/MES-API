@@ -23,7 +23,6 @@ export default class EqmRepairHistory extends Model<IEqmRepairHistory> {
   })
   repair_history_id: number;
 
-	@Unique('eqm_repair_history_tb_factory_id_equip_id_occur_start_date_un')
   @ForeignKey(() => StdFactory)
   @Column({
     comment: '공장ID',
@@ -32,7 +31,6 @@ export default class EqmRepairHistory extends Model<IEqmRepairHistory> {
   })
   factory_id: number;
 
-	@Unique('eqm_repair_history_tb_factory_id_equip_id_occur_start_date_un')
 	@ForeignKey(() => StdEquip)
   @Column({ 
     comment: '설비ID',
@@ -41,7 +39,6 @@ export default class EqmRepairHistory extends Model<IEqmRepairHistory> {
   })
   equip_id: number;
 
-  @Unique('eqm_repair_history_tb_factory_id_equip_id_occur_start_date_un')
   @Column({
     comment: '발생시작일시',
     type: DataType.DATE,
