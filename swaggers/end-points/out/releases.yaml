@@ -120,7 +120,6 @@ post:
                   - money_unit_uuid
                   - exchange
                   - from_store_uuid
-                  - from_location_uuid
                 type: object
                 allOf:        
                   - $ref: ../../schemas/out/release-detail.schema.yaml#/release_uuid

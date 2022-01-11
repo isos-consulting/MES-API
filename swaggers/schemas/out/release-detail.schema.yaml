@@ -61,7 +61,7 @@ price:
   type: object
   properties:
     price:
-      description: 금액
+      description: 단가
       type: number
       format: numeric(19, 6)
 

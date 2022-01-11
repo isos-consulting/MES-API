@@ -45,7 +45,7 @@ reg_date:
   type: object
   properties: 
     reg_date:
-      description: 출하 일시
+      description: 출고 일시
       type: string
       format: date-time
 
