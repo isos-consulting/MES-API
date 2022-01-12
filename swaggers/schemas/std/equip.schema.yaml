@@ -41,46 +41,6 @@ equip_nm:
       type: string
       format: varchar(50)
 
-workings_id:
-  type: object
-  properties:
-    workings_id:
-      description: 작업장ID
-      type: number
-      format: int4
-
-manager_emp_id:
-  type: object
-  properties:
-    manager_emp_id:
-      description: 관리자(정)ID
-      type: number
-      format: int4
-
-sub_manager_emp_id:
-  type: object
-  properties:
-    sub_manager_emp_id:
-      description: 관리자(부)ID
-      type: number
-      format: int4
-
-equip_no:
-  type: object
-  properties:
-    equip_no:
-      description: 설비관리번호
-      type: string
-      format: varchar(25)
-
-equip_grade:
-  type: object
-  properties:
-    equip_grade:
-      description: 설비등급
-      type: string
-      format: varchar(10)
-
 equip_model:
   type: object
   properties:
@@ -104,14 +64,6 @@ equip_spec:
       description: 설비제원
       type: string
       format: varchar(50)
-
-voltage:
-  type: object
-  properties:
-    voltage:
-      description: 전압
-      type: string
-      format: varchar(10)
 
 manufacturer:
   type: object
@@ -209,60 +161,3 @@ equip_type_uuid:
       description: 설비유형UUID
       type: string
       format: uuid
-
-workings_uuid:
-  type: object
-  properties:
-    workings_uuid:
-      description: 작업장UUID
-      type: string
-      format: uuid
-
-manager_emp_uuid:
-  type: object
-  properties:
-    manager_emp_uuid:
-      description: 관리자(정)UUID
-      type: string
-      format: uuid
-
-sub_manager_emp_uuid:
-  type: object
-  properties:
-    sub_manager_emp_uuid:
-      description: 관리자(부)UUID
-      type: string
-      format: uuid
-
-# Others
-manager_emp_cd: 
-  type: object
-  properties: 
-    manager_emp_cd:
-      description: 관리자(정) 사원코드
-      type: string
-      format: varchar(20)
-
-manager_emp_nm: 
-  type: object
-  properties: 
-    manager_emp_nm:
-      description: 관리자(정) 사원명
-      type: string
-      format: varchar(50)
-
-sub_manager_emp_cd: 
-  type: object
-  properties: 
-    sub_manager_emp_cd:
-      description: 관리자(부) 사원코드
-      type: string
-      format: varchar(20)
-
-sub_manager_emp_nm: 
-  type: object
-  properties: 
-    sub_manager_emp_nm:
-      description: 관리자(부) 사원명
-      type: string
-      format: varchar(50)
