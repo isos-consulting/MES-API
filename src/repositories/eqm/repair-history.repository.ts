@@ -71,9 +71,14 @@ class EqmRepairHistoryRepo {
             model: this.sequelize.models.StdFactory, 
             attributes: [], 
             required: true, 
-            where: { uuid: params.factory_uuid ? params.factory_uuid : { [Op.ne]: null } }
+            where: { uuid: params.factory_uuid ?? { [Op.ne]: null } }
           },
-					{ model: this.sequelize.models.StdEquip, attributes: [], required: true },
+					{ 
+            model: this.sequelize.models.StdEquip, 
+            attributes: [], 
+            required: true,
+            where: { uuid: params.equip_uuid ?? { [Op.ne]: null } }
+          },
 					{ model: this.sequelize.models.StdEmp, as: 'occurEmp', attributes: [], required: false },
 					{ model: this.sequelize.models.StdEmp, as: 'checkEmp', attributes: [], required: false },
           { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },

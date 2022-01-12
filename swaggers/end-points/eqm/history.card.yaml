@@ -1,0 +1,144 @@
+get:
+  description: |
+    설비의 이력카드 데이터를 조회합니다.
+  summary: 설비이력카드 데이터 조회
+  tags:
+    - 설비개정이력관리(History)
+  parameters:
+    - name: equip_uuid
+      in: query
+      description: 설비의 UUID 를 입력합니다.
+      required: true
+      schema:
+        type: string
+        format: uuid
+
+  responses:
+    200:
+      description: Read OK
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: ../../schemas/common/default-response.schema.yaml
+              - type: object
+                properties:
+                  datas:
+                    description: Enable
+                    type: object
+                    properties:
+                      value:
+                        description: Enable
+                        type: object
+                        properties:
+                          count:
+                            description: 영향받은 데이터의 개수
+                            type: number
+                            format: int32
+                            minimum: 0
+                      raws:
+                        description: 설비개정이력관리 데이터 목록
+                        type: array
+                        items:
+                          type: object
+                          properties:
+                            equip:
+                              description: 설비정보 Data
+                              type: object
+                              allOf:
+                                - $ref: ../../schemas/std/equip.schema.yaml#/equip_uuid
+                                - $ref: ../../schemas/std/equip.schema.yaml#/factory_uuid
+                                - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
+                                - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
+                                - $ref: ../../schemas/std/equip.schema.yaml#/equip_type_uuid
+                                - $ref: ../../schemas/std/equip-type.schema.yaml#/equip_type_cd
+                                - $ref: ../../schemas/std/equip-type.schema.yaml#/equip_type_nm
+                                - $ref: ../../schemas/std/equip.schema.yaml#/equip_cd
+                                - $ref: ../../schemas/std/equip.schema.yaml#/equip_nm
+                                - $ref: ../../schemas/std/equip.schema.yaml#/workings_uuid
+                                - $ref: ../../schemas/std/workings.schema.yaml#/workings_cd
+                                - $ref: ../../schemas/std/workings.schema.yaml#/workings_nm
+                                - $ref: ../../schemas/std/equip.schema.yaml#/manager_emp_uuid
+                                - $ref: ../../schemas/std/equip.schema.yaml#/manager_emp_cd
+                                - $ref: ../../schemas/std/equip.schema.yaml#/manager_emp_nm
+                                - $ref: ../../schemas/std/equip.schema.yaml#/sub_manager_emp_uuid
+                                - $ref: ../../schemas/std/equip.schema.yaml#/sub_manager_emp_cd
+                                - $ref: ../../schemas/std/equip.schema.yaml#/sub_manager_emp_nm
+                                - $ref: ../../schemas/std/equip.schema.yaml#/equip_no
+                                - $ref: ../../schemas/std/equip.schema.yaml#/equip_grade
+                                - $ref: ../../schemas/std/equip.schema.yaml#/equip_model
+                                - $ref: ../../schemas/std/equip.schema.yaml#/equip_std
+                                - $ref: ../../schemas/std/equip.schema.yaml#/equip_spec
+                                - $ref: ../../schemas/std/equip.schema.yaml#/voltage
+                                - $ref: ../../schemas/std/equip.schema.yaml#/manufacturer
+                                - $ref: ../../schemas/std/equip.schema.yaml#/purchase_partner
+                                - $ref: ../../schemas/std/equip.schema.yaml#/purchase_date
+                                - $ref: ../../schemas/std/equip.schema.yaml#/purchase_tel
+                                - $ref: ../../schemas/std/equip.schema.yaml#/purchase_price
+                                - $ref: ../../schemas/std/equip.schema.yaml#/use_fg
+                                - $ref: ../../schemas/std/equip.schema.yaml#/prd_fg
+                                - $ref: ../../schemas/std/equip.schema.yaml#/remark
+                                - $ref: ../../schemas/common/timestamp.schema.yaml
+                            hisotries:
+                              description: 설비개정이력 Data
+                              type: array
+                              items:
+                                type: object
+                                allOf:
+                                  - $ref: ../../schemas/eqm/history.schema.yaml#/history_uuid
+                                  - $ref: ../../schemas/eqm/history.schema.yaml#/factory_uuid
+                                  - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
+                                  - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
+                                  - $ref: ../../schemas/std/equip.schema.yaml#/equip_type_uuid
+                                  - $ref: ../../schemas/std/equip-type.schema.yaml#/equip_type_cd
+                                  - $ref: ../../schemas/std/equip-type.schema.yaml#/equip_type_nm
+                                  - $ref: ../../schemas/eqm/history.schema.yaml#/equip_uuid
+                                  - $ref: ../../schemas/std/equip.schema.yaml#/equip_cd
+                                  - $ref: ../../schemas/std/equip.schema.yaml#/equip_nm
+                                  - $ref: ../../schemas/eqm/history.schema.yaml#/reg_date
+                                  - $ref: ../../schemas/eqm/history.schema.yaml#/contents
+                                  - $ref: ../../schemas/common/timestamp.schema.yaml
+                            repair_hisotries:
+                              description: 설비수리이력 Data
+                              type: array
+                              items:
+                                type: object
+                                allOf:
+                                  - $ref: ../../schemas/eqm/repair-history.schema.yaml#/repair_history_uuid
+                                  - $ref: ../../schemas/eqm/repair-history.schema.yaml#/factory_uuid
+                                  - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
+                                  - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
+                                  - $ref: ../../schemas/eqm/repair-history.schema.yaml#/equip_uuid
+                                  - $ref: ../../schemas/std/equip.schema.yaml#/equip_cd
+                                  - $ref: ../../schemas/std/equip.schema.yaml#/equip_nm
+                                  - $ref: ../../schemas/eqm/repair-history.schema.yaml#/occur_start_date
+                                  - $ref: ../../schemas/eqm/repair-history.schema.yaml#/occur_end_date
+                                  - $ref: ../../schemas/eqm/repair-history.schema.yaml#/occur_emp_uuid
+                                  - $ref: ../../schemas/eqm/repair-history.schema.yaml#/occur_emp_cd
+                                  - $ref: ../../schemas/eqm/repair-history.schema.yaml#/occur_emp_nm
+                                  - $ref: ../../schemas/eqm/repair-history.schema.yaml#/occur_reason
+                                  - $ref: ../../schemas/eqm/repair-history.schema.yaml#/occur_contents
+                                  - $ref: ../../schemas/eqm/repair-history.schema.yaml#/repair_start_date
+                                  - $ref: ../../schemas/eqm/repair-history.schema.yaml#/repair_end_date
+                                  - $ref: ../../schemas/eqm/repair-history.schema.yaml#/repair_time
+                                  - $ref: ../../schemas/eqm/repair-history.schema.yaml#/repair_place
+                                  - $ref: ../../schemas/eqm/repair-history.schema.yaml#/repair_price
+                                  - $ref: ../../schemas/eqm/repair-history.schema.yaml#/check_date
+                                  - $ref: ../../schemas/eqm/repair-history.schema.yaml#/check_emp_uuid
+                                  - $ref: ../../schemas/eqm/repair-history.schema.yaml#/check_emp_cd
+                                  - $ref: ../../schemas/eqm/repair-history.schema.yaml#/check_emp_nm
+                                  - $ref: ../../schemas/common/timestamp.schema.yaml
+                            spare_parts:
+                              description: 설비예비품정보 Data (❗️작업 미진행)
+                              type: array
+                              items:
+                                type: object
+                            images:
+                              description: 설비이미지 Data (❗️작업 미진행)
+                              type: array
+                              items:
+                                type: object
+
+                            
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

@@ -1,0 +1,77 @@
+# EQM_HISTORY_TB
+
+# Columns
+history_id:
+  type: object
+  properties:
+    history_id:
+      description: 설비 개정이력ID
+      type: number
+      format: int4
+
+factory_id:
+  type: object
+  properties:
+    factory_id:
+      description: 공장ID
+      type: number
+      format: int4
+
+equip_id:
+  type: object
+  properties:
+    equip_id:
+      description: 설비ID
+      type: number
+      format: int4
+
+reg_date:
+  type: object
+  properties:
+    reg_date:
+      description: 개정일자
+      type: string
+      format: date
+
+contents:
+  type: object
+  properties:
+    contents:
+      description: 개정내용
+      type: string
+      format: varchar(250)
+
+uuid:
+  type: object
+  properties:
+    uuid:
+      description: 설비 개정이력UUID
+      type: string
+      format: uuid
+
+# Uuids
+history_uuid:
+  type: object
+  properties:
+    history_uuid:
+      description: 설비 개정이력UUID
+      type: string
+      format: uuid
+
+factory_uuid:
+  type: object
+  properties:
+    factory_uuid:
+      description: 공장UUID
+      type: string
+      format: uuid
+
+equip_uuid:
+  type: object
+  properties:
+    equip_uuid:
+      description: 설비UUID
+      type: string
+      format: uuid
+
+# Others

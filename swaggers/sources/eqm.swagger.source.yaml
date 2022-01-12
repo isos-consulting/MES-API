@@ -44,6 +44,14 @@ components:
             read:pets: read your pets
 
 paths:
+  # ✅ RepairHistory (설비 개정이력 관리)
+  /eqm/history/card:
+    $ref: ../end-points/eqm/history.card.yaml
+  /eqm/history/{uuid}:
+    $ref: ../end-points/eqm/history.{uuid}.yaml
+  /eqm/histories:
+    $ref: ../end-points/eqm/histories.yaml
+
   # ✅ Insp (설비검사기준서)
   /eqm/insp/apply:
     $ref: ../end-points/eqm/insp.apply.yaml
