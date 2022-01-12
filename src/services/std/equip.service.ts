@@ -1,7 +1,9 @@
 import { Transaction } from "sequelize/types";
+import StdEmpRepo from "../../repositories/std/emp.repository";
 import StdEquipTypeRepo from '../../repositories/std/equip-type.repository';
 import StdEquipRepo from '../../repositories/std/equip.repository';
 import StdFactoryRepo from "../../repositories/std/factory.repository";
+import StdWorkingsRepo from "../../repositories/std/workings.repository";
 import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
 
 class StdEquipService {
@@ -27,6 +29,26 @@ class StdEquipService {
         TRepo: StdEquipTypeRepo,
         idName: 'equip_type_id',
         uuidName: 'equip_type_uuid'
+      },
+			{
+        key: 'workings',
+        TRepo: StdWorkingsRepo,
+        idName: 'workings_id',
+        uuidName: 'workings_uuid'
+      },
+      {
+        key: 'managerEmp',
+        TRepo: StdEmpRepo,
+        idName: 'emp_id',
+        idAlias: 'manager_emp_id',
+        uuidName: 'manager_emp_uuid'
+      },
+      {
+        key: 'subManagerEmp',
+        TRepo: StdEmpRepo,
+        idName: 'emp_id',
+        idAlias: 'sub_manager_emp_id',
+        uuidName: 'sub_manager_emp_uuid'
       }
     ];
   }
