@@ -15,7 +15,7 @@ const readWorks = (
   if (params.factory_uuid) { searchQuery += ` AND s_f.uuid = '${params.factory_uuid}'`; }
   if (params.prod_uuid) { searchQuery += ` AND s_p.uuid = '${params.prod_uuid}'`; }
   if (params.complete_fg != null) { searchQuery += ` AND p_w.complete_fg = ${params.complete_fg}`; }
-  if (params.start_date && params.end_date) { searchQuery += ` AND p_w.reg_date BETWEEN '${params.start_date}' AND '${params.end_date}'`; }
+  if (params.start_date && params.end_date) { searchQuery += ` AND date(p_w.reg_date) BETWEEN '${params.start_date}' AND '${params.end_date}'`; }
 
   if (searchQuery.length > 0) {
     searchQuery = searchQuery.substring(4, searchQuery.length);
