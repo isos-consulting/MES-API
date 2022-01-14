@@ -1,13 +1,13 @@
 {
   "executionRoleArn": "arn:aws:iam::557471975685:role/ecsTaskExecutionRole",
   "containerDefinitions": [{
-    "name": "iso-server",
-    "image": "557471975685.dkr.ecr.ap-northeast-2.amazonaws.com/iso-server",
+    "name": "iso-production",
+    "image": "557471975685.dkr.ecr.ap-northeast-2.amazonaws.com/ecr-production-iso",
     "essential": true,
     "portMappings": [{
-      "hostPort": 4000,
+      "hostPort": 3004,
       "protocol": "tcp",
-      "containerPort": 4000
+      "containerPort": 3004
     }],
     "environment": [],
     "environmentFiles": [
@@ -29,7 +29,7 @@
         "logDriver": "awslogs",
         "options": {
             "awslogs-create-group": "true",
-            "awslogs-group": "/ecs/iso-server",
+            "awslogs-group": "/ecs/iso-production",
             "awslogs-region": "ap-northeast-2",
             "awslogs-stream-prefix": "ecs"
         },
@@ -45,5 +45,5 @@
   "networkMode": "awsvpc",
   "cpu": "1024",
   "memory": "2048",
-  "family": "iso-server"
+  "family": "iso-production"
 } 

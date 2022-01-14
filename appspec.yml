@@ -3,7 +3,7 @@ Resources:
   - TargetService:
       Type: AWS::ECS::Service
       Properties:
-        TaskDefinition: "arn:aws:ecs:ap-northeast-2:557471975685:task-definition/iso-server"
+        TaskDefinition: "arn:aws:ecs:ap-northeast-2:557471975685:task-definition/td-production-iso"
         LoadBalancerInfo:
-            ContainerName: "iso-server"
-            ContainerPort: 4000
+            ContainerName: "container-production-iso"
+            ContainerPort: 3004
