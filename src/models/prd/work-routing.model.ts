@@ -81,15 +81,15 @@ export default class PrdWorkRouting extends Model<IPrdWorkRouting> {
 
   @Column({
     comment: '시작일시',
-    type: DataType.DATE,
+    type: 'timestamp',
   })
-  start_date: Date;
+  start_date: string;
 
   @Column({
     comment: '종료일시',
-    type: DataType.DATE,
+    type: 'timestamp',
   })
-  end_date: Date;
+  end_date: string;
 
   @Column({
     comment: '작업시간',

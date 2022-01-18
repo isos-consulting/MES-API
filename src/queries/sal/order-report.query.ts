@@ -15,10 +15,10 @@ const readOrderReport = (
     CREATE TEMP TABLE temp_order(
       order_detail_id int, 
       factory_id int, 
-      reg_date timestamptz, 
+      reg_date timestamp, 
       partner_id int, 
       prod_id int, 
-      due_date timestamptz, 
+      due_date timestamp, 
       qty numeric, 
       price numeric,
       money_unit_id int, 
@@ -36,8 +36,8 @@ const readOrderReport = (
   `;
 
   if (params.factory_uuid) { searchQuery += ` AND s_f.uuid = '${params.factory_uuid}'`; }
-  if (params.start_reg_date && params.end_reg_date) { searchQuery += ` AND s_o.reg_date BETWEEN '${params.start_reg_date}' AND '${params.end_reg_date}'`; }
-  if (params.start_due_date && params.end_due_date) { searchQuery += ` AND s_od.due_date BETWEEN '${params.start_due_date}' AND '${params.end_due_date}'`; }
+  if (params.start_reg_date && params.end_reg_date) { searchQuery += ` AND date(s_o.reg_date) BETWEEN '${params.start_reg_date}' AND '${params.end_reg_date}'`; }
+  if (params.start_due_date && params.end_due_date) { searchQuery += ` AND date(s_od.due_date) BETWEEN '${params.start_due_date}' AND '${params.end_due_date}'`; }
 
   switch (params.complete_state) {
     case 'all': break;

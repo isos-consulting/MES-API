@@ -12,7 +12,7 @@ const readIncomeReport = (
     CREATE TEMP TABLE temp_income(
       income_id int, 
       factory_id int, 
-      reg_date timestamptz, 
+      reg_date timestamp, 
       prod_id int, 
       lot_no varchar(25), 
       qty numeric,
@@ -27,7 +27,7 @@ const readIncomeReport = (
   `;
 
   if (params.factory_uuid) { searchQuery += ` AND s_f.uuid = '${params.factory_uuid}'`; }
-  if (params.start_date && params.end_date) { searchQuery += ` AND s_i.reg_date BETWEEN '${params.start_date}' AND '${params.end_date}'`; }
+  if (params.start_date && params.end_date) { searchQuery += ` AND date(s_i.reg_date) BETWEEN '${params.start_date}' AND '${params.end_date}'`; }
 
   if (searchQuery.length > 0) {
     searchQuery = searchQuery.substring(4, searchQuery.length);

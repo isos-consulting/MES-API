@@ -14,7 +14,7 @@ const readReceiveReport = (
     CREATE TEMP TABLE temp_receive(
       receive_detail_id int, 
       factory_id int, 
-      reg_date timestamptz, 
+      reg_date timestamp, 
       partner_id int, 
       prod_id int, 
       order_qty numeric, 
@@ -37,8 +37,8 @@ const readReceiveReport = (
   `;
 
   if (params.factory_uuid) { searchQuery += ` AND s_f.uuid = '${params.factory_uuid}'`; }
-  if (params.start_reg_date && params.end_reg_date) { searchQuery += ` AND o_r.reg_date BETWEEN '${params.start_reg_date}' AND '${params.end_reg_date}'`; }
-  if (params.start_due_date && params.end_due_date) { searchQuery += ` AND m_od.due_date BETWEEN '${params.start_due_date}' AND '${params.end_due_date}'`; }
+  if (params.start_reg_date && params.end_reg_date) { searchQuery += ` AND date(o_r.reg_date) BETWEEN '${params.start_reg_date}' AND '${params.end_reg_date}'`; }
+  if (params.start_due_date && params.end_due_date) { searchQuery += ` AND date(m_od.due_date) BETWEEN '${params.start_due_date}' AND '${params.end_due_date}'`; }
 
   if (searchQuery.length > 0) {
     searchQuery = searchQuery.substring(4, searchQuery.length);

@@ -49,10 +49,10 @@ export default class SalOutgoOrder extends Model<ISalOutgoOrder> {
 
   @Column({
     comment: '지시 일시',
-    type: DataType.DATE,
+    type: 'timestamp',
     allowNull: false,
   })
-  reg_date: Date;
+  reg_date: string;
 
   @Column({
     comment: '합계 수량',

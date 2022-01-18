@@ -110,10 +110,10 @@ export default class QmsInspResult extends Model<IQmsInspResult> {
 
   @Column({
     comment: '검사 결과 등록 일시',
-    type: DataType.DATE,
+    type: 'timestamp',
     allowNull: false,
   })
-  reg_date: number;
+  reg_date: string;
 
   @Column({
     comment: '검사 결과 합격 여부',

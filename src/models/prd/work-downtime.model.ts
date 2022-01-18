@@ -64,15 +64,15 @@ export default class ProdWorkDowntime extends Model<IProdWorkDowntime> {
 
   @Column({
     comment: '비가동 시작 일시',
-    type: DataType.DATE,
+    type: 'timestamp',
   })
-  start_date: Date;
+  start_date: string;
 
   @Column({
     comment: '비가동 종료 일시',
-    type: DataType.DATE,
+    type: 'timestamp',
   })
-  end_date: Date;
+  end_date: string;
 
   @Column({
     comment: '비가동 시간',

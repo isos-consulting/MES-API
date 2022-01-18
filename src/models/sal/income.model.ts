@@ -34,10 +34,10 @@ export default class SalIncome extends Model<ISalIncome> {
   
   @Column({
     comment: '입고 일시',
-    type: DataType.DATE,
+    type: 'timestamp',
     allowNull: false,
   })
-  reg_date: Date;
+  reg_date: string;
 
   @ForeignKey(() => StdProd)
   @Column({

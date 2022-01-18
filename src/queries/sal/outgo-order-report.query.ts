@@ -12,7 +12,7 @@ const readOutgoOrderReport = (
     CREATE TEMP TABLE temp_outgo_order(
       outgo_order_detail_id int,
       factory_id int, 
-      reg_date timestamptz, 
+      reg_date timestamp, 
       partner_id int, 
       prod_id int, 
       order_qty numeric,

@@ -52,15 +52,15 @@ export default class PrdWorkWorker extends Model<IPrdWorkWorker> {
 
   @Column({
     comment: '작업 시작 일시',
-    type: DataType.DATE,
+    type: 'timestamp',
   })
-  start_date: Date;
+  start_date: string;
 
   @Column({
     comment: '작업 종료 일시',
-    type: DataType.DATE,
+    type: 'timestamp',
   })
-  end_date: Date;
+  end_date: string;
 
   @Column({
     comment: '작업 시간',

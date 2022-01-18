@@ -63,7 +63,7 @@ const readStoreIndividualHistory = (
         i_s.factory_id, i_s.prod_id, i_s.reject_id, i_s.lot_no, i_s.store_id, i_s.location_id,
         sum(CASE WHEN i_s.inout_fg = FALSE THEN COALESCE(i_s.qty,0) * -1 ELSE COALESCE(i_s.qty,0) END) AS qty
       FROM inv_store_tb i_s
-      WHERE i_s.reg_date <= '${params.start_date}'
+      WHERE date(i_s.reg_date) <= '${params.start_date}'
       GROUP BY i_s.factory_id, i_s.prod_id, i_s.reject_id, i_s.lot_no, i_s.store_id, i_s.location_id
     ) b_s ON b_s.factory_id = i_s.factory_id 
           AND b_s.store_id = i_s.store_id
@@ -71,7 +71,7 @@ const readStoreIndividualHistory = (
           AND b_s.lot_no = i_s.lot_no
           AND COALESCE(b_s.reject_id,0) = COALESCE(i_s.reject_id,0)
           AND COALESCE(b_s.location_id,0) = COALESCE(i_s.location_id,0)
-    WHERE i_s.reg_date BETWEEN '${params.start_date}' AND '${params.end_date}'
+    WHERE date(i_s.reg_date) BETWEEN '${params.start_date}' AND '${params.end_date}'
     AND s_f.uuid = '${params.factory_uuid}'
     AND s_s.uuid = '${params.store_uuid}';
   `;
