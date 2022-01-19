@@ -1,7 +1,7 @@
 import express from 'express';
 import { matchedData } from 'express-validator';
 import config from '../../configs/config';
-import AdmFileMgmtTypeService from '../../services/adm/file-mgmt-type.service';
+import AdmFileMgmtDetailTypeService from '../../services/adm/file-mgmt-detail-type.service';
 import createDatabaseError from '../../utils/createDatabaseError';
 import createUnknownError from '../../utils/createUnknownError';
 import { sequelizes } from '../../utils/getSequelize';
@@ -11,12 +11,12 @@ import createApiResult from '../../utils/createApiResult_new';
 import { successState } from '../../states/common.state';
 import ApiResult from '../../interfaces/common/api-result.interface';
 
-class AdmFileMgmtTypeCtl {
+class AdmFileMgmtDetailTypeCtl {
   stateTag: string
 
   //#region ✅ Constructor
   constructor() {
-    this.stateTag = 'admFileMgmtType'
+    this.stateTag = 'admFileMgmtDetailType'
   };
   //#endregion
 
@@ -28,9 +28,9 @@ class AdmFileMgmtTypeCtl {
   public create = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       let result: ApiResult<any> = { count:0, raws: [] };
-      const service = new AdmFileMgmtTypeService(req.tenant.uuid);
+      const service = new AdmFileMgmtDetailTypeService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
-      const datas = Object.values(matched);
+      const datas = await service.convertFk(Object.values(matched));
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
         result = await service.create(datas, req.user?.uid as number, tran)
@@ -55,7 +55,7 @@ class AdmFileMgmtTypeCtl {
   public read = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       let result: ApiResult<any> = { count:0, raws: [] };
-      const service = new AdmFileMgmtTypeService(req.tenant.uuid);
+      const service = new AdmFileMgmtDetailTypeService(req.tenant.uuid);
       const params = matchedData(req, { locations: [ 'query', 'params' ] });
 
       result = await service.read(params);
@@ -75,7 +75,7 @@ class AdmFileMgmtTypeCtl {
   public readByUuid = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       let result: ApiResult<any> = { count:0, raws: [] };
-      const service = new AdmFileMgmtTypeService(req.tenant.uuid);
+      const service = new AdmFileMgmtDetailTypeService(req.tenant.uuid);
 
       result = await service.readByUuid(req.params.uuid);
 
@@ -98,9 +98,9 @@ class AdmFileMgmtTypeCtl {
   public update = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       let result: ApiResult<any> = { count:0, raws: [] };
-      const service = new AdmFileMgmtTypeService(req.tenant.uuid);
+      const service = new AdmFileMgmtDetailTypeService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
-      const datas = Object.values(matched);
+      const datas = await service.convertFk(Object.values(matched));
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
         result = await service.update(datas, req.user?.uid as number, tran)
@@ -125,9 +125,9 @@ class AdmFileMgmtTypeCtl {
   public patch = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       let result: ApiResult<any> = { count:0, raws: [] };
-      const service = new AdmFileMgmtTypeService(req.tenant.uuid);
+      const service = new AdmFileMgmtDetailTypeService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
-      const datas = Object.values(matched);
+      const datas = await service.convertFk(Object.values(matched));
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
         result = await service.patch(datas, req.user?.uid as number, tran)
@@ -152,7 +152,7 @@ class AdmFileMgmtTypeCtl {
   public delete = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       let result: ApiResult<any> = { count:0, raws: [] };
-      const service = new AdmFileMgmtTypeService(req.tenant.uuid);
+      const service = new AdmFileMgmtDetailTypeService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
       const datas = Object.values(matched);
 
@@ -176,4 +176,4 @@ class AdmFileMgmtTypeCtl {
   //#endregion
 }
 
-export default AdmFileMgmtTypeCtl;
+export default AdmFileMgmtDetailTypeCtl;

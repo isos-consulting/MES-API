@@ -22,19 +22,18 @@ declare global {
     interface Request {
       tenant: {
         uuid: string
-      }
+      },
       user: {
         uuid: string,
         uid: number,
         user_nm: string,
         email: string
-      } | undefined
+      } | undefined,
+      file_promise: any
     }
   }
 };
 const app: express.Application = express();
-
-console.log(config.node_env);
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));

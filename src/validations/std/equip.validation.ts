@@ -69,7 +69,8 @@ const stdEquipValidation = {
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'prd_fg', '생산설비여부'))
       .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'prd_fg', '생산설비여부')),
     body('*.remark', '비고').optional({ nullable: true })
-      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'remark', '비고'))
+      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'remark', '비고')),
+    body('*.files', '파일정보')
   ],
   update: [
     body('*.uuid', '설비UUID')

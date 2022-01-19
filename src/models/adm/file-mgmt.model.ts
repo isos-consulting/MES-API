@@ -1,6 +1,7 @@
-import { Sequelize, Table, Column, Model, DataType, CreatedAt, UpdatedAt, BelongsTo, Unique } from 'sequelize-typescript'
+import { Sequelize, Table, Column, Model, DataType, CreatedAt, UpdatedAt, BelongsTo, Unique, ForeignKey } from 'sequelize-typescript'
 import IAdmFileMgmt from '../../interfaces/adm/file-mgmt.interface';
 import AutUser from '../aut/user.model';
+import AdmFileMgmtDetailType from './file-mgmt-detail-type.model';
 
 @Table({
   tableName: 'ADM_FILE_MGMT_TB',
@@ -20,22 +21,18 @@ export default class AdmFileMgmt extends Model<IAdmFileMgmt> {
   })
   file_mgmt_id: number;
 
+  @ForeignKey(() => AdmFileMgmtDetailType)
   @Column({
-    comment: '파일관리코드',
-    type: DataType.STRING(20),
+    comment: '파일관리 상세유형ID',
+    type: DataType.INTEGER,
     allowNull: false,
   })
-  file_mgmt_cd: string;
-
-  @Column({
-    comment: '파일관련 테이블 Row ID',
-    type: DataType.INTEGER,
-  })
-  reference_id: number;
+  file_mgmt_detail_type_id: number;
 
   @Column({
     comment: '파일관련 테이블 Row UUID',
     type: DataType.UUID,
+    allowNull: false,
   })
   reference_uuid: string
 
@@ -48,10 +45,17 @@ export default class AdmFileMgmt extends Model<IAdmFileMgmt> {
 
   @Column({
     comment: '파일확장자',
-    type: DataType.STRING(5),
+    type: DataType.STRING(20),
     allowNull: false,
   })
   file_extension: string;
+
+  @Column({
+    comment: '파일 용량(KB)',
+    type: DataType.BIGINT,
+    allowNull: false,
+  })
+  file_size: number;
 
   @Column({
     comment: 'IP Address',
@@ -112,6 +116,9 @@ export default class AdmFileMgmt extends Model<IAdmFileMgmt> {
   createUser: AutUser;
   @BelongsTo(() => AutUser, { as: 'updateUser', foreignKey: 'updated_uid', targetKey: 'uid', onDelete: 'restrict', onUpdate: 'cascade' })
   updateUser: AutUser;
+  
+  @BelongsTo(() => AdmFileMgmtDetailType, { foreignKey: 'file_mgmt_detail_type_id', targetKey: 'file_mgmt_detail_type_id', onDelete: 'restrict', onUpdate: 'cascade' })
+  admFileMgmtDetailType: AdmFileMgmtDetailType;
 
   // HasMany
   //#endregion

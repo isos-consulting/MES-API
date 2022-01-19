@@ -33,13 +33,14 @@ class AdmFileMgmtRepo {
     try {
       const fileMgmts = body.map((fileMgmt) => {
         return {
-          file_mgmt_cd: fileMgmt.file_mgmt_cd,
-          reference_id: fileMgmt.reference_id,
+          file_mgmt_detail_type_id: fileMgmt.file_mgmt_detail_type_id,
           reference_uuid: fileMgmt.reference_uuid,
           file_nm: fileMgmt.file_nm,
           file_extension: fileMgmt.file_extension,
+          file_size: fileMgmt.file_size,
           ip: fileMgmt.ip,
           remark: fileMgmt.remark,
+          uuid: fileMgmt.uuid,
           created_uid: uid,
           updated_uid: uid,
         }
@@ -63,15 +64,35 @@ class AdmFileMgmtRepo {
     try {
       const result = await this.repo.findAll({ 
         include: [
+          { 
+            model: this.sequelize.models.AdmFileMgmtDetailType, 
+            attributes: [], 
+            required: true,
+            include: [
+              { 
+                model: this.sequelize.models.AdmFileMgmtType, 
+                attributes: [], 
+                required: true,
+                where: { uuid: params.file_mgmt_type_uuid ?? { [Op.ne]: null } }
+              }
+            ],
+            where: { uuid: params.file_mgmt_detail_type_uuid ?? { [Op.ne]: null } }
+          },
           { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('admfileMgmt.uuid'), 'file_mgmt_uuid' ],
-          'file_mgmt_cd',
+          [ Sequelize.col('admFileMgmtDetailType.admFileMgmtType.uuid'), 'file_mgmt_type_uuid' ],
+          [ Sequelize.col('admFileMgmtDetailType.admFileMgmtType.file_mgmt_type_cd'), 'file_mgmt_type_cd' ],
+          [ Sequelize.col('admFileMgmtDetailType.admFileMgmtType.file_mgmt_type_nm'), 'file_mgmt_type_nm' ],
+          [ Sequelize.col('admFileMgmtDetailType.uuid'), 'file_mgmt_detail_type_uuid' ],
+          [ Sequelize.col('admFileMgmtDetailType.file_mgmt_detail_type_cd'), 'file_mgmt_detail_type_cd' ],
+          [ Sequelize.col('admFileMgmtDetailType.file_mgmt_detail_type_nm'), 'file_mgmt_detail_type_nm' ],
           'reference_uuid',
           'file_nm',
           'file_extension',
+          'file_size',
           'ip',
           'remark',
           'created_at',
@@ -79,12 +100,7 @@ class AdmFileMgmtRepo {
           'updated_at',
           [ Sequelize.col('updateUser.user_nm'), 'updated_nm' ]
         ],
-        where: {  
-          [Op.and]: [
-            params.file_mgmt_cd ? { file_mgmt_cd: params.file_mgmt_cd } : {},
-            params.reference_uuid ? { reference_uuid: params.reference_uuid } : {},
-          ]
-        },
+        where: { reference_uuid: params.reference_uuid ?? { [Op.ne]: null } },
         order: [ 'reference_uuid', 'created_at' ],
       });
 
@@ -99,15 +115,27 @@ class AdmFileMgmtRepo {
     try {
       const result = await this.repo.findOne({ 
         include: [
+          { 
+            model: this.sequelize.models.AdmFileMgmtDetailType, 
+            attributes: [], 
+            required: true,
+            include: [{ model: this.sequelize.models.AdmFileMgmtType, attributes: [], required: true }],
+          },
           { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
           [ Sequelize.col('admfileMgmt.uuid'), 'file_mgmt_uuid' ],
-          'file_mgmt_cd',
+          [ Sequelize.col('admFileMgmtDetailType.admFileMgmtType.uuid'), 'file_mgmt_type_uuid' ],
+          [ Sequelize.col('admFileMgmtDetailType.admFileMgmtType.file_mgmt_type_cd'), 'file_mgmt_type_cd' ],
+          [ Sequelize.col('admFileMgmtDetailType.admFileMgmtType.file_mgmt_type_nm'), 'file_mgmt_type_nm' ],
+          [ Sequelize.col('admFileMgmtDetailType.uuid'), 'file_mgmt_detail_type_uuid' ],
+          [ Sequelize.col('admFileMgmtDetailType.file_mgmt_detail_type_cd'), 'file_mgmt_detail_type_cd' ],
+          [ Sequelize.col('admFileMgmtDetailType.file_mgmt_detail_type_nm'), 'file_mgmt_detail_type_nm' ],
           'reference_uuid',
           'file_nm',
           'file_extension',
+          'file_size',
           'ip',
           'remark',
           'created_at',
@@ -227,6 +255,30 @@ class AdmFileMgmtRepo {
 
       for await (let file_mgmt of body) {
         count += await this.repo.destroy({ where: { uuid: file_mgmt.uuid }, transaction});
+      };
+
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.AdmFileMgmt.getTableName() as string, previousRaws, uid, transaction);
+      return { count, raws: previousRaws };
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  // 📒 Fn[deleteByReferenceUuids]: 파일관련 Table의 Row에 해당하는 File 데이터 삭제
+  deleteByReferenceUuids = async(uuids: string[], uid: number, transaction?: Transaction) => {
+    let count: number = 0;
+
+    try {      
+      let previousRaws: any[] = [];
+
+      for await (let uuid of uuids) {
+        const find = await this.repo.findAll({ where: { reference_uuid: uuid }})
+        previousRaws = [...previousRaws, ...find];
+
+        count += await this.repo.destroy({ 
+          where: { reference_uuid: uuid }, 
+          transaction
+        });
       };
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.AdmFileMgmt.getTableName() as string, previousRaws, uid, transaction);

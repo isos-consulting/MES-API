@@ -18,6 +18,10 @@ import admCycleUnitValidation from '../validations/adm/cycle-unit.validation';
 import AdmDailyInspCycleCtl from '../controllers/adm/daily-insp-cycle.controller';
 import admDailyInspCycleValidation from '../validations/adm/daily-insp-cycle.validation';
 import validationCallback from '../utils/validationCallback';
+import admFileMgmtTypeValidation from '../validations/adm/file-mgmt-type.validation';
+import admFileMgmtDetailTypeValidation from '../validations/adm/file-mgmt-detail-type.validation';
+import AdmFileMgmtDetailTypeCtl from '../controllers/adm/file-mgmt-detail-type.controller';
+import admFileMgmtValidation from '../validations/adm/file-mgmt.validation';
 
 const router = express.Router();
 
@@ -121,24 +125,34 @@ router.route('/store-types').patch(storeType.patch);
 router.route('/store-types').delete(storeType.delete);
 //#endregion
 
-//#region ✅ FileMgmt (파일관리)
-const fileMgmt = new AdmFileMgmtCtl();
-router.route('/file-mgmt/:uuid').get(fileMgmt.read);
-router.route('/file-mgmts').get(fileMgmt.read);
-router.route('/file-mgmts').post(fileMgmt.create);
-router.route('/file-mgmts').put(fileMgmt.update);
-router.route('/file-mgmts').patch(fileMgmt.patch);
-router.route('/file-mgmts').delete(fileMgmt.delete);
-//#endregion
-
 //#region ✅ FileMgmtType (파일관리유형)
 const fileMgmtType = new AdmFileMgmtTypeCtl();
-router.route('/file-mgmt-type/:uuid').get(fileMgmtType.read);
-router.route('/file-mgmt-types').get(fileMgmtType.read);
-router.route('/file-mgmt-types').post(fileMgmtType.create);
-router.route('/file-mgmt-types').put(fileMgmtType.update);
-router.route('/file-mgmt-types').patch(fileMgmtType.patch);
-router.route('/file-mgmt-types').delete(fileMgmtType.delete);
+router.route('/file-mgmt-type/:uuid').get(admFileMgmtTypeValidation.readByUuid, validationCallback, fileMgmtType.readByUuid);
+router.route('/file-mgmt-types').get(admFileMgmtTypeValidation.read, validationCallback, fileMgmtType.read);
+router.route('/file-mgmt-types').post(admFileMgmtTypeValidation.create, validationCallback, fileMgmtType.create);
+router.route('/file-mgmt-types').put(admFileMgmtTypeValidation.update, validationCallback, fileMgmtType.update);
+router.route('/file-mgmt-types').patch(admFileMgmtTypeValidation.patch, validationCallback, fileMgmtType.patch);
+router.route('/file-mgmt-types').delete(admFileMgmtTypeValidation.delete, validationCallback, fileMgmtType.delete);
+//#endregion
+
+//#region ✅ FileMgmtDetailType (파일관리상세유형)
+const fileMgmtDetailType = new AdmFileMgmtDetailTypeCtl();
+router.route('/file-mgmt-detail-type/:uuid').get(admFileMgmtDetailTypeValidation.readByUuid, validationCallback, fileMgmtDetailType.readByUuid);
+router.route('/file-mgmt-detail-types').get(admFileMgmtDetailTypeValidation.read, validationCallback, fileMgmtDetailType.read);
+router.route('/file-mgmt-detail-types').post(admFileMgmtDetailTypeValidation.create, validationCallback, fileMgmtDetailType.create);
+router.route('/file-mgmt-detail-types').put(admFileMgmtDetailTypeValidation.update, validationCallback, fileMgmtDetailType.update);
+router.route('/file-mgmt-detail-types').patch(admFileMgmtDetailTypeValidation.patch, validationCallback, fileMgmtDetailType.patch);
+router.route('/file-mgmt-detail-types').delete(admFileMgmtDetailTypeValidation.delete, validationCallback, fileMgmtDetailType.delete);
+//#endregion
+
+//#region ✅ FileMgmt (파일관리)
+const fileMgmt = new AdmFileMgmtCtl();
+router.route('/file-mgmt/:uuid').get(admFileMgmtValidation.readByUuid, validationCallback, fileMgmt.readByUuid);
+router.route('/file-mgmts').get(admFileMgmtValidation.read, validationCallback, fileMgmt.read);
+router.route('/file-mgmts').post(admFileMgmtValidation.create, validationCallback, fileMgmt.create);
+router.route('/file-mgmts').put(admFileMgmtValidation.update, validationCallback, fileMgmt.update);
+router.route('/file-mgmts').patch(admFileMgmtValidation.patch, validationCallback, fileMgmt.patch);
+router.route('/file-mgmts').delete(admFileMgmtValidation.delete, validationCallback, fileMgmt.delete);
 //#endregion
 
 //#region ✅ CompanyOpt (회사 옵션)
