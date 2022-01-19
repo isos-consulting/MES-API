@@ -16,7 +16,7 @@ const readStoreHistoryByTransaction = (
       tran_uuid uuid,
       inout_state TEXT, 
       tran_cd varchar(20), 
-      reg_date timestamptz, 
+      reg_date timestamp, 
       factory_id int,
       store_id int, 
       location_id int, 

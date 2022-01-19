@@ -2,7 +2,7 @@ export default interface IInvStore {
   tran_id?: number,
   inout_fg?: boolean,
   tran_cd?: string,
-  reg_date?: Date,
+  reg_date?: string,
   factory_id?: number,
   store_id?: number,
   location_id?: number | null,

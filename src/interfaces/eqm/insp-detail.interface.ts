@@ -11,7 +11,7 @@ export default interface IEqmInspDetail {
   spec_max?: string,
   insp_tool_id?: number | null,
   insp_method_id?: number | null,
-  base_date?: string,
+  base_date?: String,
   daily_insp_cycle_id?: number | null,
   cycle_unit_id?: number | null,
   cycle?: number | null,

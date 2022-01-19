@@ -40,10 +40,10 @@ export default class PrdWork extends Model<IPrdWork> {
 
   @Column({
     comment: '실적 일시',
-    type: DataType.DATE,
+    type: 'timestamp',
     allowNull: false,
   })
-  reg_date: Date;
+  reg_date: string;
 
   @ForeignKey(() => PrdOrder)
   @Column({
@@ -126,16 +126,16 @@ export default class PrdWork extends Model<IPrdWork> {
 
   @Column({
     comment: '생산 시작 일시',
-    type: DataType.DATE,
+    type: 'timestamp',
     allowNull: false,
   })
-  start_date: Date;
+  start_date: string;
 
   @Column({
     comment: '생산 종료 일시',
-    type: DataType.DATE,
+    type: 'timestamp',
   })
-  end_date: Date;
+  end_date: string;
 
   @Column({
     comment: '작업시간',

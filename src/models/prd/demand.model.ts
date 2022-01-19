@@ -46,10 +46,10 @@ export default class PrdDemand extends Model<IPrdDemand> {
 
   @Column({
     comment: '자재출고요청 일시',
-    type: DataType.DATE,
+    type: 'timestamp',
     allowNull: false,
   })
-  reg_date: Date;
+  reg_date: string;
 
   @Column({
     comment: '자재출고요청 유형코드',
@@ -104,7 +104,7 @@ export default class PrdDemand extends Model<IPrdDemand> {
 
   @Column({
     comment: '납기 일시',
-    type: DataType.DATE
+    type: 'timestamp'
   })
   due_date: string;
 

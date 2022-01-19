@@ -101,9 +101,9 @@ export default class SalOrderDetail extends Model<ISalOrderDetail> {
 
   @Column({
     comment: '납기 일시',
-    type: DataType.DATE,
+    type: 'timestamp',
   })
-  due_date: Date;
+  due_date: string;
 
   @Column({
     comment: '수주완료 유무',

@@ -49,14 +49,14 @@ export default class EqmInsp extends Model<IEqmInsp> {
 
   @Column({
     comment: '기준서 등록 일시',
-    type: DataType.DATE,
+    type:  'timestamp',
     allowNull: false,
   })
   reg_date: string;
 
   @Column({
     comment: '기준서 적용 일시',
-    type: DataType.DATE,
+    type:  'timestamp',
   })
   apply_date: string;
 

@@ -8,7 +8,7 @@ const seedDatas: ISalIncome[] = [
   {
 		"income_id" : 1,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-11-03T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-11-03T15:00:00.000Z").toString(),
 		"prod_id" : 6,
 		"lot_no" : "SILSA001",
 		"qty" : 150.000000,
@@ -25,7 +25,7 @@ const seedDatas: ISalIncome[] = [
 	{
 		"income_id" : 2,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-11-03T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-11-03T15:00:00.000Z").toString(),
 		"prod_id" : 6,
 		"lot_no" : "SILSA002",
 		"qty" : 150.000000,
@@ -42,7 +42,7 @@ const seedDatas: ISalIncome[] = [
 	{
 		"income_id" : 3,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-11-03T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-11-03T15:00:00.000Z").toString(),
 		"prod_id" : 8,
 		"lot_no" : "SILSA001",
 		"qty" : 150.000000,
@@ -59,7 +59,7 @@ const seedDatas: ISalIncome[] = [
 	{
 		"income_id" : 4,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-11-30T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-11-30T15:00:00.000Z").toString(),
 		"prod_id" : 6,
 		"lot_no" : "SILSA001",
 		"qty" : 150.000000,
@@ -76,7 +76,7 @@ const seedDatas: ISalIncome[] = [
 	{
 		"income_id" : 5,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-11-30T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-11-30T15:00:00.000Z").toString(),
 		"prod_id" : 6,
 		"lot_no" : "SILSA001",
 		"qty" : 150.000000,
@@ -93,7 +93,7 @@ const seedDatas: ISalIncome[] = [
 	{
 		"income_id" : 6,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-11-30T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-11-30T15:00:00.000Z").toString(),
 		"prod_id" : 6,
 		"lot_no" : "SILSA002",
 		"qty" : 150.000000,
@@ -110,7 +110,7 @@ const seedDatas: ISalIncome[] = [
 	{
 		"income_id" : 7,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-11-30T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-11-30T15:00:00.000Z").toString(),
 		"prod_id" : 6,
 		"lot_no" : "SILSA002",
 		"qty" : 150.000000,
@@ -127,7 +127,7 @@ const seedDatas: ISalIncome[] = [
 	{
 		"income_id" : 8,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-11-30T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-11-30T15:00:00.000Z").toString(),
 		"prod_id" : 7,
 		"lot_no" : "20211007",
 		"qty" : 150.000000,
@@ -144,7 +144,7 @@ const seedDatas: ISalIncome[] = [
 	{
 		"income_id" : 9,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-11-30T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-11-30T15:00:00.000Z").toString(),
 		"prod_id" : 7,
 		"lot_no" : "SILSA001",
 		"qty" : 150.000000,
@@ -161,7 +161,7 @@ const seedDatas: ISalIncome[] = [
 	{
 		"income_id" : 10,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-10-16T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-10-16T15:00:00.000Z").toString(),
 		"prod_id" : 27,
 		"lot_no" : "OUT002-1",
 		"qty" : 100.000000,
@@ -178,7 +178,7 @@ const seedDatas: ISalIncome[] = [
 	{
 		"income_id" : 11,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-10-16T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-10-16T15:00:00.000Z").toString(),
 		"prod_id" : 27,
 		"lot_no" : "OUT002",
 		"qty" : 100.000000,
@@ -195,7 +195,7 @@ const seedDatas: ISalIncome[] = [
 	{
 		"income_id" : 12,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-10-16T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-10-16T15:00:00.000Z").toString(),
 		"prod_id" : 27,
 		"lot_no" : "OUT001",
 		"qty" : 450.000000,
@@ -212,7 +212,7 @@ const seedDatas: ISalIncome[] = [
 	{
 		"income_id" : 13,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-10-16T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-10-16T15:00:00.000Z").toString(),
 		"prod_id" : 27,
 		"lot_no" : "20211007",
 		"qty" : 10.000000,

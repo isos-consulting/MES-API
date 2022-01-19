@@ -15,7 +15,7 @@ const readOrderDetails = (
   if (params.outgo_order_uuid) { searchQuery = searchQuery.concat(` AND s_oo.uuid = '${params.outgo_order_uuid}'`); }
   if (params.factory_uuid) { searchQuery = searchQuery.concat(` AND s_f.uuid = '${params.factory_uuid}'`); }
   if (params.partner_uuid) { searchQuery = searchQuery.concat(` AND s_pa.uuid = '${params.partner_uuid}'`); }
-  if (params.start_date && params.end_date) { searchQuery = searchQuery.concat(` AND s_oo.reg_date BETWEEN '${params.start_date}' AND '${params.end_date}'`); }
+  if (params.start_date && params.end_date) { searchQuery = searchQuery.concat(` AND date(s_oo.reg_date) BETWEEN '${params.start_date}' AND '${params.end_date}'`); }
 
   switch (params.complete_state) {
     case 'all': break;

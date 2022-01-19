@@ -8,7 +8,7 @@ const seedDatas: IInvStockReject[] = [
   {
 		"stock_reject_id" : 1,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-10-06T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"prod_id" : 26,
 		"reject_id" : 4,
 		"lot_no" : "OUT001",
@@ -26,7 +26,7 @@ const seedDatas: IInvStockReject[] = [
 	{
 		"stock_reject_id" : 2,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-10-06T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"prod_id" : 26,
 		"reject_id" : 4,
 		"lot_no" : "OUT002",
@@ -44,7 +44,7 @@ const seedDatas: IInvStockReject[] = [
 	{
 		"stock_reject_id" : 3,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-10-06T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"prod_id" : 26,
 		"reject_id" : 5,
 		"lot_no" : "OUT002-1",
@@ -62,7 +62,7 @@ const seedDatas: IInvStockReject[] = [
 	{
 		"stock_reject_id" : 4,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-10-31T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-10-31T15:00:00.000Z").toString(),
 		"prod_id" : 27,
 		"reject_id" : 4,
 		"lot_no" : "OUT002-1",
@@ -80,7 +80,7 @@ const seedDatas: IInvStockReject[] = [
 	{
 		"stock_reject_id" : 5,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-10-31T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-10-31T15:00:00.000Z").toString(),
 		"prod_id" : 27,
 		"reject_id" : 4,
 		"lot_no" : "OUT002",
@@ -98,7 +98,7 @@ const seedDatas: IInvStockReject[] = [
 	{
 		"stock_reject_id" : 6,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-10-31T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-10-31T15:00:00.000Z").toString(),
 		"prod_id" : 27,
 		"reject_id" : 4,
 		"lot_no" : "OUT001",
@@ -116,7 +116,7 @@ const seedDatas: IInvStockReject[] = [
 	{
 		"stock_reject_id" : 7,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-11-30T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-11-30T15:00:00.000Z").toString(),
 		"prod_id" : 26,
 		"reject_id" : 5,
 		"lot_no" : "OUT002-1",
@@ -134,7 +134,7 @@ const seedDatas: IInvStockReject[] = [
 	{
 		"stock_reject_id" : 8,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-11-30T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-11-30T15:00:00.000Z").toString(),
 		"prod_id" : 26,
 		"reject_id" : 5,
 		"lot_no" : "OUT002",
@@ -152,7 +152,7 @@ const seedDatas: IInvStockReject[] = [
 	{
 		"stock_reject_id" : 9,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-11-30T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-11-30T15:00:00.000Z").toString(),
 		"prod_id" : 26,
 		"reject_id" : 5,
 		"lot_no" : "OUT001",

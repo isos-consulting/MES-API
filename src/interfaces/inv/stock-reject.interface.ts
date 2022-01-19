@@ -1,7 +1,7 @@
 export default interface IInvStockReject {
   stock_reject_id?: number,
   factory_id?: number,
-  reg_date?: Date,
+  reg_date?: string,
   prod_id?: number,
   reject_id?: number,
   lot_no?: string,

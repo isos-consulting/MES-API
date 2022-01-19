@@ -35,10 +35,10 @@ export default class InvStockReject extends Model<IInvStockReject> {
 
   @Column({
     comment: '재고 부적합 일시',
-    type: DataType.DATE,
+    type: 'timestamp',
     allowNull: false,
   })
-  reg_date: Date;
+  reg_date: string;
 
   @ForeignKey(() => StdProd)
   @Column({
