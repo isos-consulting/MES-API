@@ -3,7 +3,7 @@ export default interface ISalOutgoOrder {
   factory_id?: number,
   partner_id?: number,
   delivery_id?: number | null,
-  reg_date?: Date,
+  reg_date?: string,
   order_id?: number | null,
   total_qty?: number | null,
   remark?: string | null,

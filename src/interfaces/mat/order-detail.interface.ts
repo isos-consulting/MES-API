@@ -11,7 +11,7 @@ export default interface IMatOrderDetail {
   exchange?: number,
   total_price?: number,
   unit_qty?: number | null,
-  due_date?: Date | null,
+  due_date?: string | null,
   complete_fg?: boolean,
   remark?: string | null,
   created_at?: Date,

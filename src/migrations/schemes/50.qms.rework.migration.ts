@@ -8,7 +8,7 @@ const seedDatas: IQmsRework[] = [
   {
 		"rework_id" : 1,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-10-13T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-10-13T15:00:00.000Z").toString(),
 		"rework_type_cd" : "DISPOSAL",
 		"prod_id" : 11,
 		"lot_no" : "20211007",
@@ -26,7 +26,7 @@ const seedDatas: IQmsRework[] = [
 	{
 		"rework_id" : 2,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-10-13T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-10-13T15:00:00.000Z").toString(),
 		"rework_type_cd" : "DISPOSAL",
 		"prod_id" : 18,
 		"lot_no" : "20211007",
@@ -44,7 +44,7 @@ const seedDatas: IQmsRework[] = [
 	{
 		"rework_id" : 3,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-10-13T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-10-13T15:00:00.000Z").toString(),
 		"rework_type_cd" : "DISPOSAL",
 		"prod_id" : 20,
 		"lot_no" : "20211007",
@@ -62,7 +62,7 @@ const seedDatas: IQmsRework[] = [
 	{
 		"rework_id" : 4,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-10-13T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-10-13T15:00:00.000Z").toString(),
 		"rework_type_cd" : "REWORK",
 		"prod_id" : 11,
 		"lot_no" : "20211007",
@@ -80,7 +80,7 @@ const seedDatas: IQmsRework[] = [
 	{
 		"rework_id" : 5,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-10-13T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-10-13T15:00:00.000Z").toString(),
 		"rework_type_cd" : "REWORK",
 		"prod_id" : 18,
 		"lot_no" : "20211007",
@@ -98,7 +98,7 @@ const seedDatas: IQmsRework[] = [
 	{
 		"rework_id" : 6,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-10-13T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-10-13T15:00:00.000Z").toString(),
 		"rework_type_cd" : "RETURN",
 		"prod_id" : 26,
 		"lot_no" : "OUT002",
@@ -116,7 +116,7 @@ const seedDatas: IQmsRework[] = [
 	{
 		"rework_id" : 7,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-10-16T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-10-16T15:00:00.000Z").toString(),
 		"rework_type_cd" : "REWORK",
 		"prod_id" : 11,
 		"lot_no" : "20211008",
@@ -134,7 +134,7 @@ const seedDatas: IQmsRework[] = [
 	{
 		"rework_id" : 8,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-10-16T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-10-16T15:00:00.000Z").toString(),
 		"rework_type_cd" : "REWORK",
 		"prod_id" : 13,
 		"lot_no" : "20211008",
@@ -152,7 +152,7 @@ const seedDatas: IQmsRework[] = [
 	{
 		"rework_id" : 9,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-10-16T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-10-16T15:00:00.000Z").toString(),
 		"rework_type_cd" : "REWORK",
 		"prod_id" : 20,
 		"lot_no" : "20211007",
@@ -170,7 +170,7 @@ const seedDatas: IQmsRework[] = [
 	{
 		"rework_id" : 10,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-10-16T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-10-16T15:00:00.000Z").toString(),
 		"rework_type_cd" : "DISPOSAL",
 		"prod_id" : 26,
 		"lot_no" : "OUT001",
@@ -188,7 +188,7 @@ const seedDatas: IQmsRework[] = [
 	{
 		"rework_id" : 11,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-10-16T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-10-16T15:00:00.000Z").toString(),
 		"rework_type_cd" : "DISPOSAL",
 		"prod_id" : 26,
 		"lot_no" : "OUT002",
@@ -206,7 +206,7 @@ const seedDatas: IQmsRework[] = [
 	{
 		"rework_id" : 12,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-10-16T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-10-16T15:00:00.000Z").toString(),
 		"rework_type_cd" : "DISASSEMBLE",
 		"prod_id" : 13,
 		"lot_no" : "20211008",
@@ -224,7 +224,7 @@ const seedDatas: IQmsRework[] = [
 	{
 		"rework_id" : 13,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-10-16T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-10-16T15:00:00.000Z").toString(),
 		"rework_type_cd" : "DISASSEMBLE",
 		"prod_id" : 11,
 		"lot_no" : "20211008",
@@ -242,7 +242,7 @@ const seedDatas: IQmsRework[] = [
 	{
 		"rework_id" : 14,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-11-03T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-11-03T15:00:00.000Z").toString(),
 		"rework_type_cd" : "DISPOSAL",
 		"prod_id" : 20,
 		"lot_no" : "20211007",
@@ -260,7 +260,7 @@ const seedDatas: IQmsRework[] = [
 	{
 		"rework_id" : 15,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-11-03T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-11-03T15:00:00.000Z").toString(),
 		"rework_type_cd" : "DISPOSAL",
 		"prod_id" : 26,
 		"lot_no" : "OUT001",
@@ -278,7 +278,7 @@ const seedDatas: IQmsRework[] = [
 	{
 		"rework_id" : 16,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-11-03T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-11-03T15:00:00.000Z").toString(),
 		"rework_type_cd" : "DISPOSAL",
 		"prod_id" : 26,
 		"lot_no" : "OUT002",
@@ -296,7 +296,7 @@ const seedDatas: IQmsRework[] = [
 	{
 		"rework_id" : 17,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-12-03T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-12-03T15:00:00.000Z").toString(),
 		"rework_type_cd" : "DISPOSAL",
 		"prod_id" : 20,
 		"lot_no" : "20211007",
@@ -314,7 +314,7 @@ const seedDatas: IQmsRework[] = [
 	{
 		"rework_id" : 18,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-12-03T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-12-03T15:00:00.000Z").toString(),
 		"rework_type_cd" : "DISPOSAL",
 		"prod_id" : 26,
 		"lot_no" : "OUT001",
@@ -332,7 +332,7 @@ const seedDatas: IQmsRework[] = [
 	{
 		"rework_id" : 19,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-12-03T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-12-03T15:00:00.000Z").toString(),
 		"rework_type_cd" : "DISPOSAL",
 		"prod_id" : 26,
 		"lot_no" : "OUT001",
@@ -350,7 +350,7 @@ const seedDatas: IQmsRework[] = [
 	{
 		"rework_id" : 20,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-12-03T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-12-03T15:00:00.000Z").toString(),
 		"rework_type_cd" : "DISPOSAL",
 		"prod_id" : 26,
 		"lot_no" : "OUT002",
@@ -368,7 +368,7 @@ const seedDatas: IQmsRework[] = [
 	{
 		"rework_id" : 21,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-12-03T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-12-03T15:00:00.000Z").toString(),
 		"rework_type_cd" : "DISPOSAL",
 		"prod_id" : 26,
 		"lot_no" : "OUT002-1",
@@ -386,7 +386,7 @@ const seedDatas: IQmsRework[] = [
 	{
 		"rework_id" : 25,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-12-16T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-12-16T15:00:00.000Z").toString(),
 		"rework_type_cd" : "DISASSEMBLE",
 		"prod_id" : 8,
 		"lot_no" : "20211203",
@@ -404,7 +404,7 @@ const seedDatas: IQmsRework[] = [
 	{
 		"rework_id" : 26,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-12-16T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-12-16T15:00:00.000Z").toString(),
 		"rework_type_cd" : "DISASSEMBLE",
 		"prod_id" : 2,
 		"lot_no" : "20211203",
@@ -422,7 +422,7 @@ const seedDatas: IQmsRework[] = [
 	{
 		"rework_id" : 27,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-12-16T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-12-16T15:00:00.000Z").toString(),
 		"rework_type_cd" : "DISASSEMBLE",
 		"prod_id" : 3,
 		"lot_no" : "20211001",
@@ -440,7 +440,7 @@ const seedDatas: IQmsRework[] = [
 	{
 		"rework_id" : 43,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-12-24T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-12-24T15:00:00.000Z").toString(),
 		"rework_type_cd" : "DISASSEMBLE",
 		"prod_id" : 2,
 		"lot_no" : "20211001",
@@ -458,7 +458,7 @@ const seedDatas: IQmsRework[] = [
 	{
 		"rework_id" : 44,
 		"factory_id" : 1,
-		"reg_date" : moment("2021-10-24T15:00:00.000Z").toDate(),
+		"reg_date" : moment("2021-10-24T15:00:00.000Z").toString(),
 		"rework_type_cd" : "DISASSEMBLE",
 		"prod_id" : 3,
 		"lot_no" : "20211001",

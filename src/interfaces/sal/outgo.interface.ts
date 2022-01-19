@@ -4,7 +4,7 @@ export default interface ISalOutgo {
   partner_id?: number,
   delivery_id?: number | null,
   stmt_no?: string | null,
-  reg_date?: Date,
+  reg_date?: string,
   total_price?: number | null,
   total_qty?: number | null,
   order_id?: number | null,

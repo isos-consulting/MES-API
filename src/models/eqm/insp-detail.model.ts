@@ -115,7 +115,7 @@ export default class EqmInspDetail extends Model<IEqmInspDetail> {
 
   @Column({
     comment: '주기 기준일 (정기점검에서 사용)',
-    type:  'timestamp',
+    type: DataType.DATEONLY,
   })
   base_date: string;
 

@@ -10,7 +10,7 @@ export default interface IQmsInspResult {
   prod_id?: number,
   lot_no?: string | null,
   emp_id?: number | null,
-  reg_date?: Date,
+  reg_date?: string,
   insp_result_fg?: boolean | null,
   insp_qty?: number | null,
   pass_qty?: number | null,

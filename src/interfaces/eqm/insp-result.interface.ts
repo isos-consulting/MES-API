@@ -4,7 +4,7 @@ export default interface IEqmInspResult {
   insp_detail_id?: number,
   equip_id?: number,
   emp_id?: number,
-  reg_date?: Date,
+  reg_date?: string,
   insp_value?: string,
   insp_result_fg?: boolean,
   remark?: string | null,
