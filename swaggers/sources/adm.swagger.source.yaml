@@ -116,17 +116,23 @@ paths:
   /adm/store-types:
     $ref: ../end-points/adm/store-types.yaml
 
-  # ✅ FileMgmt (파일관리)
-  /adm/file-mgmt/{uuid}:
-    $ref: ../end-points/adm/file-mgmt.{uuid}.yaml
-  /adm/file-mgmts:
-    $ref: ../end-points/adm/file-mgmts.yaml
-
   # ✅ FileMgmtType (파일관리유형)
   /adm/file-mgmt-type/{uuid}:
     $ref: ../end-points/adm/file-mgmt-type.{uuid}.yaml
   /adm/file-mgmt-types:
     $ref: ../end-points/adm/file-mgmt-types.yaml
+
+  # ✅ FileMgmtType (파일관리유형)
+  /adm/file-mgmt-detail-type/{uuid}:
+    $ref: ../end-points/adm/file-mgmt-detail-type.{uuid}.yaml
+  /adm/file-mgmt-detail-types:
+    $ref: ../end-points/adm/file-mgmt-detail-types.yaml
+
+  # ✅ FileMgmt (파일관리)
+  /adm/file-mgmt/{uuid}:
+    $ref: ../end-points/adm/file-mgmt.{uuid}.yaml
+  /adm/file-mgmts:
+    $ref: ../end-points/adm/file-mgmts.yaml
 
   # ✅ CompanyOpt (회사 옵션)
   /adm/company-opt/{uuid}:

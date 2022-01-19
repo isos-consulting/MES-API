@@ -25,22 +25,6 @@ file_mgmt_type_nm:
       type: string
       format: varchar(50)
 
-table_nm:
-  type: object
-  properties:
-    table_nm:
-      description: 테이블명
-      type: string
-      format: varchar(255)
-
-id_nm:
-  type: object
-  properties:
-    id_nm:
-      description: id명
-      type: string
-      format: varchar(255)
-
 sortby:
   type: object
   properties:
@@ -56,5 +40,12 @@ uuid:
       description: 파일관리유형UUID
       type: string
       format: uuid
-# Uuids
 
+# Uuids
+file_mgmt_type_uuid:
+  type: object
+  properties:
+    file_mgmt_type_uuid:
+      description: 파일관리유형UUID
+      type: string
+      format: uuid

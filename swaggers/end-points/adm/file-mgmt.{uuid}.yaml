@@ -42,10 +42,16 @@ get:
                         items:
                           allOf:
                             - $ref: ../../schemas/adm/file-mgmt.schema.yaml#/file_mgmt_uuid
-                            - $ref: ../../schemas/adm/file-mgmt.schema.yaml#/file_mgmt_cd
+                            - $ref: ../../schemas/adm/file-mgmt-detail-type.schema.yaml#/file_mgmt_type_uuid
+                            - $ref: ../../schemas/adm/file-mgmt-type.schema.yaml#/file_mgmt_type_cd
+                            - $ref: ../../schemas/adm/file-mgmt-type.schema.yaml#/file_mgmt_type_nm
+                            - $ref: ../../schemas/adm/file-mgmt.schema.yaml#/file_mgmt_detail_type_uuid
+                            - $ref: ../../schemas/adm/file-mgmt-detail-type.schema.yaml#/file_mgmt_detail_type_cd
+                            - $ref: ../../schemas/adm/file-mgmt-detail-type.schema.yaml#/file_mgmt_detail_type_nm
                             - $ref: ../../schemas/adm/file-mgmt.schema.yaml#/reference_uuid
                             - $ref: ../../schemas/adm/file-mgmt.schema.yaml#/file_nm
                             - $ref: ../../schemas/adm/file-mgmt.schema.yaml#/file_extension
+                            - $ref: ../../schemas/adm/file-mgmt.schema.yaml#/file_size
                             - $ref: ../../schemas/adm/file-mgmt.schema.yaml#/ip
                             - $ref: ../../schemas/adm/file-mgmt.schema.yaml#/remark
                             - $ref: ../../schemas/common/timestamp.schema.yaml

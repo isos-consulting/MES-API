@@ -10,6 +10,8 @@ import response from '../../utils/response_new';
 import createApiResult from '../../utils/createApiResult_new';
 import { successState } from '../../states/common.state';
 import ApiResult from '../../interfaces/common/api-result.interface';
+import AdmFileMgmtService from '../../services/adm/file-mgmt.service';
+import _, { isArray } from 'lodash';
 
 class StdEquipCtl {
   stateTag: string
@@ -29,12 +31,50 @@ class StdEquipCtl {
     try {
       let result: ApiResult<any> = { count:0, raws: [] };
       const service = new StdEquipService(req.tenant.uuid);
+      const fileService = new AdmFileMgmtService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
-      const datas = await service.convertFk(Object.values(matched));
+      const datas: any[] = await service.convertFk(Object.values(matched));
+
+      let fileDatas: any[] = [];
+      let fileUuids: string[] = [];
+
+      // 📌 파일을 함께 저장하는 경우
+      if (req.headers['file-included'] === 'true') {
+        // 📌 데이터 내에 있는 file 데이터가 Temp S3에 존재하는지 Validation
+        datas
+          .filter((data: any) => data.files && isArray(data.files))
+          .forEach((data: any) => {
+            fileDatas = [...fileDatas, ...data.files];
+            fileUuids = [...fileUuids, ...data.files.map((file: any) => file.uuid)];
+          });
+        
+        await fileService.isExistInTempStorage(fileUuids);
+      }
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
-        result = await service.create(datas, req.user?.uid as number, tran)
+        result = await service.create(datas, req.user?.uid as number, tran);
+
+        // 📌 파일을 함께 저장하는 경우
+        if (req.headers['file-included'] === 'true') {
+          fileDatas = [];
+          datas
+            .filter((data: any) => data.files && isArray(data.files))
+            .forEach((data: any) => {
+              const referenceUuid = result.raws.find(raw => raw.equip_cd === data.equip_cd).uuid;
+              data.files.forEach((file: any) => {
+                file.reference_uuid = referenceUuid;
+                fileDatas.push(file);
+              });
+            });
+
+          fileDatas = await fileService.convertFk(fileDatas);
+
+          await fileService.create(fileDatas, req.user?.uid as number, tran);
+        }
       });
+
+      // 📌 Temp S3에 있는 File 데이터를 Real S3로 이동
+      await fileService.moveToRealStorage(fileUuids);
 
       return createApiResult(res, result, 201, '데이터 생성 성공', this.stateTag, successState.CREATE);
     } catch (error) {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
@@ -152,13 +192,23 @@ class StdEquipCtl {
   public delete = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       let result: ApiResult<any> = { count:0, raws: [] };
+      let fileResult: ApiResult<any> = { count:0, raws: [] };
       const service = new StdEquipService(req.tenant.uuid);
+      const fileService = new AdmFileMgmtService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
       const datas = Object.values(matched);
+      const referenceUuids = datas.map(data => data.uuid);
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
-        result = await service.delete(datas, req.user?.uid as number, tran)
+        result = await service.delete(datas, req.user?.uid as number, tran);
+        fileResult = await fileService.deleteByReferenceUuids(referenceUuids, req.user?.uid as number, tran);
       });
+
+      // 📌 파일 데이터가 삭제된 경우
+      if (fileResult.count) { 
+        const fileUuids = fileResult.raws.map(raw => raw.uuid);
+        await fileService.deleteFromRealStorage(fileUuids); 
+      }
 
       return createApiResult(res, result, 200, '데이터 삭제 성공', this.stateTag, successState.DELETE);
     } catch (error) {

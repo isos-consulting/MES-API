@@ -5,23 +5,15 @@ file_mgmt_id:
   type: object
   properties: 
     file_mgmt_id:
-      description: 파일관리ID
+      description: 파일ID
       type: number
       format: int4
 
-file_mgmt_cd: 
+file_mgmt_detail_type_id: 
   type: object
   properties: 
-    file_mgmt_cd:
-      description: 파일관리코드
-      type: string
-      format: varchar(20)
-
-reference_id: 
-  type: object
-  properties: 
-    reference_id:
-      description: 파일관련 테이블 Row ID
+    file_mgmt_detail_type_id:
+      description: 파일관리상세유형ID
       type: number
       format: int4
 
@@ -47,7 +39,15 @@ file_extension:
     file_extension:
       description: 파일확장자
       type: string
-      format: varchar(50)
+      format: varchar(20)
+
+file_size: 
+  type: object
+  properties: 
+    file_size:
+      description: 파일 용량(KB)
+      type: number
+      format: bigint
 
 ip: 
   type: object
@@ -55,7 +55,7 @@ ip:
     ip:
       description: IP Address
       type: string
-      format: varchar(50)
+      format: varchar(39)
 
 remark: 
   type: object
@@ -78,6 +78,23 @@ file_mgmt_uuid:
   type: object
   properties: 
     file_mgmt_uuid:
-      description: 파일관리UUID
+      description: 파일UUID
       type: string
       format: uuid
+
+file_mgmt_detail_type_uuid:
+  type: object
+  properties: 
+    file_mgmt_detail_type_uuid:
+      description: 파일관리상세유형UUID
+      type: string
+      format: uuid
+
+# Others
+save_type:
+  type: object
+  properties: 
+    save_type:
+      description: 파일 생성/삭제 구분 (CREATE, DELETE)
+      type: string
+      format: varchar

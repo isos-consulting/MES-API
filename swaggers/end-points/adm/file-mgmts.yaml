@@ -5,10 +5,19 @@ get:
   tags:
     - 파일관리(FileMgmt)
   parameters:
-    - name: file_mgmt_cd
+    - name: file_mgmt_type_uuid
       in: query
       description: |
-        파일관리코드를 입력하여 해당하는 파일관리 데이터를 조회합니다. <br/>
+        파일관리유형의 UUID를 입력하여 해당하는 파일관리 데이터를 조회합니다. <br/>
+        [전체 조회시 입력하지 않습니다.]
+      schema:
+        type: string
+        format: uuid
+
+    - name: file_mgmt_detail_type_uuid
+      in: query
+      description: |
+        파일관리상세유형의 UUID를 입력하여 해당하는 파일관리 데이터를 조회합니다. <br/>
         [전체 조회시 입력하지 않습니다.]
       schema:
         type: string
@@ -52,10 +61,16 @@ get:
                         items:
                           allOf:
                             - $ref: ../../schemas/adm/file-mgmt.schema.yaml#/file_mgmt_uuid
-                            - $ref: ../../schemas/adm/file-mgmt.schema.yaml#/file_mgmt_cd
+                            - $ref: ../../schemas/adm/file-mgmt-detail-type.schema.yaml#/file_mgmt_type_uuid
+                            - $ref: ../../schemas/adm/file-mgmt-type.schema.yaml#/file_mgmt_type_cd
+                            - $ref: ../../schemas/adm/file-mgmt-type.schema.yaml#/file_mgmt_type_nm
+                            - $ref: ../../schemas/adm/file-mgmt.schema.yaml#/file_mgmt_detail_type_uuid
+                            - $ref: ../../schemas/adm/file-mgmt-detail-type.schema.yaml#/file_mgmt_detail_type_cd
+                            - $ref: ../../schemas/adm/file-mgmt-detail-type.schema.yaml#/file_mgmt_detail_type_nm
                             - $ref: ../../schemas/adm/file-mgmt.schema.yaml#/reference_uuid
                             - $ref: ../../schemas/adm/file-mgmt.schema.yaml#/file_nm
                             - $ref: ../../schemas/adm/file-mgmt.schema.yaml#/file_extension
+                            - $ref: ../../schemas/adm/file-mgmt.schema.yaml#/file_size
                             - $ref: ../../schemas/adm/file-mgmt.schema.yaml#/ip
                             - $ref: ../../schemas/adm/file-mgmt.schema.yaml#/remark
                             - $ref: ../../schemas/common/timestamp.schema.yaml
@@ -73,15 +88,19 @@ post:
       application/json:
         schema:
           required:
-            - file_mgmt_cd
+            - uuid
+            - save_type
             - reference_uuid
             - file_nm
             - file_extension
+            - file_size
           allOf:
-            - $ref: ../../schemas/adm/file-mgmt.schema.yaml#/file_mgmt_cd
+            - $ref: ../../schemas/adm/file-mgmt.schema.yaml#/uuid
+            - $ref: ../../schemas/adm/file-mgmt.schema.yaml#/save_type
             - $ref: ../../schemas/adm/file-mgmt.schema.yaml#/reference_uuid
             - $ref: ../../schemas/adm/file-mgmt.schema.yaml#/file_nm
             - $ref: ../../schemas/adm/file-mgmt.schema.yaml#/file_extension
+            - $ref: ../../schemas/adm/file-mgmt.schema.yaml#/file_size
             - $ref: ../../schemas/adm/file-mgmt.schema.yaml#/ip
             - $ref: ../../schemas/adm/file-mgmt.schema.yaml#/remark
   responses:

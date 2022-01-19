@@ -1,13 +1,13 @@
 get:
   description: |
-    하나의 파일관리유형 데이터를 조회합니다.
-  summary: 파일관리유형 데이터 단일 조회
+    하나의 파일관리상세유형 데이터를 조회합니다.
+  summary: 파일관리상세유형 데이터 단일 조회
   tags:
-    - 파일관리유형(FileMgmtType)
+    - 파일관리상세유형(FileMgmtDetailType)
   parameters:
     - name: uuid
       in: path
-      description: 파일관리유형의 UUID 를 입력합니다.
+      description: 파일관리상세유형의 UUID 를 입력합니다.
       required: true
       schema:
         type: string
@@ -37,13 +37,17 @@ get:
                             format: int32
                             minimum: 0
                       raws:
-                        description: 파일관리유형 데이터 목록
+                        description: 파일관리상세유형 데이터 목록
                         type: array
                         items:
                           allOf:
-                            - $ref: ../../schemas/adm/file-mgmt-type.schema.yaml#/uuid
+                            - $ref: ../../schemas/adm/file-mgmt-detail-type.schema.yaml#/file_mgmt_detail_type_uuid
+                            - $ref: ../../schemas/adm/file-mgmt-detail-type.schema.yaml#/file_mgmt_detail_type_cd
+                            - $ref: ../../schemas/adm/file-mgmt-detail-type.schema.yaml#/file_mgmt_detail_type_nm
+                            - $ref: ../../schemas/adm/file-mgmt-detail-type.schema.yaml#/file_mgmt_type_uuid
                             - $ref: ../../schemas/adm/file-mgmt-type.schema.yaml#/file_mgmt_type_cd
                             - $ref: ../../schemas/adm/file-mgmt-type.schema.yaml#/file_mgmt_type_nm
+                            - $ref: ../../schemas/adm/file-mgmt-detail-type.schema.yaml#/file_extension_types
                             - $ref: ../../schemas/adm/file-mgmt-type.schema.yaml#/sortby
                             - $ref: ../../schemas/common/timestamp.schema.yaml
     500:

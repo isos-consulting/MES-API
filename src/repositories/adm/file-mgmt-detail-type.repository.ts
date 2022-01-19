@@ -1,6 +1,6 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
-import AdmFileMgmtType from '../../models/adm/file-mgmt-type.model';
-import IAdmFileMgmtType from '../../interfaces/adm/file-mgmt-type.interface';
+import AdmFileMgmtDetailType from '../../models/adm/file-mgmt-detail-type.model';
+import IAdmFileMgmtDetailType from '../../interfaces/adm/file-mgmt-detail-type.interface';
 import { Sequelize } from 'sequelize-typescript';
 import convertBulkResult from '../../utils/convertBulkResult';
 import convertResult from '../../utils/convertResult';
@@ -10,8 +10,8 @@ import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
 
-class AdmFileMgmtTypeRepo {
-  repo: Repository<AdmFileMgmtType>;
+class AdmFileMgmtDetailTypeRepo {
+  repo: Repository<AdmFileMgmtDetailType>;
   sequelize: Sequelize;
   tenant: string;
 
@@ -19,26 +19,28 @@ class AdmFileMgmtTypeRepo {
   constructor(tenant: string) {
     this.tenant = tenant;
     this.sequelize = getSequelize(tenant);
-    this.repo = this.sequelize.getRepository(AdmFileMgmtType);
+    this.repo = this.sequelize.getRepository(AdmFileMgmtDetailType);
   }
   //#endregion
 
   //#region ✅ CRUD Functions
 
 	// 📒 Fn[create]: Default Create Function
-	public create = async(body: IAdmFileMgmtType[], uid: number, transaction?: Transaction) => {
+	public create = async(body: IAdmFileMgmtDetailType[], uid: number, transaction?: Transaction) => {
 		try {
-			const fileMgmtTypes = body.map((fileMgmtType) => {
+			const fileMgmtDetailTypes = body.map((fileMgmtDetailType) => {
 				return {
-					file_mgmt_type_cd: fileMgmtType.file_mgmt_type_cd,
-					file_mgmt_type_nm: fileMgmtType.file_mgmt_type_nm,
-					sortby: fileMgmtType.sortby,
+					file_mgmt_detail_type_cd: fileMgmtDetailType.file_mgmt_detail_type_cd,
+					file_mgmt_detail_type_nm: fileMgmtDetailType.file_mgmt_detail_type_nm,
+					file_mgmt_type_id: fileMgmtDetailType.file_mgmt_type_id,
+					file_extension_types: fileMgmtDetailType.file_extension_types,
+					sortby: fileMgmtDetailType.sortby,
 					created_uid: uid,
 					updated_uid: uid,
 				}
 			});
 
-			const result = await this.repo.bulkCreate(fileMgmtTypes, { individualHooks: true, transaction });
+			const result = await this.repo.bulkCreate(fileMgmtDetailTypes, { individualHooks: true, transaction });
 
 			return convertBulkResult(result);
 		} catch (error) {
@@ -55,13 +57,23 @@ class AdmFileMgmtTypeRepo {
     try {
       const result = await this.repo.findAll({ 
         include: [
+          { 
+            model: this.sequelize.models.AdmFileMgmtType, 
+            attributes: [], 
+            required: true,
+            where: { uuid: params.file_mgmt_type_uuid ?? { [Op.ne]: null } }
+          },
           { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
-					[ Sequelize.col('admFileMgmtType.uuid'), 'file_mgmt_type_uuid' ],
-          'file_mgmt_type_cd',
-          'file_mgmt_type_nm',
+					[ Sequelize.col('admFileMgmtDetailType.uuid'), 'file_mgmt_detail_type_uuid' ],
+          'file_mgmt_detail_type_cd',
+          'file_mgmt_detail_type_nm',
+          [ Sequelize.col('admFileMgmtType.uuid'), 'file_mgmt_type_uuid' ],
+          [ Sequelize.col('admFileMgmtType.file_mgmt_type_cd'), 'file_mgmt_type_cd' ],
+          [ Sequelize.col('admFileMgmtType.file_mgmt_type_nm'), 'file_mgmt_type_nm' ],
+          'file_extension_types',
 					'sortby',
           'created_at',
           [ Sequelize.col('createUser.user_nm'), 'created_nm' ],
@@ -87,9 +99,13 @@ class AdmFileMgmtTypeRepo {
 					{ model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
 				],
 				attributes: [
-					[ Sequelize.col('admFileMgmtType.uuid'), 'file_mgmt_type_uuid' ],
-					'file_mgmt_type_cd',
-          'file_mgmt_type_nm',
+					[ Sequelize.col('admFileMgmtDetailType.uuid'), 'file_mgmt_detail_type_uuid' ],
+					'file_mgmt_detail_type_cd',
+          'file_mgmt_detail_type_nm',
+          [ Sequelize.col('admFileMgmtType.uuid'), 'file_mgmt_type_uuid' ],
+          [ Sequelize.col('admFileMgmtType.file_mgmt_type_cd'), 'file_mgmt_type_cd' ],
+          [ Sequelize.col('admFileMgmtType.file_mgmt_type_nm'), 'file_mgmt_type_nm' ],
+          'file_extension_types',
 					'sortby',
           'created_at',
 					[ Sequelize.col('createUser.user_nm'), 'created_nm' ],
@@ -118,8 +134,8 @@ class AdmFileMgmtTypeRepo {
 	};
 
 	// 📒 Fn[readRawByUnique]: Unique Key를 통하여 Raw Data Read Function
-	public readRawByUnique = async(params: { file_mgmt_type_cd: string }) => {
-		const result = await this.repo.findOne({ where: { file_mgmt_type_cd: params.file_mgmt_type_cd } });
+	public readRawByUnique = async(params: { file_mgmt_detail_type_cd: string }) => {
+		const result = await this.repo.findOne({ where: { file_mgmt_detail_type_cd: params.file_mgmt_detail_type_cd } });
 		return convertReadResult(result);
 	};
 
@@ -128,22 +144,24 @@ class AdmFileMgmtTypeRepo {
   //#region 🟡 Update Functions
   
   // 📒 Fn[update]: Default Update Function
-  public update = async(body: IAdmFileMgmtType[], uid: number, transaction?: Transaction) => {
+  public update = async(body: IAdmFileMgmtDetailType[], uid: number, transaction?: Transaction) => {
     let raws: any[] = [];
 
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let fileMgmtType of body) {
+      for await (let fileMgmtDetailType of body) {
         const result = await this.repo.update(
           {
-            file_mgmt_type_cd: fileMgmtType.file_mgmt_type_cd ?? null,
-						file_mgmt_type_nm: fileMgmtType.file_mgmt_type_nm ?? null,
-						sortby: fileMgmtType.sortby ?? null,
+            file_mgmt_detail_type_cd: fileMgmtDetailType.file_mgmt_detail_type_cd ?? null,
+						file_mgmt_detail_type_nm: fileMgmtDetailType.file_mgmt_detail_type_nm ?? null,
+						file_mgmt_type_id: fileMgmtDetailType.file_mgmt_type_id ?? null,
+						file_extension_types: fileMgmtDetailType.file_extension_types ?? null,
+						sortby: fileMgmtDetailType.sortby ?? null,
             updated_uid: uid,
           } as any,
           { 
-            where: { uuid: fileMgmtType.uuid },
+            where: { uuid: fileMgmtDetailType.uuid },
             returning: true,
             individualHooks: true,
             transaction
@@ -153,7 +171,7 @@ class AdmFileMgmtTypeRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.AdmFileMgmtType.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.AdmFileMgmtDetailType.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -166,22 +184,24 @@ class AdmFileMgmtTypeRepo {
   //#region 🟠 Patch Functions
   
   // 📒 Fn[patch]: Default Patch Function
-  public patch = async(body: IAdmFileMgmtType[], uid: number, transaction?: Transaction) => {
+  public patch = async(body: IAdmFileMgmtDetailType[], uid: number, transaction?: Transaction) => {
     let raws: any[] = [];
 
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let fileMgmtType of body) {
+      for await (let fileMgmtDetailType of body) {
         const result = await this.repo.update(
           {
-						file_mgmt_type_cd: fileMgmtType.file_mgmt_type_cd,
-						file_mgmt_type_nm: fileMgmtType.file_mgmt_type_nm,
-						sortby: fileMgmtType.sortby,
+						file_mgmt_detail_type_cd: fileMgmtDetailType.file_mgmt_detail_type_cd,
+						file_mgmt_detail_type_nm: fileMgmtDetailType.file_mgmt_detail_type_nm,
+            file_mgmt_type_id: fileMgmtDetailType.file_mgmt_type_id,
+						file_extension_types: fileMgmtDetailType.file_extension_types,
+						sortby: fileMgmtDetailType.sortby,
             updated_uid: uid,
           },
           { 
-            where: { uuid: fileMgmtType.uuid },
+            where: { uuid: fileMgmtDetailType.uuid },
             returning: true,
             individualHooks: true,
             transaction
@@ -191,7 +211,7 @@ class AdmFileMgmtTypeRepo {
         raws.push(result);
       };
 
-      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.AdmFileMgmtType.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.AdmFileMgmtDetailType.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -204,17 +224,17 @@ class AdmFileMgmtTypeRepo {
 	//#region 🔴 Delete Functions
   
   // 📒 Fn[delete]: Default Delete Function
-  public delete = async(body: IAdmFileMgmtType[], uid: number, transaction?: Transaction) => {
+  public delete = async(body: IAdmFileMgmtDetailType[], uid: number, transaction?: Transaction) => {
     let count: number = 0;
 
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let fileMgmtType of body) {
-        count += await this.repo.destroy({ where: { uuid: fileMgmtType.uuid }, transaction});
+      for await (let fileMgmtDetailType of body) {
+        count += await this.repo.destroy({ where: { uuid: fileMgmtDetailType.uuid }, transaction});
       };
 
-      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.AdmFileMgmtType.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.AdmFileMgmtDetailType.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
     } catch (error) {
       throw error;
@@ -226,4 +246,4 @@ class AdmFileMgmtTypeRepo {
   //#endregion
 }
 
-export default AdmFileMgmtTypeRepo;
+export default AdmFileMgmtDetailTypeRepo;
