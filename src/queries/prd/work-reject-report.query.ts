@@ -51,7 +51,7 @@ const readWorkRejectReport = (
       p_w.start_date,
       p_w.end_date,
       p_wr.reject_id,
-      COALESCE(p_wr.proc_id, 0),
+      COALESCE(p_wrt.proc_id, 0),
       p_wr.qty,
       p_wr.remark,
       p_wr.created_at, p_wr.created_uid, a_uc.user_nm,
