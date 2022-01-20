@@ -44,10 +44,10 @@ export default class SalRelease extends Model<ISalRelease> {
 
   @Column({
     comment: '출고 일시',
-    type: DataType.DATE,
+    type: 'timestamp',
     allowNull: false,
   })
-  reg_date: Date;
+  reg_date: string;
 
   @Column({
     comment: 'LOT NO',

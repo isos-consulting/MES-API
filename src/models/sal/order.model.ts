@@ -46,10 +46,10 @@ export default class SalOrder extends Model<ISalOrder> {
 
   @Column({
     comment: '수주 일시',
-    type: DataType.DATE,
+    type: 'timestamp',
     allowNull: false,
   })
-  reg_date: Date;
+  reg_date: string;
 
   @Column({
     comment: '합계 금액',

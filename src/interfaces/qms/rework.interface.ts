@@ -1,7 +1,7 @@
 export default interface IQmsRework {
   rework_id?: number,
   factory_id?: number,
-  reg_date?: Date,
+  reg_date?: string,
   prod_id?: number,
   lot_no?: string,
   rework_type_cd?: string,

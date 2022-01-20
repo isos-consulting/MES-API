@@ -50,10 +50,10 @@ export default class InvStore extends Model<IInvStore> {
 
   @Column({
     comment: '수불 일시',
-    type: DataType.DATE,
+    type: 'timestamp',
     allowNull: false,
   })
-  reg_date: Date;
+  reg_date: string;
 
   @ForeignKey(() => StdStore)
   @Column({

@@ -60,7 +60,7 @@ export default class EqmInspResult extends Model<IEqmInspResult> {
   @Unique('eqm_insp_result_tb_insp_detail_id_reg_date_un')
   @Column({
     comment: '등록 일시',
-    type: DataType.DATE,
+    type:  'timestamp',
     allowNull: false
   })
   reg_date: string;

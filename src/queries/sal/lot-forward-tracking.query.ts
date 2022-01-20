@@ -14,13 +14,13 @@ const readLotForwardReport = (
 		CREATE TEMP TABLE temp_lot(
 			proc_id int,
 			equip_id int,
-			reg_date timestamptz,
+			reg_date timestamp,
 			prod_id int,
 			lot_no varchar(50),
 			input_prod_id int,
 			input_lot_no varchar(50),
 			partner_id int,
-			in_reg_date timestamptz,
+			in_reg_date timestamp,
 			in_qty NUMERIC,
 			sortby varchar(100),
 			lv NUMERIC

@@ -29,11 +29,11 @@ export default class AdmLog extends Model<IAdmLog> {
 
   @Column({
     comment: '로그 생성 일시',
-    type: DataType.DATE,
+    type: 'timestamp',
     allowNull: false,
     defaultValue: Sequelize.fn('now')
   })
-  logged_at: Date;
+  logged_at: string;
   
   @Column({
     comment: '로그 생성자 UID',

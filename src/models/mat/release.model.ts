@@ -43,10 +43,10 @@ export default class MatRelease extends Model<IMatRelease> {
 
   @Column({
     comment: '투입 일시',
-    type: DataType.DATE,
+    type: 'timestamp',
     allowNull: false,
   })
-  reg_date: Date;
+  reg_date: string;
 
   @Column({
     comment: 'LOT NO',

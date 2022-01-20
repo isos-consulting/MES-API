@@ -92,7 +92,7 @@ const readWaitingReceive = (
     LEFT JOIN aut_user_tb a_uu ON a_uu.uid = m_rd.updated_uid
     WHERE (m_rd.insp_fg = TRUE AND COALESCE(q_ir.cnt, 0) = 0)
     ${params.factory_uuid ? `AND s_f.uuid = '${params.factory_uuid}'` : ''}
-    ${params.start_date && params.end_date ? ` AND m_r.reg_date BETWEEN '${params.start_date}' AND '${params.end_date}'` : ''}
+    ${params.start_date && params.end_date ? ` AND date(m_r.reg_date) BETWEEN '${params.start_date}' AND '${params.end_date}'` : ''}
   `
 
   const readOutsourcingQuery = `
@@ -181,7 +181,7 @@ const readWaitingReceive = (
     LEFT JOIN aut_user_tb a_uu ON a_uu.uid = o_rd.updated_uid
     WHERE (o_rd.insp_fg = TRUE AND COALESCE(q_ir.cnt, 0) = 0)
     ${params.factory_uuid ? `AND s_f.uuid = '${params.factory_uuid}'` : ''}
-    ${params.start_date && params.end_date ? ` AND o_r.reg_date BETWEEN '${params.start_date}' AND '${params.end_date}'` : ''}
+    ${params.start_date && params.end_date ? ` AND date(o_r.reg_date) BETWEEN '${params.start_date}' AND '${params.end_date}'` : ''}
   `
 
   let query: string;

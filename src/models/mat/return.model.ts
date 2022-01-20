@@ -55,10 +55,10 @@ export default class MatReturn extends Model<IMatReturn> {
 
   @Column({
     comment: '반출 일시',
-    type: DataType.DATE,
+    type: 'timestamp',
     allowNull: false,
   })
-  reg_date: Date;
+  reg_date: string;
 
   @Column({
     comment: '합계 금액',

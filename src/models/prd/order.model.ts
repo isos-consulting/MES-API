@@ -40,10 +40,10 @@ export default class PrdOrder extends Model<IPrdOrder> {
 
   @Column({
     comment: '지시 일시',
-    type: DataType.DATE,
+    type: 'timestamp',
     allowNull: false,
   })
-  reg_date: Date;
+  reg_date: string;
 
   @Unique('prd_order_tb_factory_id_order_no_un')
   @Column({
@@ -135,15 +135,15 @@ export default class PrdOrder extends Model<IPrdOrder> {
 
   @Column({
     comment: '시작 예정 일시',
-    type: DataType.DATE,
+    type: 'timestamp',
   })
-  start_date: Date;
+  start_date: string;
 
   @Column({
     comment: '종료 예정 일시',
-    type: DataType.DATE,
+    type: 'timestamp',
   })
-  end_date: Date;
+  end_date: string;
 
   @Column({
     comment: '마감 여부',
@@ -155,9 +155,9 @@ export default class PrdOrder extends Model<IPrdOrder> {
 
   @Column({
     comment: '마감 일시',
-    type: DataType.DATE,
+    type: 'timestamp',
   })
-  complete_date: Date;
+  complete_date: string;
 
   @ForeignKey(() => SalOrderDetail)
   @Column({

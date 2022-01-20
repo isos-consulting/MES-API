@@ -34,10 +34,10 @@ export default class PrdReturn extends Model<IPrdReturn> {
 
   @Column({
     comment: '반납 일시',
-    type: DataType.DATE,
+    type: 'timestamp',
     allowNull: false,
   })
-  reg_date: Date;
+  reg_date: string;
 
   @ForeignKey(() => StdProd)
   @Column({

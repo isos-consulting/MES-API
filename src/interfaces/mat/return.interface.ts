@@ -4,7 +4,7 @@ export default interface IMatReturn {
   partner_id?: number,
   supplier_id?: number | null,
   stmt_no?: string | null,
-  reg_date?: Date,
+  reg_date?: string,
   total_price?: number | null,
   total_qty?: number | null,
   receive_id?: number | null,

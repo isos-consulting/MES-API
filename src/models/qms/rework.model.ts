@@ -36,10 +36,10 @@ export default class QmsRework extends Model<IQmsRework> {
   
   @Column({
     comment: '재작업 등록 일시',
-    type: DataType.DATE,
+    type: 'timestamp',
     allowNull: false,
   })
-  reg_date: number;
+  reg_date: string;
 
   @Column({
     comment: '재작업 유형 코드',

@@ -14,6 +14,15 @@ get:
         type: string
         format: uuid
 
+    - name: file_mgmt_type_cd
+      in: query
+      description: |
+        파일관리유형의 코드를 입력하여 파일관리유형코드에 따라 파일관리상세유형를 조회합니다. <br/> 
+        [전체 조회시 입력하지 않습니다.]
+      schema:
+        type: string
+        format: varchar(20)
+
   responses:
     200:
       description: Read OK

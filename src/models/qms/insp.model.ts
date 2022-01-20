@@ -57,16 +57,16 @@ export default class QmsInsp extends Model<IQmsInsp> {
 
   @Column({
     comment: '기준서 등록 일시',
-    type: DataType.DATE,
+    type: 'timestamp',
     allowNull: false,
   })
-  reg_date: number;
+  reg_date: string;
 
   @Column({
     comment: '기준서 적용 일시',
-    type: DataType.DATE,
+    type: 'timestamp',
   })
-  apply_date: number;
+  apply_date: string;
 
   @Column({
     comment: '기준서 적용 여부',

@@ -9,6 +9,8 @@ const admFileMgmtDetailTypeValidation = {
   read: [
     query('file_mgmt_type_uuid', '파일관리 유형UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'file_mgmt_type_uuid', '파일관리 유형UUID')),
+    query('file_mgmt_type_cd', '파일관리 유형코드').optional({ nullable: true })
+      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'file_mgmt_type_cd', '파일관리 유형코드')),
   ],
   readByUuid: [ 
     param('uuid', '파일관리 상세유형UUID')

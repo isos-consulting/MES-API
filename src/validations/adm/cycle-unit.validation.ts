@@ -3,7 +3,7 @@ import { errorState } from '../../states/common.state';
 import createValidationError from '../../utils/createValidationError';
 
 const stateTag = 'admCycleUnit';
-console.log(`11`)
+
 const admCycleUnitValidation = {
   read: [],
   readByUuid: [ 

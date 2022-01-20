@@ -14,13 +14,13 @@ const readLotReverseReport = (
 		CREATE TEMP TABLE temp_lot(
 			proc_id int,
 			equip_id int,
-			reg_date timestamptz,
+			reg_date timestamp,
 			prod_id int,
 			lot_no varchar(50),
 			work_prod_id int,
 			work_lot_no varchar(50),
 			partner_id int,
-			out_reg_date timestamptz,
+			out_reg_date timestamp,
 			out_qty NUMERIC,
 			sortby varchar(100),
 			lv NUMERIC

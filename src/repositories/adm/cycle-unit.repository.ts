@@ -10,6 +10,7 @@ import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
+import _ from 'lodash';
 
 class AdmCycleUnitRepo {
   repo: Repository<AdmCycleUnit>;
@@ -39,9 +40,8 @@ class AdmCycleUnitRepo {
 					updated_uid: uid,
 				}
 			});
-
 			const result = await this.repo.bulkCreate(cycleUnit, { individualHooks: true, transaction });
-
+      
 			return convertBulkResult(result);
 		} catch (error) {
 			if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -134,13 +134,11 @@ class AdmCycleUnitRepo {
   
   // 📒 Fn[update]: Default Update Function
   public update = async(body: IAdmCycleUnit[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let cycleUnit of body) {
-        const result = await this.repo.update(
+      const promises = body.map((cycleUnit: any) => {
+        return this.repo.update(
           {
 						cycle_unit_cd: cycleUnit.cycle_unit_cd ?? null,
 						cycle_unit_nm: cycleUnit.cycle_unit_nm ?? null,
@@ -153,11 +151,10 @@ class AdmCycleUnitRepo {
             returning: true,
             individualHooks: true,
             transaction
-          },
+          }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', sequelize.models.AdmCycleUnit.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -173,20 +170,18 @@ class AdmCycleUnitRepo {
   
   // 📒 Fn[patch]: Default Patch Function
   public patch = async(body: IAdmCycleUnit[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let cycleUnit of body) {
-        const result = await this.repo.update(
+      const promises = body.map((cycleUnit: any) => {
+        return this.repo.update(
           {
 						cycle_unit_cd: cycleUnit.cycle_unit_cd,
 						cycle_unit_nm: cycleUnit.cycle_unit_nm,
 						format: cycleUnit.format,
 						sortby: cycleUnit.sortby,
             updated_uid: uid,
-          },
+          } as any,
           { 
             where: { uuid: cycleUnit.uuid },
             returning: true,
@@ -194,9 +189,8 @@ class AdmCycleUnitRepo {
             transaction
           }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', sequelize.models.AdmCycleUnit.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -208,18 +202,17 @@ class AdmCycleUnitRepo {
 
   //#endregion
 
-	  //#region 🔴 Delete Functions
+	//#region 🔴 Delete Functions
   
   // 📒 Fn[delete]: Default Delete Function
   public delete = async(body: IAdmCycleUnit[], uid: number, transaction?: Transaction) => {
-    let count: number = 0;
-
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let cycleUnit of body) {
-        count += await this.repo.destroy({ where: { uuid: cycleUnit.uuid }, transaction});
-      };
+      const promises = body.map((cycleUnit: any) => {
+        return this.repo.destroy({ where: { uuid: cycleUnit.uuid }, transaction});
+      });
+      const count = _.sum(await Promise.all(promises));
 
       await new AdmLogRepo(this.tenant).create('delete', sequelize.models.AdmCycleUnit.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };

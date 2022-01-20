@@ -5,7 +5,7 @@ const readReceiveDetails = (receiveDetailUuid?: string, receiveUuid?: string, fa
   if (receiveDetailUuid) { searchQuery += ` AND o_rd.uuid = '${receiveDetailUuid}'`; }
   if (factoryUuid) { searchQuery += ` AND s_f.uuid = '${factoryUuid}'`; }
   if (partnerUuid) { searchQuery += ` AND s_pa.uuid = '${partnerUuid}'`; }
-  if (startDate && endDate) { searchQuery += ` AND o_r.reg_date BETWEEN '${startDate}' AND '${endDate}'`; }
+  if (startDate && endDate) { searchQuery += ` AND date(o_r.reg_date) BETWEEN '${startDate}' AND '${endDate}'`; }
 
   switch (completeState) {
     case 'all': break;

@@ -41,16 +41,16 @@ export default class EqmRepairHistory extends Model<IEqmRepairHistory> {
 
   @Column({
     comment: '발생시작일시',
-    type: DataType.DATE,
+    type: 'timestamp',
     allowNull: false
   })
-  occur_start_date: Date;
+  occur_start_date: string;
 
   @Column({
     comment: '발생종료일시',
-    type: DataType.DATE
+    type: 'timestamp'
   })
-  occur_end_date: Date;
+  occur_end_date: string;
 
   @ForeignKey(() => StdEmp)
   @Column({
@@ -73,15 +73,15 @@ export default class EqmRepairHistory extends Model<IEqmRepairHistory> {
 
   @Column({
     comment: '수리시작일시',
-    type: DataType.DATE
+    type: 'timestamp'
   })
-  repair_start_date: Date;
+  repair_start_date: string;
 
   @Column({
     comment: '수리종료일시',
-    type: DataType.DATE
+    type: 'timestamp'
   })
-  repair_end_date: Date;
+  repair_end_date: string;
 
   @Column({
     comment: '수리시간',

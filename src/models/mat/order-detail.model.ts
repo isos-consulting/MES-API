@@ -110,9 +110,9 @@ export default class MatOrderDetail extends Model<IMatOrderDetail> {
 
   @Column({
     comment: '납기 일시',
-    type: DataType.DATE,
+    type: 'timestamp',
   })
-  due_date: Date;
+  due_date: string;
 
   @Column({
     comment: '발주완료 유무',
