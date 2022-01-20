@@ -13,6 +13,10 @@ const admFileMgmtValidation = {
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'file_mgmt_detail_type_uuid', '파일관리 상세유형UUID')),
     query('reference_uuid', '파일관련 테이블 Row UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'reference_uuid', '파일관련 테이블 Row UUID')),
+    query('file_mgmt_type_cd', '파일관리 유형코드').optional({ nullable: true })
+      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'file_mgmt_type_cd', '파일관리 유형코드')),
+    query('file_mgmt_detail_type_cd', '파일관리 상세유형코드').optional({ nullable: true })
+      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'file_mgmt_detail_type_cd', '파일관리 상세유형코드')),
   ],
   readByUuid: [ 
     param('uuid', '파일UUID')

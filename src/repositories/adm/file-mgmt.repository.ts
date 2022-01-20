@@ -73,10 +73,20 @@ class AdmFileMgmtRepo {
                 model: this.sequelize.models.AdmFileMgmtType, 
                 attributes: [], 
                 required: true,
-                where: { uuid: params.file_mgmt_type_uuid ?? { [Op.ne]: null } }
+                where: {
+                  [Op.and]: [
+                    { uuid: params.file_mgmt_type_uuid ?? { [Op.ne]: null } },
+                    { file_mgmt_type_cd: params.file_mgmt_type_cd ?? { [Op.ne]: null } },
+                  ]
+                } 
               }
             ],
-            where: { uuid: params.file_mgmt_detail_type_uuid ?? { [Op.ne]: null } }
+            where: {
+              [Op.and]: [
+                { uuid: params.file_mgmt_detail_type_uuid ?? { [Op.ne]: null } },
+                { file_mgmt_detail_type_cd: params.file_mgmt_detail_type_cd ?? { [Op.ne]: null } }
+              ]
+            } 
           },
           { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
