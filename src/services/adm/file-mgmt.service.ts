@@ -4,6 +4,9 @@ import AdmFileMgmtDetailTypeRepo from "../../repositories/adm/file-mgmt-detail-t
 import AdmFileMgmtRepo from "../../repositories/adm/file-mgmt.repository";
 import AdmFileMgmt from "../../repositories/adm/file-mgmt.repository";
 import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
+import _, { isArray } from 'lodash';
+import createApiError from '../../utils/createApiError';
+import { errorState } from '../../states/common.state';
 
 class AdmFileMgmtService {
   tenant: string;
@@ -71,12 +74,19 @@ class AdmFileMgmtService {
       await Promise.all(
         uuids.map(uuid => {
           return axios({
-            url: `http://localhost:3000/temp/file/${uuid}/size/1234`,
+            url: `http://localhost:3002/temp/file/${uuid}/size/1234`,
             method: 'GET'
           });
         })
       )
-    } catch (error) { throw error; }
+    } catch (error) { 	
+				throw createApiError(
+				400, 
+				`Temp Storage에 파일존재 여부 확인중 문제가 방생 하였습니다. ${error}`, 
+				this.stateTag, 
+				errorState.EMPTY_FILE_IN_TEMP_STORAGE
+			); 
+		}
   }
 
   public isExistInRealStorage = async (uuids: string[]) => {
@@ -84,12 +94,19 @@ class AdmFileMgmtService {
       await Promise.all(
         uuids.map(uuid => {
           return axios({
-            url: `http://localhost:3000/tenant/${this.tenant}/file/${uuid}`,
+            url: `http://localhost:3002/tenant/${this.tenant}/file/${uuid}`,
             method: 'GET'
           });
         })
       )
-    } catch (error) { throw error; }
+    } catch (error) { 	
+				throw createApiError(
+				400, 
+				`Real Storage에 파일존재 여부 확인중 문제가 방생 하였습니다. ${error}`, 
+				this.stateTag, 
+				errorState.EMPTY_FILE_IN_REAL_STORAGE
+			); 
+		}
   }
 
   public moveToRealStorage = async (uuids: string[]) => {
@@ -97,12 +114,19 @@ class AdmFileMgmtService {
       await Promise.all(
         uuids.map(uuid => {
           return axios({
-            url: `http://localhost:3000/tenant/${this.tenant}/file/${uuid}`,
+            url: `http://localhost:3002/tenant/${this.tenant}/file/${uuid}`,
             method: 'POST'
           });
         })
       )
-    } catch (error) { throw error; }
+    } catch (error) { 	
+				throw createApiError(
+				400, 
+				`파일업로드 요청중 문제가 발생하였습니다. ${error}`, 
+				this.stateTag, 
+				errorState.FAILED_UPLOAD_FILE
+			); 
+		}
   }
 
   public deleteFromRealStorage = async (uuids: string[]) => {
@@ -110,13 +134,67 @@ class AdmFileMgmtService {
       await Promise.all(
         uuids.map(uuid => {
           return axios({
-            url: `http://localhost:3000/tenant/${this.tenant}/file/${uuid}`,
+            url: `http://localhost:3002/tenant/${this.tenant}/file/${uuid}`,
             method: 'DELETE'
           });
         })
       )
-    } catch (error) { throw error; }
+    } catch (error) { 
+			throw createApiError(
+				400, 
+				`파일삭제 요청중 문제가 발생하였습니다. ${error}`, 
+				this.stateTag, 
+				errorState.FAILED_DELETE_FILE
+			); 
+		}
   }
+
+	//어디서 삭제중 발생한 에러다 .
+
+	public getFileDatasByUnique  = async (datas: any, raws: any[], uniques: string[]) => {
+		let fileDatas: any[] = [];
+		let referenceUuid: string;
+		let isMatched: boolean = false;
+
+		datas
+		.filter((data: any) => data.files && isArray(data.files))
+		.forEach((data: any) => {
+			for (const raw of raws) {
+				for (const unique of uniques) {
+					if (raw[unique] !== data[unique]) {
+						isMatched = false;
+						break;
+					}
+					isMatched = true;
+				}
+
+				if (isMatched) { 
+					referenceUuid = raw.uuid; 
+					break;
+				}
+			}
+			data.files.forEach((file: any) => {
+				file.reference_uuid = referenceUuid;
+				fileDatas.push(file);
+			});
+		});
+		
+		return await this.convertFk(fileDatas);
+	}
+
+	public validateFileInTempStorage = async(datas: any) => {
+		let fileDatas: any[] = [];
+    let fileUuids: string[] = [];
+
+		datas
+		.filter((data: any) => data.files && isArray(data.files))
+		.forEach((data: any) => {
+			fileDatas = [...fileDatas, ...data.files];
+			fileUuids = [...fileUuids, ...data.files.map((file: any) => file.uuid)];
+		});
+		await this.isExistInTempStorage(fileUuids);
+		return fileUuids
+	}
 }
 
 export default AdmFileMgmtService;

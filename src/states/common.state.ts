@@ -34,6 +34,10 @@ type TErrorState = {
   EXPIRED_REFRESH_TOKEN: '0011',              // 📌 Refresh 토큰정보가 만료되었음
   NOT_EXPIRED_ACCESS_TOKEN: '0012',           // 📌 Access 토큰정보가 만료되지 않았음
   INVALID_DIFF_DATE: '0013',                  // 📌 시작일자 데이터가 종료일자 데이터보다 늦음
+	EMPTY_FILE_IN_TEMP_STORAGE: '0014',         // 📌 Temp Storage에 파일이 존재 하지 않음 
+	EMPTY_FILE_IN_REAL_STORAGE: '0015',         // 📌 Real Storage에 파일이 존재 하지 않음 
+	FAILED_UPLOAD_FILE: '0016',                 // 📌 파일업로드 요청 중 문제가 발생되었음
+	FAILED_DELETE_FILE: '0017'                  // 📌 파일삭제 요청 중 문제가 발생되었음
 }
 const errorState: TErrorState = { 
   NO_DATA: '0000',                            // 📌 영향받은 데이터가 없음
@@ -50,6 +54,12 @@ const errorState: TErrorState = {
   EXPIRED_REFRESH_TOKEN: '0011',              // 📌 Refresh 토큰정보가 만료되었음
   NOT_EXPIRED_ACCESS_TOKEN: '0012',           // 📌 Access 토큰정보가 만료되지 않았음
   INVALID_DIFF_DATE: '0013',                  // 📌 시작일자가 종료일자보다 
+	EMPTY_FILE_IN_TEMP_STORAGE: '0014',         // 📌 Temp Storage에 파일이 존재 하지 않음 
+	EMPTY_FILE_IN_REAL_STORAGE: '0015',         // 📌 Real Storage에 파일이 존재 하지 않음 
+	FAILED_UPLOAD_FILE: '0016',                 // 📌 파일업로드 요청 중 문제가 발생되었음
+	FAILED_DELETE_FILE: '0017'                  // 📌 파일삭제 요청 중 문제가 발생되었음
 }
+
+
 
 export { successState, errorState };

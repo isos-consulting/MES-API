@@ -11,7 +11,6 @@ import createApiResult from '../../utils/createApiResult_new';
 import { successState } from '../../states/common.state';
 import ApiResult from '../../interfaces/common/api-result.interface';
 import AdmFileMgmtService from '../../services/adm/file-mgmt.service';
-import _, { isArray } from 'lodash';
 
 class StdEquipCtl {
   stateTag: string
@@ -35,47 +34,26 @@ class StdEquipCtl {
       const matched = matchedData(req, { locations: [ 'body' ] });
       const datas: any[] = await service.convertFk(Object.values(matched));
 
-      let fileDatas: any[] = [];
-      let fileUuids: string[] = [];
+			let fileUuids: string[] = [];
 
       // 📌 파일을 함께 저장하는 경우
       if (req.headers['file-included'] === 'true') {
         // 📌 데이터 내에 있는 file 데이터가 Temp S3에 존재하는지 Validation
-        datas
-          .filter((data: any) => data.files && isArray(data.files))
-          .forEach((data: any) => {
-            fileDatas = [...fileDatas, ...data.files];
-            fileUuids = [...fileUuids, ...data.files.map((file: any) => file.uuid)];
-          });
-        
-        await fileService.isExistInTempStorage(fileUuids);
+        fileUuids = await fileService.validateFileInTempStorage(datas);
       }
-
+			
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
         result = await service.create(datas, req.user?.uid as number, tran);
-
         // 📌 파일을 함께 저장하는 경우
         if (req.headers['file-included'] === 'true') {
-          fileDatas = [];
-          datas
-            .filter((data: any) => data.files && isArray(data.files))
-            .forEach((data: any) => {
-              const referenceUuid = result.raws.find(raw => raw.equip_cd === data.equip_cd).uuid;
-              data.files.forEach((file: any) => {
-                file.reference_uuid = referenceUuid;
-                fileDatas.push(file);
-              });
-            });
-
-          fileDatas = await fileService.convertFk(fileDatas);
-
-          await fileService.create(fileDatas, req.user?.uid as number, tran);
+					const fileDatas = await fileService.getFileDatasByUnique(datas, result.raws, ['equip_cd', 'factory_id'])
+					await fileService.create(fileDatas, req.user?.uid as number, tran);
         }
       });
 
       // 📌 Temp S3에 있는 File 데이터를 Real S3로 이동
       await fileService.moveToRealStorage(fileUuids);
-
+			
       return createApiResult(res, result, 201, '데이터 생성 성공', this.stateTag, successState.CREATE);
     } catch (error) {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
       if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
