@@ -6,8 +6,8 @@ export default {
   port: process.env.PORT,
   cache: {
     elastic: {
-      host: process.env.NODE_ENV === 'test' ? 'localhost' : process.env.CACHE_ELA_HOST as string,
-      port: process.env.NODE_ENV === 'test' ? 6379 : process.env.CACHE_ELA_PORT as string,
+      host: process.env.NODE_ENV === 'production' ? process.env.CACHE_ELA_HOST as string : 'localhost',
+      port: process.env.NODE_ENV === 'production' ? process.env.CACHE_ELA_PORT as string : 6379,
     }
   },
   db: {
