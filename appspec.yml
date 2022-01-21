@@ -1,9 +1,22 @@
 version: 0.0
-Resources:
-  - TargetService:
-      Type: AWS::ECS::Service
-      Properties:
-        TaskDefinition: "arn:aws:ecs:ap-northeast-2:557471975685:task-definition/td-production-iso"
-        LoadBalancerInfo:
-            ContainerName: "container-production-iso"
-            ContainerPort: 3004
+os: linux
+files:
+  - source: /
+    destination: /var/iso-server
+hooks:
+  ApplicationStop: 
+    - location: ./shells/application-stop.sh
+      timeout: 300
+      runas: root
+  BeforeInstall:
+    - location: ./shells/before-install.sh
+      timeout: 300
+      runas: root    
+  AfterInstall:
+    - location: ./shells/after-install.sh
+      timeout: 300
+      runas: root
+  ApplicationStart:
+    - location: ./shells/application-start.sh
+      timeout: 300
+      runas: root
