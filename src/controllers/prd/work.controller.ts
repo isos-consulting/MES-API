@@ -505,8 +505,14 @@ class PrdWorkCtl extends BaseCtl {
           // 📌 생산실적 이력 삭제
           const workResult = await repo.delete([{ uuid: work.uuid }], req.user?.uid as number, tran);
 
+          // 📌 해당 실적의 작업지시에 진행중인 생산 실적이 없을 경우 작업지시의 생산진행여부(work_fg)를 False로 변경
+          const incompleteWorkCount = await repo.getIncompleteCount(work.order_id, tran);
+          let orderResult: ApiResult<any> = { raws: [], count: 0 };
+          if (incompleteWorkCount == 0) { orderResult = await orderRepo.updateWorkFgById(work.order_id, false, req.user?.uid as number, tran); }
+
           result.raws.push({
             work: workResult.raws,
+            order: orderResult.raws,
             input: inputResult.raws,
             worker: workerResult.raws,
             routing: routingResult.raws,
