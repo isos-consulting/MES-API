@@ -188,7 +188,7 @@ class PrdWorkRejectCtl extends BaseCtl {
           const rejectRead = await repo.readRawsByWorkId(id, tran);
           let qty: number = 0;
 
-          rejectRead.raws.forEach((reject: any) => { qty += reject.qty; });
+          rejectRead.raws.forEach((reject: any) => { qty += Number(reject.qty); });
           workBody.push({ work_id: id, reject_qty: qty });
         }
         const workResult = await workRepo.updateRejectQtyById(workBody, req.user?.uid as number, tran);
@@ -237,7 +237,7 @@ class PrdWorkRejectCtl extends BaseCtl {
           const rejectRead = await repo.readRawsByWorkId(id, tran);
           let qty: number = 0;
 
-          rejectRead.raws.forEach((reject: any) => { qty += reject.qty; });
+          rejectRead.raws.forEach((reject: any) => { qty += Number(reject.qty); });
           workBody.push({ work_id: id, reject_qty: qty });
         }
         const workResult = await workRepo.updateRejectQtyById(workBody, req.user?.uid as number, tran);
@@ -285,7 +285,7 @@ class PrdWorkRejectCtl extends BaseCtl {
           const rejectRead = await repo.readRawsByWorkId(id, tran);
           let qty: number = 0;
 
-          rejectRead.raws.forEach((reject: any) => { qty += reject.qty; });
+          rejectRead.raws.forEach((reject: any) => { qty += Number(reject.qty); });
           workBody.push({ work_id: id, reject_qty: qty });
         }
         const workResult = await workRepo.updateRejectQtyById(workBody, req.user?.uid as number, tran);

@@ -34,7 +34,7 @@ export default class PrdWorkReject extends Model<IPrdWorkReject> {
   })
   factory_id: number;
 
-  @Unique('prd_work_reject_tb_work_id_reject_id_un')
+  @Unique('prd_work_reject_tb_work_id_work_routing_id_reject_id_un')
   @ForeignKey(() => PrdWork)
   @Column({
     comment: '실적ID',
@@ -43,6 +43,7 @@ export default class PrdWorkReject extends Model<IPrdWorkReject> {
   })
   work_id: number;
 
+  @Unique('prd_work_reject_tb_work_id_work_routing_id_reject_id_un')
   @ForeignKey(() => PrdWorkRouting)
   @Column({
     comment: '공정순서ID',
@@ -51,7 +52,7 @@ export default class PrdWorkReject extends Model<IPrdWorkReject> {
   })
   work_routing_id: number;
 
-  @Unique('prd_work_reject_tb_work_id_reject_id_un')
+  @Unique('prd_work_reject_tb_work_id_work_routing_id_reject_id_un')
   @ForeignKey(() => StdReject)
   @Column({
     comment: '부적합ID',
