@@ -2,13 +2,14 @@ import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repos
 import StdProdType from '../../models/std/prod-type.model';
 import IStdProdType from '../../interfaces/std/prod-type.interface';
 import { Sequelize } from 'sequelize-typescript';
-import convertBulkResult from '../../utils/convertBulkResult';
+import _ from 'lodash';
 import convertResult from '../../utils/convertResult';
 import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
+import ApiResult from '../../interfaces/common/api-result.interface';
 
 class StdProdTypeRepo {
   repo: Repository<StdProdType>;
@@ -30,18 +31,20 @@ class StdProdTypeRepo {
   // 📒 Fn[create]: Default Create Function
   public create = async(body: IStdProdType[], uid: number, transaction?: Transaction) => {
     try {
-      const prodType = body.map((prodType) => {
-        return {
-          prod_type_cd: prodType.prod_type_cd,
-          prod_type_nm: prodType.prod_type_nm,
-          created_uid: uid,
-          updated_uid: uid,
-        }
+      const promises = body.map((prodType: any) => {
+        return this.repo.create(
+          {
+            prod_type_cd: prodType.prod_type_cd,
+            prod_type_nm: prodType.prod_type_nm,
+            created_uid: uid,
+            updated_uid: uid,
+          },
+          { hooks: true, transaction }
+        );
       });
-
-      const result = await this.repo.bulkCreate(prodType, { individualHooks: true, transaction });
-
-      return convertBulkResult(result);
+      const raws = await Promise.all(promises);
+      
+			return { raws, count: raws.length } as ApiResult<any>;
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
       throw error;
@@ -128,16 +131,14 @@ class StdProdTypeRepo {
   
   // 📒 Fn[update]: Default Update Function
   public update = async(body: IStdProdType[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let prodType of body) {
-        const result = await this.repo.update(
+      const promises = body.map((prodType: any) => {
+        return this.repo.update(
           {
-            prod_type_cd: prodType.prod_type_cd != null ? prodType.prod_type_cd : null,
-            prod_type_nm: prodType.prod_type_nm != null ? prodType.prod_type_nm : null,
+            prod_type_cd: prodType.prod_type_cd ?? null,
+            prod_type_nm: prodType.prod_type_nm ?? null,
             updated_uid: uid,
           } as any,
           { 
@@ -145,11 +146,10 @@ class StdProdTypeRepo {
             returning: true,
             individualHooks: true,
             transaction
-          },
+          }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdProdType.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -165,13 +165,11 @@ class StdProdTypeRepo {
   
   // 📒 Fn[patch]: Default Patch Function
   public patch = async(body: IStdProdType[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
-
-      for await (let prodType of body) {
-        const result = await this.repo.update(
+      
+      const promises = body.map((prodType: any) => {
+        return this.repo.update(
           {
             prod_type_cd: prodType.prod_type_cd,
             prod_type_nm: prodType.prod_type_nm,
@@ -184,9 +182,8 @@ class StdProdTypeRepo {
             transaction
           }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdProdType.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -202,14 +199,13 @@ class StdProdTypeRepo {
   
   // 📒 Fn[delete]: Default Delete Function
   public delete = async(body: IStdProdType[], uid: number, transaction?: Transaction) => {
-    let count: number = 0;
-
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let prodType of body) {
-        count += await this.repo.destroy({ where: { uuid: prodType.uuid }, transaction});
-      };
+      const promises = body.map((prodType: any) => {
+        return this.repo.destroy({ where: { uuid: prodType.uuid }, transaction});
+      });
+      const count = _.sum(await Promise.all(promises));
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.StdProdType.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };

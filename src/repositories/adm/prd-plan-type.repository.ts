@@ -2,13 +2,14 @@ import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repos
 import AdmPrdPlanType from '../../models/adm/prd-plan-type.model';
 import IAdmPrdPlanType from '../../interfaces/adm/prd-plan-type.interface';
 import { Sequelize } from 'sequelize-typescript';
-import convertBulkResult from '../../utils/convertBulkResult';
 import convertResult from '../../utils/convertResult';
 import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
+import ApiResult from '../../interfaces/common/api-result.interface';
+import _ from 'lodash';
 
 class AdmPrdPlanTypeRepo {
   repo: Repository<AdmPrdPlanType>;
@@ -28,20 +29,22 @@ class AdmPrdPlanTypeRepo {
 	// 📒 Fn[create]: Default Create Function
 	public create = async(body: IAdmPrdPlanType[], uid: number, transaction?: Transaction) => {
 		try {
-			const prdPlanType = body.map((prdPlanType) => {
-				return {
-					prd_plan_type_id: prdPlanType.prd_plan_type_id,
-					prd_plan_type_cd: prdPlanType.prd_plan_type_cd,
-					prd_plan_type_nm: prdPlanType.prd_plan_type_nm,
-					sortby: prdPlanType.sortby,
-					created_uid: uid,
-					updated_uid: uid,
-				}
-			});
-
-			const result = await this.repo.bulkCreate(prdPlanType, { individualHooks: true, transaction });
-
-			return convertBulkResult(result);
+			const promises = body.map((prdPlanType: any) => {
+        return this.repo.create(
+          {
+						prd_plan_type_id: prdPlanType.prd_plan_type_id,
+						prd_plan_type_cd: prdPlanType.prd_plan_type_cd,
+						prd_plan_type_nm: prdPlanType.prd_plan_type_nm,
+						sortby: prdPlanType.sortby,
+						created_uid: uid,
+						updated_uid: uid,
+					},
+          { hooks: true, transaction }
+        );
+      });
+      const raws = await Promise.all(promises);
+      
+			return { raws, count: raws.length } as ApiResult<any>;
 		} catch (error) {
 			if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
 			throw error;
@@ -131,17 +134,15 @@ class AdmPrdPlanTypeRepo {
 	
 	// 📒 Fn[update]: Default Update Function
 	public update = async(body: IAdmPrdPlanType[], uid: number, transaction?: Transaction) => {
-		let raws: any[] = [];
-
 		try {
 			const previousRaws = await getPreviousRaws(body, this.repo);
 
-			for await (let prdPlanType of body) {
-				const result = await this.repo.update(
-					{
-						prd_plan_type_cd: prdPlanType.prd_plan_type_cd != null ? prdPlanType.prd_plan_type_cd : null,
-						prd_plan_type_nm: prdPlanType.prd_plan_type_nm != null ? prdPlanType.prd_plan_type_nm : null,
-						sortby: prdPlanType.sortby != null ? prdPlanType.sortby : null,
+			const promises = body.map((prdPlanType: any) => {
+        return this.repo.update(
+          {
+						prd_plan_type_cd: prdPlanType.prd_plan_type_cd ?? null,
+						prd_plan_type_nm: prdPlanType.prd_plan_type_nm ?? null,
+						sortby: prdPlanType.sortby ?? null,
 						updated_uid: uid,
 					} as any,
 					{ 
@@ -149,13 +150,12 @@ class AdmPrdPlanTypeRepo {
 						returning: true,
 						individualHooks: true,
 						transaction
-					},
-				);
+					}
+        );
+      });
+      const raws = await Promise.all(promises);
 
-				raws.push(result);
-			};
-
-			await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.AdmPrdPlanType.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.AdmPrdPlanType.getTableName() as string, previousRaws, uid, transaction);
 			return convertResult(raws);
 		} catch (error) {
 			if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -169,14 +169,12 @@ class AdmPrdPlanTypeRepo {
 	
 	// 📒 Fn[patch]: Default Patch Function
 	public patch = async(body: IAdmPrdPlanType[], uid: number, transaction?: Transaction) => {
-		let raws: any[] = [];
-
 		try {
 			const previousRaws = await getPreviousRaws(body, this.repo);
 
-			for await (let prdPlanType of body) {
-				const result = await this.repo.update(
-					{
+			const promises = body.map((prdPlanType: any) => {
+        return this.repo.update(
+          {
 						prd_plan_type_id: prdPlanType.prd_plan_type_id,
 						prd_plan_type_cd: prdPlanType.prd_plan_type_cd,
 						prd_plan_type_nm: prdPlanType.prd_plan_type_nm,
@@ -189,12 +187,11 @@ class AdmPrdPlanTypeRepo {
 						individualHooks: true,
 						transaction
 					}
-				);
+        );
+      });
+      const raws = await Promise.all(promises);
 
-				raws.push(result);
-			};
-
-			await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.AdmPrdPlanType.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.AdmPrdPlanType.getTableName() as string, previousRaws, uid, transaction);
 			return convertResult(raws);
 		} catch (error) {
 			if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -208,16 +205,15 @@ class AdmPrdPlanTypeRepo {
 	
 	// 📒 Fn[delete]: Default Delete Function
 	public delete = async(body: IAdmPrdPlanType[], uid: number, transaction?: Transaction) => {
-		let count: number = 0;
-
 		try {      
 			const previousRaws = await getPreviousRaws(body, this.repo);
 
-			for await (let prdPlanType of body) {
-				count += await this.repo.destroy({ where: { uuid: prdPlanType.uuid }, transaction});
-			};
+			const promises = body.map((prdPlanType: any) => {
+        return this.repo.destroy({ where: { uuid: prdPlanType.uuid }, transaction});
+      });
+      const count = _.sum(await Promise.all(promises));
 
-			await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.AdmPrdPlanType.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.AdmPrdPlanType.getTableName() as string, previousRaws, uid, transaction);
 			return { count, raws: previousRaws };
 		} catch (error) {
 			throw error;

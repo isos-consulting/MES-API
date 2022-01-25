@@ -1,12 +1,13 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
 import { Sequelize } from 'sequelize-typescript';
-import convertBulkResult from '../../utils/convertBulkResult';
+import _ from 'lodash';
 import convertResult from '../../utils/convertResult';
 import { Op, Transaction, UniqueConstraintError, WhereOptions } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
+import ApiResult from '../../interfaces/common/api-result.interface';
 import QmsInspResult from '../../models/qms/insp-result.model';
 import IQmsInspResult from '../../interfaces/qms/insp-result.interface';
 import getInspTypeCd from '../../utils/getInspTypeCd';
@@ -32,39 +33,41 @@ class QmsInspResultRepo {
   // 📒 Fn[create]: Default Create Function
   public create = async(body: IQmsInspResult[], uid: number, transaction?: Transaction) => {
     try {
-      const insp = body.map((insp) => {
-        return {
-          factory_id: insp.factory_id,
-          insp_type_cd: insp.insp_type_cd,
-          insp_detail_type_cd: insp.insp_detail_type_cd,
-          insp_handling_type_cd: insp.insp_handling_type_cd,
-          insp_reference_id: insp.insp_reference_id,
-          seq: insp.seq,
-          insp_id: insp.insp_id,
-          prod_id: insp.prod_id,
-          lot_no: insp.lot_no,
-          emp_id: insp.emp_id,
-          reg_date: insp.reg_date,
-          insp_result_fg: insp.insp_result_fg,
-          insp_qty: insp.insp_qty,
-          pass_qty: insp.pass_qty,
-          reject_qty: insp.reject_qty,
-          reject_id: insp.reject_id,
-          from_store_id: insp.from_store_id,
-          from_location_id: insp.from_location_id,
-          to_store_id: insp.to_store_id,
-          to_location_id: insp.to_location_id,
-          reject_store_id: insp.reject_store_id,
-          reject_location_id: insp.reject_location_id,
-          remark: insp.remark,
-          created_uid: uid,
-          updated_uid: uid,
-        }
+      const promises = body.map((inspResult: any) => {
+        return this.repo.create(
+          {
+            factory_id: inspResult.factory_id,
+            insp_type_cd: inspResult.insp_type_cd,
+            insp_detail_type_cd: inspResult.insp_detail_type_cd,
+            insp_handling_type_cd: inspResult.insp_handling_type_cd,
+            insp_reference_id: inspResult.insp_reference_id,
+            seq: inspResult.seq,
+            insp_id: inspResult.insp_id,
+            prod_id: inspResult.prod_id,
+            lot_no: inspResult.lot_no,
+            emp_id: inspResult.emp_id,
+            reg_date: inspResult.reg_date,
+            insp_result_fg: inspResult.insp_result_fg,
+            insp_qty: inspResult.insp_qty,
+            pass_qty: inspResult.pass_qty,
+            reject_qty: inspResult.reject_qty,
+            reject_id: inspResult.reject_id,
+            from_store_id: inspResult.from_store_id,
+            from_location_id: inspResult.from_location_id,
+            to_store_id: inspResult.to_store_id,
+            to_location_id: inspResult.to_location_id,
+            reject_store_id: inspResult.reject_store_id,
+            reject_location_id: inspResult.reject_location_id,
+            remark: inspResult.remark,
+            created_uid: uid,
+            updated_uid: uid,
+          },
+          { hooks: true, transaction }
+        );
       });
-
-      const result = await this.repo.bulkCreate(insp, { individualHooks: true, transaction });
-
-      return convertBulkResult(result);
+      const raws = await Promise.all(promises);
+      
+			return { raws, count: raws.length } as ApiResult<any>;
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
       throw error;
@@ -1167,39 +1170,36 @@ class QmsInspResultRepo {
   
   // 📒 Fn[update]: Default Update Function
   public update = async(body: IQmsInspResult[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let insp of body) {
-        const result = await this.repo.update(
+      const promises = body.map((inspResult: any) => {
+        return this.repo.update(
           {
-            emp_id: insp.emp_id != null ? insp.emp_id : null,
-            insp_result_fg: insp.insp_result_fg != null ? insp.insp_result_fg : null,
-            insp_qty: insp.insp_qty != null ? insp.insp_qty : null,
-            pass_qty: insp.pass_qty != null ? insp.pass_qty : null,
-            reject_qty: insp.reject_qty != null ? insp.reject_qty : null,
-            reject_id: insp.reject_id != null ? insp.reject_id : null,
-            from_store_id: insp.from_store_id != null ? insp.from_store_id : null,
-            from_location_id: insp.from_location_id != null ? insp.from_location_id : null,
-            to_store_id: insp.to_store_id != null ? insp.to_store_id : null,
-            to_location_id: insp.to_location_id != null ? insp.to_location_id : null,
-            reject_store_id: insp.reject_store_id != null ? insp.reject_store_id : null,
-            reject_location_id: insp.reject_location_id != null ? insp.reject_location_id : null,
-            remark: insp.remark != null ? insp.remark : null,
+            emp_id: inspResult.emp_id ?? null,
+            insp_result_fg: inspResult.insp_result_fg ?? null,
+            insp_qty: inspResult.insp_qty ?? null,
+            pass_qty: inspResult.pass_qty ?? null,
+            reject_qty: inspResult.reject_qty ?? null,
+            reject_id: inspResult.reject_id ?? null,
+            from_store_id: inspResult.from_store_id ?? null,
+            from_location_id: inspResult.from_location_id ?? null,
+            to_store_id: inspResult.to_store_id ?? null,
+            to_location_id: inspResult.to_location_id ?? null,
+            reject_store_id: inspResult.reject_store_id ?? null,
+            reject_location_id: inspResult.reject_location_id ?? null,
+            remark: inspResult.remark ?? null,
             updated_uid: uid,
           } as any,
           { 
-            where: { uuid: insp.uuid },
+            where: { uuid: inspResult.uuid },
             returning: true,
             individualHooks: true,
             transaction
-          },
+          }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.QmsInspResult.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -1215,32 +1215,29 @@ class QmsInspResultRepo {
 
   // 📒 Fn[patch]: Default Patch Function
   public patch = async(body: IQmsInspResult[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let insp of body) {
-        const result = await this.repo.update(
+      const promises = body.map((inspResult: any) => {
+        return this.repo.update(
           {
-            emp_id: insp.emp_id,
-            insp_result_fg: insp.insp_result_fg,
-            insp_qty: insp.insp_qty,
-            pass_qty: insp.pass_qty,
-            reject_qty: insp.reject_qty,
-            remark: insp.remark,
+            emp_id: inspResult.emp_id,
+            insp_result_fg: inspResult.insp_result_fg,
+            insp_qty: inspResult.insp_qty,
+            pass_qty: inspResult.pass_qty,
+            reject_qty: inspResult.reject_qty,
+            remark: inspResult.remark,
             updated_uid: uid,
           },
           { 
-            where: { uuid: insp.uuid },
+            where: { uuid: inspResult.uuid },
             returning: true,
             individualHooks: true,
             transaction
           }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.QmsInspResult.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -1256,14 +1253,13 @@ class QmsInspResultRepo {
   
   // 📒 Fn[delete]: Default Delete Function
   public delete = async(body: IQmsInspResult[], uid: number, transaction?: Transaction) => {
-    let count: number = 0;
-
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let insp of body) {
-        count += await this.repo.destroy({ where: { uuid: insp.uuid }, transaction});
-      };
+      const promises = body.map((inspResult: any) => {
+        return this.repo.destroy({ where: { uuid: inspResult.uuid }, transaction});
+      });
+      const count = _.sum(await Promise.all(promises));
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.QmsInspResult.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };

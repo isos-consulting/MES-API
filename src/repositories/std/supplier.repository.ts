@@ -2,7 +2,7 @@ import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repos
 import StdSupplier from '../../models/std/supplier.model';
 import IStdSupplier from '../../interfaces/std/supplier.interface';
 import { Sequelize } from 'sequelize-typescript';
-import convertBulkResult from '../../utils/convertBulkResult';
+import _ from 'lodash';
 import convertResult from '../../utils/convertResult';
 import { Op, Transaction } from 'sequelize';
 import { UniqueConstraintError } from 'sequelize';
@@ -10,6 +10,7 @@ import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
+import ApiResult from '../../interfaces/common/api-result.interface';
 
 class StdSupplierRepo {
   repo: Repository<StdSupplier>;
@@ -31,28 +32,30 @@ class StdSupplierRepo {
   // 📒 Fn[create]: Default Create Function
   public create = async(body: IStdSupplier[], uid: number, transaction?: Transaction) => {
     try {
-      const supplier = body.map((supplier) => {
-        return {
-          supplier_cd: supplier.supplier_cd,
-          supplier_nm: supplier.supplier_nm,
-          partner_id: supplier.partner_id,
-          manager: supplier.manager,
-          email: supplier.email,
-          tel: supplier.tel,
-          fax: supplier.fax,
-          post: supplier.post,
-          addr: supplier.addr,
-          addr_detail: supplier.addr_detail,
-          use_fg: supplier.use_fg,
-          remark: supplier.remark,
-          created_uid: uid,
-          updated_uid: uid,
-        }
+      const promises = body.map((supplier: any) => {
+        return this.repo.create(
+          {
+            supplier_cd: supplier.supplier_cd,
+            supplier_nm: supplier.supplier_nm,
+            partner_id: supplier.partner_id,
+            manager: supplier.manager,
+            email: supplier.email,
+            tel: supplier.tel,
+            fax: supplier.fax,
+            post: supplier.post,
+            addr: supplier.addr,
+            addr_detail: supplier.addr_detail,
+            use_fg: supplier.use_fg,
+            remark: supplier.remark,
+            created_uid: uid,
+            updated_uid: uid,
+          },
+          { hooks: true, transaction }
+        );
       });
-
-      const result = await this.repo.bulkCreate(supplier, { individualHooks: true, transaction });
-
-      return convertBulkResult(result);
+      const raws = await Promise.all(promises);
+      
+			return { raws, count: raws.length } as ApiResult<any>;
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
       throw error;
@@ -169,26 +172,24 @@ class StdSupplierRepo {
   
   // 📒 Fn[update]: Default Update Function
   public update = async(body: IStdSupplier[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let supplier of body) {
-        const result = await this.repo.update(
+      const promises = body.map((supplier: any) => {
+        return this.repo.update(
           {
-            supplier_cd: supplier.supplier_cd != null ? supplier.supplier_cd : null,
-            supplier_nm: supplier.supplier_nm != null ? supplier.supplier_nm : null,
-            partner_id: supplier.partner_id != null ? supplier.partner_id : null,
-            manager: supplier.manager != null ? supplier.manager : null,
-            email: supplier.email != null ? supplier.email : null,
-            tel: supplier.tel != null ? supplier.tel : null,
-            fax: supplier.fax != null ? supplier.fax : null,
-            post: supplier.post != null ? supplier.post : null,
-            addr: supplier.addr != null ? supplier.addr : null,
-            addr_detail: supplier.addr_detail != null ? supplier.addr_detail : null,
-            use_fg: supplier.use_fg != null ? supplier.use_fg : null,
-            remark: supplier.remark != null ? supplier.remark : null,
+            supplier_cd: supplier.supplier_cd ?? null,
+            supplier_nm: supplier.supplier_nm ?? null,
+            partner_id: supplier.partner_id ?? null,
+            manager: supplier.manager ?? null,
+            email: supplier.email ?? null,
+            tel: supplier.tel ?? null,
+            fax: supplier.fax ?? null,
+            post: supplier.post ?? null,
+            addr: supplier.addr ?? null,
+            addr_detail: supplier.addr_detail ?? null,
+            use_fg: supplier.use_fg ?? null,
+            remark: supplier.remark ?? null,
             updated_uid: uid,
           } as any,
           { 
@@ -196,11 +197,10 @@ class StdSupplierRepo {
             returning: true,
             individualHooks: true,
             transaction
-          },
+          }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdSupplier.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -216,13 +216,11 @@ class StdSupplierRepo {
   
   // 📒 Fn[patch]: Default Patch Function
   public patch = async(body: IStdSupplier[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let supplier of body) {
-        const result = await this.repo.update(
+      const promises = body.map((supplier: any) => {
+        return this.repo.update(
           {
             supplier_cd: supplier.supplier_cd,
             supplier_nm: supplier.supplier_nm,
@@ -245,9 +243,8 @@ class StdSupplierRepo {
             transaction
           }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdSupplier.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -263,14 +260,13 @@ class StdSupplierRepo {
   
   // 📒 Fn[delete]: Default Delete Function
   public delete = async(body: IStdSupplier[], uid: number, transaction?: Transaction) => {
-    let count: number = 0;
-
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let supplier of body) {
-        count += await this.repo.destroy({ where: { uuid: supplier.uuid }, transaction});
-      };
+      const promises = body.map((supplier: any) => {
+        return this.repo.destroy({ where: { uuid: supplier.uuid }, transaction});
+      });
+      const count = _.sum(await Promise.all(promises));
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.StdSupplier.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };

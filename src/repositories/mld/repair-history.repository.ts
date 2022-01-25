@@ -3,13 +3,14 @@ import MldRepairHistory from '../../models/mld/repair-history.model';
 import IMldRepairHistory from '../../interfaces/mld/repair-history.interface';
 import { Sequelize } from 'sequelize-typescript';
 import sequelize from '../../models';
-import convertBulkResult from '../../utils/convertBulkResult';
+import _ from 'lodash';
 import convertResult from '../../utils/convertResult';
 import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
+import ApiResult from '../../interfaces/common/api-result.interface';
 
 class MldRepairHistoryRepo {
   repo: Repository<MldRepairHistory>;
@@ -29,28 +30,30 @@ class MldRepairHistoryRepo {
 	// 📒 Fn[create]: Default Create Function
 	public create = async(body: IMldRepairHistory[], uid: number, transaction?: Transaction) => {
 		try {
-			const mldRepairHistory = body.map((mldRepairHistory) => {
-				return {
-					factory_id: mldRepairHistory.factory_id,
-					mold_id: mldRepairHistory.mold_id,
-					prod_id: mldRepairHistory.prod_id,
-					problem_id: mldRepairHistory.problem_id,
-					occur_date: mldRepairHistory.occur_date,
-					occur_emp_id: mldRepairHistory.occur_emp_id,
-					repair_emp_id: mldRepairHistory.repair_emp_id,
-					repair_partner: mldRepairHistory.repair_partner,
-					repair_no: mldRepairHistory.repair_no,
-					start_date: mldRepairHistory.start_date,
-					end_date: mldRepairHistory.end_date,
-					contents: mldRepairHistory.contents,
-					created_uid: uid,
-					updated_uid: uid,
-				}
-			});
-
-			const result = await this.repo.bulkCreate(mldRepairHistory, { individualHooks: true, transaction });
-
-			return convertBulkResult(result);
+			const promises = body.map((repairHistory: any) => {
+        return this.repo.create(
+          {
+            factory_id: repairHistory.factory_id,
+            mold_id: repairHistory.mold_id,
+            prod_id: repairHistory.prod_id,
+            problem_id: repairHistory.problem_id,
+            occur_date: repairHistory.occur_date,
+            occur_emp_id: repairHistory.occur_emp_id,
+            repair_emp_id: repairHistory.repair_emp_id,
+            repair_partner: repairHistory.repair_partner,
+            repair_no: repairHistory.repair_no,
+            start_date: repairHistory.start_date,
+            end_date: repairHistory.end_date,
+            contents: repairHistory.contents,
+            created_uid: uid,
+            updated_uid: uid,
+          },
+          { hooks: true, transaction }
+        );
+      });
+      const raws = await Promise.all(promises);
+      
+			return { raws, count: raws.length } as ApiResult<any>;
 		} catch (error) {
 			if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
 			throw error;
@@ -90,7 +93,7 @@ class MldRepairHistoryRepo {
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
-					[ Sequelize.col('mldRepairHistory.uuid'), 'repair_history_uuid' ],
+					[ Sequelize.col('repairHistory.uuid'), 'repair_history_uuid' ],
 					[ Sequelize.col('stdFactory.uuid'), 'factory_uuid' ],
           [ Sequelize.col('stdFactory.factory_cd'), 'factory_cd' ],
           [ Sequelize.col('stdFactory.factory_nm'), 'factory_nm' ],
@@ -170,7 +173,7 @@ class MldRepairHistoryRepo {
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
-					[ Sequelize.col('mldRepairHistory.uuid'), 'repair_history_uuid' ],
+					[ Sequelize.col('repairHistory.uuid'), 'repair_history_uuid' ],
 					[ Sequelize.col('stdFactory.uuid'), 'factory_uuid' ],
           [ Sequelize.col('stdFactory.factory_cd'), 'factory_cd' ],
           [ Sequelize.col('stdFactory.factory_nm'), 'factory_nm' ],
@@ -257,37 +260,34 @@ class MldRepairHistoryRepo {
   
   // 📒 Fn[update]: Default Update Function
   public update = async(body: IMldRepairHistory[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let molRepairHistory of body) {
-        const result = await this.repo.update(
+      const promises = body.map((repairHistory: any) => {
+        return this.repo.update(
           {
-						mold_id: molRepairHistory.mold_id != null? molRepairHistory.mold_id : null,
-						prod_id: molRepairHistory.prod_id != null? molRepairHistory.prod_id : null,
-						problem_id: molRepairHistory.problem_id != null? molRepairHistory.problem_id : null,
-						occur_date: molRepairHistory.occur_date != null? molRepairHistory.occur_date : null,
-						occur_emp_id: molRepairHistory.occur_emp_id != null? molRepairHistory.occur_emp_id : null,
-						repair_emp_id: molRepairHistory.repair_emp_id != null? molRepairHistory.repair_emp_id : null,
-						repair_partner: molRepairHistory.repair_partner != null? molRepairHistory.repair_partner : null,
-						repair_no: molRepairHistory.repair_no != null? molRepairHistory.repair_no : null,
-						start_date: molRepairHistory.start_date != null? molRepairHistory.start_date : null,
-						end_date: molRepairHistory.end_date != null? molRepairHistory.end_date : null,
-						contents: molRepairHistory.contents != null? molRepairHistory.contents : null,
+						mold_id: repairHistory.mold_id ?? null,
+						prod_id: repairHistory.prod_id ?? null,
+						problem_id: repairHistory.problem_id ?? null,
+						occur_date: repairHistory.occur_date ?? null,
+						occur_emp_id: repairHistory.occur_emp_id ?? null,
+						repair_emp_id: repairHistory.repair_emp_id ?? null,
+						repair_partner: repairHistory.repair_partner ?? null,
+						repair_no: repairHistory.repair_no ?? null,
+						start_date: repairHistory.start_date ?? null,
+						end_date: repairHistory.end_date ?? null,
+						contents: repairHistory.contents ?? null,
             updated_uid: uid,
           } as any,
           { 
-            where: { uuid: molRepairHistory.uuid },
+            where: { uuid: repairHistory.uuid },
             returning: true,
             individualHooks: true,
             transaction
-          },
+          }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', sequelize.models.MldRepairHistory.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -303,37 +303,34 @@ class MldRepairHistoryRepo {
   
   // 📒 Fn[patch]: Default Patch Function
   public patch = async(body: IMldRepairHistory[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let molRepairHistory of body) {
-        const result = await this.repo.update(
+      const promises = body.map((repairHistory: any) => {
+        return this.repo.update(
           {
-						mold_id: molRepairHistory.mold_id,
-						prod_id: molRepairHistory.prod_id,
-						problem_id: molRepairHistory.problem_id,
-						occur_date: molRepairHistory.occur_date,
-						occur_emp_id: molRepairHistory.occur_emp_id,
-						repair_emp_id: molRepairHistory.repair_emp_id,
-						repair_partner: molRepairHistory.repair_partner,
-						repair_no: molRepairHistory.repair_no,
-						start_date: molRepairHistory.start_date,
-						end_date: molRepairHistory.end_date,
-						contents: molRepairHistory.contents,
+						mold_id: repairHistory.mold_id,
+						prod_id: repairHistory.prod_id,
+						problem_id: repairHistory.problem_id,
+						occur_date: repairHistory.occur_date,
+						occur_emp_id: repairHistory.occur_emp_id,
+						repair_emp_id: repairHistory.repair_emp_id,
+						repair_partner: repairHistory.repair_partner,
+						repair_no: repairHistory.repair_no,
+						start_date: repairHistory.start_date,
+						end_date: repairHistory.end_date,
+						contents: repairHistory.contents,
             updated_uid: uid,
           },
           { 
-            where: { uuid: molRepairHistory.uuid },
+            where: { uuid: repairHistory.uuid },
             returning: true,
             individualHooks: true,
             transaction
           }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', sequelize.models.MldRepairHistory.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -349,14 +346,13 @@ class MldRepairHistoryRepo {
   
   // 📒 Fn[delete]: Default Delete Function
   public delete = async(body: IMldRepairHistory[], uid: number, transaction?: Transaction) => {
-    let count: number = 0;
-
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let molRepairHistory of body) {
-        count += await this.repo.destroy({ where: { uuid: molRepairHistory.uuid }, transaction});
-      };
+      const promises = body.map((repairHistory: any) => {
+        return this.repo.destroy({ where: { uuid: repairHistory.uuid }, transaction});
+      });
+      const count = _.sum(await Promise.all(promises));
 
       await new AdmLogRepo(this.tenant).create('delete', sequelize.models.MldRepairHistory.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };

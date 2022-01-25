@@ -1,12 +1,13 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
 import { Sequelize } from 'sequelize-typescript';
-import convertBulkResult from '../../utils/convertBulkResult';
+import _ from 'lodash';
 import convertResult from '../../utils/convertResult';
 import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
+import ApiResult from '../../interfaces/common/api-result.interface';
 import SalIncome from '../../models/sal/income.model';
 import ISalIncome from '../../interfaces/sal/income.interface';
 import { readIncomeReport } from '../../queries/sal/income-report.query';
@@ -31,27 +32,29 @@ class SalIncomeRepo {
   // 📒 Fn[create]: Default Create Function
   public create = async(body: ISalIncome[], uid: number, transaction?: Transaction) => {
     try {
-      const income = body.map((income) => {
-        return {
-          factory_id: income.factory_id,
-          reg_date: income.reg_date,
-          prod_id: income.prod_id,
-          lot_no: income.lot_no,
-          qty: income.qty,
-          from_store_id: income.from_store_id,
-          from_location_id: income.from_location_id,
-          to_store_id: income.to_store_id,
-          to_location_id: income.to_location_id,
-          remark: income.remark,
-          barcode: income.barcode,
-          created_uid: uid,
-          updated_uid: uid,
-        }
+      const promises = body.map((income: any) => {
+        return this.repo.create(
+          {
+            factory_id: income.factory_id,
+            reg_date: income.reg_date,
+            prod_id: income.prod_id,
+            lot_no: income.lot_no,
+            qty: income.qty,
+            from_store_id: income.from_store_id,
+            from_location_id: income.from_location_id,
+            to_store_id: income.to_store_id,
+            to_location_id: income.to_location_id,
+            remark: income.remark,
+            barcode: income.barcode,
+            created_uid: uid,
+            updated_uid: uid,
+          },
+          { hooks: true, transaction }
+        );
       });
-
-      const result = await this.repo.bulkCreate(income, { individualHooks: true, transaction });
-
-      return convertBulkResult(result);
+      const raws = await Promise.all(promises);
+      
+			return { raws, count: raws.length } as ApiResult<any>;
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
       throw error;
@@ -260,16 +263,14 @@ class SalIncomeRepo {
   
   // 📒 Fn[update]: Default Update Function
   public update = async(body: ISalIncome[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let income of body) {
-        const result = await this.repo.update(
+      const promises = body.map((income: any) => {
+        return this.repo.update(
           {
-            qty: income.qty != null ? income.qty : null,
-            remark: income.remark != null ? income.remark : null,
+            qty: income.qty ?? null,
+            remark: income.remark ?? null,
             updated_uid: uid,
           } as any,
           { 
@@ -277,11 +278,10 @@ class SalIncomeRepo {
             returning: true,
             individualHooks: true,
             transaction
-          },
+          }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.SalIncome.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -297,13 +297,11 @@ class SalIncomeRepo {
   
   // 📒 Fn[patch]: Default Patch Function
   public patch = async(body: ISalIncome[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let income of body) {
-        const result = await this.repo.update(
+      const promises = body.map((income: any) => {
+        return this.repo.update(
           {
             qty: income.qty,
             remark: income.remark,
@@ -316,9 +314,8 @@ class SalIncomeRepo {
             transaction
           }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.SalIncome.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -334,14 +331,13 @@ class SalIncomeRepo {
   
   // 📒 Fn[delete]: Default Delete Function
   public delete = async(body: ISalIncome[], uid: number, transaction?: Transaction) => {
-    let count: number = 0;
-
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let income of body) {
-        count += await this.repo.destroy({ where: { uuid: income.uuid }, transaction});
-      };
+      const promises = body.map((income: any) => {
+        return this.repo.destroy({ where: { uuid: income.uuid }, transaction});
+      });
+      const count = _.sum(await Promise.all(promises));
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.SalIncome.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };

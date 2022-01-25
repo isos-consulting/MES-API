@@ -2,13 +2,14 @@ import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repos
 import StdInspTool from '../../models/std/insp-tool.model';
 import IStdInspTool from '../../interfaces/std/insp-tool.interface';
 import { Sequelize } from 'sequelize-typescript';
-import convertBulkResult from '../../utils/convertBulkResult';
+import _ from 'lodash';
 import convertResult from '../../utils/convertResult';
 import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
+import ApiResult from '../../interfaces/common/api-result.interface';
 
 class StdInspToolRepo {
   repo: Repository<StdInspTool>;
@@ -30,19 +31,21 @@ class StdInspToolRepo {
   // 📒 Fn[create]: Default Create Function
   public create = async(body: IStdInspTool[], uid: number, transaction?: Transaction) => {
     try {
-      const inspTool = body.map((inspTool) => {
-        return {
-          factory_id: inspTool.factory_id,
-          insp_tool_cd: inspTool.insp_tool_cd,
-          insp_tool_nm: inspTool.insp_tool_nm,
-          created_uid: uid,
-          updated_uid: uid,
-        }
+      const promises = body.map((inspTool: any) => {
+        return this.repo.create(
+          {
+            factory_id: inspTool.factory_id,
+            insp_tool_cd: inspTool.insp_tool_cd,
+            insp_tool_nm: inspTool.insp_tool_nm,
+            created_uid: uid,
+            updated_uid: uid,
+          },
+          { hooks: true, transaction }
+        );
       });
-
-      const result = await this.repo.bulkCreate(inspTool, { individualHooks: true, transaction });
-
-      return convertBulkResult(result);
+      const raws = await Promise.all(promises);
+      
+			return { raws, count: raws.length } as ApiResult<any>;
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
       throw error;
@@ -151,16 +154,14 @@ class StdInspToolRepo {
   
   // 📒 Fn[update]: Default Update Function
   public update = async(body: IStdInspTool[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let inspTool of body) {
-        const result = await this.repo.update(
+      const promises = body.map((inspTool: any) => {
+        return this.repo.update(
           {
-            insp_tool_cd: inspTool.insp_tool_cd != null ? inspTool.insp_tool_cd : null,
-            insp_tool_nm: inspTool.insp_tool_nm != null ? inspTool.insp_tool_nm : null,
+            insp_tool_cd: inspTool.insp_tool_cd ?? null,
+            insp_tool_nm: inspTool.insp_tool_nm ?? null,
             updated_uid: uid,
           } as any,
           { 
@@ -168,11 +169,10 @@ class StdInspToolRepo {
             returning: true,
             individualHooks: true,
             transaction
-          },
+          }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdInspTool.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -188,13 +188,11 @@ class StdInspToolRepo {
   
   // 📒 Fn[patch]: Default Patch Function
   public patch = async(body: IStdInspTool[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let inspTool of body) {
-        const result = await this.repo.update(
+      const promises = body.map((inspTool: any) => {
+        return this.repo.update(
           {
             insp_tool_cd: inspTool.insp_tool_cd,
             insp_tool_nm: inspTool.insp_tool_nm,
@@ -207,9 +205,8 @@ class StdInspToolRepo {
             transaction
           }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdInspTool.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -225,14 +222,13 @@ class StdInspToolRepo {
   
   // 📒 Fn[delete]: Default Delete Function
   public delete = async(body: IStdInspTool[], uid: number, transaction?: Transaction) => {
-    let count: number = 0;
-
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let inspTool of body) {
-        count += await this.repo.destroy({ where: { uuid: inspTool.uuid }, transaction});
-      };
+      const promises = body.map((inspTool: any) => {
+        return this.repo.destroy({ where: { uuid: inspTool.uuid }, transaction});
+      });
+      const count = _.sum(await Promise.all(promises));
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.StdInspTool.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };

@@ -1,12 +1,13 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
 import { Sequelize } from 'sequelize-typescript';
-import convertBulkResult from '../../utils/convertBulkResult';
+import _ from 'lodash';
 import convertResult from '../../utils/convertResult';
 import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
+import ApiResult from '../../interfaces/common/api-result.interface';
 import SalOutgoOrder from '../../models/sal/outgo-order.model';
 import ISalOutgoOrder from '../../interfaces/sal/outgo-order.interface';
 import { readOutgoOrderReport } from '../../queries/sal/outgo-order-report.query';
@@ -31,22 +32,24 @@ class SalOutgoOrderRepo {
   // 📒 Fn[create]: Default Create Function
   public create = async(body: ISalOutgoOrder[], uid: number, transaction?: Transaction) => {
     try {
-      const outgoOrders = body.map((outgoOrder) => {
-        return {
-          factory_id: outgoOrder.factory_id,
-          partner_id: outgoOrder.partner_id,
-          delivery_id: outgoOrder.delivery_id,
-          reg_date: outgoOrder.reg_date,
-          order_id: outgoOrder.order_id,
-          remark: outgoOrder.remark,
-          created_uid: uid,
-          updated_uid: uid,
-        }
+      const promises = body.map((outgoOrder: any) => {
+        return this.repo.create(
+          {
+            factory_id: outgoOrder.factory_id,
+            partner_id: outgoOrder.partner_id,
+            delivery_id: outgoOrder.delivery_id,
+            reg_date: outgoOrder.reg_date,
+            order_id: outgoOrder.order_id,
+            remark: outgoOrder.remark,
+            created_uid: uid,
+            updated_uid: uid,
+          },
+          { hooks: true, transaction }
+        );
       });
-
-      const result = await this.repo.bulkCreate(outgoOrders, { individualHooks: true, transaction });
-
-      return convertBulkResult(result);
+      const raws = await Promise.all(promises);
+      
+			return { raws, count: raws.length } as ApiResult<any>;
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
       throw error;
@@ -183,17 +186,15 @@ class SalOutgoOrderRepo {
   
   // 📒 Fn[update]: Default Update Function
   public update = async(body: ISalOutgoOrder[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let outgoOrder of body) {
-        const result = await this.repo.update(
+      const promises = body.map((outgoOrder: any) => {
+        return this.repo.update(
           {
-            delivery_id: outgoOrder.delivery_id != null ? outgoOrder.delivery_id : null,
-            total_qty: outgoOrder.total_qty != null ? outgoOrder.total_qty : null,
-            remark: outgoOrder.remark != null ? outgoOrder.remark : null,
+            delivery_id: outgoOrder.delivery_id ?? null,
+            total_qty: outgoOrder.total_qty ?? null,
+            remark: outgoOrder.remark ?? null,
             updated_uid: uid,
           } as any,
           { 
@@ -201,11 +202,10 @@ class SalOutgoOrderRepo {
             returning: true,
             individualHooks: true,
             transaction
-          },
+          }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.SalOutgoOrder.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -221,13 +221,11 @@ class SalOutgoOrderRepo {
   
   // 📒 Fn[patch]: Default Patch Function
   public patch = async(body: ISalOutgoOrder[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let outgoOrder of body) {
-        const result = await this.repo.update(
+      const promises = body.map((outgoOrder: any) => {
+        return this.repo.update(
           {
             delivery_id: outgoOrder.delivery_id,
             total_qty: outgoOrder.total_qty,
@@ -241,9 +239,8 @@ class SalOutgoOrderRepo {
             transaction
           }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.SalOutgoOrder.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -259,14 +256,13 @@ class SalOutgoOrderRepo {
   
   // 📒 Fn[delete]: Default Delete Function
   public delete = async(body: ISalOutgoOrder[], uid: number, transaction?: Transaction) => {
-    let count: number = 0;
-
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let outgoOrder of body) {
-        count += await this.repo.destroy({ where: { uuid: outgoOrder.uuid }, transaction});
-      };
+      const promises = body.map((outgoOrder: any) => {
+        return this.repo.destroy({ where: { uuid: outgoOrder.uuid }, transaction});
+      });
+      const count = _.sum(await Promise.all(promises));
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.SalOutgoOrder.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };

@@ -2,13 +2,14 @@ import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repos
 import StdDowntimeType from '../../models/std/downtime-type.model';
 import IStdDowntimeType from '../../interfaces/std/downtime-type.interface';
 import { Sequelize } from 'sequelize-typescript';
-import convertBulkResult from '../../utils/convertBulkResult';
+import _ from 'lodash';
 import convertResult from '../../utils/convertResult';
 import { Transaction, Op, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
+import ApiResult from '../../interfaces/common/api-result.interface';
 
 class StdDowntimeTypeRepo {
   repo: Repository<StdDowntimeType>;
@@ -30,19 +31,21 @@ class StdDowntimeTypeRepo {
   // 📒 Fn[create]: Default Create Function
   public create = async(body: IStdDowntimeType[], uid: number, transaction?: Transaction) => {
     try {
-      const downtimeType = body.map((downtimeType) => {
-        return {
-          factory_id: downtimeType.factory_id,
-          downtime_type_cd: downtimeType.downtime_type_cd,
-          downtime_type_nm: downtimeType.downtime_type_nm,
-          created_uid: uid,
-          updated_uid: uid,
-        }
+      const promises = body.map((downtimeType: any) => {
+        return this.repo.create(
+          {
+            factory_id: downtimeType.factory_id,
+            downtime_type_cd: downtimeType.downtime_type_cd,
+            downtime_type_nm: downtimeType.downtime_type_nm,
+            created_uid: uid,
+            updated_uid: uid,
+          },
+          { hooks: true, transaction }
+        );
       });
-
-      const result = await this.repo.bulkCreate(downtimeType, { individualHooks: true, transaction });
-
-      return convertBulkResult(result);
+      const raws = await Promise.all(promises);
+      
+			return { raws, count: raws.length } as ApiResult<any>;
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
       throw error;
@@ -156,16 +159,14 @@ class StdDowntimeTypeRepo {
   
   // 📒 Fn[update]: Default Update Function
   public update = async(body: IStdDowntimeType[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let downtimeType of body) {
-        const result = await this.repo.update(
+      const promises = body.map((downtimeType: any) => {
+        return this.repo.update(
           {
-            downtime_type_cd: downtimeType.downtime_type_cd != null ? downtimeType.downtime_type_cd : null,
-            downtime_type_nm: downtimeType.downtime_type_nm != null ? downtimeType.downtime_type_nm : null,
+            downtime_type_cd: downtimeType.downtime_type_cd ?? null,
+            downtime_type_nm: downtimeType.downtime_type_nm ?? null,
             updated_uid: uid,
           } as any,
           { 
@@ -173,11 +174,10 @@ class StdDowntimeTypeRepo {
             returning: true,
             individualHooks: true,
             transaction
-          },
+          }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdDowntimeType.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -193,13 +193,11 @@ class StdDowntimeTypeRepo {
   
   // 📒 Fn[patch]: Default Patch Function
   public patch = async(body: IStdDowntimeType[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let downtimeType of body) {
-        const result = await this.repo.update(
+      const promises = body.map((downtimeType: any) => {
+        return this.repo.update(
           {
             downtime_type_cd: downtimeType.downtime_type_cd,
             downtime_type_nm: downtimeType.downtime_type_nm,
@@ -212,9 +210,8 @@ class StdDowntimeTypeRepo {
             transaction
           }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdDowntimeType.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -230,14 +227,13 @@ class StdDowntimeTypeRepo {
   
   // 📒 Fn[delete]: Default Delete Function
   public delete = async(body: IStdDowntimeType[], uid: number, transaction?: Transaction) => {
-    let count: number = 0;
-
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let downtimeType of body) {
-        count += await this.repo.destroy({ where: { uuid: downtimeType.uuid }, transaction});
-      };
+      const promises = body.map((downtimeType: any) => {
+        return this.repo.destroy({ where: { uuid: downtimeType.uuid }, transaction});
+      });
+      const count = _.sum(await Promise.all(promises));
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.StdDowntimeType.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };

@@ -2,13 +2,14 @@ import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repos
 import StdUnitConvert from '../../models/std/unit-convert.model';
 import IStdUnitConvert from '../../interfaces/std/unit-convert.interface';
 import { Sequelize } from 'sequelize-typescript';
-import convertBulkResult from '../../utils/convertBulkResult';
+import _ from 'lodash';
 import convertResult from '../../utils/convertResult';
 import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
+import ApiResult from '../../interfaces/common/api-result.interface';
 
 class StdUnitConvertRepo {
   repo: Repository<StdUnitConvert>;
@@ -30,23 +31,25 @@ class StdUnitConvertRepo {
   // 📒 Fn[create]: Default Create Function
   public create = async(body: IStdUnitConvert[], uid: number, transaction?: Transaction) => {
     try {
-      const unitConvert = body.map((unitConvert) => {
-        return {
-          from_unit_id: unitConvert.from_unit_id,
-          to_unit_id: unitConvert.to_unit_id,
-          from_value: unitConvert.from_value,
-          to_value: unitConvert.to_value,
-          convert_value: unitConvert.convert_value,
-          prod_id: unitConvert.prod_id,
-          remark: unitConvert.remark,
-          created_uid: uid,
-          updated_uid: uid,
-        }
+      const promises = body.map((unitConvert: any) => {
+        return this.repo.create(
+          {
+            from_unit_id: unitConvert.from_unit_id,
+            to_unit_id: unitConvert.to_unit_id,
+            from_value: unitConvert.from_value,
+            to_value: unitConvert.to_value,
+            convert_value: unitConvert.convert_value,
+            prod_id: unitConvert.prod_id,
+            remark: unitConvert.remark,
+            created_uid: uid,
+            updated_uid: uid,
+          },
+          { hooks: true, transaction }
+        );
       });
-
-      const result = await this.repo.bulkCreate(unitConvert, { individualHooks: true, transaction });
-
-      return convertBulkResult(result);
+      const raws = await Promise.all(promises);
+      
+			return { raws, count: raws.length } as ApiResult<any>;
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
       throw error;
@@ -253,18 +256,16 @@ class StdUnitConvertRepo {
   
   // 📒 Fn[update]: Default Update Function
   public update = async(body: IStdUnitConvert[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let unitConvert of body) {
-        const result = await this.repo.update(
+      const promises = body.map((unitConvert: any) => {
+        return this.repo.update(
           {
-            from_value: unitConvert.from_value != null ? unitConvert.from_value : null,
-            to_value: unitConvert.to_value != null ? unitConvert.to_value : null,
-            convert_value: unitConvert.convert_value != null ? unitConvert.convert_value : null,
-            remark: unitConvert.remark != null ? unitConvert.remark : null,
+            from_value: unitConvert.from_value ?? null,
+            to_value: unitConvert.to_value ?? null,
+            convert_value: unitConvert.convert_value ?? null,
+            remark: unitConvert.remark ?? null,
             updated_uid: uid,
           } as any,
           { 
@@ -272,11 +273,10 @@ class StdUnitConvertRepo {
             returning: true,
             individualHooks: true,
             transaction
-          },
+          }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdUnitConvert.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -292,13 +292,11 @@ class StdUnitConvertRepo {
   
   // 📒 Fn[patch]: Default Patch Function
   public patch = async(body: IStdUnitConvert[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let unitConvert of body) {
-        const result = await this.repo.update(
+      const promises = body.map((unitConvert: any) => {
+        return this.repo.update(
           {
             from_value: unitConvert.from_value,
             to_value: unitConvert.to_value,
@@ -313,9 +311,8 @@ class StdUnitConvertRepo {
             transaction
           }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdUnitConvert.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -331,14 +328,13 @@ class StdUnitConvertRepo {
   
   // 📒 Fn[delete]: Default Delete Function
   public delete = async(body: IStdUnitConvert[], uid: number, transaction?: Transaction) => {
-    let count: number = 0;
-
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let unitConvert of body) {
-        count += await this.repo.destroy({ where: { uuid: unitConvert.uuid }, transaction});
-      };
+      const promises = body.map((unitConvert: any) => {
+        return this.repo.destroy({ where: { uuid: unitConvert.uuid }, transaction});
+      });
+      const count = _.sum(await Promise.all(promises));
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.StdUnitConvert.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };

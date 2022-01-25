@@ -1,12 +1,13 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
 import { Sequelize } from 'sequelize-typescript';
-import convertBulkResult from '../../utils/convertBulkResult';
+import _ from 'lodash';
 import convertResult from '../../utils/convertResult';
 import { Op, Transaction, UniqueConstraintError, WhereOptions } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
+import ApiResult from '../../interfaces/common/api-result.interface';
 import OutReleaseDetail from '../../models/out/release-detail.model';
 import IOutReleaseDetail from '../../interfaces/out/release-detail.interface';
 import OutRelease from '../../models/out/release.model';
@@ -31,34 +32,36 @@ class OutReleaseDetailRepo {
   // 📒 Fn[create]: Default Create Function
   public create = async(body: IOutReleaseDetail[], uid: number, transaction?: Transaction) => {
     try {
-      const releaseDetails = body.map((releaseDetail) => {
-        return {
-          release_id: releaseDetail.release_id,
-          seq: releaseDetail.seq,
-          factory_id: releaseDetail.factory_id,
-          prod_id: releaseDetail.prod_id,
-          lot_no: releaseDetail.lot_no,
-          qty: releaseDetail.qty,
-          price: releaseDetail.price,
-          money_unit_id: releaseDetail.money_unit_id,
-          exchange: releaseDetail.exchange,
-          total_price: releaseDetail.total_price,
-          unit_qty: releaseDetail.unit_qty,
-          order_detail_id: releaseDetail.order_detail_id,
-          from_store_id: releaseDetail.from_store_id,
-          from_location_id: releaseDetail.from_location_id,
-					to_store_id: releaseDetail.to_store_id,
-          to_location_id: releaseDetail.to_location_id,
-          remark: releaseDetail.remark,
-          barcode: releaseDetail.barcode,
-          created_uid: uid,
-          updated_uid: uid,
-        }
+      const promises = body.map((releaseDetail: any) => {
+        return this.repo.create(
+          {
+            release_id: releaseDetail.release_id,
+            seq: releaseDetail.seq,
+            factory_id: releaseDetail.factory_id,
+            prod_id: releaseDetail.prod_id,
+            lot_no: releaseDetail.lot_no,
+            qty: releaseDetail.qty,
+            price: releaseDetail.price,
+            money_unit_id: releaseDetail.money_unit_id,
+            exchange: releaseDetail.exchange,
+            total_price: releaseDetail.total_price,
+            unit_qty: releaseDetail.unit_qty,
+            order_detail_id: releaseDetail.order_detail_id,
+            from_store_id: releaseDetail.from_store_id,
+            from_location_id: releaseDetail.from_location_id,
+            to_store_id: releaseDetail.to_store_id,
+            to_location_id: releaseDetail.to_location_id,
+            remark: releaseDetail.remark,
+            barcode: releaseDetail.barcode,
+            created_uid: uid,
+            updated_uid: uid,
+          },
+          { hooks: true, transaction }
+        );
       });
-
-      const result = await this.repo.bulkCreate(releaseDetails, { individualHooks: true, transaction });
-
-      return convertBulkResult(result);
+      const raws = await Promise.all(promises);
+      
+			return { raws, count: raws.length } as ApiResult<any>;
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
       throw error;
@@ -310,21 +313,19 @@ class OutReleaseDetailRepo {
   
   // 📒 Fn[update]: Default Update Function
   public update = async(body: IOutReleaseDetail[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let releaseDetail of body) {
-        const result = await this.repo.update(
+      const promises = body.map((releaseDetail: any) => {
+        return this.repo.update(
           {
-            qty: releaseDetail.qty != null ? releaseDetail.qty : null,
-            price: releaseDetail.price != null ? releaseDetail.price : null,
-            money_unit_id: releaseDetail.money_unit_id != null ? releaseDetail.money_unit_id : null,
-            exchange: releaseDetail.exchange != null ? releaseDetail.exchange : null,
-            total_price: releaseDetail.total_price != null ? releaseDetail.total_price : null,
-            unit_qty: releaseDetail.unit_qty != null ? releaseDetail.unit_qty : null,
-            remark: releaseDetail.remark != null ? releaseDetail.remark : null,
+            qty: releaseDetail.qty ?? null,
+            price: releaseDetail.price ?? null,
+            money_unit_id: releaseDetail.money_unit_id ?? null,
+            exchange: releaseDetail.exchange ?? null,
+            total_price: releaseDetail.total_price ?? null,
+            unit_qty: releaseDetail.unit_qty ?? null,
+            remark: releaseDetail.remark ?? null,
             updated_uid: uid,
           } as any,
           { 
@@ -332,11 +333,10 @@ class OutReleaseDetailRepo {
             returning: true,
             individualHooks: true,
             transaction
-          },
+          }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.OutReleaseDetail.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -352,13 +352,11 @@ class OutReleaseDetailRepo {
   
   // 📒 Fn[patch]: Default Patch Function
   public patch = async(body: IOutReleaseDetail[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let releaseDetail of body) {
-        const result = await this.repo.update(
+      const promises = body.map((releaseDetail: any) => {
+        return this.repo.update(
           {
             qty: releaseDetail.qty,
             price: releaseDetail.price,
@@ -376,9 +374,8 @@ class OutReleaseDetailRepo {
             transaction
           }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.OutReleaseDetail.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -394,14 +391,13 @@ class OutReleaseDetailRepo {
   
   // 📒 Fn[delete]: Default Delete Function
   public delete = async(body: IOutReleaseDetail[], uid: number, transaction?: Transaction) => {
-    let count: number = 0;
-
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let releaseDetail of body) {
-        count += await this.repo.destroy({ where: { uuid: releaseDetail.uuid }, transaction});
-      };
+      const promises = body.map((releaseDetail: any) => {
+        return this.repo.destroy({ where: { uuid: releaseDetail.uuid }, transaction});
+      });
+      const count = _.sum(await Promise.all(promises));
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.OutReleaseDetail.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };

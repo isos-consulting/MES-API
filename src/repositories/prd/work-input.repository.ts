@@ -1,12 +1,13 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
 import { Sequelize } from 'sequelize-typescript';
-import convertBulkResult from '../../utils/convertBulkResult';
+import _ from 'lodash';
 import convertResult from '../../utils/convertResult';
 import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
+import ApiResult from '../../interfaces/common/api-result.interface';
 import PrdWorkInput from '../../models/prd/work-input.model';
 import IPrdWorkInput from '../../interfaces/prd/work-input.interface';
 import { readWorkInputs } from '../../queries/prd/work-input-ongoing.query';
@@ -32,26 +33,28 @@ class PrdWorkInputRepo {
   // 📒 Fn[create]: Default Create Function
   public create = async(body: IPrdWorkInput[], uid: number, transaction?: Transaction) => {
     try {
-      const workInputs = body.map((workInput) => {
-        return {
-          factory_id: workInput.factory_id,
-          work_id: workInput.work_id,
-          prod_id: workInput.prod_id,
-          lot_no: workInput.lot_no,
-          qty: workInput.qty,
-          c_usage: workInput.c_usage,
-          unit_id: workInput.unit_id,
-          from_store_id: workInput.from_store_id,
-          from_location_id: workInput.from_location_id,
-          remark: workInput.remark,
-          created_uid: uid,
-          updated_uid: uid,
-        }
+      const promises = body.map((workInput: any) => {
+        return this.repo.create(
+          {
+            factory_id: workInput.factory_id,
+            work_id: workInput.work_id,
+            prod_id: workInput.prod_id,
+            lot_no: workInput.lot_no,
+            qty: workInput.qty,
+            c_usage: workInput.c_usage,
+            unit_id: workInput.unit_id,
+            from_store_id: workInput.from_store_id,
+            from_location_id: workInput.from_location_id,
+            remark: workInput.remark,
+            created_uid: uid,
+            updated_uid: uid,
+          },
+          { hooks: true, transaction }
+        );
       });
-
-      const result = await this.repo.bulkCreate(workInputs, { individualHooks: true, transaction });
-
-      return convertBulkResult(result);
+      const raws = await Promise.all(promises);
+      
+			return { raws, count: raws.length } as ApiResult<any>;
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
       throw error;
@@ -284,17 +287,15 @@ class PrdWorkInputRepo {
   
   // 📒 Fn[update]: Default Update Function
   public update = async(body: IPrdWorkInput[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let workInput of body) {
-        const result = await this.repo.update(
+      const promises = body.map((workInput: any) => {
+        return this.repo.update(
           {
-            lot_no: workInput.lot_no != null ? workInput.lot_no : null,
-            qty: workInput.qty != null ? workInput.qty : null,
-            remark: workInput.remark != null ? workInput.remark : null,
+            lot_no: workInput.lot_no ?? null,
+            qty: workInput.qty ?? null,
+            remark: workInput.remark ?? null,
             updated_uid: uid,
           } as any,
           { 
@@ -302,11 +303,10 @@ class PrdWorkInputRepo {
             returning: true,
             individualHooks: true,
             transaction
-          },
+          }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.PrdWorkInput.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -322,13 +322,11 @@ class PrdWorkInputRepo {
   
   // 📒 Fn[patch]: Default Patch Function
   public patch = async(body: IPrdWorkInput[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let workInput of body) {
-        const result = await this.repo.update(
+      const promises = body.map((workInput: any) => {
+        return this.repo.update(
           {
             lot_no: workInput.lot_no,
             qty: workInput.qty,
@@ -342,9 +340,8 @@ class PrdWorkInputRepo {
             transaction
           }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.PrdWorkInput.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -360,14 +357,13 @@ class PrdWorkInputRepo {
   
   // 📒 Fn[delete]: Default Delete Function
   public delete = async(body: IPrdWorkInput[], uid: number, transaction?: Transaction) => {
-    let count: number = 0;
-
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let workInput of body) {
-        count += await this.repo.destroy({ where: { uuid: workInput.uuid }, transaction});
-      };
+      const promises = body.map((workInput: any) => {
+        return this.repo.destroy({ where: { uuid: workInput.uuid }, transaction});
+      });
+      const count = _.sum(await Promise.all(promises));
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.PrdWorkInput.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
@@ -378,12 +374,10 @@ class PrdWorkInputRepo {
 
   // 📒 Fn[deleteByWorkId]: 생산실적 Id 기준 데이터 삭제
   public deleteByWorkId = async(workId: number, uid: number, transaction?: Transaction) => {
-    let count: number = 0;
-
     try {      
       const previousRaws = await this.repo.findAll({ where: { work_id: workId } })
 
-      count += await this.repo.destroy({ where: { work_id: workId }, transaction});
+      const count = await this.repo.destroy({ where: { work_id: workId }, transaction});
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.PrdWorkInput.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
@@ -394,12 +388,10 @@ class PrdWorkInputRepo {
 
   // 📒 Fn[deleteByWorkIds]: 생산실적 Id 기준 데이터 삭제
   public deleteByWorkIds = async(workIds: number[], uid: number, transaction?: Transaction) => {
-    let count: number = 0;
-
     try {      
       const previousRaws = await this.repo.findAll({ where: { work_id: workIds } })
 
-      count += await this.repo.destroy({ where: { work_id: workIds }, transaction});
+      const count = await this.repo.destroy({ where: { work_id: workIds }, transaction});
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.PrdWorkInput.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };

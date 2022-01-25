@@ -1,12 +1,13 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
 import { Sequelize } from 'sequelize-typescript';
-import convertBulkResult from '../../utils/convertBulkResult';
+import _ from 'lodash';
 import convertResult from '../../utils/convertResult';
 import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
+import ApiResult from '../../interfaces/common/api-result.interface';
 import QmsInspDetail from '../../models/qms/insp-detail.model';
 import IQmsInspDetail from '../../interfaces/qms/insp-detail.interface';
 
@@ -30,34 +31,36 @@ class QmsInspDetailRepo {
   // 📒 Fn[create]: Default Create Function
   public create = async(body: IQmsInspDetail[], uid: number, transaction?: Transaction) => {
     try {
-      const inspDetail = body.map((inspDetail) => {
-        return {
-          insp_id: inspDetail.insp_id,
-          seq: inspDetail.seq,
-          factory_id: inspDetail.factory_id,
-          insp_item_id: inspDetail.insp_item_id,
-          insp_item_desc: inspDetail.insp_item_desc,
-          spec_std: inspDetail.spec_std,
-          spec_min: inspDetail.spec_min,
-          spec_max: inspDetail.spec_max,
-          insp_method_id: inspDetail.insp_method_id,
-          insp_tool_id: inspDetail.insp_tool_id,
-          sortby: inspDetail.sortby,
-          position_no: inspDetail.position_no,
-          special_property: inspDetail.special_property,
-          worker_sample_cnt: inspDetail.worker_sample_cnt,
-          worker_insp_cycle: inspDetail.worker_insp_cycle,
-          inspector_sample_cnt: inspDetail.inspector_sample_cnt,
-          inspector_insp_cycle: inspDetail.inspector_insp_cycle,
-          remark: inspDetail.remark,
-          created_uid: uid,
-          updated_uid: uid,
-        }
+      const promises = body.map((inspDetail: any) => {
+        return this.repo.create(
+          {
+            insp_id: inspDetail.insp_id,
+            seq: inspDetail.seq,
+            factory_id: inspDetail.factory_id,
+            insp_item_id: inspDetail.insp_item_id,
+            insp_item_desc: inspDetail.insp_item_desc,
+            spec_std: inspDetail.spec_std,
+            spec_min: inspDetail.spec_min,
+            spec_max: inspDetail.spec_max,
+            insp_method_id: inspDetail.insp_method_id,
+            insp_tool_id: inspDetail.insp_tool_id,
+            sortby: inspDetail.sortby,
+            position_no: inspDetail.position_no,
+            special_property: inspDetail.special_property,
+            worker_sample_cnt: inspDetail.worker_sample_cnt,
+            worker_insp_cycle: inspDetail.worker_insp_cycle,
+            inspector_sample_cnt: inspDetail.inspector_sample_cnt,
+            inspector_insp_cycle: inspDetail.inspector_insp_cycle,
+            remark: inspDetail.remark,
+            created_uid: uid,
+            updated_uid: uid,
+          },
+          { hooks: true, transaction }
+        );
       });
-
-      const result = await this.repo.bulkCreate(inspDetail, { individualHooks: true, transaction });
-
-      return convertBulkResult(result);
+      const raws = await Promise.all(promises);
+      
+			return { raws, count: raws.length } as ApiResult<any>;
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
       throw error;
@@ -237,28 +240,26 @@ class QmsInspDetailRepo {
   
   // 📒 Fn[update]: Default Update Function
   public update = async(body: IQmsInspDetail[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let inspDetail of body) {
-        const result = await this.repo.update(
+      const promises = body.map((inspDetail: any) => {
+        return this.repo.update(
           {
-            insp_item_desc: inspDetail.insp_item_desc != null ? inspDetail.insp_item_desc : null,
-            spec_std: inspDetail.spec_std != null ? inspDetail.spec_std : null,
-            spec_min: inspDetail.spec_min != null ? inspDetail.spec_min : null,
-            spec_max: inspDetail.spec_max != null ? inspDetail.spec_max : null,
-            insp_method_id: inspDetail.insp_method_id != null ? inspDetail.insp_method_id : null,
-            insp_tool_id: inspDetail.insp_tool_id != null ? inspDetail.insp_tool_id : null,
-            sortby: inspDetail.sortby != null ? inspDetail.sortby : null,
-            position_no: inspDetail.position_no != null ? inspDetail.position_no : null,
-            special_property: inspDetail.special_property != null ? inspDetail.special_property : null,
-            worker_sample_cnt: inspDetail.worker_sample_cnt != null ? inspDetail.worker_sample_cnt : null,
-            worker_insp_cycle: inspDetail.worker_insp_cycle != null ? inspDetail.worker_insp_cycle : null,
-            inspector_sample_cnt: inspDetail.inspector_sample_cnt != null ? inspDetail.inspector_sample_cnt : null,
-            inspector_insp_cycle: inspDetail.inspector_insp_cycle != null ? inspDetail.inspector_insp_cycle : null,
-            remark: inspDetail.remark != null ? inspDetail.remark : null,
+            insp_item_desc: inspDetail.insp_item_desc ?? null,
+            spec_std: inspDetail.spec_std ?? null,
+            spec_min: inspDetail.spec_min ?? null,
+            spec_max: inspDetail.spec_max ?? null,
+            insp_method_id: inspDetail.insp_method_id ?? null,
+            insp_tool_id: inspDetail.insp_tool_id ?? null,
+            sortby: inspDetail.sortby ?? null,
+            position_no: inspDetail.position_no ?? null,
+            special_property: inspDetail.special_property ?? null,
+            worker_sample_cnt: inspDetail.worker_sample_cnt ?? null,
+            worker_insp_cycle: inspDetail.worker_insp_cycle ?? null,
+            inspector_sample_cnt: inspDetail.inspector_sample_cnt ?? null,
+            inspector_insp_cycle: inspDetail.inspector_insp_cycle ?? null,
+            remark: inspDetail.remark ?? null,
             updated_uid: uid,
           } as any,
           { 
@@ -266,11 +267,10 @@ class QmsInspDetailRepo {
             returning: true,
             individualHooks: true,
             transaction
-          },
+          }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.QmsInspDetail.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -286,13 +286,11 @@ class QmsInspDetailRepo {
   
   // 📒 Fn[patch]: Default Patch Function
   public patch = async(body: IQmsInspDetail[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let inspDetail of body) {
-        const result = await this.repo.update(
+      const promises = body.map((inspDetail: any) => {
+        return this.repo.update(
           {
             insp_item_desc: inspDetail.insp_item_desc,
             spec_std: inspDetail.spec_std,
@@ -317,9 +315,8 @@ class QmsInspDetailRepo {
             transaction
           }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.QmsInspDetail.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -335,14 +332,13 @@ class QmsInspDetailRepo {
   
   // 📒 Fn[delete]: Default Delete Function
   public delete = async(body: IQmsInspDetail[], uid: number, transaction?: Transaction) => {
-    let count: number = 0;
-
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let inspDetail of body) {
-        count += await this.repo.destroy({ where: { uuid: inspDetail.uuid }, transaction});
-      };
+      const promises = body.map((inspDetail: any) => {
+        return this.repo.destroy({ where: { uuid: inspDetail.uuid }, transaction});
+      });
+      const count = _.sum(await Promise.all(promises));
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.QmsInspDetail.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };

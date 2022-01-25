@@ -1,12 +1,13 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
 import { Sequelize } from 'sequelize-typescript';
-import convertBulkResult from '../../utils/convertBulkResult';
+import _ from 'lodash';
 import convertResult from '../../utils/convertResult';
 import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
+import ApiResult from '../../interfaces/common/api-result.interface';
 import QmsRework from '../../models/qms/rework.model';
 import IQmsRework from '../../interfaces/qms/rework.interface';
 
@@ -30,28 +31,30 @@ class QmsReworkRepo {
   // 📒 Fn[create]: Default Create Function
   public create = async(body: IQmsRework[], uid: number, transaction?: Transaction) => {
     try {
-      const rework = body.map((rework) => {
-        return {
-          factory_id: rework.factory_id,
-          reg_date: rework.reg_date,
-          prod_id: rework.prod_id,
-          lot_no: rework.lot_no,
-          rework_type_cd: rework.rework_type_cd,
-          reject_id: rework.reject_id,
-          qty: rework.qty,
-          from_store_id: rework.from_store_id,
-          from_location_id: rework.from_location_id,
-          to_store_id: rework.to_store_id,
-          to_location_id: rework.to_location_id,
-          remark: rework.remark,
-          created_uid: uid,
-          updated_uid: uid,
-        }
+      const promises = body.map((rework: any) => {
+        return this.repo.create(
+          {
+            factory_id: rework.factory_id,
+            reg_date: rework.reg_date,
+            prod_id: rework.prod_id,
+            lot_no: rework.lot_no,
+            rework_type_cd: rework.rework_type_cd,
+            reject_id: rework.reject_id,
+            qty: rework.qty,
+            from_store_id: rework.from_store_id,
+            from_location_id: rework.from_location_id,
+            to_store_id: rework.to_store_id,
+            to_location_id: rework.to_location_id,
+            remark: rework.remark,
+            created_uid: uid,
+            updated_uid: uid,
+          },
+          { hooks: true, transaction }
+        );
       });
-
-      const result = await this.repo.bulkCreate(rework, { individualHooks: true, transaction });
-
-      return convertBulkResult(result);
+      const raws = await Promise.all(promises);
+      
+			return { raws, count: raws.length } as ApiResult<any>;
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
       throw error;
@@ -283,15 +286,13 @@ class QmsReworkRepo {
   
   // 📒 Fn[update]: Default Update Function
   public update = async(body: IQmsRework[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let rework of body) {
-        const result = await this.repo.update(
+      const promises = body.map((rework: any) => {
+        return this.repo.update(
           {
-            remark: rework.remark != null ? rework.remark : null,
+            remark: rework.remark ?? null,
             updated_uid: uid,
           } as any,
           { 
@@ -299,11 +300,10 @@ class QmsReworkRepo {
             returning: true,
             individualHooks: true,
             transaction
-          },
+          }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.QmsRework.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -319,13 +319,11 @@ class QmsReworkRepo {
 
   // 📒 Fn[patch]: Default Patch Function
   public patch = async(body: IQmsRework[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let rework of body) {
-        const result = await this.repo.update(
+      const promises = body.map((rework: any) => {
+        return this.repo.update(
           {
             remark: rework.remark,
             updated_uid: uid,
@@ -337,9 +335,8 @@ class QmsReworkRepo {
             transaction
           }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.QmsRework.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -355,14 +352,13 @@ class QmsReworkRepo {
   
   // 📒 Fn[delete]: Default Delete Function
   public delete = async(body: IQmsRework[], uid: number, transaction?: Transaction) => {
-    let count: number = 0;
-
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
-
-      for await (let rework of body) {
-        count += await this.repo.destroy({ where: { uuid: rework.uuid }, transaction});
-      };
+      
+      const promises = body.map((rework: any) => {
+        return this.repo.destroy({ where: { uuid: rework.uuid }, transaction});
+      });
+      const count = _.sum(await Promise.all(promises));
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.QmsRework.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };

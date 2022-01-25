@@ -1,12 +1,13 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
 import { Sequelize } from 'sequelize-typescript';
-import convertBulkResult from '../../utils/convertBulkResult';
+import _ from 'lodash';
 import convertResult from '../../utils/convertResult';
 import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
+import ApiResult from '../../interfaces/common/api-result.interface';
 import PrdOrder from '../../models/prd/order.model';
 import IPrdOrder from '../../interfaces/prd/order.interface';
 import { readOrders } from '../../queries/prd/order.query';
@@ -31,33 +32,35 @@ class PrdOrderRepo {
   // 📒 Fn[create]: Default Create Function
   public create = async(body: IPrdOrder[], uid: number, transaction?: Transaction) => {
     try {
-      const order = body.map((order) => {
-        return {
-          factory_id: order.factory_id,
-          reg_date: order.reg_date,
-          order_no: order.order_no,
-          proc_id: order.proc_id,
-          workings_id: order.workings_id,
-          equip_id: order.equip_id,
-          mold_id: order.mold_id,
-          prod_id: order.prod_id,
-          plan_qty: order.plan_qty,
-          qty: order.qty,
-          seq: order.seq,
-          shift_id: order.shift_id,
-          worker_group_id: order.worker_group_id,
-          start_date: order.start_date,
-          end_date: order.end_date,
-          sal_order_detail_id: order.sal_order_detail_id,
-          remark: order.remark,
-          created_uid: uid,
-          updated_uid: uid,
-        }
+      const promises = body.map((order: any) => {
+        return this.repo.create(
+          {
+            factory_id: order.factory_id,
+            reg_date: order.reg_date,
+            order_no: order.order_no,
+            proc_id: order.proc_id,
+            workings_id: order.workings_id,
+            equip_id: order.equip_id,
+            mold_id: order.mold_id,
+            prod_id: order.prod_id,
+            plan_qty: order.plan_qty,
+            qty: order.qty,
+            seq: order.seq,
+            shift_id: order.shift_id,
+            worker_group_id: order.worker_group_id,
+            start_date: order.start_date,
+            end_date: order.end_date,
+            sal_order_detail_id: order.sal_order_detail_id,
+            remark: order.remark,
+            created_uid: uid,
+            updated_uid: uid,
+          },
+          { hooks: true, transaction }
+        );
       });
-
-      const result = await this.repo.bulkCreate(order, { individualHooks: true, transaction });
-
-      return convertBulkResult(result);
+      const raws = await Promise.all(promises);
+      
+			return { raws, count: raws.length } as ApiResult<any>;
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
       throw error;
@@ -135,13 +138,11 @@ class PrdOrderRepo {
   
   // 📒 Fn[update]: Default Update Function
   public update = async(body: IPrdOrder[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let order of body) {
-        const result = await this.repo.update(
+      const promises = body.map((order: any) => {
+        return this.repo.update(
           {
             order_no: order.order_no ?? null,
             workings_id: order.workings_id ?? null,
@@ -160,11 +161,10 @@ class PrdOrderRepo {
             returning: true,
             individualHooks: true,
             transaction
-          },
+          }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.PrdOrder.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -176,13 +176,11 @@ class PrdOrderRepo {
   
   // 📒 Fn[updateComplete]: 완료여부 및 완료일시 수정
   public updateComplete = async(body: IPrdOrder[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let order of body) {
-        const result = await this.repo.update(
+      const promises = body.map((order: any) => {
+        return this.repo.update(
           {
             complete_fg: order.complete_fg,
             complete_date: order.complete_date,
@@ -193,11 +191,10 @@ class PrdOrderRepo {
             returning: true,
             individualHooks: true,
             transaction
-          },
+          }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.PrdOrder.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -209,8 +206,6 @@ class PrdOrderRepo {
   
   // 📒 Fn[updateWorkFgById]: 생산진행여부 수정 Function
   public updateWorkFgById = async(id: number, workFg: boolean, uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaw = await this.repo.findByPk(id);
 
@@ -227,10 +222,8 @@ class PrdOrderRepo {
         },
       );
 
-      raws.push(result);
-
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.PrdOrder.getTableName() as string, previousRaw, uid, transaction);
-      return convertResult(raws);
+      return convertResult([result]);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
       throw error;
@@ -239,13 +232,11 @@ class PrdOrderRepo {
   
   // 📒 Fn[updateWorkerGroup]: 작업조 수정
   public updateWorkerGroup = async(body: IPrdOrder[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let order of body) {
-        const result = await this.repo.update(
+      const promises = body.map((order: any) => {
+        return this.repo.update(
           {
             worker_group_id: order.worker_group_id,
             updated_uid: uid,
@@ -255,11 +246,10 @@ class PrdOrderRepo {
             returning: true,
             individualHooks: true,
             transaction
-          },
+          }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.PrdOrder.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -275,13 +265,11 @@ class PrdOrderRepo {
   
   // 📒 Fn[patch]: Default Patch Function
   public patch = async(body: IPrdOrder[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let order of body) {
-        const result = await this.repo.update(
+      const promises = body.map((order: any) => {
+        return this.repo.update(
           {
             order_no: order.order_no,
             workings_id: order.workings_id,
@@ -302,9 +290,8 @@ class PrdOrderRepo {
             transaction
           }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.PrdOrder.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -320,14 +307,13 @@ class PrdOrderRepo {
   
   // 📒 Fn[delete]: Default Delete Function
   public delete = async(body: IPrdOrder[], uid: number, transaction?: Transaction) => {
-    let count: number = 0;
-
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let order of body) {
-        count += await this.repo.destroy({ where: { uuid: order.uuid }, transaction});
-      };
+      const promises = body.map((order: any) => {
+        return this.repo.destroy({ where: { uuid: order.uuid }, transaction});
+      });
+      const count = _.sum(await Promise.all(promises));
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.PrdOrder.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };

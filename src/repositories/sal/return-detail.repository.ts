@@ -1,12 +1,13 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
 import { Sequelize } from 'sequelize-typescript';
-import convertBulkResult from '../../utils/convertBulkResult';
+import _ from 'lodash';
 import convertResult from '../../utils/convertResult';
 import { Op, Transaction, UniqueConstraintError, WhereOptions } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
+import ApiResult from '../../interfaces/common/api-result.interface';
 import SalReturnDetail from '../../models/sal/return-detail.model';
 import ISalReturnDetail from '../../interfaces/sal/return-detail.interface';
 
@@ -30,32 +31,34 @@ class SalReturnDetailRepo {
   // 📒 Fn[create]: Default Create Function
   public create = async(body: ISalReturnDetail[], uid: number, transaction?: Transaction) => {
     try {
-      const returnDetail = body.map((returnDetail) => {
-        return {
-          return_id: returnDetail.return_id,
-          seq: returnDetail.seq,
-          factory_id: returnDetail.factory_id,
-          prod_id: returnDetail.prod_id,
-          lot_no: returnDetail.lot_no,
-          qty: returnDetail.qty,
-          price: returnDetail.price,
-          money_unit_id: returnDetail.money_unit_id,
-          exchange: returnDetail.exchange,
-          total_price: returnDetail.total_price,
-          reject_id: returnDetail.reject_id,
-          outgo_detail_id: returnDetail.outgo_detail_id,
-          to_store_id: returnDetail.to_store_id,
-          to_location_id: returnDetail.to_location_id,
-          remark: returnDetail.remark,
-          barcode: returnDetail.barcode,
-          created_uid: uid,
-          updated_uid: uid,
-        }
+      const promises = body.map((returnDetail: any) => {
+        return this.repo.create(
+          {
+            return_id: returnDetail.return_id,
+            seq: returnDetail.seq,
+            factory_id: returnDetail.factory_id,
+            prod_id: returnDetail.prod_id,
+            lot_no: returnDetail.lot_no,
+            qty: returnDetail.qty,
+            price: returnDetail.price,
+            money_unit_id: returnDetail.money_unit_id,
+            exchange: returnDetail.exchange,
+            total_price: returnDetail.total_price,
+            reject_id: returnDetail.reject_id,
+            outgo_detail_id: returnDetail.outgo_detail_id,
+            to_store_id: returnDetail.to_store_id,
+            to_location_id: returnDetail.to_location_id,
+            remark: returnDetail.remark,
+            barcode: returnDetail.barcode,
+            created_uid: uid,
+            updated_uid: uid,
+          },
+          { hooks: true, transaction }
+        );
       });
-
-      const result = await this.repo.bulkCreate(returnDetail, { individualHooks: true, transaction });
-
-      return convertBulkResult(result);
+      const raws = await Promise.all(promises);
+      
+			return { raws, count: raws.length } as ApiResult<any>;
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
       throw error;
@@ -312,20 +315,18 @@ class SalReturnDetailRepo {
   
   // 📒 Fn[update]: Default Update Function
   public update = async(body: ISalReturnDetail[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let returnDetail of body) {
-        const result = await this.repo.update(
+      const promises = body.map((returnDetail: any) => {
+        return this.repo.update(
           {
-            qty: returnDetail.qty != null ? returnDetail.qty : null ,
-            price: returnDetail.price != null ? returnDetail.price : null ,
-            money_unit_id: returnDetail.money_unit_id != null ? returnDetail.money_unit_id : null ,
-            exchange: returnDetail.exchange != null ? returnDetail.exchange : null ,
-            total_price: returnDetail.total_price != null ? returnDetail.total_price : null ,
-            remark: returnDetail.remark != null ? returnDetail.remark : null ,
+            qty: returnDetail.qty ?? null,
+            price: returnDetail.price ?? null,
+            money_unit_id: returnDetail.money_unit_id ?? null,
+            exchange: returnDetail.exchange ?? null,
+            total_price: returnDetail.total_price ?? null,
+            remark: returnDetail.remark ?? null,
             updated_uid: uid,
           } as any,
           { 
@@ -333,11 +334,10 @@ class SalReturnDetailRepo {
             returning: true,
             individualHooks: true,
             transaction
-          },
+          }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.SalReturnDetail.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -353,13 +353,11 @@ class SalReturnDetailRepo {
   
   // 📒 Fn[patch]: Default Patch Function
   public patch = async(body: ISalReturnDetail[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let returnDetail of body) {
-        const result = await this.repo.update(
+      const promises = body.map((returnDetail: any) => {
+        return this.repo.update(
           {
             qty: returnDetail.qty,
             price: returnDetail.price,
@@ -376,9 +374,8 @@ class SalReturnDetailRepo {
             transaction
           }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.SalReturnDetail.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -394,14 +391,13 @@ class SalReturnDetailRepo {
   
   // 📒 Fn[delete]: Default Delete Function
   public delete = async(body: ISalReturnDetail[], uid: number, transaction?: Transaction) => {
-    let count: number = 0;
-
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let returnDetail of body) {
-        count += await this.repo.destroy({ where: { uuid: returnDetail.uuid }, transaction});
-      };
+      const promises = body.map((returnDetail: any) => {
+        return this.repo.destroy({ where: { uuid: returnDetail.uuid }, transaction});
+      });
+      const count = _.sum(await Promise.all(promises));
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.SalReturnDetail.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };

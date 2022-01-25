@@ -2,13 +2,14 @@ import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repos
 import StdEquipType from '../../models/std/equip-type.model';
 import IStdEquipType from '../../interfaces/std/equip-type.interface';
 import { Sequelize } from 'sequelize-typescript';
-import convertBulkResult from '../../utils/convertBulkResult';
+import _ from 'lodash';
 import convertResult from '../../utils/convertResult';
 import { Transaction, Op, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
+import ApiResult from '../../interfaces/common/api-result.interface';
 
 class StdEquipTypeRepo {
   repo: Repository<StdEquipType>;
@@ -30,19 +31,21 @@ class StdEquipTypeRepo {
   // 📒 Fn[create]: Default Create Function
   public create = async(body: IStdEquipType[], uid: number, transaction?: Transaction) => {
     try {
-      const equipType = body.map((equipType) => {
-        return {
-          factory_id: equipType.factory_id,
-          equip_type_cd: equipType.equip_type_cd,
-          equip_type_nm: equipType.equip_type_nm,
-          created_uid: uid,
-          updated_uid: uid,
-        }
+      const promises = body.map((equipType: any) => {
+        return this.repo.create(
+          {
+            factory_id: equipType.factory_id,
+            equip_type_cd: equipType.equip_type_cd,
+            equip_type_nm: equipType.equip_type_nm,
+            created_uid: uid,
+            updated_uid: uid,
+          },
+          { hooks: true, transaction }
+        );
       });
-
-      const result = await this.repo.bulkCreate(equipType, { individualHooks: true, transaction });
-
-      return convertBulkResult(result);
+      const raws = await Promise.all(promises);
+      
+			return { raws, count: raws.length } as ApiResult<any>;
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
       throw error;
@@ -156,16 +159,14 @@ class StdEquipTypeRepo {
   
   // 📒 Fn[update]: Default Update Function
   public update = async(body: IStdEquipType[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let equipType of body) {
-        const result = await this.repo.update(
+      const promises = body.map((equipType: any) => {
+        return this.repo.update(
           {
-            equip_type_cd: equipType.equip_type_cd != null ? equipType.equip_type_cd : null,
-            equip_type_nm: equipType.equip_type_nm != null ? equipType.equip_type_nm : null,
+            equip_type_cd: equipType.equip_type_cd ?? null,
+            equip_type_nm: equipType.equip_type_nm ?? null,
             updated_uid: uid,
           } as any,
           { 
@@ -173,11 +174,10 @@ class StdEquipTypeRepo {
             returning: true,
             individualHooks: true,
             transaction
-          },
+          }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdEquipType.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -193,13 +193,11 @@ class StdEquipTypeRepo {
   
   // 📒 Fn[patch]: Default Patch Function
   public patch = async(body: IStdEquipType[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let equipType of body) {
-        const result = await this.repo.update(
+      const promises = body.map((equipType: any) => {
+        return this.repo.update(
           {
             equip_type_cd: equipType.equip_type_cd,
             equip_type_nm: equipType.equip_type_nm,
@@ -212,9 +210,8 @@ class StdEquipTypeRepo {
             transaction
           }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdEquipType.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -230,14 +227,13 @@ class StdEquipTypeRepo {
   
   // 📒 Fn[delete]: Default Delete Function
   public delete = async(body: IStdEquipType[], uid: number, transaction?: Transaction) => {
-    let count: number = 0;
-
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let equipType of body) {
-        count += await this.repo.destroy({ where: { uuid: equipType.uuid }, transaction});
-      };
+      const promises = body.map((equipType: any) => {
+        return this.repo.destroy({ where: { uuid: equipType.uuid }, transaction});
+      });
+      const count = _.sum(await Promise.all(promises));
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.StdEquipType.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };

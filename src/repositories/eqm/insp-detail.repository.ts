@@ -1,12 +1,13 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
 import { Sequelize } from 'sequelize-typescript';
-import convertBulkResult from '../../utils/convertBulkResult';
+import _ from 'lodash';
 import convertResult from '../../utils/convertResult';
 import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
+import ApiResult from '../../interfaces/common/api-result.interface';
 import EqmInspDetail from '../../models/eqm/insp-detail.model';
 import IEqmInspDetail from '../../interfaces/eqm/insp-detail.interface';
 
@@ -30,33 +31,35 @@ class EqmInspDetailRepo {
   // 📒 Fn[create]: Default Create Function
   public create = async(body: IEqmInspDetail[], uid: number, transaction?: Transaction) => {
     try {
-      const inspDetails = body.map((inspDetail) => {
-        return {
-          insp_id: inspDetail.insp_id,
-          seq: inspDetail.seq,
-          factory_id: inspDetail.factory_id,
-          insp_item_id: inspDetail.insp_item_id,
-          insp_item_desc: inspDetail.insp_item_desc,
-          periodicity_fg: inspDetail.periodicity_fg,
-          spec_std: inspDetail.spec_std,
-          spec_min: inspDetail.spec_min,
-          spec_max: inspDetail.spec_max,
-          insp_tool_id: inspDetail.insp_tool_id,
-          insp_method_id: inspDetail.insp_method_id,
-          base_date: inspDetail.base_date,
-          daily_insp_cycle_id: inspDetail.daily_insp_cycle_id,
-          cycle_unit_id: inspDetail.cycle_unit_id,
-          cycle: inspDetail.cycle,
-          sortby: inspDetail.sortby,
-          remark: inspDetail.remark,
-          created_uid: uid,
-          updated_uid: uid,
-        }
+      const promises = body.map((inspDetail: any) => {
+        return this.repo.create(
+          {
+            insp_id: inspDetail.insp_id,
+            seq: inspDetail.seq,
+            factory_id: inspDetail.factory_id,
+            insp_item_id: inspDetail.insp_item_id,
+            insp_item_desc: inspDetail.insp_item_desc,
+            periodicity_fg: inspDetail.periodicity_fg,
+            spec_std: inspDetail.spec_std,
+            spec_min: inspDetail.spec_min,
+            spec_max: inspDetail.spec_max,
+            insp_tool_id: inspDetail.insp_tool_id,
+            insp_method_id: inspDetail.insp_method_id,
+            base_date: inspDetail.base_date,
+            daily_insp_cycle_id: inspDetail.daily_insp_cycle_id,
+            cycle_unit_id: inspDetail.cycle_unit_id,
+            cycle: inspDetail.cycle,
+            sortby: inspDetail.sortby,
+            remark: inspDetail.remark,
+            created_uid: uid,
+            updated_uid: uid,
+          },
+          { hooks: true, transaction }
+        );
       });
-
-      const result = await this.repo.bulkCreate(inspDetails, { individualHooks: true, transaction });
-
-      return convertBulkResult(result);
+      const raws = await Promise.all(promises);
+      
+			return { raws, count: raws.length } as ApiResult<any>;
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
       throw error;
@@ -244,13 +247,11 @@ class EqmInspDetailRepo {
   
   // 📒 Fn[update]: Default Update Function
   public update = async(body: IEqmInspDetail[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let inspDetail of body) {
-        const result = await this.repo.update(
+      const promises = body.map((inspDetail: any) => {
+        return this.repo.update(
           {
             insp_item_desc: inspDetail.insp_item_desc ?? null,
             periodicity_fg: inspDetail.periodicity_fg ?? null,
@@ -272,11 +273,10 @@ class EqmInspDetailRepo {
             returning: true,
             individualHooks: true,
             transaction
-          },
+          }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.EqmInspDetail.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -292,13 +292,11 @@ class EqmInspDetailRepo {
   
   // 📒 Fn[patch]: Default Patch Function
   public patch = async(body: IEqmInspDetail[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let inspDetail of body) {
-        const result = await this.repo.update(
+      const promises = body.map((inspDetail: any) => {
+        return this.repo.update(
           {
             insp_item_desc: inspDetail.insp_item_desc,
             periodicity_fg: inspDetail.periodicity_fg,
@@ -322,9 +320,8 @@ class EqmInspDetailRepo {
             transaction
           }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.EqmInspDetail.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -340,14 +337,13 @@ class EqmInspDetailRepo {
   
   // 📒 Fn[delete]: Default Delete Function
   public delete = async(body: IEqmInspDetail[], uid: number, transaction?: Transaction) => {
-    let count: number = 0;
-
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let inspDetail of body) {
-        count += await this.repo.destroy({ where: { uuid: inspDetail.uuid }, transaction});
-      };
+      const promises = body.map((inspDetail: any) => {
+        return this.repo.destroy({ where: { uuid: inspDetail.uuid }, transaction});
+      });
+      const count = _.sum(await Promise.all(promises));
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.EqmInspDetail.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
