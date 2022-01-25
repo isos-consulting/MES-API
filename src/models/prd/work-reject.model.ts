@@ -47,6 +47,7 @@ export default class PrdWorkReject extends Model<IPrdWorkReject> {
   @Column({
     comment: '공정순서ID',
     type: DataType.INTEGER,
+    allowNull: false
   })
   work_routing_id: number;
 
