@@ -6,6 +6,7 @@ import StdLocation from './location.model';
 import StdProd from './prod.model';
 import StdStore from './store.model';
 import StdUnit from './unit.model';
+// import AdmBomInputType from '../adm/bom-input-type.model';
 
 @Table({
   tableName: 'STD_BOM_TB',
@@ -72,6 +73,13 @@ export default class StdBom extends Model<IStdBom> {
     type: DataType.INTEGER,
   })
   sortby: number;
+
+  // @ForeignKey(() => AdmBomInputType)
+  @Column({
+    comment: '투입방법ID',
+    type: DataType.INTEGER,
+  })
+  bom_input_type_id: number;
 
   @ForeignKey(() => StdStore)
   @Column({
@@ -148,6 +156,8 @@ export default class StdBom extends Model<IStdBom> {
   stdPProd: StdProd;
   @BelongsTo(() => StdProd, { foreignKey: 'c_prod_id', targetKey: 'prod_id', onDelete: 'restrict', onUpdate: 'cascade' })
   stdCProd: StdProd;
+  // @BelongsTo(() => AdmBomInputType, { foreignKey: 'bom_input_type_id', targetKey: 'bom_input_type_id', onDelete: 'restrict', onUpdate: 'cascade' })
+  // admBomInputType: AdmBomInputType;
   @BelongsTo(() => StdStore, { foreignKey: 'from_store_id', targetKey: 'store_id', onDelete: 'restrict', onUpdate: 'cascade' })
   stdStore: StdStore;
   @BelongsTo(() => StdLocation, { foreignKey: 'from_location_id', targetKey: 'location_id', onDelete: 'restrict', onUpdate: 'cascade' })

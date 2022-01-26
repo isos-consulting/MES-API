@@ -6,6 +6,7 @@ export default interface IStdBom {
   c_usage?: number,
   unit_id?: number,
   sortby?: number,
+  bom_input_type_id?: number,
   from_store_id?: number,
   from_location_id?: number | null,
   remark?: string | null,
