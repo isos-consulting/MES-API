@@ -2,7 +2,7 @@ import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repos
 import AutGroupPermission from '../../models/aut/group-permission.model';
 import IAutGroupPermission from '../../interfaces/aut/group-permission.interface';
 import { Sequelize } from 'sequelize-typescript';
-import convertBulkResult from '../../utils/convertBulkResult';
+import _ from 'lodash';
 import convertResult from '../../utils/convertResult';
 import { Op, Transaction } from 'sequelize';
 import { UniqueConstraintError } from 'sequelize';
@@ -10,6 +10,7 @@ import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
+import ApiResult from '../../interfaces/common/api-result.interface';
 import AutMenuTree from '../../models/aut/menu-tree.model';
 
 class AutGroupPermissionRepo {
@@ -34,19 +35,21 @@ class AutGroupPermissionRepo {
   // 📒 Fn[create]: Default Create Function
   public create = async(body: IAutGroupPermission[], uid: number, transaction?: Transaction) => {
     try {
-      const groupPermissions = body.map((groupPermission) => {
-        return {
-          group_id: groupPermission.group_id,
-          menu_id: groupPermission.menu_id,
-          permission_id: groupPermission.permission_id,
-          created_uid: uid,
-          updated_uid: uid,
-        }
+      const promises = body.map((groupPermission: any) => {
+        return this.repo.create(
+          {
+            group_id: groupPermission.group_id,
+            menu_id: groupPermission.menu_id,
+            permission_id: groupPermission.permission_id,
+            created_uid: uid,
+            updated_uid: uid,
+          },
+          { hooks: true, transaction }
+        );
       });
-
-      const result = await this.repo.bulkCreate(groupPermissions, { individualHooks: true, transaction });
-
-      return convertBulkResult(result);
+      const raws = await Promise.all(promises);
+      
+			return { raws, count: raws.length } as ApiResult<any>;
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
       throw error;
@@ -143,15 +146,13 @@ class AutGroupPermissionRepo {
   
   // 📒 Fn[update]: Default Update Function
   public update = async(body: IAutGroupPermission[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let groupPermission of body) {
-        const result = await this.repo.update(
+      const promises = body.map((groupPermission: any) => {
+        return this.repo.update(
           {
-            permission_id: groupPermission.permission_id != null ? groupPermission.permission_id : null,
+            permission_id: groupPermission.permission_id ?? null,
             updated_uid: uid,
           } as any,
           { 
@@ -159,11 +160,10 @@ class AutGroupPermissionRepo {
             returning: true,
             individualHooks: true,
             transaction
-          },
+          }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.AutGroupPermission.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -179,13 +179,11 @@ class AutGroupPermissionRepo {
   
   // 📒 Fn[patch]: Default Patch Function
   public patch = async(body: IAutGroupPermission[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let groupPermission of body) {
-        const result = await this.repo.update(
+      const promises = body.map((groupPermission: any) => {
+        return this.repo.update(
           {
             permission_id: groupPermission.permission_id,
             updated_uid: uid,
@@ -197,9 +195,8 @@ class AutGroupPermissionRepo {
             transaction
           }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.AutGroupPermission.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -215,14 +212,13 @@ class AutGroupPermissionRepo {
   
   // 📒 Fn[delete]: Default Delete Function
   public delete = async(body: IAutGroupPermission[], uid: number, transaction?: Transaction) => {
-    let count: number = 0;
-
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
-
-      for await (let groupPermission of body) {
-        count += await this.repo.destroy({ where: { uuid: groupPermission.uuid }, transaction});
-      };
+      
+      const promises = body.map((groupPermission: any) => {
+        return this.repo.destroy({ where: { uuid: groupPermission.uuid }, transaction});
+      });
+      const count = _.sum(await Promise.all(promises));
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.AutGroupPermission.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };

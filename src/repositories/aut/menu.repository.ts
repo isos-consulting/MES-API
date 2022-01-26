@@ -2,7 +2,7 @@ import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repos
 import AutMenu from '../../models/aut/menu.model';
 import IAutMenu from '../../interfaces/aut/menu.interface';
 import { Sequelize } from 'sequelize-typescript';
-import convertBulkResult from '../../utils/convertBulkResult';
+import _ from 'lodash';
 import convertResult from '../../utils/convertResult';
 import { Op, Transaction } from 'sequelize';
 import { UniqueConstraintError } from 'sequelize';
@@ -10,6 +10,7 @@ import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
+import ApiResult from '../../interfaces/common/api-result.interface';
 import AutMenuTree from '../../models/aut/menu-tree.model';
 import { readMenuWithPermission } from '../../queries/aut/menu-with-permission.query';
 
@@ -35,24 +36,26 @@ class AutMenuRepo {
   // 📒 Fn[create]: Default Create Function
   public create = async(body: IAutMenu[], uid: number, transaction?: Transaction) => {
     try {
-      const menus = body.map((menu) => {
-        return {
-          menu_type_id: menu.menu_type_id,
-          menu_nm: menu.menu_nm,
-          menu_uri: menu.menu_uri,
-          component_nm: menu.component_nm,
-          icon: menu.icon,
-          parent_id: menu.parent_id,
-          sortby: menu.sortby,
-          use_fg: menu.use_fg,
-          created_uid: uid,
-          updated_uid: uid,
-        }
+      const promises = body.map((menu: any) => {
+        return this.repo.create(
+          {
+            menu_type_id: menu.menu_type_id,
+            menu_nm: menu.menu_nm,
+            menu_uri: menu.menu_uri,
+            component_nm: menu.component_nm,
+            icon: menu.icon,
+            parent_id: menu.parent_id,
+            sortby: menu.sortby,
+            use_fg: menu.use_fg,
+            created_uid: uid,
+            updated_uid: uid,
+          },
+          { hooks: true, transaction }
+        );
       });
-
-      const result = await this.repo.bulkCreate(menus, { individualHooks: true, transaction });
-
-      return convertBulkResult(result);
+      const raws = await Promise.all(promises);
+      
+			return { raws, count: raws.length } as ApiResult<any>;
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
       throw error;
@@ -177,22 +180,20 @@ class AutMenuRepo {
   
   // 📒 Fn[update]: Default Update Function
   public update = async(body: IAutMenu[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let menu of body) {
-        const result = await this.repo.update(
+      const promises = body.map((menu: any) => {
+        return this.repo.update(
           {
-            menu_type_id: menu.menu_type_id != null ? menu.menu_type_id : null,
-            menu_nm: menu.menu_nm != null ? menu.menu_nm : null,
-            menu_uri: menu.menu_uri != null ? menu.menu_uri : null,
-            component_nm: menu.component_nm != null ? menu.component_nm : null,
-            icon: menu.icon != null ? menu.icon : null,
-            parent_id: menu.parent_id != null ? menu.parent_id : null,
-            sortby: menu.sortby != null ? menu.sortby : null,
-            use_fg: menu.use_fg != null ? menu.use_fg : null,
+            menu_type_id: menu.menu_type_id ?? null,
+            menu_nm: menu.menu_nm ?? null,
+            menu_uri: menu.menu_uri ?? null,
+            component_nm: menu.component_nm ?? null,
+            icon: menu.icon ?? null,
+            parent_id: menu.parent_id ?? null,
+            sortby: menu.sortby ?? null,
+            use_fg: menu.use_fg ?? null,
             updated_uid: uid,
           } as any,
           { 
@@ -200,11 +201,10 @@ class AutMenuRepo {
             returning: true,
             individualHooks: true,
             transaction
-          },
+          }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.AutMenu.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -220,13 +220,11 @@ class AutMenuRepo {
   
   // 📒 Fn[patch]: Default Patch Function
   public patch = async(body: IAutMenu[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let menu of body) {
-        const result = await this.repo.update(
+      const promises = body.map((menu: any) => {
+        return this.repo.update(
           {
             menu_type_id: menu.menu_type_id,
             menu_nm: menu.menu_nm,
@@ -245,9 +243,8 @@ class AutMenuRepo {
             transaction
           }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.AutMenu.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -263,14 +260,13 @@ class AutMenuRepo {
   
   // 📒 Fn[delete]: Default Delete Function
   public delete = async(body: IAutMenu[], uid: number, transaction?: Transaction) => {
-    let count: number = 0;
-
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let menu of body) {
-        count += await this.repo.destroy({ where: { uuid: menu.uuid }, transaction});
-      };
+      const promises = body.map((menu: any) => {
+        return this.repo.destroy({ where: { uuid: menu.uuid }, transaction});
+      });
+      const count = _.sum(await Promise.all(promises));
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.AutMenu.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };

@@ -2,7 +2,7 @@ import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repos
 import StdCustomerPrice from '../../models/std/customer-price.model';
 import IStdCustomerPrice from '../../interfaces/std/customer-price.interface';
 import { Sequelize } from 'sequelize-typescript';
-import convertBulkResult from '../../utils/convertBulkResult';
+import _ from 'lodash';
 import convertResult from '../../utils/convertResult';
 import { Op, Transaction, WhereOptions } from 'sequelize';
 import { UniqueConstraintError } from 'sequelize';
@@ -10,6 +10,7 @@ import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
+import ApiResult from '../../interfaces/common/api-result.interface';
 import moment = require('moment');
 
 class StdCustomerPriceRepo {
@@ -32,26 +33,28 @@ class StdCustomerPriceRepo {
   // 📒 Fn[create]: Default Create Function
   public create = async(body: IStdCustomerPrice[], uid: number, transaction?: Transaction) => {
     try {
-      const customerPrice = body.map((customerPrice) => {
-        return {
-          partner_id: customerPrice.partner_id,
-          prod_id: customerPrice.prod_id,
-          price: customerPrice.price,
-          money_unit_id: customerPrice.money_unit_id,
-          price_type_id: customerPrice.price_type_id,
-          start_date: customerPrice.start_date,
-          end_date: '9999-12-31',
-          retroactive_price: customerPrice.retroactive_price,
-          division: customerPrice.division,
-          remark: customerPrice.remark,
-          created_uid: uid,
-          updated_uid: uid,
-        }
+      const promises = body.map((customerPrice: any) => {
+        return this.repo.create(
+          {
+            partner_id: customerPrice.partner_id,
+            prod_id: customerPrice.prod_id,
+            price: customerPrice.price,
+            money_unit_id: customerPrice.money_unit_id,
+            price_type_id: customerPrice.price_type_id,
+            start_date: customerPrice.start_date,
+            end_date: '9999-12-31',
+            retroactive_price: customerPrice.retroactive_price,
+            division: customerPrice.division,
+            remark: customerPrice.remark,
+            created_uid: uid,
+            updated_uid: uid,
+          },
+          { hooks: true, transaction }
+        );
       });
-
-      const result = await this.repo.bulkCreate(customerPrice, { individualHooks: true, transaction });
-
-      return convertBulkResult(result);
+      const raws = await Promise.all(promises);
+      
+			return { raws, count: raws.length } as ApiResult<any>;
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
       throw error;
@@ -259,21 +262,19 @@ class StdCustomerPriceRepo {
   
   // 📒 Fn[update]: Default Update Function
   public update = async(body: IStdCustomerPrice[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let customerPrice of body) {
-        const result = await this.repo.update(
+      const promises = body.map((customerPrice: any) => {
+        return this.repo.update(
           {
-            price: customerPrice.price != null ? customerPrice.price : null,
-            money_unit_id: customerPrice.money_unit_id != null ? customerPrice.money_unit_id : null,
-            price_type_id: customerPrice.price_type_id != null ? customerPrice.price_type_id : null,
-            start_date: customerPrice.start_date != null ? customerPrice.start_date : null,
-            retroactive_price: customerPrice.retroactive_price != null ? customerPrice.retroactive_price : null,
-            division: customerPrice.division != null ? customerPrice.division : null,
-            remark: customerPrice.remark != null ? customerPrice.remark : null,
+            price: customerPrice.price ?? null,
+            money_unit_id: customerPrice.money_unit_id ?? null,
+            price_type_id: customerPrice.price_type_id ?? null,
+            start_date: customerPrice.start_date ?? null,
+            retroactive_price: customerPrice.retroactive_price ?? null,
+            division: customerPrice.division ?? null,
+            remark: customerPrice.remark ?? null,
             updated_uid: uid,
           } as any,
           { 
@@ -281,11 +282,10 @@ class StdCustomerPriceRepo {
             returning: true,
             individualHooks: true,
             transaction
-          },
+          }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdCustomerPrice.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -301,13 +301,11 @@ class StdCustomerPriceRepo {
   
   // 📒 Fn[patch]: Default Patch Function
   public patch = async(body: IStdCustomerPrice[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let customerPrice of body) {
-        const result = await this.repo.update(
+      const promises = body.map((customerPrice: any) => {
+        return this.repo.update(
           {
             price: customerPrice.price,
             money_unit_id: customerPrice.money_unit_id,
@@ -325,9 +323,8 @@ class StdCustomerPriceRepo {
             transaction
           }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdCustomerPrice.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -343,14 +340,13 @@ class StdCustomerPriceRepo {
   
   // 📒 Fn[delete]: Default Delete Function
   public delete = async(body: IStdCustomerPrice[], uid: number, transaction?: Transaction) => {
-    let count: number = 0;
-
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let customerPrice of body) {
-        count += await this.repo.destroy({ where: { uuid: customerPrice.uuid }, transaction});
-      };
+      const promises = body.map((customerPrice: any) => {
+        return this.repo.destroy({ where: { uuid: customerPrice.uuid }, transaction});
+      });
+      const count = _.sum(await Promise.all(promises));
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.StdCustomerPrice.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };

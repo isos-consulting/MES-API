@@ -3,13 +3,14 @@ import MldMold from '../../models/mld/mold.model';
 import IMldMold from '../../interfaces/mld/mold.interface';
 import { Sequelize } from 'sequelize-typescript';
 import sequelize from '../../models';
-import convertBulkResult from '../../utils/convertBulkResult';
+import _ from 'lodash';
 import convertResult from '../../utils/convertResult';
 import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
+import ApiResult from '../../interfaces/common/api-result.interface';
 import { readMoldReport } from '../../queries/mld/mold-report.query';
 
 class MldMoldRepo {
@@ -30,28 +31,30 @@ class MldMoldRepo {
 	// 📒 Fn[create]: Default Create Function
 	public create = async(body: IMldMold[], uid: number, transaction?: Transaction) => {
 		try {
-			const mold = body.map((mold) => {
-				return {
-					factory_id: mold.factory_id,
-					mold_cd: mold.mold_cd,
-					mold_nm: mold.mold_nm,
-					mold_no: mold.mold_no,
-					cavity: mold.cavity,
-					guarantee_cnt: mold.guarantee_cnt,
-					basic_cnt: mold.basic_cnt,
-					manufacturer: mold.manufacturer,
-					purchase_date: mold.purchase_date,
-					weight: mold.weight,
-					size: mold.size,
-					use_fg: mold.use_fg,
-					created_uid: uid,
-					updated_uid: uid,
-				}
-			});
-
-			const result = await this.repo.bulkCreate(mold, { individualHooks: true, transaction });
-
-			return convertBulkResult(result);
+			const promises = body.map((mold: any) => {
+        return this.repo.create(
+          {
+            factory_id: mold.factory_id,
+            mold_cd: mold.mold_cd,
+            mold_nm: mold.mold_nm,
+            mold_no: mold.mold_no,
+            cavity: mold.cavity,
+            guarantee_cnt: mold.guarantee_cnt,
+            basic_cnt: mold.basic_cnt,
+            manufacturer: mold.manufacturer,
+            purchase_date: mold.purchase_date,
+            weight: mold.weight,
+            size: mold.size,
+            use_fg: mold.use_fg,
+            created_uid: uid,
+            updated_uid: uid,
+          },
+          { hooks: true, transaction }
+        );
+      });
+      const raws = await Promise.all(promises);
+      
+			return { raws, count: raws.length } as ApiResult<any>;
 		} catch (error) {
 			if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
 			throw error;
@@ -190,25 +193,23 @@ class MldMoldRepo {
   
   // 📒 Fn[update]: Default Update Function
   public update = async(body: IMldMold[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let mold of body) {
-        const result = await this.repo.update(
+      const promises = body.map((mold: any) => {
+        return this.repo.update(
           {
-						mold_cd: mold.mold_cd != null? mold.mold_cd : null,
-						mold_nm: mold.mold_nm != null? mold.mold_nm : null,
-						mold_no: mold.mold_no != null? mold.mold_no : null,
-						cavity: mold.cavity != null? mold.cavity : null,
-						guarantee_cnt: mold.guarantee_cnt != null? mold.guarantee_cnt : null,
-						basic_cnt: mold.basic_cnt != null? mold.basic_cnt : null,
-						manufacturer: mold.manufacturer != null? mold.manufacturer : null,
-						purchase_date: mold.purchase_date != null? mold.purchase_date : null,
-						weight: mold.weight != null? mold.weight : null,
-						size: mold.size != null? mold.size : null,
-						use_fg: mold.use_fg != null? mold.use_fg : null,
+						mold_cd: mold.mold_cd ?? null,
+						mold_nm: mold.mold_nm ?? null,
+						mold_no: mold.mold_no ?? null,
+						cavity: mold.cavity ?? null,
+						guarantee_cnt: mold.guarantee_cnt ?? null,
+						basic_cnt: mold.basic_cnt ?? null,
+						manufacturer: mold.manufacturer ?? null,
+						purchase_date: mold.purchase_date ?? null,
+						weight: mold.weight ?? null,
+						size: mold.size ?? null,
+						use_fg: mold.use_fg ?? null,
             updated_uid: uid,
           } as any,
           { 
@@ -216,11 +217,10 @@ class MldMoldRepo {
             returning: true,
             individualHooks: true,
             transaction
-          },
+          }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', sequelize.models.MldMold.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -236,13 +236,11 @@ class MldMoldRepo {
   
   // 📒 Fn[patch]: Default Patch Function
   public patch = async(body: IMldMold[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let mold of body) {
-        const result = await this.repo.update(
+      const promises = body.map((mold: any) => {
+        return this.repo.update(
           {
 						mold_cd: mold.mold_cd,
 						mold_nm: mold.mold_nm,
@@ -263,9 +261,8 @@ class MldMoldRepo {
             transaction
           }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', sequelize.models.MldMold.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -281,14 +278,13 @@ class MldMoldRepo {
   
   // 📒 Fn[delete]: Default Delete Function
   public delete = async(body: IMldMold[], uid: number, transaction?: Transaction) => {
-    let count: number = 0;
-
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let mold of body) {
-        count += await this.repo.destroy({ where: { uuid: mold.uuid }, transaction});
-      };
+      const promises = body.map((mold: any) => {
+        return this.repo.destroy({ where: { uuid: mold.uuid }, transaction});
+      });
+      const count = _.sum(await Promise.all(promises));
 
       await new AdmLogRepo(this.tenant).create('delete', sequelize.models.MldMold.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };

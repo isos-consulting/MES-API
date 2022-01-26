@@ -1,12 +1,13 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
 import { Sequelize } from 'sequelize-typescript';
-import convertBulkResult from '../../utils/convertBulkResult';
+import _ from 'lodash';
 import convertResult from '../../utils/convertResult';
 import { Op, Transaction, UniqueConstraintError, WhereOptions } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
+import ApiResult from '../../interfaces/common/api-result.interface';
 import InvStore from '../../models/inv/store.model';
 import IInvStore from '../../interfaces/inv/store.interface';
 import getTranTypeCd from '../../utils/getTranTypeCd';
@@ -37,29 +38,31 @@ class InvStoreRepo {
   // 📒 Fn[create]: Default Create Function
   public create = async(body: IInvStore[], uid: number, transaction?: Transaction) => {
     try {
-      const store = body.map((store) => {
-        return {
-          factory_id: store.factory_id,
-          tran_id: store.tran_id,
-          inout_fg: store.inout_fg,
-          tran_cd: store.tran_cd,
-          reg_date: store.reg_date,
-          store_id: store.store_id,
-          location_id: store.location_id,
-          prod_id: store.prod_id,
-          reject_id: store.reject_id,
-					partner_id: store.partner_id,
-          lot_no: store.lot_no,
-          qty: store.qty,
-          remark: store.remark,
-          created_uid: uid,
-          updated_uid: uid,
-        }
+      const promises = body.map((store: any) => {
+        return this.repo.create(
+          {
+            factory_id: store.factory_id,
+            tran_id: store.tran_id,
+            inout_fg: store.inout_fg,
+            tran_cd: store.tran_cd,
+            reg_date: store.reg_date,
+            store_id: store.store_id,
+            location_id: store.location_id,
+            prod_id: store.prod_id,
+            reject_id: store.reject_id,
+            partner_id: store.partner_id,
+            lot_no: store.lot_no,
+            qty: store.qty,
+            remark: store.remark,
+            created_uid: uid,
+            updated_uid: uid,
+          },
+          { hooks: true, transaction }
+        );
       });
-
-      const result = await this.repo.bulkCreate(store, { individualHooks: true, transaction });
-
-      return convertBulkResult(result);
+      const raws = await Promise.all(promises);
+      
+			return { raws, count: raws.length } as ApiResult<any>;
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
       throw error;
@@ -325,13 +328,11 @@ class InvStoreRepo {
   
   // 📒 Fn[update]: Default Update Function
   public update = async(body: IInvStore[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let store of body) {
-        const result = await this.repo.update(
+      const promises = body.map((store: any) => {
+        return this.repo.update(
           {
             qty: store.qty != null ? store.qty : null,
             remark: store.remark != null ? store.remark : null,
@@ -342,11 +343,10 @@ class InvStoreRepo {
             returning: true,
             individualHooks: true,
             transaction
-          },
+          }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.InvStore.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -358,23 +358,20 @@ class InvStoreRepo {
 
   // 📒 Fn[updateToTransaction]: 전표 데이터 변경으로 수불 데이터 수정
   updateToTransaction = async(body: IInvStore[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
-      const previousRaws = [];
+      let previousPromises: any[] = [];
+      let promises: any[] = [];
 
-      for await (let store of body) {
-        previousRaws.push(
-          await this.repo.findOne({
-            where: {
-              tran_id: store.tran_id,
-              inout_fg: store.inout_fg,
-              tran_cd: store.tran_cd
-            }
-          })
-        )
+      body.forEach((store) => {
+        const previousPromise = this.repo.findOne({
+          where: {
+            tran_id: store.tran_id,
+            inout_fg: store.inout_fg,
+            tran_cd: store.tran_cd
+          }
+        });
 
-        const result = await this.repo.update(
+        const promise = this.repo.update(
           {
             qty: store.qty,
             remark: store.remark,
@@ -392,8 +389,12 @@ class InvStoreRepo {
           },
         );
 
-        raws.push(result);
-      };
+        previousPromises = [...previousPromises, previousPromise];
+        promises = [...promises, promise];
+      });
+
+      const previousRaws = await Promise.all(previousPromises);
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.InvStore.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -409,13 +410,11 @@ class InvStoreRepo {
   
   // 📒 Fn[patch]: Default Patch Function
   public patch = async(body: IInvStore[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let store of body) {
-        const result = await this.repo.update(
+      const promises = body.map((store: any) => {
+        return this.repo.update(
           {
             qty: store.qty,
             remark: store.remark,
@@ -428,9 +427,8 @@ class InvStoreRepo {
             transaction
           }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.InvStore.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -446,14 +444,13 @@ class InvStoreRepo {
   
   // 📒 Fn[delete]: Default Delete Function
   public delete = async(body: IInvStore[], uid: number, transaction?: Transaction) => {
-    let count: number = 0;
-
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let store of body) {
-        count += await this.repo.destroy({ where: { uuid: store.uuid }, transaction});
-      };
+      const promises = body.map((store: any) => {
+        return this.repo.destroy({ where: { uuid: store.uuid }, transaction});
+      });
+      const count = _.sum(await Promise.all(promises));
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.InvStore.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
@@ -464,23 +461,20 @@ class InvStoreRepo {
 
   // 📒 Fn[deleteToTransaction]: 전표 데이터 변경으로 수불 데이터 삭제
   deleteToTransaction = async(body: IInvStore[], uid: number, transaction?: Transaction) => {
-    let count: number = 0;
+    try {    
+      let previousPromises: any[] = [];
+      let promises: any[] = [];
 
-    try {      
-      const previousRaws = [];
+      body.forEach((store) => {
+        const previousPromise = this.repo.findOne({
+          where: {
+            tran_id: store.tran_id,
+            inout_fg: store.inout_fg,
+            tran_cd: store.tran_cd
+          }
+        });
 
-      for await (let store of body) {
-        previousRaws.push(
-          await this.repo.findOne({
-            where: {
-              tran_id: store.tran_id,
-              inout_fg: store.inout_fg,
-              tran_cd: store.tran_cd
-            }
-          })
-        )
-
-        count += await this.repo.destroy({ 
+        const promise = this.repo.destroy({
           where: { 
             tran_id: store.tran_id,
             inout_fg: store.inout_fg,
@@ -488,7 +482,13 @@ class InvStoreRepo {
           }, 
           transaction
         });
-      };
+
+        previousPromises = [...previousPromises, previousPromise];
+        promises = [...promises, promise];
+      });
+
+      const previousRaws = await Promise.all(previousPromises);
+      const count = _.sum(await Promise.all(promises));
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.InvStore.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };

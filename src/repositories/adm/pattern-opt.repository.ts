@@ -2,13 +2,14 @@ import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repos
 import AdmPatternOpt from '../../models/adm/pattern-opt.model';
 import IAdmPatternOpt from '../../interfaces/adm/pattern-opt.interface';
 import { Sequelize } from 'sequelize-typescript';
-import convertBulkResult from '../../utils/convertBulkResult';
+import _ from 'lodash';
 import convertResult from '../../utils/convertResult';
 import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
+import ApiResult from '../../interfaces/common/api-result.interface';
 
 class AdmPatternOptRepo {
   repo: Repository<AdmPatternOpt>;
@@ -28,22 +29,24 @@ class AdmPatternOptRepo {
 	// 📒 Fn[create]: Default Create Function
 	public create = async(body: IAdmPatternOpt[], uid: number, transaction?: Transaction) => {
 		try {
-			const patternOpt = body.map((patternOpt) => {
-				return {
-					pattern_opt_nm: patternOpt.pattern_opt_nm,
-					table_nm: patternOpt.table_nm,
-					auto_fg: patternOpt.auto_fg,
-					col_nm: patternOpt.col_nm,
-					pattern: patternOpt.pattern,
-					sortby: patternOpt.sortby,
-					created_uid: uid,
-					updated_uid: uid,
-				}
-			});
-
-			const result = await this.repo.bulkCreate(patternOpt, { individualHooks: true, transaction });
-
-			return convertBulkResult(result);
+      const promises = body.map((patternOpt: any) => {
+        return this.repo.create(
+          {
+            pattern_opt_nm: patternOpt.pattern_opt_nm,
+            table_nm: patternOpt.table_nm,
+            auto_fg: patternOpt.auto_fg,
+            col_nm: patternOpt.col_nm,
+            pattern: patternOpt.pattern,
+            sortby: patternOpt.sortby,
+            created_uid: uid,
+            updated_uid: uid,
+          },
+          { hooks: true, transaction }
+        );
+      });
+      const raws = await Promise.all(promises);
+      
+			return { raws, count: raws.length } as ApiResult<any>;
 		} catch (error) {
 			if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
 			throw error;
@@ -161,21 +164,19 @@ class AdmPatternOptRepo {
   
   // 📒 Fn[update]: Default Update Function
   public update = async(body: IAdmPatternOpt[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let patternOpt of body) {
-        const result = await this.repo.update(
+      const promises = body.map((patternOpt: any) => {
+        return this.repo.update(
           {
-            pattern_opt_cd: patternOpt.pattern_opt_cd != null ? patternOpt.pattern_opt_cd : null,
-            pattern_opt_nm: patternOpt.pattern_opt_nm != null ? patternOpt.pattern_opt_nm : null,
-						table_nm: patternOpt.table_nm != null ? patternOpt.table_nm : null,
-						auto_fg: patternOpt.auto_fg != null ? patternOpt.auto_fg : null,
-						col_nm: patternOpt.col_nm != null ? patternOpt.col_nm : null,
-						pattern: patternOpt.pattern != null ? patternOpt.pattern : null,
-						sortby: patternOpt.sortby != null ? patternOpt.sortby : null,
+            pattern_opt_cd: patternOpt.pattern_opt_cd ?? null,
+            pattern_opt_nm: patternOpt.pattern_opt_nm ?? null,
+						table_nm: patternOpt.table_nm ?? null,
+						auto_fg: patternOpt.auto_fg ?? null,
+						col_nm: patternOpt.col_nm ?? null,
+						pattern: patternOpt.pattern ?? null,
+						sortby: patternOpt.sortby ?? null,
             updated_uid: uid,
           } as any,
           { 
@@ -183,11 +184,10 @@ class AdmPatternOptRepo {
             returning: true,
             individualHooks: true,
             transaction
-          },
+          }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.AdmPatternOpt.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -203,13 +203,11 @@ class AdmPatternOptRepo {
   
   // 📒 Fn[patch]: Default Patch Function
   public patch = async(body: IAdmPatternOpt[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let patternOpt of body) {
-        const result = await this.repo.update(
+      const promises = body.map((patternOpt: any) => {
+        return this.repo.update(
           {
             pattern_opt_cd: patternOpt.pattern_opt_cd,
 						pattern_opt_nm: patternOpt.pattern_opt_nm,
@@ -227,9 +225,8 @@ class AdmPatternOptRepo {
             transaction
           }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.AdmPatternOpt.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -245,14 +242,13 @@ class AdmPatternOptRepo {
   
   // 📒 Fn[delete]: Default Delete Function
   public delete = async(body: IAdmPatternOpt[], uid: number, transaction?: Transaction) => {
-    let count: number = 0;
-
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let patternOpt of body) {
-        count += await this.repo.destroy({ where: { uuid: patternOpt.uuid }, transaction});
-      };
+      const promises = body.map((patternOpt: any) => {
+        return this.repo.destroy({ where: { uuid: patternOpt.uuid }, transaction});
+      });
+      const count = _.sum(await Promise.all(promises));
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.AdmPatternOpt.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };

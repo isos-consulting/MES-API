@@ -3,13 +3,14 @@ import EqmRepairHistory from '../../models/eqm/repair-history.model';
 import IEqmRepairHistory from '../../interfaces/eqm/repair-history.interface';
 import { Sequelize } from 'sequelize-typescript';
 import sequelize from '../../models';
-import convertBulkResult from '../../utils/convertBulkResult';
+import _ from 'lodash';
 import convertResult from '../../utils/convertResult';
 import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
+import ApiResult from '../../interfaces/common/api-result.interface';
 
 class EqmRepairHistoryRepo {
   repo: Repository<EqmRepairHistory>;
@@ -29,30 +30,32 @@ class EqmRepairHistoryRepo {
 	// 📒 Fn[create]: Default Create Function
 	public create = async(body: IEqmRepairHistory[], uid: number, transaction?: Transaction) => {
 		try {
-			const eqmRepairHistories = body.map((eqmRepairHistory) => {
-				return {
-					factory_id: eqmRepairHistory.factory_id,
-					equip_id: eqmRepairHistory.equip_id,
-					occur_start_date: eqmRepairHistory.occur_start_date,
-					occur_end_date: eqmRepairHistory.occur_end_date,
-					occur_emp_id: eqmRepairHistory.occur_emp_id,
-					occur_reason: eqmRepairHistory.occur_reason,
-					occur_contents: eqmRepairHistory.occur_contents,
-					repair_start_date: eqmRepairHistory.repair_start_date,
-					repair_end_date: eqmRepairHistory.repair_end_date,
-					repair_time: eqmRepairHistory.repair_time,
-					repair_place: eqmRepairHistory.repair_place,
-					repair_price: eqmRepairHistory.repair_price,
-					check_date: eqmRepairHistory.check_date,
-					check_emp_id: eqmRepairHistory.check_emp_id,
-					created_uid: uid,
-					updated_uid: uid,
-				}
-			});
-
-			const result = await this.repo.bulkCreate(eqmRepairHistories, { individualHooks: true, transaction });
-
-			return convertBulkResult(result);
+			const promises = body.map((repairHistory: any) => {
+        return this.repo.create(
+          {
+            factory_id: repairHistory.factory_id,
+            equip_id: repairHistory.equip_id,
+            occur_start_date: repairHistory.occur_start_date,
+            occur_end_date: repairHistory.occur_end_date,
+            occur_emp_id: repairHistory.occur_emp_id,
+            occur_reason: repairHistory.occur_reason,
+            occur_contents: repairHistory.occur_contents,
+            repair_start_date: repairHistory.repair_start_date,
+            repair_end_date: repairHistory.repair_end_date,
+            repair_time: repairHistory.repair_time,
+            repair_place: repairHistory.repair_place,
+            repair_price: repairHistory.repair_price,
+            check_date: repairHistory.check_date,
+            check_emp_id: repairHistory.check_emp_id,
+            created_uid: uid,
+            updated_uid: uid,
+          },
+          { hooks: true, transaction }
+        );
+      });
+      const raws = await Promise.all(promises);
+      
+			return { raws, count: raws.length } as ApiResult<any>;
 		} catch (error) {
 			if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
 			throw error;
@@ -208,39 +211,36 @@ class EqmRepairHistoryRepo {
   
   // 📒 Fn[update]: Default Update Function
   public update = async(body: IEqmRepairHistory[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let molRepairHistory of body) {
-        const result = await this.repo.update(
+      const promises = body.map((repairHistory: any) => {
+        return this.repo.update(
           {
-						equip_id: molRepairHistory.equip_id ?? null,
-						occur_start_date: molRepairHistory.occur_start_date ?? null,
-						occur_end_date: molRepairHistory.occur_end_date ?? null,
-						occur_emp_id: molRepairHistory.occur_emp_id ?? null,
-						occur_reason: molRepairHistory.occur_reason ?? null,
-						occur_contents: molRepairHistory.occur_contents ?? null,
-						repair_start_date: molRepairHistory.repair_start_date ?? null,
-						repair_end_date: molRepairHistory.repair_end_date ?? null,
-						repair_time: molRepairHistory.repair_time ?? null,
-						repair_place: molRepairHistory.repair_place ?? null,
-						repair_price: molRepairHistory.repair_price ?? null,
-						check_date: molRepairHistory.check_date ?? null,
-						check_emp_id: molRepairHistory.check_emp_id ?? null,
+						equip_id: repairHistory.equip_id ?? null,
+						occur_start_date: repairHistory.occur_start_date ?? null,
+						occur_end_date: repairHistory.occur_end_date ?? null,
+						occur_emp_id: repairHistory.occur_emp_id ?? null,
+						occur_reason: repairHistory.occur_reason ?? null,
+						occur_contents: repairHistory.occur_contents ?? null,
+						repair_start_date: repairHistory.repair_start_date ?? null,
+						repair_end_date: repairHistory.repair_end_date ?? null,
+						repair_time: repairHistory.repair_time ?? null,
+						repair_place: repairHistory.repair_place ?? null,
+						repair_price: repairHistory.repair_price ?? null,
+						check_date: repairHistory.check_date ?? null,
+						check_emp_id: repairHistory.check_emp_id ?? null,
             updated_uid: uid,
           } as any,
           { 
-            where: { uuid: molRepairHistory.uuid },
+            where: { uuid: repairHistory.uuid },
             returning: true,
             individualHooks: true,
             transaction
-          },
+          }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', sequelize.models.EqmRepairHistory.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -256,39 +256,36 @@ class EqmRepairHistoryRepo {
   
   // 📒 Fn[patch]: Default Patch Function
   public patch = async(body: IEqmRepairHistory[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let molRepairHistory of body) {
-        const result = await this.repo.update(
+      const promises = body.map((repairHistory: any) => {
+        return this.repo.update(
           {
-						equip_id: molRepairHistory.equip_id,
-						occur_start_date: molRepairHistory.occur_start_date,
-						occur_end_date: molRepairHistory.occur_end_date,
-						occur_emp_id: molRepairHistory.occur_emp_id,
-						occur_reason: molRepairHistory.occur_reason,
-						occur_contents: molRepairHistory.occur_contents,
-						repair_start_date: molRepairHistory.repair_start_date,
-						repair_end_date: molRepairHistory.repair_end_date,
-						repair_time: molRepairHistory.repair_time,
-						repair_place: molRepairHistory.repair_place,
-						repair_price: molRepairHistory.repair_price,
-						check_date: molRepairHistory.check_date,
-						check_emp_id: molRepairHistory.check_emp_id,
+						equip_id: repairHistory.equip_id,
+						occur_start_date: repairHistory.occur_start_date,
+						occur_end_date: repairHistory.occur_end_date,
+						occur_emp_id: repairHistory.occur_emp_id,
+						occur_reason: repairHistory.occur_reason,
+						occur_contents: repairHistory.occur_contents,
+						repair_start_date: repairHistory.repair_start_date,
+						repair_end_date: repairHistory.repair_end_date,
+						repair_time: repairHistory.repair_time,
+						repair_place: repairHistory.repair_place,
+						repair_price: repairHistory.repair_price,
+						check_date: repairHistory.check_date,
+						check_emp_id: repairHistory.check_emp_id,
             updated_uid: uid,
           },
           { 
-            where: { uuid: molRepairHistory.uuid },
+            where: { uuid: repairHistory.uuid },
             returning: true,
             individualHooks: true,
             transaction
           }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', sequelize.models.EqmRepairHistory.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -304,14 +301,13 @@ class EqmRepairHistoryRepo {
   
   // 📒 Fn[delete]: Default Delete Function
   public delete = async(body: IEqmRepairHistory[], uid: number, transaction?: Transaction) => {
-    let count: number = 0;
-
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let molRepairHistory of body) {
-        count += await this.repo.destroy({ where: { uuid: molRepairHistory.uuid }, transaction});
-      };
+      const promises = body.map((repairHistory: any) => {
+        return this.repo.destroy({ where: { uuid: repairHistory.uuid }, transaction});
+      });
+      const count = _.sum(await Promise.all(promises));
 
       await new AdmLogRepo(this.tenant).create('delete', sequelize.models.EqmRepairHistory.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };

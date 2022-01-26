@@ -2,13 +2,14 @@ import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repos
 import StdWorkerGroupWorker from '../../models/std/worker-group-worker.model';
 import IStdWorkerGroupWorker from '../../interfaces/std/worker-group-worker.interface';
 import { Sequelize } from 'sequelize-typescript';
-import convertBulkResult from '../../utils/convertBulkResult';
+import _ from 'lodash';
 import convertResult from '../../utils/convertResult';
 import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
+import ApiResult from '../../interfaces/common/api-result.interface';
 
 class StdWorkerGroupWorkerRepo {
   repo: Repository<StdWorkerGroupWorker>;
@@ -30,20 +31,22 @@ class StdWorkerGroupWorkerRepo {
   // 📒 Fn[create]: Default Create Function
   public create = async(body: IStdWorkerGroupWorker[], uid: number, transaction?: Transaction) => {
     try {
-      const workerGroupWorker = body.map((workerGroupWorker) => {
-        return {
-          factory_id: workerGroupWorker.factory_id,
-          worker_group_id: workerGroupWorker.worker_group_id,
-          worker_id: workerGroupWorker.worker_id,
-          remark: workerGroupWorker.remark,
-          created_uid: uid,
-          updated_uid: uid,
-        }
+      const promises = body.map((workerGroupWorker: any) => {
+        return this.repo.create(
+          {
+            factory_id: workerGroupWorker.factory_id,
+            worker_group_id: workerGroupWorker.worker_group_id,
+            worker_id: workerGroupWorker.worker_id,
+            remark: workerGroupWorker.remark,
+            created_uid: uid,
+            updated_uid: uid,
+          },
+          { hooks: true, transaction }
+        );
       });
-
-      const result = await this.repo.bulkCreate(workerGroupWorker, { individualHooks: true, transaction });
-
-      return convertBulkResult(result);
+      const raws = await Promise.all(promises);
+      
+			return { raws, count: raws.length } as ApiResult<any>;
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
       throw error;
@@ -186,13 +189,11 @@ class StdWorkerGroupWorkerRepo {
   
   // 📒 Fn[update]: Default Update Function
   public update = async(body: IStdWorkerGroupWorker[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let workerGroupWorker of body) {
-        const result = await this.repo.update(
+      const promises = body.map((workerGroupWorker: any) => {
+        return this.repo.update(
           {
             remark: workerGroupWorker.remark != null ? workerGroupWorker.remark : null,
             updated_uid: uid,
@@ -202,11 +203,10 @@ class StdWorkerGroupWorkerRepo {
             returning: true,
             individualHooks: true,
             transaction
-          },
+          }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdWorkerGroupWorker.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -222,13 +222,11 @@ class StdWorkerGroupWorkerRepo {
   
   // 📒 Fn[patch]: Default Patch Function
   public patch = async(body: IStdWorkerGroupWorker[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let workerGroupWorker of body) {
-        const result = await this.repo.update(
+      const promises = body.map((workerGroupWorker: any) => {
+        return this.repo.update(
           {
             remark: workerGroupWorker.remark,
             updated_uid: uid,
@@ -240,9 +238,8 @@ class StdWorkerGroupWorkerRepo {
             transaction
           }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdWorkerGroupWorker.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -258,14 +255,13 @@ class StdWorkerGroupWorkerRepo {
   
   // 📒 Fn[delete]: Default Delete Function
   public delete = async(body: IStdWorkerGroupWorker[], uid: number, transaction?: Transaction) => {
-    let count: number = 0;
-
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let workerGroupWorker of body) {
-        count += await this.repo.destroy({ where: { uuid: workerGroupWorker.uuid }, transaction});
-      };
+      const promises = body.map((workerGroupWorker: any) => {
+        return this.repo.destroy({ where: { uuid: workerGroupWorker.uuid }, transaction});
+      });
+      const count = _.sum(await Promise.all(promises));
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.StdWorkerGroupWorker.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };

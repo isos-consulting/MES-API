@@ -3,7 +3,6 @@ import AdmCycleUnit from '../../models/adm/cycle-unit.model';
 import IAdmCycleUnit from '../../interfaces/adm/cycle-unit.interface';
 import { Sequelize } from 'sequelize-typescript';
 import sequelize from '../../models';
-import convertBulkResult from '../../utils/convertBulkResult';
 import convertResult from '../../utils/convertResult';
 import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
@@ -11,6 +10,7 @@ import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
 import _ from 'lodash';
+import ApiResult from '../../interfaces/common/api-result.interface';
 
 class AdmCycleUnitRepo {
   repo: Repository<AdmCycleUnit>;
@@ -30,19 +30,22 @@ class AdmCycleUnitRepo {
 	// 📒 Fn[create]: Default Create Function
 	public create = async(body: IAdmCycleUnit[], uid: number, transaction?: Transaction) => {
 		try {
-			const cycleUnit = body.map((cycleUnit) => {
-				return {
-					cycle_unit_cd: cycleUnit.cycle_unit_cd,
-					cycle_unit_nm: cycleUnit.cycle_unit_nm,
-					format: cycleUnit.format,
-					sortby: cycleUnit.sortby,
-					created_uid: uid,
-					updated_uid: uid,
-				}
-			});
-			const result = await this.repo.bulkCreate(cycleUnit, { individualHooks: true, transaction });
+      const promises = body.map((cycleUnit: any) => {
+        return this.repo.create(
+          {
+						cycle_unit_cd: cycleUnit.cycle_unit_cd,
+						cycle_unit_nm: cycleUnit.cycle_unit_nm,
+						format: cycleUnit.format,
+						sortby: cycleUnit.sortby,
+            created_uid: uid,
+            updated_uid: uid,
+          },
+          { hooks: true, transaction }
+        );
+      });
+      const raws = await Promise.all(promises);
       
-			return convertBulkResult(result);
+			return { raws, count: raws.length } as ApiResult<any>;
 		} catch (error) {
 			if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
 			throw error;

@@ -1,12 +1,13 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
 import { Sequelize } from 'sequelize-typescript';
-import convertBulkResult from '../../utils/convertBulkResult';
+import _ from 'lodash';
 import convertResult from '../../utils/convertResult';
 import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
+import ApiResult from '../../interfaces/common/api-result.interface';
 import PrdWorkReject from '../../models/prd/work-reject.model';
 import IPrdWorkReject from '../../interfaces/prd/work-reject.interface';
 import { readWorkRejectReport } from '../../queries/prd/work-reject-report.query';
@@ -32,24 +33,26 @@ class PrdWorkRejectRepo {
   // 📒 Fn[create]: Default Create Function
   public create = async(body: IPrdWorkReject[], uid: number, transaction?: Transaction) => {
     try {
-      const workRejects = body.map((workReject) => {
-        return {
-          factory_id: workReject.factory_id,
-          work_id: workReject.work_id,
-          work_routing_id: workReject.work_routing_id,
-          reject_id: workReject.reject_id,
-          qty: workReject.qty,
-          to_store_id: workReject.to_store_id,
-          to_location_id: workReject.to_location_id,
-          remark: workReject.remark,
-          created_uid: uid,
-          updated_uid: uid,
-        }
+      const promises = body.map((workReject: any) => {
+        return this.repo.create(
+          {
+            factory_id: workReject.factory_id,
+            work_id: workReject.work_id,
+            work_routing_id: workReject.work_routing_id,
+            reject_id: workReject.reject_id,
+            qty: workReject.qty,
+            to_store_id: workReject.to_store_id,
+            to_location_id: workReject.to_location_id,
+            remark: workReject.remark,
+            created_uid: uid,
+            updated_uid: uid,
+          },
+          { hooks: true, transaction }
+        );
       });
-
-      const result = await this.repo.bulkCreate(workRejects, { individualHooks: true, transaction });
-
-      return convertBulkResult(result);
+      const raws = await Promise.all(promises);
+      
+			return { raws, count: raws.length } as ApiResult<any>;
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
       throw error;
@@ -281,16 +284,14 @@ class PrdWorkRejectRepo {
   
   // 📒 Fn[update]: Default Update Function
   public update = async(body: IPrdWorkReject[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let workReject of body) {
-        const result = await this.repo.update(
+      const promises = body.map((workReject: any) => {
+        return this.repo.update(
           {
-            qty: workReject.qty != null ? workReject.qty : null,
-            remark: workReject.remark != null ? workReject.remark : null,
+            qty: workReject.qty ?? null,
+            remark: workReject.remark ?? null,
             updated_uid: uid,
           } as any,
           { 
@@ -298,11 +299,10 @@ class PrdWorkRejectRepo {
             returning: true,
             individualHooks: true,
             transaction
-          },
+          }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.PrdWorkReject.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -318,13 +318,11 @@ class PrdWorkRejectRepo {
   
   // 📒 Fn[patch]: Default Patch Function
   public patch = async(body: IPrdWorkReject[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let workReject of body) {
-        const result = await this.repo.update(
+      const promises = body.map((workReject: any) => {
+        return this.repo.update(
           {
             qty: workReject.qty,
             remark: workReject.remark,
@@ -337,9 +335,8 @@ class PrdWorkRejectRepo {
             transaction
           }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.PrdWorkReject.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -355,14 +352,13 @@ class PrdWorkRejectRepo {
   
   // 📒 Fn[delete]: Default Delete Function
   public delete = async(body: IPrdWorkReject[], uid: number, transaction?: Transaction) => {
-    let count: number = 0;
-
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let workReject of body) {
-        count += await this.repo.destroy({ where: { uuid: workReject.uuid }, transaction});
-      };
+      const promises = body.map((workReject: any) => {
+        return this.repo.destroy({ where: { uuid: workReject.uuid }, transaction});
+      });
+      const count = _.sum(await Promise.all(promises));
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.PrdWorkReject.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
@@ -373,12 +369,10 @@ class PrdWorkRejectRepo {
 
   // 📒 Fn[deleteByWorkId]: 생산실적 Id 기준 데이터 삭제
   public deleteByWorkId = async(workId: number, uid: number, transaction?: Transaction) => {
-    let count: number = 0;
-
     try {      
       const previousRaws = await this.repo.findAll({ where: { work_id: workId } })
 
-      count += await this.repo.destroy({ where: { work_id: workId }, transaction});
+      const count = await this.repo.destroy({ where: { work_id: workId }, transaction});
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.PrdWorkReject.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };

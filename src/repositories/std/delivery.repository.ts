@@ -2,7 +2,7 @@ import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repos
 import StdDelivery from '../../models/std/delivery.model';
 import IStdDelivery from '../../interfaces/std/delivery.interface';
 import { Sequelize } from 'sequelize-typescript';
-import convertBulkResult from '../../utils/convertBulkResult';
+import _ from 'lodash';
 import convertResult from '../../utils/convertResult';
 import { Op, Transaction } from 'sequelize';
 import { UniqueConstraintError } from 'sequelize';
@@ -10,6 +10,7 @@ import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
+import ApiResult from '../../interfaces/common/api-result.interface';
 
 class StdDeliveryRepo {
   repo: Repository<StdDelivery>;
@@ -31,28 +32,30 @@ class StdDeliveryRepo {
   // 📒 Fn[create]: Default Create Function
   public create = async(body: IStdDelivery[], uid: number, transaction?: Transaction) => {
     try {
-      const delivery = body.map((delivery) => {
-        return {
-          delivery_cd: delivery.delivery_cd,
-          delivery_nm: delivery.delivery_nm,
-          partner_id: delivery.partner_id,
-          manager: delivery.manager,
-          email: delivery.email,
-          tel: delivery.tel,
-          fax: delivery.fax,
-          post: delivery.post,
-          addr: delivery.addr,
-          addr_detail: delivery.addr_detail,
-          use_fg: delivery.use_fg,
-          remark: delivery.remark,
-          created_uid: uid,
-          updated_uid: uid,
-        }
+      const promises = body.map((delivery: any) => {
+        return this.repo.create(
+          {
+            delivery_cd: delivery.delivery_cd,
+            delivery_nm: delivery.delivery_nm,
+            partner_id: delivery.partner_id,
+            manager: delivery.manager,
+            email: delivery.email,
+            tel: delivery.tel,
+            fax: delivery.fax,
+            post: delivery.post,
+            addr: delivery.addr,
+            addr_detail: delivery.addr_detail,
+            use_fg: delivery.use_fg,
+            remark: delivery.remark,
+            created_uid: uid,
+            updated_uid: uid,
+          },
+          { hooks: true, transaction }
+        );
       });
-
-      const result = await this.repo.bulkCreate(delivery, { individualHooks: true, transaction });
-
-      return convertBulkResult(result);
+      const raws = await Promise.all(promises);
+      
+			return { raws, count: raws.length } as ApiResult<any>;
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
       throw error;
@@ -169,26 +172,24 @@ class StdDeliveryRepo {
   
   // 📒 Fn[update]: Default Update Function
   public update = async(body: IStdDelivery[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let delivery of body) {
-        const result = await this.repo.update(
+      const promises = body.map((delivery: any) => {
+        return this.repo.update(
           {
-            delivery_cd: delivery.delivery_cd != null ? delivery.delivery_cd : null,
-            delivery_nm: delivery.delivery_nm != null ? delivery.delivery_nm : null,
-            partner_id: delivery.partner_id != null ? delivery.partner_id : null,
-            manager: delivery.manager != null ? delivery.manager : null,
-            email: delivery.email != null ? delivery.email : null,
-            tel: delivery.tel != null ? delivery.tel : null,
-            fax: delivery.fax != null ? delivery.fax : null,
-            post: delivery.post != null ? delivery.post : null,
-            addr: delivery.addr != null ? delivery.addr : null,
-            addr_detail: delivery.addr_detail != null ? delivery.addr_detail : null,
-            use_fg: delivery.use_fg != null ? delivery.use_fg : null,
-            remark: delivery.remark != null ? delivery.remark : null,
+            delivery_cd: delivery.delivery_cd ?? null,
+            delivery_nm: delivery.delivery_nm ?? null,
+            partner_id: delivery.partner_id ?? null,
+            manager: delivery.manager ?? null,
+            email: delivery.email ?? null,
+            tel: delivery.tel ?? null,
+            fax: delivery.fax ?? null,
+            post: delivery.post ?? null,
+            addr: delivery.addr ?? null,
+            addr_detail: delivery.addr_detail ?? null,
+            use_fg: delivery.use_fg ?? null,
+            remark: delivery.remark ?? null,
             updated_uid: uid,
           } as any,
           { 
@@ -196,11 +197,10 @@ class StdDeliveryRepo {
             returning: true,
             individualHooks: true,
             transaction
-          },
+          }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdDelivery.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -221,13 +221,11 @@ class StdDeliveryRepo {
   
   // 📒 Fn[patch]: Default Patch Function
   public patch = async(body: IStdDelivery[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let delivery of body) {
-        const result = await this.repo.update(
+      const promises = body.map((delivery: any) => {
+        return this.repo.update(
           {
             delivery_cd: delivery.delivery_cd,
             delivery_nm: delivery.delivery_nm,
@@ -250,9 +248,8 @@ class StdDeliveryRepo {
             transaction
           }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdDelivery.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -268,14 +265,13 @@ class StdDeliveryRepo {
   
   // 📒 Fn[delete]: Default Delete Function
   public delete = async(body: IStdDelivery[], uid: number, transaction?: Transaction) => {
-    let count: number = 0;
-
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
-
-      for await (let delivery of body) {
-        count += await this.repo.destroy({ where: { uuid: delivery.uuid }, transaction});
-      };
+      
+      const promises = body.map((delivery: any) => {
+        return this.repo.destroy({ where: { uuid: delivery.uuid }, transaction});
+      });
+      const count = _.sum(await Promise.all(promises));
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.StdDelivery.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };

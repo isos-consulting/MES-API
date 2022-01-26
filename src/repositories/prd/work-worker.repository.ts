@@ -1,12 +1,13 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
 import { Sequelize } from 'sequelize-typescript';
-import convertBulkResult from '../../utils/convertBulkResult';
+import _ from 'lodash';
 import convertResult from '../../utils/convertResult';
 import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
+import ApiResult from '../../interfaces/common/api-result.interface';
 import PrdWorkWorker from '../../models/prd/work-worker.model';
 import IPrdWorkWorker from '../../interfaces/prd/work-worker.interface';
 
@@ -30,22 +31,24 @@ class PrdWorkWorkerRepo {
   // 📒 Fn[create]: Default Create Function
   public create = async(body: IPrdWorkWorker[], uid: number, transaction?: Transaction) => {
     try {
-      const workWorkers = body.map((workWorker) => {
-        return {
-          factory_id: workWorker.factory_id,
-          work_id: workWorker.work_id,
-          worker_id: workWorker.worker_id,
-          start_date: workWorker.start_date,
-          end_date: workWorker.end_date,
-          work_time: workWorker.work_time,
-          created_uid: uid,
-          updated_uid: uid,
-        }
+      const promises = body.map((workWorker: any) => {
+        return this.repo.create(
+          {
+            factory_id: workWorker.factory_id,
+            work_id: workWorker.work_id,
+            worker_id: workWorker.worker_id,
+            start_date: workWorker.start_date,
+            end_date: workWorker.end_date,
+            work_time: workWorker.work_time,
+            created_uid: uid,
+            updated_uid: uid,
+          },
+          { hooks: true, transaction }
+        );
       });
-
-      const result = await this.repo.bulkCreate(workWorkers, { individualHooks: true, transaction });
-
-      return convertBulkResult(result);
+      const raws = await Promise.all(promises);
+      
+			return { raws, count: raws.length } as ApiResult<any>;
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
       throw error;
@@ -160,18 +163,16 @@ class PrdWorkWorkerRepo {
   
   // 📒 Fn[update]: Default Update Function
   public update = async(body: IPrdWorkWorker[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let workWorker of body) {
-        const result = await this.repo.update(
+      const promises = body.map((workWorker: any) => {
+        return this.repo.update(
           {
-            worker_id: workWorker.worker_id != null ? workWorker.worker_id : null,
-            start_date: workWorker.start_date != null ? workWorker.start_date : null,
-            end_date: workWorker.end_date != null ? workWorker.end_date : null,
-            work_time: workWorker.work_time != null ? workWorker.work_time : null,
+            worker_id: workWorker.worker_id ?? null,
+            start_date: workWorker.start_date ?? null,
+            end_date: workWorker.end_date ?? null,
+            work_time: workWorker.work_time ?? null,
             updated_uid: uid,
           } as any,
           { 
@@ -179,11 +180,10 @@ class PrdWorkWorkerRepo {
             returning: true,
             individualHooks: true,
             transaction
-          },
+          }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.PrdWorkWorker.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -199,13 +199,11 @@ class PrdWorkWorkerRepo {
   
   // 📒 Fn[patch]: Default Patch Function
   public patch = async(body: IPrdWorkWorker[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let workWorker of body) {
-        const result = await this.repo.update(
+      const promises = body.map((workWorker: any) => {
+        return this.repo.update(
           {
             worker_id: workWorker.worker_id,
             start_date: workWorker.start_date,
@@ -220,9 +218,8 @@ class PrdWorkWorkerRepo {
             transaction
           }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.PrdWorkWorker.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -238,14 +235,13 @@ class PrdWorkWorkerRepo {
   
   // 📒 Fn[delete]: Default Delete Function
   public delete = async(body: IPrdWorkWorker[], uid: number, transaction?: Transaction) => {
-    let count: number = 0;
-
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let workWorker of body) {
-        count += await this.repo.destroy({ where: { uuid: workWorker.uuid }, transaction});
-      };
+      const promises = body.map((workWorker: any) => {
+        return this.repo.destroy({ where: { uuid: workWorker.uuid }, transaction});
+      });
+      const count = _.sum(await Promise.all(promises));
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.PrdWorkWorker.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
@@ -256,12 +252,10 @@ class PrdWorkWorkerRepo {
   
   // 📒 Fn[deleteByWorkId]: 생산실적 Id 기준 데이터 삭제
   public deleteByWorkId = async(workId: number, uid: number, transaction?: Transaction) => {
-    let count: number = 0;
-
     try {      
       const previousRaws = await this.repo.findAll({ where: { work_id: workId } })
 
-      count += await this.repo.destroy({ where: { work_id: workId }, transaction});
+      const count = await this.repo.destroy({ where: { work_id: workId }, transaction});
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.PrdWorkWorker.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };

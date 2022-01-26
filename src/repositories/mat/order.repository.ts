@@ -1,12 +1,13 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
 import { Sequelize } from 'sequelize-typescript';
-import convertBulkResult from '../../utils/convertBulkResult';
+import _ from 'lodash';
 import convertResult from '../../utils/convertResult';
 import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
+import ApiResult from '../../interfaces/common/api-result.interface';
 import MatOrder from '../../models/mat/order.model';
 import IMatOrder from '../../interfaces/mat/order.interface';
 import { readOrderReport } from '../../queries/mat/order-report.query';
@@ -31,21 +32,23 @@ class MatOrderRepo {
   // 📒 Fn[create]: Default Create Function
   public create = async(body: IMatOrder[], uid: number, transaction?: Transaction) => {
     try {
-      const order = body.map((order) => {
-        return {
-          factory_id: order.factory_id,
-          partner_id: order.partner_id,
-          stmt_no: order.stmt_no,
-          reg_date: order.reg_date,
-          remark: order.remark,
-          created_uid: uid,
-          updated_uid: uid,
-        }
+      const promises = body.map((order: any) => {
+        return this.repo.create(
+          {
+            factory_id: order.factory_id,
+            partner_id: order.partner_id,
+            stmt_no: order.stmt_no,
+            reg_date: order.reg_date,
+            remark: order.remark,
+            created_uid: uid,
+            updated_uid: uid,
+          },
+          { hooks: true, transaction }
+        );
       });
-
-      const result = await this.repo.bulkCreate(order, { individualHooks: true, transaction });
-
-      return convertBulkResult(result);
+      const raws = await Promise.all(promises);
+      
+			return { raws, count: raws.length } as ApiResult<any>;
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
       throw error;
@@ -175,13 +178,11 @@ class MatOrderRepo {
   
   // 📒 Fn[update]: Default Update Function
   public update = async(body: IMatOrder[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let order of body) {
-        const result = await this.repo.update(
+      const promises = body.map((order: any) => {
+        return this.repo.update(
           {
             stmt_no: order.stmt_no != null ? order.stmt_no : null,
             remark: order.remark != null ? order.remark : null,
@@ -192,11 +193,10 @@ class MatOrderRepo {
             returning: true,
             individualHooks: true,
             transaction
-          },
+          }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.MatOrder.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -212,13 +212,11 @@ class MatOrderRepo {
   
   // 📒 Fn[patch]: Default Patch Function
   public patch = async(body: IMatOrder[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let order of body) {
-        const result = await this.repo.update(
+      const promises = body.map((order: any) => {
+        return this.repo.update(
           {
             stmt_no: order.stmt_no,
             reg_date: order.reg_date,
@@ -234,9 +232,8 @@ class MatOrderRepo {
             transaction
           }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.MatOrder.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -252,14 +249,13 @@ class MatOrderRepo {
   
   // 📒 Fn[delete]: Default Delete Function
   public delete = async(body: IMatOrder[], uid: number, transaction?: Transaction) => {
-    let count: number = 0;
-
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let order of body) {
-        count += await this.repo.destroy({ where: { uuid: order.uuid }, transaction});
-      };
+      const promises = body.map((order: any) => {
+        return this.repo.destroy({ where: { uuid: order.uuid }, transaction});
+      });
+      const count = _.sum(await Promise.all(promises));
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.MatOrder.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };

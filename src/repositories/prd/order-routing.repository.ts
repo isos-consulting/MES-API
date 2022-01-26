@@ -1,12 +1,13 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
 import { Sequelize } from 'sequelize-typescript';
-import convertBulkResult from '../../utils/convertBulkResult';
+import _ from 'lodash';
 import convertResult from '../../utils/convertResult';
 import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
+import ApiResult from '../../interfaces/common/api-result.interface';
 import PrdOrderRouting from '../../models/prd/order-routing.model';
 import IPrdOrderRouting from '../../interfaces/prd/order-routing.interface';
 
@@ -30,23 +31,25 @@ class PrdOrderRoutingRepo {
   // 📒 Fn[create]: Default Create Function
   public create = async(body: IPrdOrderRouting[], uid: number, transaction?: Transaction) => {
     try {
-      const orderRoutings = body.map((orderRouting) => {
-        return {
-          factory_id: orderRouting.factory_id,
-          order_id: orderRouting.order_id,
-          proc_id: orderRouting.proc_id,
-          proc_no: orderRouting.proc_no,
-          workings_id: orderRouting.workings_id,
-          equip_id: orderRouting.equip_id,
-          remark: orderRouting.remark,
-          created_uid: uid,
-          updated_uid: uid,
-        }
+      const promises = body.map((orderRouting: any) => {
+        return this.repo.create(
+          {
+            factory_id: orderRouting.factory_id,
+            order_id: orderRouting.order_id,
+            proc_id: orderRouting.proc_id,
+            proc_no: orderRouting.proc_no,
+            workings_id: orderRouting.workings_id,
+            equip_id: orderRouting.equip_id,
+            remark: orderRouting.remark,
+            created_uid: uid,
+            updated_uid: uid,
+          },
+          { hooks: true, transaction }
+        );
       });
-
-      const result = await this.repo.bulkCreate(orderRoutings, { individualHooks: true, transaction });
-
-      return convertBulkResult(result);
+      const raws = await Promise.all(promises);
+      
+			return { raws, count: raws.length } as ApiResult<any>;
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
       throw error;
@@ -184,17 +187,15 @@ class PrdOrderRoutingRepo {
   
   // 📒 Fn[update]: Default Update Function
   public update = async(body: IPrdOrderRouting[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let orderRouting of body) {
-        const result = await this.repo.update(
+      const promises = body.map((orderRouting: any) => {
+        return this.repo.update(
           {
-            workings_id: orderRouting.workings_id != null ? orderRouting.workings_id : null,
-            equip_id: orderRouting.equip_id != null ? orderRouting.equip_id : null,
-            remark: orderRouting.remark != null ? orderRouting.remark : null,
+            workings_id: orderRouting.workings_id ?? null,
+            equip_id: orderRouting.equip_id ?? null,
+            remark: orderRouting.remark ?? null,
             updated_uid: uid,
           } as any,
           { 
@@ -202,11 +203,10 @@ class PrdOrderRoutingRepo {
             returning: true,
             individualHooks: true,
             transaction
-          },
+          }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.PrdOrderRouting.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -222,13 +222,11 @@ class PrdOrderRoutingRepo {
   
   // 📒 Fn[patch]: Default Patch Function
   public patch = async(body: IPrdOrderRouting[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let orderRouting of body) {
-        const result = await this.repo.update(
+      const promises = body.map((orderRouting: any) => {
+        return this.repo.update(
           {
             workings_id: orderRouting.workings_id,
             equip_id: orderRouting.equip_id,
@@ -242,9 +240,8 @@ class PrdOrderRoutingRepo {
             transaction
           }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.PrdOrderRouting.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -260,14 +257,13 @@ class PrdOrderRoutingRepo {
   
   // 📒 Fn[delete]: Default Delete Function
   public delete = async(body: IPrdOrderRouting[], uid: number, transaction?: Transaction) => {
-    let count: number = 0;
-
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let orderRouting of body) {
-        count += await this.repo.destroy({ where: { uuid: orderRouting.uuid }, transaction});
-      };
+      const promises = body.map((orderRouting: any) => {
+        return this.repo.destroy({ where: { uuid: orderRouting.uuid }, transaction});
+      });
+      const count = _.sum(await Promise.all(promises));
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.PrdOrderRouting.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
@@ -278,11 +274,9 @@ class PrdOrderRoutingRepo {
 
   // 📒 Fn[deleteByOrderIds]: 지시 Id 기준 라우팅 리스트 삭제
   public deleteByOrderIds = async(orderIds: number[], uid: number, transaction?: Transaction) => {
-    let count: number = 0;
-
     try {
       const previousRaws = await this.repo.findAll({ where: { order_id: orderIds }});
-      count += await this.repo.destroy({ where: { order_id: orderIds }, transaction});
+      const count = await this.repo.destroy({ where: { order_id: orderIds }, transaction});
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.PrdOrderRouting.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };

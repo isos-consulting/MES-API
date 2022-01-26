@@ -2,13 +2,14 @@ import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repos
 import StdProd from '../../models/std/prod.model';
 import IStdProd from '../../interfaces/std/prod.interface';
 import { Sequelize } from 'sequelize-typescript';
-import convertBulkResult from '../../utils/convertBulkResult';
+import _ from 'lodash';
 import convertResult from '../../utils/convertResult';
 import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
+import ApiResult from '../../interfaces/common/api-result.interface';
 
 class StdProdRepo {
   repo: Repository<StdProd>;
@@ -30,52 +31,54 @@ class StdProdRepo {
   // 📒 Fn[create]: Default Create Function
   public create = async(body: IStdProd[], uid: number, transaction?: Transaction) => {
     try {
-      const prod = body.map((prod) => {
-        return {
-          prod_no: prod.prod_no,
-          prod_nm: prod.prod_nm,
-          item_type_id: prod.item_type_id,
-          prod_type_id: prod.prod_type_id,
-          model_id: prod.model_id,
-          unit_id: prod.unit_id,
-          rev: prod.rev,
-          prod_std: prod.prod_std,
-          lot_fg: prod.lot_fg,
-          use_fg: prod.use_fg,
-          active_fg: prod.active_fg,
-          bom_type_cd: prod.bom_type_cd,
-          width: prod.width,
-          length: prod.length,
-          height: prod.height,
-          material: prod.material,
-          color: prod.color,
-          weight: prod.weight,
-          thickness: prod.thickness,
-          mat_order_fg: prod.mat_order_fg,
-          mat_unit_id: prod.mat_unit_id,
-          mat_order_min_qty: prod.mat_order_min_qty,
-          mat_supply_days: prod.mat_supply_days,
-          sal_order_fg: prod.sal_order_fg,
-          inv_use_fg: prod.inv_use_fg,
-          inv_unit_qty: prod.inv_unit_qty,
-          inv_safe_qty: prod.inv_safe_qty,
-          inv_to_store_id: prod.inv_to_store_id,
-          inv_to_location_id: prod.inv_to_location_id,
-          qms_receive_insp_fg: prod.qms_receive_insp_fg,
-          qms_proc_insp_fg: prod.qms_proc_insp_fg,
-          qms_final_insp_fg: prod.qms_final_insp_fg,
-          prd_active_fg: prod.prd_active_fg,
-          prd_plan_type_cd: prod.prd_plan_type_cd,
-          prd_min: prod.prd_min,
-          prd_max: prod.prd_max,
-          created_uid: uid,
-          updated_uid: uid,
-        }
+      const promises = body.map((prod: any) => {
+        return this.repo.create(
+          {
+            prod_no: prod.prod_no,
+            prod_nm: prod.prod_nm,
+            item_type_id: prod.item_type_id,
+            prod_type_id: prod.prod_type_id,
+            model_id: prod.model_id,
+            unit_id: prod.unit_id,
+            rev: prod.rev,
+            prod_std: prod.prod_std,
+            lot_fg: prod.lot_fg,
+            use_fg: prod.use_fg,
+            active_fg: prod.active_fg,
+            bom_type_cd: prod.bom_type_cd,
+            width: prod.width,
+            length: prod.length,
+            height: prod.height,
+            material: prod.material,
+            color: prod.color,
+            weight: prod.weight,
+            thickness: prod.thickness,
+            mat_order_fg: prod.mat_order_fg,
+            mat_unit_id: prod.mat_unit_id,
+            mat_order_min_qty: prod.mat_order_min_qty,
+            mat_supply_days: prod.mat_supply_days,
+            sal_order_fg: prod.sal_order_fg,
+            inv_use_fg: prod.inv_use_fg,
+            inv_unit_qty: prod.inv_unit_qty,
+            inv_safe_qty: prod.inv_safe_qty,
+            inv_to_store_id: prod.inv_to_store_id,
+            inv_to_location_id: prod.inv_to_location_id,
+            qms_receive_insp_fg: prod.qms_receive_insp_fg,
+            qms_proc_insp_fg: prod.qms_proc_insp_fg,
+            qms_final_insp_fg: prod.qms_final_insp_fg,
+            prd_active_fg: prod.prd_active_fg,
+            prd_plan_type_cd: prod.prd_plan_type_cd,
+            prd_min: prod.prd_min,
+            prd_max: prod.prd_max,
+            created_uid: uid,
+            updated_uid: uid,
+          },
+          { hooks: true, transaction }
+        );
       });
-
-      const result = await this.repo.bulkCreate(prod, { individualHooks: true, transaction });
-
-      return convertBulkResult(result);
+      const raws = await Promise.all(promises);
+      
+			return { raws, count: raws.length } as ApiResult<any>;
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
       throw error;
@@ -304,50 +307,48 @@ class StdProdRepo {
   
   // 📒 Fn[update]: Default Update Function
   public update = async(body: IStdProd[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let prod of body) {
-        const result = await this.repo.update(
+      const promises = body.map((prod: any) => {
+        return this.repo.update(
           {
-            prod_no: prod.prod_no != null ? prod.prod_no : null,
-            prod_nm: prod.prod_nm != null ? prod.prod_nm : null,
-            item_type_id: prod.item_type_id != null ? prod.item_type_id : null,
-            prod_type_id: prod.prod_type_id != null ? prod.prod_type_id : null,
-            model_id: prod.model_id != null ? prod.model_id : null,
-            unit_id: prod.unit_id != null ? prod.unit_id : null,
-            rev: prod.rev != null ? prod.rev : null,
-            prod_std: prod.prod_std != null ? prod.prod_std : null,
-            lot_fg: prod.lot_fg != null ? prod.lot_fg : null,
-            use_fg: prod.use_fg != null ? prod.use_fg : null,
-            active_fg: prod.active_fg != null ? prod.active_fg : null,
-            bom_type_cd: prod.bom_type_cd != null ? prod.bom_type_cd : null,
-            width: prod.width != null ? prod.width : null,
-            length: prod.length != null ? prod.length : null,
-            height: prod.height != null ? prod.height : null,
-            material: prod.material != null ? prod.material : null,
-            color: prod.color != null ? prod.color : null,
-            weight: prod.weight != null ? prod.weight : null,
-            thickness: prod.thickness != null ? prod.thickness : null,
-            mat_order_fg: prod.mat_order_fg != null ? prod.mat_order_fg : null,
-            mat_unit_id: prod.mat_unit_id != null ? prod.mat_unit_id : null,
-            mat_order_min_qty: prod.mat_order_min_qty != null ? prod.mat_order_min_qty : null,
-            mat_supply_days: prod.mat_supply_days != null ? prod.mat_supply_days : null,
-            sal_order_fg: prod.sal_order_fg != null ? prod.sal_order_fg : null,
-            inv_use_fg: prod.inv_use_fg != null ? prod.inv_use_fg : null,
-            inv_unit_qty: prod.inv_unit_qty != null ? prod.inv_unit_qty : null,
-            inv_safe_qty: prod.inv_safe_qty != null ? prod.inv_safe_qty : null,
-            inv_to_store_id: prod.inv_to_store_id != null ? prod.inv_to_store_id : null,
-            inv_to_location_id: prod.inv_to_location_id != null ? prod.inv_to_location_id : null,
-            qms_receive_insp_fg: prod.qms_receive_insp_fg != null ? prod.qms_receive_insp_fg : null,
-            qms_proc_insp_fg: prod.qms_proc_insp_fg != null ? prod.qms_proc_insp_fg : null,
-            qms_final_insp_fg: prod.qms_final_insp_fg != null ? prod.qms_final_insp_fg : null,
-            prd_active_fg: prod.prd_active_fg != null ? prod.prd_active_fg : null,
-            prd_plan_type_cd: prod.prd_plan_type_cd != null ? prod.prd_plan_type_cd : null,
-            prd_min: prod.prd_min != null ? prod.prd_min : null,
-            prd_max: prod.prd_max != null ? prod.prd_max : null,
+            prod_no: prod.prod_no ?? null,
+            prod_nm: prod.prod_nm ?? null,
+            item_type_id: prod.item_type_id ?? null,
+            prod_type_id: prod.prod_type_id ?? null,
+            model_id: prod.model_id ?? null,
+            unit_id: prod.unit_id ?? null,
+            rev: prod.rev ?? null,
+            prod_std: prod.prod_std ?? null,
+            lot_fg: prod.lot_fg ?? null,
+            use_fg: prod.use_fg ?? null,
+            active_fg: prod.active_fg ?? null,
+            bom_type_cd: prod.bom_type_cd ?? null,
+            width: prod.width ?? null,
+            length: prod.length ?? null,
+            height: prod.height ?? null,
+            material: prod.material ?? null,
+            color: prod.color ?? null,
+            weight: prod.weight ?? null,
+            thickness: prod.thickness ?? null,
+            mat_order_fg: prod.mat_order_fg ?? null,
+            mat_unit_id: prod.mat_unit_id ?? null,
+            mat_order_min_qty: prod.mat_order_min_qty ?? null,
+            mat_supply_days: prod.mat_supply_days ?? null,
+            sal_order_fg: prod.sal_order_fg ?? null,
+            inv_use_fg: prod.inv_use_fg ?? null,
+            inv_unit_qty: prod.inv_unit_qty ?? null,
+            inv_safe_qty: prod.inv_safe_qty ?? null,
+            inv_to_store_id: prod.inv_to_store_id ?? null,
+            inv_to_location_id: prod.inv_to_location_id ?? null,
+            qms_receive_insp_fg: prod.qms_receive_insp_fg ?? null,
+            qms_proc_insp_fg: prod.qms_proc_insp_fg ?? null,
+            qms_final_insp_fg: prod.qms_final_insp_fg ?? null,
+            prd_active_fg: prod.prd_active_fg ?? null,
+            prd_plan_type_cd: prod.prd_plan_type_cd ?? null,
+            prd_min: prod.prd_min ?? null,
+            prd_max: prod.prd_max ?? null,
             updated_uid: uid,
           } as any,
           { 
@@ -355,11 +356,10 @@ class StdProdRepo {
             returning: true,
             individualHooks: true,
             transaction
-          },
+          }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdProd.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -375,13 +375,11 @@ class StdProdRepo {
   
   // 📒 Fn[patch]: Default Patch Function
   public patch = async(body: IStdProd[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let prod of body) {
-        const result = await this.repo.update(
+      const promises = body.map((prod: any) => {
+        return this.repo.update(
           {
             prod_no: prod.prod_no,
             prod_nm: prod.prod_nm,
@@ -428,9 +426,8 @@ class StdProdRepo {
             transaction
           }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdProd.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -446,14 +443,13 @@ class StdProdRepo {
   
   // 📒 Fn[delete]: Default Delete Function
   public delete = async(body: IStdProd[], uid: number, transaction?: Transaction) => {
-    let count: number = 0;
-
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let prod of body) {
-        count += await this.repo.destroy({ where: { uuid: prod.uuid }, transaction});
-      };
+      const promises = body.map((prod: any) => {
+        return this.repo.destroy({ where: { uuid: prod.uuid }, transaction});
+      });
+      const count = _.sum(await Promise.all(promises));
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.StdProd.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };

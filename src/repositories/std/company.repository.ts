@@ -1,7 +1,7 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
 import StdCompany from '../../models/std/company.model';
 import IStdCompany from '../../interfaces/std/company.interface';
-import convertBulkResult from '../../utils/convertBulkResult';
+import _ from 'lodash';
 import convertResult from '../../utils/convertResult';
 import { Sequelize } from 'sequelize-typescript';
 import { Op, Transaction, UniqueConstraintError } from 'sequelize';
@@ -9,6 +9,7 @@ import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
+import ApiResult from '../../interfaces/common/api-result.interface';
 
 class StdCompanyRepo {
   repo: Repository<StdCompany>;
@@ -30,24 +31,26 @@ class StdCompanyRepo {
   // 📒 Fn[create]: Default Create Function
   public create = async(body: IStdCompany[], uid: number, transaction?: Transaction) => {
     try {
-      const company = body.map((company) => {
-        return {
-          company_nm: company.company_nm,
-          company_no: company.company_no,
-          boss_nm: company.boss_nm,
-          tel: company.tel,
-          fax: company.fax,
-          post: company.post,
-          addr: company.addr,
-          addr_detail: company.addr_detail,
-          created_uid: uid,
-          updated_uid: uid,
-        }
+      const promises = body.map((company: any) => {
+        return this.repo.create(
+          {
+            company_nm: company.company_nm,
+            company_no: company.company_no,
+            boss_nm: company.boss_nm,
+            tel: company.tel,
+            fax: company.fax,
+            post: company.post,
+            addr: company.addr,
+            addr_detail: company.addr_detail,
+            created_uid: uid,
+            updated_uid: uid,
+          },
+          { hooks: true, transaction }
+        );
       });
-
-      const result = await this.repo.bulkCreate(company, { individualHooks: true, transaction });
-
-      return convertBulkResult(result);
+      const raws = await Promise.all(promises);
+      
+			return { raws, count: raws.length } as ApiResult<any>;
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
       throw error;
@@ -145,22 +148,20 @@ class StdCompanyRepo {
   
   // 📒 Fn[update]: Default Update Function
   public update = async(body: IStdCompany[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let company of body) {
-        const result = await this.repo.update(
+      const promises = body.map((company: any) => {
+        return this.repo.update(
           {
-            company_nm: company.company_nm != null ? company.company_nm : null,
-            company_no: company.company_no != null ? company.company_no : null,
-            boss_nm: company.boss_nm != null ? company.boss_nm : null,
-            tel: company.tel != null ? company.tel : null,
-            fax: company.fax != null ? company.fax : null,
-            post: company.post != null ? company.post : null,
-            addr: company.addr != null ? company.addr : null,
-            addr_detail: company.addr_detail != null ? company.addr_detail : null,
+            company_nm: company.company_nm ?? null,
+            company_no: company.company_no ?? null,
+            boss_nm: company.boss_nm ?? null,
+            tel: company.tel ?? null,
+            fax: company.fax ?? null,
+            post: company.post ?? null,
+            addr: company.addr ?? null,
+            addr_detail: company.addr_detail ?? null,
             updated_uid: uid,
           } as any,
           { 
@@ -168,11 +169,10 @@ class StdCompanyRepo {
             returning: true,
             individualHooks: true,
             transaction
-          },
+          }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdCompany.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -188,13 +188,11 @@ class StdCompanyRepo {
   
   // 📒 Fn[patch]: Default Patch Function
   public patch = async(body: IStdCompany[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let company of body) {
-        const result = await this.repo.update(
+      const promises = body.map((company: any) => {
+        return this.repo.update(
           {
             company_nm: company.company_nm,
             company_no: company.company_no,
@@ -213,9 +211,8 @@ class StdCompanyRepo {
             transaction
           }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdCompany.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -231,14 +228,13 @@ class StdCompanyRepo {
   
   // 📒 Fn[delete]: Default Delete Function
   public delete = async(body: IStdCompany[], uid: number, transaction?: Transaction) => {
-    let count: number = 0;
-
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let company of body) {
-        count += await this.repo.destroy({ where: { uuid: company.uuid }, transaction});
-      };
+      const promises = body.map((company: any) => {
+        return this.repo.destroy({ where: { uuid: company.uuid }, transaction});
+      });
+      const count = _.sum(await Promise.all(promises));
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.StdCompany.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };

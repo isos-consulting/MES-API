@@ -1,12 +1,13 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
 import { Sequelize } from 'sequelize-typescript';
-import convertBulkResult from '../../utils/convertBulkResult';
+import _ from 'lodash';
 import convertResult from '../../utils/convertResult';
 import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
+import ApiResult from '../../interfaces/common/api-result.interface';
 import PrdDemand from '../../models/prd/demand.model';
 import IPrdDemand from '../../interfaces/prd/demand.interface';
 import { readDemands } from '../../queries/prd/demand.query';
@@ -31,30 +32,32 @@ class PrdDemandRepo {
   // 📒 Fn[create]: Default Create Function
   public create = async(body: IPrdDemand[], uid: number, transaction?: Transaction) => {
     try {
-      const demand = body.map((demand) => {
-        return {
-          factory_id: demand.factory_id,
-          order_id: demand.order_id,
-          reg_date: demand.reg_date,
-          demand_type_cd: demand.demand_type_cd,
-          proc_id: demand.proc_id,
-          equip_id: demand.equip_id,
-          prod_id: demand.prod_id,
-          qty: demand.qty,
-          complete_fg: demand.complete_fg,
-          dept_id: demand.dept_id,
-          due_date: demand.due_date,
-          to_store_id: demand.to_store_id,
-          to_location_id: demand.to_location_id,
-          remark: demand.remark,
-          created_uid: uid,
-          updated_uid: uid,
-        }
+      const promises = body.map((demand: any) => {
+        return this.repo.create(
+          {
+            factory_id: demand.factory_id,
+            order_id: demand.order_id,
+            reg_date: demand.reg_date,
+            demand_type_cd: demand.demand_type_cd,
+            proc_id: demand.proc_id,
+            equip_id: demand.equip_id,
+            prod_id: demand.prod_id,
+            qty: demand.qty,
+            complete_fg: demand.complete_fg,
+            dept_id: demand.dept_id,
+            due_date: demand.due_date,
+            to_store_id: demand.to_store_id,
+            to_location_id: demand.to_location_id,
+            remark: demand.remark,
+            created_uid: uid,
+            updated_uid: uid,
+          },
+          { hooks: true, transaction }
+        );
       });
-
-      const result = await this.repo.bulkCreate(demand, { individualHooks: true, transaction });
-
-      return convertBulkResult(result);
+      const raws = await Promise.all(promises);
+      
+			return { raws, count: raws.length } as ApiResult<any>;
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
       throw error;
@@ -116,13 +119,11 @@ class PrdDemandRepo {
   
   // 📒 Fn[update]: Default Update Function
   public update = async(body: IPrdDemand[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let demand of body) {
-        const result = await this.repo.update(
+      const promises = body.map((demand: any) => {
+        return this.repo.update(
           {
             proc_id: demand.proc_id ?? null,
             equip_id: demand.equip_id ?? null,
@@ -139,11 +140,10 @@ class PrdDemandRepo {
             returning: true,
             individualHooks: true,
             transaction
-          },
+          }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.PrdDemand.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -155,13 +155,11 @@ class PrdDemandRepo {
 
   // 📒 Fn[updateComplete]: Update Complete(완료여부) Function
   public updateComplete = async(body: IPrdDemand[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let demand of body) {
-        const result = await this.repo.update(
+      const promises = body.map((demand: any) => {
+        return this.repo.update(
           {
             complete_fg: demand.complete_fg,
             updated_uid: uid,
@@ -173,9 +171,8 @@ class PrdDemandRepo {
             transaction
           }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.PrdDemand.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -191,13 +188,11 @@ class PrdDemandRepo {
   
   // 📒 Fn[patch]: Default Patch Function
   public patch = async(body: IPrdDemand[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let demand of body) {
-        const result = await this.repo.update(
+      const promises = body.map((demand: any) => {
+        return this.repo.update(
           {
             proc_id: demand.proc_id,
             equip_id: demand.equip_id,
@@ -216,9 +211,8 @@ class PrdDemandRepo {
             transaction
           }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.PrdDemand.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -234,14 +228,13 @@ class PrdDemandRepo {
   
   // 📒 Fn[delete]: Default Delete Function
   public delete = async(body: IPrdDemand[], uid: number, transaction?: Transaction) => {
-    let count: number = 0;
-
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let demand of body) {
-        count += await this.repo.destroy({ where: { uuid: demand.uuid }, transaction});
-      };
+      const promises = body.map((demand: any) => {
+        return this.repo.destroy({ where: { uuid: demand.uuid }, transaction});
+      });
+      const count = _.sum(await Promise.all(promises));
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.PrdDemand.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };

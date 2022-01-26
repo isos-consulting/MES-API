@@ -2,13 +2,14 @@ import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repos
 import AdmInspHandlingType from '../../models/adm/insp-handling-type.model';
 import IAdmInspHandlingType from '../../interfaces/adm/insp-handling-type.interface';
 import { Sequelize } from 'sequelize-typescript';
-import convertBulkResult from '../../utils/convertBulkResult';
+import _ from 'lodash';
 import convertResult from '../../utils/convertResult';
 import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
+import ApiResult from '../../interfaces/common/api-result.interface';
 
 class AdmInspHandlingTypeRepo {
   repo: Repository<AdmInspHandlingType>;
@@ -28,19 +29,21 @@ class AdmInspHandlingTypeRepo {
 	// 📒 Fn[create]: Default Create Function
 	public create = async(body: IAdmInspHandlingType[], uid: number, transaction?: Transaction) => {
 		try {
-			const inspHandlingType = body.map((inspHandlingType) => {
-				return {
-					insp_handling_type_cd: inspHandlingType.insp_handling_type_cd,
-					insp_handling_type_nm: inspHandlingType.insp_handling_type_nm,
-					sortby: inspHandlingType.sortby,
-					created_uid: uid,
-					updated_uid: uid,
-				}
-			});
-
-			const result = await this.repo.bulkCreate(inspHandlingType, { individualHooks: true, transaction });
-
-			return convertBulkResult(result);
+      const promises = body.map((inspHandlingType: any) => {
+        return this.repo.create(
+          {
+            insp_handling_type_cd: inspHandlingType.insp_handling_type_cd,
+            insp_handling_type_nm: inspHandlingType.insp_handling_type_nm,
+            sortby: inspHandlingType.sortby,
+            created_uid: uid,
+            updated_uid: uid,
+          },
+          { hooks: true, transaction }
+        );
+      });
+      const raws = await Promise.all(promises);
+      
+			return { raws, count: raws.length } as ApiResult<any>;
 		} catch (error) {
 			if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
 			throw error;
@@ -130,17 +133,15 @@ class AdmInspHandlingTypeRepo {
   
   // 📒 Fn[update]: Default Update Function
   public update = async(body: IAdmInspHandlingType[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let inspHandlingType of body) {
-        const result = await this.repo.update(
+      const promises = body.map((inspHandlingType: any) => {
+        return this.repo.update(
           {
-            insp_handling_type_cd: inspHandlingType.insp_handling_type_cd != null ? inspHandlingType.insp_handling_type_cd : null,
-						insp_handling_type_nm: inspHandlingType.insp_handling_type_nm != null ? inspHandlingType.insp_handling_type_nm : null,
-						sortby: inspHandlingType.sortby != null ? inspHandlingType.sortby : null,
+            insp_handling_type_cd: inspHandlingType.insp_handling_type_cd ?? null,
+						insp_handling_type_nm: inspHandlingType.insp_handling_type_nm ?? null,
+						sortby: inspHandlingType.sortby ?? null,
             updated_uid: uid,
           } as any,
           { 
@@ -148,11 +149,10 @@ class AdmInspHandlingTypeRepo {
             returning: true,
             individualHooks: true,
             transaction
-          },
+          }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.AdmInspHandlingType.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -168,13 +168,11 @@ class AdmInspHandlingTypeRepo {
   
   // 📒 Fn[patch]: Default Patch Function
   public patch = async(body: IAdmInspHandlingType[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let inspHandlingType of body) {
-        const result = await this.repo.update(
+      const promises = body.map((inspHandlingType: any) => {
+        return this.repo.update(
           {
 						insp_handling_type_cd: inspHandlingType.insp_handling_type_cd,
 						insp_handling_type_nm: inspHandlingType.insp_handling_type_nm,
@@ -188,9 +186,8 @@ class AdmInspHandlingTypeRepo {
             transaction
           }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.AdmInspHandlingType.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -206,14 +203,13 @@ class AdmInspHandlingTypeRepo {
   
   // 📒 Fn[delete]: Default Delete Function
   public delete = async(body: IAdmInspHandlingType[], uid: number, transaction?: Transaction) => {
-    let count: number = 0;
-
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let inspHandlingType of body) {
-        count += await this.repo.destroy({ where: { uuid: inspHandlingType.uuid }, transaction});
-      };
+      const promises = body.map((inspHandlingType: any) => {
+        return this.repo.destroy({ where: { uuid: inspHandlingType.uuid }, transaction});
+      });
+      const count = _.sum(await Promise.all(promises));
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.AdmInspHandlingType.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };

@@ -2,13 +2,14 @@ import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repos
 import StdPartnerType from '../../models/std/partner-type.model';
 import IStdPartnerType from '../../interfaces/std/partner-type.interface';
 import { Sequelize } from 'sequelize-typescript';
-import convertBulkResult from '../../utils/convertBulkResult';
+import _ from 'lodash';
 import convertResult from '../../utils/convertResult';
 import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
+import ApiResult from '../../interfaces/common/api-result.interface';
 
 class StdPartnerTypeRepo {
   repo: Repository<StdPartnerType>;
@@ -30,18 +31,20 @@ class StdPartnerTypeRepo {
   // 📒 Fn[create]: Default Create Function
   public create = async(body: IStdPartnerType[], uid: number, transaction?: Transaction) => {
     try {
-      const partnerType = body.map((partnerType) => {
-        return {
-          partner_type_cd: partnerType.partner_type_cd,
-          partner_type_nm: partnerType.partner_type_nm,
-          created_uid: uid,
-          updated_uid: uid,
-        }
+      const promises = body.map((partnerType: any) => {
+        return this.repo.create(
+          {
+            partner_type_cd: partnerType.partner_type_cd,
+            partner_type_nm: partnerType.partner_type_nm,
+            created_uid: uid,
+            updated_uid: uid,
+          },
+          { hooks: true, transaction }
+        );
       });
-
-      const result = await this.repo.bulkCreate(partnerType, { individualHooks: true, transaction });
-
-      return convertBulkResult(result);
+      const raws = await Promise.all(promises);
+      
+			return { raws, count: raws.length } as ApiResult<any>;
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
       throw error;
@@ -128,16 +131,14 @@ class StdPartnerTypeRepo {
   
   // 📒 Fn[update]: Default Update Function
   public update = async(body: IStdPartnerType[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let partnerType of body) {
-        const result = await this.repo.update(
+      const promises = body.map((partnerType: any) => {
+        return this.repo.update(
           {
-            partner_type_cd: partnerType.partner_type_cd != null ? partnerType.partner_type_cd : null,
-            partner_type_nm: partnerType.partner_type_nm != null ? partnerType.partner_type_nm : null,
+            partner_type_cd: partnerType.partner_type_cd ?? null,
+            partner_type_nm: partnerType.partner_type_nm ?? null,
             updated_uid: uid,
           } as any,
           { 
@@ -145,11 +146,10 @@ class StdPartnerTypeRepo {
             returning: true,
             individualHooks: true,
             transaction
-          },
+          }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdPartnerType.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -165,13 +165,11 @@ class StdPartnerTypeRepo {
   
   // 📒 Fn[patch]: Default Patch Function
   public patch = async(body: IStdPartnerType[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let partnerType of body) {
-        const result = await this.repo.update(
+      const promises = body.map((partnerType: any) => {
+        return this.repo.update(
           {
             partner_type_cd: partnerType.partner_type_cd,
             partner_type_nm: partnerType.partner_type_nm,
@@ -184,9 +182,8 @@ class StdPartnerTypeRepo {
             transaction
           }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdPartnerType.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -202,14 +199,13 @@ class StdPartnerTypeRepo {
   
   // 📒 Fn[delete]: Default Delete Function
   public delete = async(body: IStdPartnerType[], uid: number, transaction?: Transaction) => {
-    let count: number = 0;
-
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let partnerType of body) {
-        count += await this.repo.destroy({ where: { uuid: partnerType.uuid }, transaction});
-      };
+      const promises = body.map((partnerType: any) => {
+        return this.repo.destroy({ where: { uuid: partnerType.uuid }, transaction});
+      });
+      const count = _.sum(await Promise.all(promises));
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.StdPartnerType.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };

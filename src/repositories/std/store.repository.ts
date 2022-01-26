@@ -2,7 +2,7 @@ import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repos
 import StdStore from '../../models/std/store.model';
 import IStdStore from '../../interfaces/std/store.interface';
 import { Sequelize } from 'sequelize-typescript';
-import convertBulkResult from '../../utils/convertBulkResult';
+import _ from 'lodash';
 import convertResult from '../../utils/convertResult';
 import { Op, Transaction, WhereOptions } from 'sequelize';
 import { UniqueConstraintError } from 'sequelize';
@@ -10,6 +10,7 @@ import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
+import ApiResult from '../../interfaces/common/api-result.interface';
 
 class StdStoreRepo {
   repo: Repository<StdStore>;
@@ -31,26 +32,28 @@ class StdStoreRepo {
   // 📒 Fn[create]: Default Create Function
   public create = async(body: IStdStore[], uid: number, transaction?: Transaction) => {
     try {
-      const store = body.map((store) => {
-        return {
-          factory_id: store.factory_id,
-          store_cd: store.store_cd,
-          store_nm: store.store_nm,
-          reject_store_fg: store.reject_store_fg,
-          return_store_fg: store.return_store_fg,
-          outgo_store_fg: store.outgo_store_fg,
-          final_insp_store_fg: store.final_insp_store_fg,
-          outsourcing_store_fg: store.outsourcing_store_fg,
-          available_store_fg: store.available_store_fg,
-          position_type: store.position_type,
-          created_uid: uid,
-          updated_uid: uid,
-        }
+      const promises = body.map((store: any) => {
+        return this.repo.create(
+          {
+            factory_id: store.factory_id,
+            store_cd: store.store_cd,
+            store_nm: store.store_nm,
+            reject_store_fg: store.reject_store_fg,
+            return_store_fg: store.return_store_fg,
+            outgo_store_fg: store.outgo_store_fg,
+            final_insp_store_fg: store.final_insp_store_fg,
+            outsourcing_store_fg: store.outsourcing_store_fg,
+            available_store_fg: store.available_store_fg,
+            position_type: store.position_type,
+            created_uid: uid,
+            updated_uid: uid,
+          },
+          { hooks: true, transaction }
+        );
       });
-
-      const result = await this.repo.bulkCreate(store, { individualHooks: true, transaction });
-
-      return convertBulkResult(result);
+      const raws = await Promise.all(promises);
+      
+			return { raws, count: raws.length } as ApiResult<any>;
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
       throw error;
@@ -174,23 +177,21 @@ class StdStoreRepo {
   
   // 📒 Fn[update]: Default Update Function
   public update = async(body: IStdStore[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let store of body) {
-        const result = await this.repo.update(
+      const promises = body.map((store: any) => {
+        return this.repo.update(
           {
-            store_cd: store.store_cd != null ? store.store_cd : null,
-            store_nm: store.store_nm != null ? store.store_nm : null,
-            reject_store_fg: store.reject_store_fg != null ? store.reject_store_fg : null,
-            return_store_fg: store.return_store_fg != null ? store.return_store_fg : null,
-            outgo_store_fg: store.outgo_store_fg != null ? store.outgo_store_fg : null,
-            final_insp_store_fg: store.final_insp_store_fg != null ? store.final_insp_store_fg : null,
-            outsourcing_store_fg: store.outsourcing_store_fg != null ? store.outsourcing_store_fg : null,
-            available_store_fg: store.available_store_fg != null ? store.available_store_fg : null,
-            position_type: store.position_type != null ? store.position_type : null,
+            store_cd: store.store_cd ?? null,
+            store_nm: store.store_nm ?? null,
+            reject_store_fg: store.reject_store_fg ?? null,
+            return_store_fg: store.return_store_fg ?? null,
+            outgo_store_fg: store.outgo_store_fg ?? null,
+            final_insp_store_fg: store.final_insp_store_fg ?? null,
+            outsourcing_store_fg: store.outsourcing_store_fg ?? null,
+            available_store_fg: store.available_store_fg ?? null,
+            position_type: store.position_type ?? null,
             updated_uid: uid,
           } as any,
           { 
@@ -198,11 +199,10 @@ class StdStoreRepo {
             returning: true,
             individualHooks: true,
             transaction
-          },
+          }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdStore.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -218,13 +218,11 @@ class StdStoreRepo {
   
   // 📒 Fn[patch]: Default Patch Function
   public patch = async(body: IStdStore[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let store of body) {
-        const result = await this.repo.update(
+      const promises = body.map((store: any) => {
+        return this.repo.update(
           {
             store_cd: store.store_cd,
             store_nm: store.store_nm,
@@ -244,9 +242,8 @@ class StdStoreRepo {
             transaction
           }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdStore.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -262,14 +259,13 @@ class StdStoreRepo {
   
   // 📒 Fn[delete]: Default Delete Function
   public delete = async(body: IStdStore[], uid: number, transaction?: Transaction) => {
-    let count: number = 0;
-
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let store of body) {
-        count += await this.repo.destroy({ where: { uuid: store.uuid }, transaction});
-      };
+      const promises = body.map((store: any) => {
+        return this.repo.destroy({ where: { uuid: store.uuid }, transaction});
+      });
+      const count = _.sum(await Promise.all(promises));
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.StdStore.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };

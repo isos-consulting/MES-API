@@ -2,13 +2,14 @@ import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repos
 import StdPriceType from '../../models/std/price-type.model';
 import IStdPriceType from '../../interfaces/std/price-type.interface';
 import { Sequelize } from 'sequelize-typescript';
-import convertBulkResult from '../../utils/convertBulkResult';
+import _ from 'lodash';
 import convertResult from '../../utils/convertResult';
 import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
+import ApiResult from '../../interfaces/common/api-result.interface';
 
 class StdPriceTypeRepo {
   repo: Repository<StdPriceType>;
@@ -30,18 +31,20 @@ class StdPriceTypeRepo {
   // 📒 Fn[create]: Default Create Function
   public create = async(body: IStdPriceType[], uid: number, transaction?: Transaction) => {
     try {
-      const priceType = body.map((priceType) => {
-        return {
-          price_type_cd: priceType.price_type_cd,
-          price_type_nm: priceType.price_type_nm,
-          created_uid: uid,
-          updated_uid: uid,
-        }
+      const promises = body.map((priceType: any) => {
+        return this.repo.create(
+          {
+            price_type_cd: priceType.price_type_cd,
+            price_type_nm: priceType.price_type_nm,
+            created_uid: uid,
+            updated_uid: uid,
+          },
+          { hooks: true, transaction }
+        );
       });
-
-      const result = await this.repo.bulkCreate(priceType, { individualHooks: true, transaction });
-
-      return convertBulkResult(result);
+      const raws = await Promise.all(promises);
+      
+			return { raws, count: raws.length } as ApiResult<any>;
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
       throw error;
@@ -128,16 +131,14 @@ class StdPriceTypeRepo {
   
   // 📒 Fn[update]: Default Update Function
   public update = async(body: IStdPriceType[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let priceType of body) {
-        const result = await this.repo.update(
+      const promises = body.map((priceType: any) => {
+        return this.repo.update(
           {
-            price_type_cd: priceType.price_type_cd != null ? priceType.price_type_cd : null,
-            price_type_nm: priceType.price_type_nm != null ? priceType.price_type_nm : null,
+            price_type_cd: priceType.price_type_cd ?? null,
+            price_type_nm: priceType.price_type_nm ?? null,
             updated_uid: uid,
           } as any,
           { 
@@ -145,11 +146,10 @@ class StdPriceTypeRepo {
             returning: true,
             individualHooks: true,
             transaction
-          },
+          }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdPriceType.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -165,13 +165,11 @@ class StdPriceTypeRepo {
   
   // 📒 Fn[patch]: Default Patch Function
   public patch = async(body: IStdPriceType[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let priceType of body) {
-        const result = await this.repo.update(
+      const promises = body.map((priceType: any) => {
+        return this.repo.update(
           {
             price_type_cd: priceType.price_type_cd,
             price_type_nm: priceType.price_type_nm,
@@ -184,9 +182,8 @@ class StdPriceTypeRepo {
             transaction
           }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdPriceType.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -202,14 +199,13 @@ class StdPriceTypeRepo {
   
   // 📒 Fn[delete]: Default Delete Function
   public delete = async(body: IStdPriceType[], uid: number, transaction?: Transaction) => {
-    let count: number = 0;
-
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let priceType of body) {
-        count += await this.repo.destroy({ where: { uuid: priceType.uuid }, transaction});
-      };
+      const promises = body.map((priceType: any) => {
+        return this.repo.destroy({ where: { uuid: priceType.uuid }, transaction});
+      });
+      const count = _.sum(await Promise.all(promises));
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.StdPriceType.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };

@@ -35,7 +35,13 @@ class AdmLogRepo {
         });
       });
   
-      await this.repo.bulkCreate(logDatas, { transaction });
+      const promises = logDatas.map((logData: any) => {
+        return this.repo.create(
+          logData,
+          { hooks: true, transaction }
+        );
+      });
+      await Promise.all(promises);
     } catch (error) {
       throw new Error(`${_tableName} ${_type} Log 작성 중 Error 발생`);
     }

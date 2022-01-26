@@ -2,7 +2,7 @@ import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repos
 import AdmFileMgmt from '../../models/adm/file-mgmt.model';
 import IAdmFileMgmt from '../../interfaces/adm/file-mgmt.interface';
 import { Sequelize } from 'sequelize-typescript';
-import convertBulkResult from '../../utils/convertBulkResult';
+import _ from 'lodash';
 import convertResult from '../../utils/convertResult';
 import { Op, Transaction } from 'sequelize';
 import { UniqueConstraintError } from 'sequelize';
@@ -10,6 +10,7 @@ import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from './log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
+import ApiResult from '../../interfaces/common/api-result.interface';
 
 class AdmFileMgmtRepo {
   repo: Repository<AdmFileMgmt>;
@@ -31,24 +32,26 @@ class AdmFileMgmtRepo {
   // 📒 Fn[create]: Default Create Function
   public create = async(body: IAdmFileMgmt[], uid: number, transaction?: Transaction) => {
     try {
-      const fileMgmts = body.map((fileMgmt) => {
-        return {
-          file_mgmt_detail_type_id: fileMgmt.file_mgmt_detail_type_id,
-          reference_uuid: fileMgmt.reference_uuid,
-          file_nm: fileMgmt.file_nm,
-          file_extension: fileMgmt.file_extension,
-          file_size: fileMgmt.file_size,
-          ip: fileMgmt.ip,
-          remark: fileMgmt.remark,
-          uuid: fileMgmt.uuid,
-          created_uid: uid,
-          updated_uid: uid,
-        }
+      const promises = body.map((fileMgmt: any) => {
+        return this.repo.create(
+          {
+            file_mgmt_detail_type_id: fileMgmt.file_mgmt_detail_type_id,
+            reference_uuid: fileMgmt.reference_uuid,
+            file_nm: fileMgmt.file_nm,
+            file_extension: fileMgmt.file_extension,
+            file_size: fileMgmt.file_size,
+            ip: fileMgmt.ip,
+            remark: fileMgmt.remark,
+            uuid: fileMgmt.uuid,
+            created_uid: uid,
+            updated_uid: uid,
+          },
+          { hooks: true, transaction }
+        );
       });
-
-      const result = await this.repo.bulkCreate(fileMgmts, { individualHooks: true, transaction });
-
-      return convertBulkResult(result);
+      const raws = await Promise.all(promises);
+      
+			return { raws, count: raws.length } as ApiResult<any>;
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
       throw error;
@@ -180,13 +183,11 @@ class AdmFileMgmtRepo {
   
   // 📒 Fn[update]: Default Update Function
   public update = async(body: IAdmFileMgmt[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let fileMgmt of body) {
-        const result = await this.repo.update(
+      const promises = body.map((fileMgmt: any) => {
+        return this.repo.update(
           {
             file_nm: fileMgmt.file_nm ?? null,
             file_extension: fileMgmt.file_extension ?? null,
@@ -199,11 +200,10 @@ class AdmFileMgmtRepo {
             returning: true,
             individualHooks: true,
             transaction
-          },
+          }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.AdmFileMgmt.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -219,13 +219,11 @@ class AdmFileMgmtRepo {
   
   // 📒 Fn[patch]: Default Patch Function
   public patch = async(body: IAdmFileMgmt[], uid: number, transaction?: Transaction) => {
-    let raws: any[] = [];
-
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let fileMgmt of body) {
-        const result = await this.repo.update(
+      const promises = body.map((fileMgmt: any) => {
+        return this.repo.update(
           {
             file_nm: fileMgmt.file_nm,
             file_extension: fileMgmt.file_extension,
@@ -240,9 +238,8 @@ class AdmFileMgmtRepo {
             transaction
           }
         );
-
-        raws.push(result);
-      };
+      });
+      const raws = await Promise.all(promises);
 
       await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.AdmFileMgmt.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
@@ -258,14 +255,13 @@ class AdmFileMgmtRepo {
   
   // 📒 Fn[delete]: Default Delete Function
   public delete = async(body: IAdmFileMgmt[], uid: number, transaction?: Transaction) => {
-    let count: number = 0;
-
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      for await (let file_mgmt of body) {
-        count += await this.repo.destroy({ where: { uuid: file_mgmt.uuid }, transaction});
-      };
+      const promises = body.map((fileMgmt: any) => {
+        return this.repo.destroy({ where: { uuid: fileMgmt.uuid }, transaction});
+      });
+      const count = _.sum(await Promise.all(promises));
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.AdmFileMgmt.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
@@ -276,9 +272,8 @@ class AdmFileMgmtRepo {
 
   // 📒 Fn[deleteByReferenceUuids]: 파일관련 Table의 Row에 해당하는 File 데이터 삭제
   deleteByReferenceUuids = async(uuids: string[], uid: number, transaction?: Transaction) => {
-    let count: number = 0;
-
     try {      
+      let count: number = 0;
       let previousRaws: any[] = [];
 
       for await (let uuid of uuids) {
