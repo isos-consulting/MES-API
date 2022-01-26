@@ -1,6 +1,6 @@
 #!/bin/bash 
-id=$(/root/node_modules/.bin/pm2 id ${DEPLOYMENT_GROUP_NAME})
+id=$(/root/node_modules/.bin/pm2 id iso-server)
 if [ "$id" != "[]" ] 
 then
-  /root/node_modules/.bin/pm2 delete ${DEPLOYMENT_GROUP_NAME}
+  /root/node_modules/.bin/pm2 delete iso-server
 fi
