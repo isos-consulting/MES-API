@@ -3,8 +3,7 @@ import IAdmTransaction from '../../interfaces/adm/transaction.interface';
 import AutUser from '../aut/user.model';
 
 @Table({
-  // tableName: 'ADM_TRANSACTION_TB',
-  tableName: 'ADM_TRANSACTION_VW',
+  tableName: 'ADM_TRANSACTION_TB',
   modelName: 'AdmTransaction',
   comment: '수불 유형 정보 뷰',
   timestamps: true,

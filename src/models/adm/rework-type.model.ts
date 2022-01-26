@@ -3,8 +3,7 @@ import IAdmReworkType from '../../interfaces/adm/rework-type.interface';
 import AutUser from '../aut/user.model';
 
 @Table({
-  // tableName: 'ADM_REWORK_TYPE_TB',
-  tableName: 'ADM_REWORK_TYPE_VW',
+  tableName: 'ADM_REWORK_TYPE_TB',
   modelName: 'AdmReworkType',
   comment: '재작업 유형 정보 뷰',
   timestamps: true,

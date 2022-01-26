@@ -35,6 +35,18 @@ export default class AdmFileMgmtType extends Model<IAdmFileMgmtType> {
   })
   file_mgmt_type_nm: string;
 
+	@Column({
+		comment: '테이블명',
+		type: DataType.STRING(255)
+	})
+	table_nm: string;
+
+	@Column({
+		comment: '아이디명',
+		type: DataType.STRING(255)
+	})
+	id_nm: string;
+
   @Column({
     comment: '정렬',
     type: DataType.INTEGER,
