@@ -57,14 +57,6 @@ c_usage:
       type: number
       format: numeric(19, 6)
 
-unit_id:
-  type: object
-  properties:
-    unit_id:
-      description: 단위ID
-      type: number
-      format: int4
-
 from_store_id:
   type: object
   properties:
@@ -135,14 +127,6 @@ model_uuid:
   properties:
     model_uuid:
       description: 모델UUID
-      type: string
-      format: uuid
-
-unit_uuid:
-  type: object
-  properties:
-    unit_uuid:
-      description: 단위UUID
       type: string
       format: uuid
 

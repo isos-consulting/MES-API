@@ -8,7 +8,7 @@ import AdmPrdPlanTypeCtl from '../controllers/adm/prd-plan-type.controller';
 import AdmInspDetailTypeCtl from '../controllers/adm/insp-detail-type.controller';
 import AdmReworkTypeCtl from '../controllers/adm/rework-type.controller';
 import AdmStoreTypeCtl from '../controllers/adm/store-type.controller';
-import AdmTransactionCtl from '../controllers/adm/transaction.controller';
+import AdmTransactionCtl from '../controllers/adm/tran-type.controller';
 import AdmFileMgmtCtl from '../controllers/adm/file-mgmt.controller';
 import AdmFileMgmtTypeCtl from '../controllers/adm/file-mgmt-type.controller';
 import AdmInspHandlingTypeCtl from '../controllers/adm/insp-handling-type.controller';
@@ -22,6 +22,7 @@ import admFileMgmtTypeValidation from '../validations/adm/file-mgmt-type.validat
 import admFileMgmtDetailTypeValidation from '../validations/adm/file-mgmt-detail-type.validation';
 import AdmFileMgmtDetailTypeCtl from '../controllers/adm/file-mgmt-detail-type.controller';
 import admFileMgmtValidation from '../validations/adm/file-mgmt.validation';
+import admTranTypeValidation from '../validations/adm/tran-type.validation';
 
 const router = express.Router();
 
@@ -75,14 +76,14 @@ router.route('/insp-detail-types').patch(admInspDetailTypeValidation.patch, vali
 router.route('/insp-detail-types').delete(admInspDetailTypeValidation.delete, validationCallback, inspDetailType.delete);
 //#endregion
 
-//#region ✅ Transaction (수불 유형)
-const transaction = new AdmTransactionCtl();
-router.route('/transaction/:uuid').get(transaction.read);
-router.route('/transactions').get(transaction.read);
-router.route('/transactions').post(transaction.create);
-router.route('/transactions').put(transaction.update);
-router.route('/transactions').patch(transaction.patch);
-router.route('/transactions').delete(transaction.delete);
+//#region ✅ TranType (수불 유형)
+const tranType = new AdmTransactionCtl();
+router.route('/tran-type/:uuid').get(admTranTypeValidation.readByUuid, validationCallback, tranType.readByUuid);
+router.route('/tran-types').get(admTranTypeValidation.read, validationCallback, tranType.read);
+router.route('/tran-types').post(admTranTypeValidation.create, validationCallback, tranType.create);
+router.route('/tran-types').put(admTranTypeValidation.update, validationCallback, tranType.update);
+router.route('/tran-types').patch(admTranTypeValidation.patch, validationCallback, tranType.patch);
+router.route('/tran-types').delete(admTranTypeValidation.delete, validationCallback, tranType.delete);
 //#endregion
 
 //#region ✅ DemandType (요청 유형)

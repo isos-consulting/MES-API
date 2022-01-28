@@ -125,7 +125,6 @@ post:
                   - to_store_uuid
                 type: object
                 allOf:        
-                  - $ref: ../../schemas/out/receive-detail.schema.yaml#/receive_uuid
                   - $ref: ../../schemas/out/receive-detail.schema.yaml#/factory_uuid
                   - $ref: ../../schemas/out/receive-detail.schema.yaml#/prod_uuid
                   - $ref: ../../schemas/out/receive-detail.schema.yaml#/unit_uuid

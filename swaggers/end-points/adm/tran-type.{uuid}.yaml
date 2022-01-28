@@ -3,7 +3,7 @@ get:
     하나의 수불유형 데이터를 조회합니다.
   summary: 수불유형 데이터 단일 조회
   tags:
-    - 수불유형(Transaction)
+    - 수불유형(TranType)
   parameters:
     - name: uuid
       in: path
@@ -41,11 +41,11 @@ get:
                         type: array
                         items:
                           allOf:
-                            - $ref: ../../schemas/adm/transaction.schema.yaml#/uuid
-                            - $ref: ../../schemas/adm/transaction.schema.yaml#/tran_cd
-                            - $ref: ../../schemas/adm/transaction.schema.yaml#/tran_nm
-                            - $ref: ../../schemas/adm/transaction.schema.yaml#/remark
-                            - $ref: ../../schemas/adm/transaction.schema.yaml#/sortby
+                            - $ref: ../../schemas/adm/tran-type.schema.yaml#/tran_type_uuid
+                            - $ref: ../../schemas/adm/tran-type.schema.yaml#/tran_type_cd
+                            - $ref: ../../schemas/adm/tran-type.schema.yaml#/tran_type_nm
+                            - $ref: ../../schemas/adm/tran-type.schema.yaml#/remark
+                            - $ref: ../../schemas/adm/tran-type.schema.yaml#/sortby
                             - $ref: ../../schemas/common/timestamp.schema.yaml
     500:
       $ref: ../../responses/common/general-error.response.yaml

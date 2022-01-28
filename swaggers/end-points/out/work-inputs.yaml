@@ -56,7 +56,7 @@ get:
                             - $ref: ../../schemas/out/work-input.schema.yaml#/lot_no
                             - $ref: ../../schemas/out/work-input.schema.yaml#/qty
                             - $ref: ../../schemas/out/work-input.schema.yaml#/c_usage
-                            - $ref: ../../schemas/out/work-input.schema.yaml#/unit_uuid
+                            - $ref: ../../schemas/std/prod.schema.yaml#/unit_uuid
                             - $ref: ../../schemas/out/work-input.schema.yaml#/unit_cd
                             - $ref: ../../schemas/out/work-input.schema.yaml#/unit_nm
                             - $ref: ../../schemas/out/work-input.schema.yaml#/from_store_uuid
@@ -86,7 +86,6 @@ post:
             - lot_no
             - qty
             - c_usage
-            - unit_id
             - from_store_id
           allOf:
             - $ref: ../../schemas/out/work-input.schema.yaml#/factory_id
@@ -95,7 +94,6 @@ post:
             - $ref: ../../schemas/out/work-input.schema.yaml#/lot_no
             - $ref: ../../schemas/out/work-input.schema.yaml#/qty
             - $ref: ../../schemas/out/work-input.schema.yaml#/c_usage
-            - $ref: ../../schemas/out/work-input.schema.yaml#/unit_id
             - $ref: ../../schemas/out/work-input.schema.yaml#/from_store_id
             - $ref: ../../schemas/out/work-input.schema.yaml#/from_location_id
   responses:
@@ -122,7 +120,6 @@ put:
             - lot_no
             - qty
             - c_usage
-            - unit_id
             - from_store_id
           allOf:
             - $ref: ../../schemas/out/work-input.schema.yaml#/work_input_uuid
@@ -132,7 +129,6 @@ put:
             - $ref: ../../schemas/out/work-input.schema.yaml#/lot_no
             - $ref: ../../schemas/out/work-input.schema.yaml#/qty
             - $ref: ../../schemas/out/work-input.schema.yaml#/c_usage
-            - $ref: ../../schemas/out/work-input.schema.yaml#/unit_id
             - $ref: ../../schemas/out/work-input.schema.yaml#/from_store_id
             - $ref: ../../schemas/out/work-input.schema.yaml#/from_location_id
   responses:
@@ -159,7 +155,6 @@ patch:
             - lot_no
             - qty
             - c_usage
-            - unit_id
             - from_store_id
           allOf:
             - $ref: ../../schemas/out/work-input.schema.yaml#/work_input_uuid
@@ -169,7 +164,6 @@ patch:
             - $ref: ../../schemas/out/work-input.schema.yaml#/lot_no
             - $ref: ../../schemas/out/work-input.schema.yaml#/qty
             - $ref: ../../schemas/out/work-input.schema.yaml#/c_usage
-            - $ref: ../../schemas/out/work-input.schema.yaml#/unit_id
             - $ref: ../../schemas/out/work-input.schema.yaml#/from_store_id
             - $ref: ../../schemas/out/work-input.schema.yaml#/from_location_id
   responses:

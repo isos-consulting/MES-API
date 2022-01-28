@@ -1,21 +1,21 @@
 import { Transaction } from "sequelize/types";
-import StdEmpRepo from "../../repositories/std/emp.repository";
-import StdEquipTypeRepo from '../../repositories/std/equip-type.repository';
-import StdEquipRepo from '../../repositories/std/equip.repository';
+import StdStoreRepo from '../../repositories/std/store.repository';
 import StdFactoryRepo from "../../repositories/std/factory.repository";
-import StdWorkingsRepo from "../../repositories/std/workings.repository";
+import { errorState } from "../../states/common.state";
+import TStoreType from "../../types/store-type.type";
+import createApiError from "../../utils/createApiError";
 import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
 
-class StdEquipService {
+class StdStoreService {
   tenant: string;
   stateTag: string;
-  repo: StdEquipRepo;
+  repo: StdStoreRepo;
   fkIdInfos: getFkIdInfo[];
 
   constructor(tenant: string) {
     this.tenant = tenant;
-    this.stateTag = 'stdEquip';
-    this.repo = new StdEquipRepo(tenant);
+    this.stateTag = 'stdStore';
+    this.repo = new StdStoreRepo(tenant);
 
     this.fkIdInfos = [
       {
@@ -24,32 +24,6 @@ class StdEquipService {
         idName: 'factory_id',
         uuidName: 'factory_uuid'
       },
-			{
-        key: 'equipType',
-        TRepo: StdEquipTypeRepo,
-        idName: 'equip_type_id',
-        uuidName: 'equip_type_uuid'
-      },
-			{
-        key: 'workings',
-        TRepo: StdWorkingsRepo,
-        idName: 'workings_id',
-        uuidName: 'workings_uuid'
-      },
-      {
-        key: 'managerEmp',
-        TRepo: StdEmpRepo,
-        idName: 'emp_id',
-        idAlias: 'manager_emp_id',
-        uuidName: 'manager_emp_uuid'
-      },
-      {
-        key: 'subManagerEmp',
-        TRepo: StdEmpRepo,
-        idName: 'emp_id',
-        idAlias: 'sub_manager_emp_id',
-        uuidName: 'sub_manager_emp_uuid'
-      }
     ];
   }
 
@@ -87,6 +61,37 @@ class StdEquipService {
     try { return await this.repo.delete(datas, uid, tran); }
 		catch (error) { throw error; }
   }
+
+  /**
+   * 입력한 창고가 해당 창고유형에 속하는지 검증
+   * @param storeId 창고ID
+   * @param storeType 창고유형
+   * @param tran DB Transaction
+   * @returns 
+   */
+  public validateStoreType = async (storeId: number, storeType: TStoreType, tran?: Transaction) => {
+    try { 
+      const read = await this.repo.readRawById(storeId, tran);
+      if (read.count === 0) {
+        throw createApiError(
+          400, 
+          `일치하는 창고유형이 없습니다. [창고유형: ${storeType}]`, 
+          this.stateTag, 
+          errorState.NO_DATA
+        );
+      }
+      
+      switch (storeType) {
+        case 'AVAILABLE': return read.raws[0].available_store_fg;
+        case 'RETURN': return read.raws[0].return_store_fg;
+        case 'REJECT': return read.raws[0].reject_store_fg;
+        case 'FINAL_INSP': return read.raws[0].final_insp_store_fg;
+        case 'OUTGO': return read.raws[0].outgo_store_fg;
+        case 'OUTSOURCING': return read.raws[0].outsourcing_store_fg;
+      }
+    } 
+		catch (error) { throw error; }
+  }
 }
 
-export default StdEquipService;
+export default StdStoreService;

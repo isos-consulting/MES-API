@@ -156,6 +156,12 @@ class StdStoreRepo {
     return convertReadResult(result);
   };
 
+  // 📒 Fn[readRawById]: Id 를 포함한 Raw Data Read Function
+  public readRawById = async(id: number, tran?: Transaction) => {
+    const result = await this.repo.findOne({ where: { store_id: id }, transaction: tran });
+    return convertReadResult(result);
+  };
+
   // 📒 Fn[readRawByUnique]: Unique Key를 통하여 Raw Data Read Function
   public readRawByUnique = async(
     params: { factory_id: number, store_cd: string }
@@ -168,6 +174,12 @@ class StdStoreRepo {
         ]
       }
     });
+    return convertReadResult(result);
+  };
+
+  // 📒 Fn[readRawAll]: Raw Data 전체 Read Function
+  public readRawAll = async(tran?: Transaction) => {
+    const result = await this.repo.findOne({ transaction: tran });
     return convertReadResult(result);
   };
 
