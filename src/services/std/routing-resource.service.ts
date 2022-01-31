@@ -16,7 +16,7 @@ class StdRoutingResourceService {
 
   constructor(tenant: string) {
     this.tenant = tenant;
-    this.stateTag = 'eqmInsp';
+    this.stateTag = 'stdRoutingResource';
     this.repo = new StdRoutingResourceRepo(tenant);
 
     this.fkIdInfos = [

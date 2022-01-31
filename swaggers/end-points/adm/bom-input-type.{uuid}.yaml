@@ -1,13 +1,13 @@
 get:
   description: |
-    하나의 수불유형 데이터를 조회합니다.
-  summary: 수불유형 데이터 단일 조회
+    하나의 BOM 투입유형 데이터를 조회합니다.
+  summary: BOM 투입유형 데이터 단일 조회
   tags:
-    - 수불유형(Transaction)
+    - BOM 투입유형(BomInputType)
   parameters:
     - name: uuid
       in: path
-      description: 수불유형의 UUID 를 입력합니다.
+      description: BOM 투입유형의 UUID 를 입력합니다.
       required: true
       schema:
         type: string
@@ -37,15 +37,14 @@ get:
                             format: int32
                             minimum: 0
                       raws:
-                        description: 수불유형 데이터 목록
+                        description: BOM 투입유형 데이터 목록
                         type: array
                         items:
                           allOf:
-                            - $ref: ../../schemas/adm/transaction.schema.yaml#/uuid
-                            - $ref: ../../schemas/adm/transaction.schema.yaml#/tran_cd
-                            - $ref: ../../schemas/adm/transaction.schema.yaml#/tran_nm
-                            - $ref: ../../schemas/adm/transaction.schema.yaml#/remark
-                            - $ref: ../../schemas/adm/transaction.schema.yaml#/sortby
+                            - $ref: ../../schemas/adm/bom-input-type.schema.yaml#/bom_input_type_uuid
+                            - $ref: ../../schemas/adm/bom-input-type.schema.yaml#/bom_input_type_cd
+                            - $ref: ../../schemas/adm/bom-input-type.schema.yaml#/bom_input_type_nm
+                            - $ref: ../../schemas/adm/bom-input-type.schema.yaml#/sortby
                             - $ref: ../../schemas/common/timestamp.schema.yaml
     500:
       $ref: ../../responses/common/general-error.response.yaml

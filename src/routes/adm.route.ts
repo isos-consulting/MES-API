@@ -8,7 +8,7 @@ import AdmPrdPlanTypeCtl from '../controllers/adm/prd-plan-type.controller';
 import AdmInspDetailTypeCtl from '../controllers/adm/insp-detail-type.controller';
 import AdmReworkTypeCtl from '../controllers/adm/rework-type.controller';
 import AdmStoreTypeCtl from '../controllers/adm/store-type.controller';
-import AdmTransactionCtl from '../controllers/adm/transaction.controller';
+import AdmTransactionCtl from '../controllers/adm/tran-type.controller';
 import AdmFileMgmtCtl from '../controllers/adm/file-mgmt.controller';
 import AdmFileMgmtTypeCtl from '../controllers/adm/file-mgmt-type.controller';
 import AdmInspHandlingTypeCtl from '../controllers/adm/insp-handling-type.controller';
@@ -22,6 +22,9 @@ import admFileMgmtTypeValidation from '../validations/adm/file-mgmt-type.validat
 import admFileMgmtDetailTypeValidation from '../validations/adm/file-mgmt-detail-type.validation';
 import AdmFileMgmtDetailTypeCtl from '../controllers/adm/file-mgmt-detail-type.controller';
 import admFileMgmtValidation from '../validations/adm/file-mgmt.validation';
+import admTranTypeValidation from '../validations/adm/tran-type.validation';
+import AdmBomInputTypeCtl from '../controllers/adm/bom-input-type.controller';
+import admBomInputTypeValidation from '../validations/adm/bom-input-type.validation';
 
 const router = express.Router();
 
@@ -33,6 +36,16 @@ router.route('/bom-types').post(bomType.create);
 router.route('/bom-types').put(bomType.update);
 router.route('/bom-types').patch(bomType.patch);
 router.route('/bom-types').delete(bomType.delete);
+//#endregion
+
+//#region ✅ BomType (BOM 투입 유형)
+const bomInputType = new AdmBomInputTypeCtl();
+router.route('/bom-input-type/:uuid').get(admBomInputTypeValidation.readByUuid, validationCallback, bomInputType.readByUuid);
+router.route('/bom-input-types').get(admBomInputTypeValidation.read, validationCallback, bomInputType.read);
+router.route('/bom-input-types').post(admBomInputTypeValidation.create, validationCallback, bomInputType.create);
+router.route('/bom-input-types').put(admBomInputTypeValidation.update, validationCallback, bomInputType.update);
+router.route('/bom-input-types').patch(admBomInputTypeValidation.patch, validationCallback, bomInputType.patch);
+router.route('/bom-input-types').delete(admBomInputTypeValidation.delete, validationCallback, bomInputType.delete);
 //#endregion
 
 //#region ✅ InspType (검사 유형)
@@ -75,14 +88,14 @@ router.route('/insp-detail-types').patch(admInspDetailTypeValidation.patch, vali
 router.route('/insp-detail-types').delete(admInspDetailTypeValidation.delete, validationCallback, inspDetailType.delete);
 //#endregion
 
-//#region ✅ Transaction (수불 유형)
-const transaction = new AdmTransactionCtl();
-router.route('/transaction/:uuid').get(transaction.read);
-router.route('/transactions').get(transaction.read);
-router.route('/transactions').post(transaction.create);
-router.route('/transactions').put(transaction.update);
-router.route('/transactions').patch(transaction.patch);
-router.route('/transactions').delete(transaction.delete);
+//#region ✅ TranType (수불 유형)
+const tranType = new AdmTransactionCtl();
+router.route('/tran-type/:uuid').get(admTranTypeValidation.readByUuid, validationCallback, tranType.readByUuid);
+router.route('/tran-types').get(admTranTypeValidation.read, validationCallback, tranType.read);
+router.route('/tran-types').post(admTranTypeValidation.create, validationCallback, tranType.create);
+router.route('/tran-types').put(admTranTypeValidation.update, validationCallback, tranType.update);
+router.route('/tran-types').patch(admTranTypeValidation.patch, validationCallback, tranType.patch);
+router.route('/tran-types').delete(admTranTypeValidation.delete, validationCallback, tranType.delete);
 //#endregion
 
 //#region ✅ DemandType (요청 유형)

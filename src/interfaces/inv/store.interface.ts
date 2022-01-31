@@ -1,7 +1,7 @@
 export default interface IInvStore {
   tran_id?: number,
   inout_fg?: boolean,
-  tran_cd?: string,
+  tran_type_id?: number,
   reg_date?: string,
   factory_id?: number,
   store_id?: number,
@@ -18,5 +18,4 @@ export default interface IInvStore {
   updated_uid?: number,
   uuid?: string,
   tenant_uuid?: string
-	
 }

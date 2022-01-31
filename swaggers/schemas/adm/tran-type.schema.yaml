@@ -1,37 +1,29 @@
-# ADM_COMPANY_OPT_TB
+# ADM_TRAN_TYPE_TB
 
 # Columns
-tran_id:
+tran_type_id:
   type: object
   properties:
-    tran_id:
+    tran_type_id:
       description: 수불유형ID
       type: number
       format: int4
 
-tran_cd:
+tran_type_cd:
   type: object
   properties:
-    tran_cd:
+    tran_type_cd:
       description: 수불유형코드
       type: string
-      format: varchar(20)
+      format: varchar(50)
 
-tran_nm:
+tran_type_nm:
   type: object
   properties:
-    tran_nm:
+    tran_type_nm:
       description: 수불유형명
       type: string1
       format: varchar(50)
-
-remark:
-  type: object
-  properties:
-    remark:
-      description: 비고
-      type: string
-      format: varchar(255)
 
 sortby:
   type: object
@@ -41,6 +33,14 @@ sortby:
       type: number
       format: int4
 
+remark:
+  type: object
+  properties:
+    remark:
+      description: 비고
+      type: string
+      format: varchar(250)
+
 uuid:
   type: object
   properties:
@@ -48,5 +48,12 @@ uuid:
       description: 수불유형UUID
       type: string
       format: uuid
-# Uuids
 
+# Uuids
+tran_type_uuid:
+  type: object
+  properties:
+    tran_type_uuid:
+      description: 수불유형UUID
+      type: string
+      format: uuid

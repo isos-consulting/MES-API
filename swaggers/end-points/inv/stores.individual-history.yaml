@@ -101,7 +101,7 @@ get:
                             - $ref: ../../schemas/std/location.schema.yaml#/location_cd
                             - $ref: ../../schemas/std/location.schema.yaml#/location_nm
                             - $ref: ../../schemas/inv/store.schema.yaml#/tran_cd
-                            - $ref: ../../schemas/adm/transaction.schema.yaml#/tran_nm
+                            - $ref: ../../schemas/adm/tran-type.schema.yaml#/tran_type_nm
                             - $ref: ../../schemas/inv/store.schema.yaml#/basic_stock
                             - $ref: ../../schemas/inv/store.schema.yaml#/in_qty
                             - $ref: ../../schemas/inv/store.schema.yaml#/out_qty

@@ -44,7 +44,7 @@ class InvStoreRepo {
             factory_id: store.factory_id,
             tran_id: store.tran_id,
             inout_fg: store.inout_fg,
-            tran_cd: store.tran_cd,
+            tran_type_id: store.tran_type_id,
             reg_date: store.reg_date,
             store_id: store.store_id,
             location_id: store.location_id,
@@ -245,6 +245,44 @@ class InvStoreRepo {
     }
   };
 
+  // 📒 Fn[readStocks]: 매개변수에 따른 재고수량 조회
+  public readStocks = async(params?: any) => {
+    try {
+      const result = await this.repo.findAll({ 
+        attributes: [
+          [ Sequelize.literal('SUM(invStore.qty * invStore.inout_fg:: int'), 'qty' ],
+          'factory_id',
+          'prod_id',
+          'store_id',
+          'location_id',
+          'lot_no',
+          'reject_id',
+          'partner_id'
+        ],
+        where: { 
+          [Op.and]: [
+            params.factory_id ? { factory_id: params.factory_id } : {},
+            params.prod_id ? { prod_id: params.prod_id } : {},
+            params.store_id ? { store_id: params.store_id } : {},
+            params.location_id ? { location_id: params.location_id } : {},
+            params.lot_no ? { lot_no: params.lot_no } : {},
+            params.reject_id ? { reject_id: params.reject_id } : {},
+            params.partner_id ? { partner_id: params.partner_id } : {},
+            params.exclude_zero_lot_fg ? { lot_no: { [Op.ne]: '0'} } : {},
+            Sequelize.where(Sequelize.fn('date', Sequelize.col('invStore.reg_date')), '<=', params.reg_date),
+          ]
+        },
+        group: [ 'factory_id', 'prod_id', 'store_id', 'location_id', 'lot_no', 'reject_id', 'partner_id' ],
+        having: Sequelize.where(Sequelize.literal('SUM(invStore.qty * invStore.inout_fg:: int'), '>', '0'),
+        order: [ 'reg_date' ],
+      });
+
+      return convertReadResult(result);
+    } catch (error) {
+      throw error;
+    }
+  };
+
   // 📒 Fn[readRawsByUuids]: Id 를 포함한 Raw Datas Read Function
   public readRawsByUuids = async(uuids: string[]) => {
     const result = await this.repo.findAll({ where: { uuid: { [Op.in]: uuids } } });
@@ -367,7 +405,7 @@ class InvStoreRepo {
           where: {
             tran_id: store.tran_id,
             inout_fg: store.inout_fg,
-            tran_cd: store.tran_cd
+            tran_type_id: store.tran_type_id
           }
         });
 
@@ -381,7 +419,7 @@ class InvStoreRepo {
             where: { 
               tran_id: store.tran_id,
               inout_fg: store.inout_fg,
-              tran_cd: store.tran_cd
+              tran_type_id: store.tran_type_id
             },
             returning: true,
             individualHooks: true,
@@ -470,7 +508,7 @@ class InvStoreRepo {
           where: {
             tran_id: store.tran_id,
             inout_fg: store.inout_fg,
-            tran_cd: store.tran_cd
+            tran_type_id: store.tran_type_id
           }
         });
 
@@ -478,7 +516,7 @@ class InvStoreRepo {
           where: { 
             tran_id: store.tran_id,
             inout_fg: store.inout_fg,
-            tran_cd: store.tran_cd
+            tran_type_id: store.tran_type_id
           }, 
           transaction
         });
@@ -593,17 +631,17 @@ class InvStoreRepo {
   // 📒 Fn[getMaxTranId]: 재고 실사 진행 시 tran_id Max 값 발급 받아 +1 하여 사용
   /**
    * 재고 실사 진행 시 tran_id Max 값 발급 받아 +1 하여 사용
-   * @param tranCd Max tran_id 를 생성 할 transaction type code 입력
+   * @param tranTypeId Max tran_id 를 생성 할 transaction type code 입력
    * @param transaction Transaction
    * @returns Max(tran_id)
    */
-  getMaxTranId = async(tranCd: string, transaction?: Transaction) => {
+  getMaxTranId = async(tranTypeId: number, transaction?: Transaction) => {
     try {
       const result = await this.repo.findOne({ 
         attributes: [
           [ Sequelize.fn('max', Sequelize.col('tran_id')), 'tran_id' ],
         ],
-        where: { tran_cd: tranCd },
+        where: { tran_type_id: tranTypeId },
         group: [ 'tran_cd' ],
         transaction
       });

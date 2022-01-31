@@ -1,18 +1,17 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
-import AdmTransaction from '../../models/adm/transaction.model';
-import IAdmTransaction from '../../interfaces/adm/transaction.interface';
+import AdmTranType from '../../models/adm/tran-type.model';
+import IAdmTranType from '../../interfaces/adm/tran-type.interface';
 import { Sequelize } from 'sequelize-typescript';
+import convertBulkResult from '../../utils/convertBulkResult';
 import convertResult from '../../utils/convertResult';
 import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
-import AdmLogRepo from '../adm/log.repository';
+import AdmLogRepo from './log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
-import ApiResult from '../../interfaces/common/api-result.interface';
-import _ from 'lodash';
 
-class AdmTransactionRepo {
-  repo: Repository<AdmTransaction>;
+class AdmTranTypeRepo {
+  repo: Repository<AdmTranType>;
   sequelize: Sequelize;
   tenant: string;
 
@@ -20,35 +19,33 @@ class AdmTransactionRepo {
   constructor(tenant: string) {
     this.tenant = tenant;
     this.sequelize = getSequelize(tenant);
-    this.repo = this.sequelize.getRepository(AdmTransaction);
+    this.repo = this.sequelize.getRepository(AdmTranType);
   }
   //#endregion
 
   //#region ✅ CRUD Functions
 
 	// 📒 Fn[create]: Default Create Function
-	public create = async(body: IAdmTransaction[], uid: number, transaction?: Transaction) => {
-    try {
-      const promises = body.map((admTransaction: any) => {
-        return this.repo.create(
-          {
-            tran_cd: admTransaction.tran_cd,
-            tran_nm: admTransaction.tran_nm,
-            sortby: admTransaction.sortby,
-            remark: admTransaction.remark,
-            created_uid: uid,
-            updated_uid: uid,
-          },
-          { hooks: true, transaction }
-        );
-      });
-      const raws = await Promise.all(promises);
-      
-      return { raws, count: raws.length } as ApiResult<any>;
-    } catch (error) {
-      if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
-      throw error;
-    }
+	public create = async(body: IAdmTranType[], uid: number, transaction?: Transaction) => {
+	try {
+		const tranTypes = body.map((tranType) => {
+			return {
+				tran_type_cd: tranType.tran_type_cd,
+				tran_type_nm: tranType.tran_type_nm,
+				sortby: tranType.sortby,
+				remark: tranType.remark,
+				created_uid: uid,
+				updated_uid: uid,
+			}
+		});
+
+		const result = await this.repo.bulkCreate(tranTypes, { individualHooks: true, transaction });
+
+		return convertBulkResult(result);
+	} catch (error) {
+		if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
+		throw error;
+	}
 	};
 	//#endregion
 
@@ -63,9 +60,9 @@ class AdmTransactionRepo {
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
-					// [ Sequelize.col('admTransaction.uuid'), 'transaction_uuid' ],
-          'tran_cd',
-          'tran_nm',
+					[ Sequelize.col('admTranType.uuid'), 'tran_type_uuid' ],
+          'tran_type_cd',
+          'tran_type_nm',
 					'sortby',
           'remark',
           'created_at',
@@ -82,6 +79,7 @@ class AdmTransactionRepo {
     }
   };
   //#endregion
+  
 	// 📒 Fn[readByUuid]: Default Read With Uuid Function
 	public readByUuid = async(uuid: string, params?: any) => {
 		try {
@@ -91,9 +89,9 @@ class AdmTransactionRepo {
 					{ model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
 				],
 				attributes: [
-					// [ Sequelize.col('admTransaction.uuid'), 'transaction_uuid' ],
-					'tran_cd',
-          'tran_nm',
+					[ Sequelize.col('admTranType.uuid'), 'tran_type_uuid' ],
+					'tran_type_cd',
+          'tran_type_nm',
 					'sortby',
           'remark',
           'created_at',
@@ -123,38 +121,41 @@ class AdmTransactionRepo {
 	};
 
 	// 📒 Fn[readRawByUnique]: Unique Key를 통하여 Raw Data Read Function
-	public readRawByUnique = async(params: { tran_cd: string }) => {
-		const result = await this.repo.findOne({ where: { tran_cd: params.tran_cd } });
+	public readRawByUnique = async(params: { tran_type_cd: string }) => {
+		const result = await this.repo.findOne({ where: { tran_type_cd: params.tran_type_cd } });
 		return convertReadResult(result);
 	};
 
   //#endregion
 
   // 📒 Fn[update]: Default Update Function
-  public update = async(body: IAdmTransaction[], uid: number, transaction?: Transaction) => {
+  public update = async(body: IAdmTranType[], uid: number, transaction?: Transaction) => {
+    let raws: any[] = [];
+
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      const promises = body.map((tran: any) => {
-        return this.repo.update(
+      for await (let tranType of body) {
+        const result = await this.repo.update(
           {
-            tran_cd: tran.tran_cd != null ? tran.tran_cd : null,
-						tran_nm: tran.tran_nm != null ? tran.tran_nm : null,
-						sortby: tran.sortby != null ? tran.sortby : null,
-						remark: tran.remark != null ? tran.remark : null,
+            tran_type_cd: tranType.tran_type_cd ?? null,
+						tran_type_nm: tranType.tran_type_nm ?? null,
+						sortby: tranType.sortby ?? null,
+						remark: tranType.remark ?? null,
             updated_uid: uid,
           } as any,
           { 
-            where: { uuid: tran.uuid },
+            where: { uuid: tranType.uuid },
             returning: true,
             individualHooks: true,
             transaction
-          }
+          },
         );
-      });
-      const raws = await Promise.all(promises);
 
-      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.AdmTransaction.getTableName() as string, previousRaws, uid, transaction);
+        raws.push(result);
+      };
+
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.AdmTranType.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -167,30 +168,33 @@ class AdmTransactionRepo {
 	//#region 🟠 Patch Functions
   
   // 📒 Fn[patch]: Default Patch Function
-  public patch = async(body: IAdmTransaction[], uid: number, transaction?: Transaction) => {
+  public patch = async(body: IAdmTranType[], uid: number, transaction?: Transaction) => {
+    let raws: any[] = [];
+
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      const promises = body.map((tran: any) => {
-        return this.repo.update(
+      for await (let tranType of body) {
+        const result = await this.repo.update(
           {
-						tran_cd: tran.tran_cd,
-						tran_nm: tran.tran_nm,
-						sortby: tran.sortby,
-						remark: tran.remark,
+						tran_type_cd: tranType.tran_type_cd,
+						tran_type_nm: tranType.tran_type_nm,
+						sortby: tranType.sortby,
+						remark: tranType.remark,
             updated_uid: uid,
           },
           { 
-            where: { uuid: tran.uuid },
+            where: { uuid: tranType.uuid },
             returning: true,
             individualHooks: true,
             transaction
           }
         );
-      });
-      const raws = await Promise.all(promises);
 
-      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.AdmTransaction.getTableName() as string, previousRaws, uid, transaction);
+        raws.push(result);
+      };
+
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.AdmTranType.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -203,16 +207,17 @@ class AdmTransactionRepo {
 	//#region 🔴 Delete Functions
   
   // 📒 Fn[delete]: Default Delete Function
-  public delete = async(body: IAdmTransaction[], uid: number, transaction?: Transaction) => {
+  public delete = async(body: IAdmTranType[], uid: number, transaction?: Transaction) => {
+    let count: number = 0;
+
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      const promises = body.map((tran: any) => {
-        return this.repo.destroy({ where: { uuid: tran.uuid }, transaction});
-      });
-      const count = _.sum(await Promise.all(promises));
+      for await (let tran of body) {
+        count += await this.repo.destroy({ where: { uuid: tran.uuid }, transaction});
+      };
 
-      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.AdmTransaction.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.AdmTranType.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
     } catch (error) {
       throw error;
@@ -224,4 +229,4 @@ class AdmTransactionRepo {
   //#endregion
 }
 
-export default AdmTransactionRepo;
+export default AdmTranTypeRepo;

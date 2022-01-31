@@ -122,7 +122,6 @@ post:
                   - from_store_uuid
                 type: object
                 allOf:        
-                  - $ref: ../../schemas/out/release-detail.schema.yaml#/release_uuid
                   - $ref: ../../schemas/out/release-detail.schema.yaml#/factory_uuid
                   - $ref: ../../schemas/out/release-detail.schema.yaml#/prod_uuid
                   - $ref: ../../schemas/out/release-detail.schema.yaml#/lot_no
