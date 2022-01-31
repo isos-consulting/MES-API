@@ -44,6 +44,7 @@ export default class StdRoutingResource extends Model<IStdRoutingResource> {
   @Column({
     comment: '인원',
     type: DataType.INTEGER,
+    allowNull: false,
   })
   emp_cnt: number;
 

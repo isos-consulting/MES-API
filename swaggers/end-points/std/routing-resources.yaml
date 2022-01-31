@@ -76,7 +76,7 @@ post:
           required:
             - factory_uuid
             - routing_uuid
-            - resource_type
+            - emp_cnt
             - cycle_time
           allOf:
             - $ref: ../../schemas/std/routing-resource.schema.yaml#/factory_uuid
@@ -102,7 +102,7 @@ put:
         schema:
           required:
             - uuid
-            - resource_type
+            - emp_cnt
             - cycle_time
           allOf:
             - $ref: ../../schemas/std/routing-resource.schema.yaml#/uuid
