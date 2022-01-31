@@ -96,7 +96,8 @@ class AdmPatternOptRepo {
           table_nm: params.table_nm,
           col_nm: params.col_nm,
           auto_fg: '1',
-				}
+				},
+        transaction: params.tran
 			});
 
       const converted = convertReadResult(result);

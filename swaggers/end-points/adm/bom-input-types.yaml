@@ -1,0 +1,144 @@
+get:
+  description: |
+    BOM 투입유형 데이터 목록을 조회합니다.
+  summary: BOM 투입유형 데이터 조회
+  tags:
+    - BOM 투입유형(BomInputType)
+
+  parameters:
+    - name: bom_input_type_cd
+      in: query
+      description: |
+        BOM 투입유형코드에 따라 데이터를 조회합니다. <br/>
+        [전체 조회시 입력하지 않습니다.]
+      schema:
+        type: string
+        format: varchar(20)
+
+  responses:
+    200:
+      description: Read OK
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: ../../schemas/common/default-response.schema.yaml
+              - type: object
+                properties:
+                  datas:
+                    description: Enable
+                    type: object
+                    properties:
+                      value:
+                        description: Enable
+                        type: object
+                        properties:
+                          count:
+                            description: 영향받은 데이터의 개수
+                            type: number
+                            format: int32
+                            minimum: 0
+                      raws:
+                        description: BOM 투입유형 데이터 목록
+                        type: array
+                        items:
+                          allOf:
+                            - $ref: ../../schemas/adm/bom-input-type.schema.yaml#/bom_input_type_uuid
+                            - $ref: ../../schemas/adm/bom-input-type.schema.yaml#/bom_input_type_cd
+                            - $ref: ../../schemas/adm/bom-input-type.schema.yaml#/bom_input_type_nm
+                            - $ref: ../../schemas/adm/bom-input-type.schema.yaml#/sortby
+                            - $ref: ../../schemas/common/timestamp.schema.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml
+
+post:
+  description: |
+    BOM 투입유형 데이터를 생성합니다.
+  summary: BOM 투입유형 데이터 생성
+  tags:
+    - BOM 투입유형(BomInputType)
+
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - bom_input_type_cd
+            - bom_input_type_nm
+          allOf:
+            - $ref: ../../schemas/adm/bom-input-type.schema.yaml#/bom_input_type_cd
+            - $ref: ../../schemas/adm/bom-input-type.schema.yaml#/bom_input_type_nm
+            - $ref: ../../schemas/adm/bom-input-type.schema.yaml#/sortby
+  responses:
+    201:
+      $ref: ../../responses/common/succeed-create.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml
+
+put:
+  description: |
+    BOM 투입유형 데이터를 행(Row) 단위로 수정합니다.
+  summary: BOM 투입유형 데이터 수정
+  tags:
+    - BOM 투입유형(BomInputType)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - uuid
+            - bom_input_type_cd
+            - bom_input_type_nm
+          allOf:
+            - $ref: ../../schemas/adm/bom-input-type.schema.yaml#/uuid
+            - $ref: ../../schemas/adm/bom-input-type.schema.yaml#/bom_input_type_cd
+            - $ref: ../../schemas/adm/bom-input-type.schema.yaml#/bom_input_type_nm
+            - $ref: ../../schemas/adm/bom-input-type.schema.yaml#/sortby
+  responses:
+    201:
+      $ref: ../../responses/common/succeed-update.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml
+
+patch:
+  description: |
+    BOM 투입유형 데이터를 개별 항목 단위로 수정합니다.
+  summary: BOM 투입유형 데이터 수정
+  tags:
+    - BOM 투입유형(BomInputType)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - uuid
+          allOf:
+            - $ref: ../../schemas/adm/bom-input-type.schema.yaml#/uuid
+            - $ref: ../../schemas/adm/bom-input-type.schema.yaml#/bom_input_type_cd
+            - $ref: ../../schemas/adm/bom-input-type.schema.yaml#/bom_input_type_nm
+            - $ref: ../../schemas/adm/bom-input-type.schema.yaml#/sortby
+  responses:
+    201:
+      $ref: ../../responses/common/succeed-update.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml
+
+delete:
+  description: |
+    BOM 투입유형 데이터를 삭제합니다.
+  summary: BOM 투입유형 데이터 삭제
+  tags:
+    - BOM 투입유형(BomInputType)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - uuid
+          allOf:
+            - $ref: ../../schemas/adm/bom-input-type.schema.yaml#/uuid
+  responses:
+    200:
+      $ref: ../../responses/common/succeed-delete.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml

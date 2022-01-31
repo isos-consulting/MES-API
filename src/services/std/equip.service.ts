@@ -14,7 +14,7 @@ class StdEquipService {
 
   constructor(tenant: string) {
     this.tenant = tenant;
-    this.stateTag = 'mldMold';
+    this.stateTag = 'stdEquip';
     this.repo = new StdEquipRepo(tenant);
 
     this.fkIdInfos = [

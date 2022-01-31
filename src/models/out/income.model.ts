@@ -62,6 +62,7 @@ export default class OutIncome extends Model<IOutIncome> {
   })
   qty: number;
 
+  @Unique('out_income_tb_receive_detail_id_un')
   @ForeignKey(() => OutReceiveDetail)
   @Column({
     comment: '외주입하 상세ID',
@@ -128,7 +129,7 @@ export default class OutIncome extends Model<IOutIncome> {
   })
   updated_uid: number;
 
-  @Unique('mat_income_tb_uuid_un')
+  @Unique('out_income_tb_uuid_un')
   @Column({
     comment: '외주입고UUID',
     type: DataType.UUID,

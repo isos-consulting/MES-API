@@ -40,7 +40,6 @@ class OutWorkInputRepo {
             lot_no: workInput.lot_no,
             qty: workInput.qty,
             c_usage: workInput.c_usage,
-            unit_id: workInput.unit_id,
             from_store_id: workInput.from_store_id,
             from_location_id: workInput.from_location_id,
             created_uid: uid,
@@ -87,6 +86,7 @@ class OutWorkInputRepo {
               { model: this.sequelize.models.StdItemType, attributes: [], required: false },
               { model: this.sequelize.models.StdProdType, attributes: [], required: false },
               { model: this.sequelize.models.StdModel, attributes: [], required: false },
+              { model: this.sequelize.models.StdUnit, attributes: [], required: false },
             ],
           },
           { model: this.sequelize.models.StdUnit, attributes: [], required: true },
@@ -113,14 +113,14 @@ class OutWorkInputRepo {
           [ Sequelize.col('stdProd.stdModel.uuid'), 'model_uuid' ],
           [ Sequelize.col('stdProd.stdModel.model_cd'), 'model_cd' ],
           [ Sequelize.col('stdProd.stdModel.model_nm'), 'model_nm' ],
+          [ Sequelize.col('stdProd.stdUnit.uuid'), 'unit_uuid' ],
+          [ Sequelize.col('stdProd.stdUnit.unit_cd'), 'unit_cd' ],
+          [ Sequelize.col('stdProd.stdUnit.unit_nm'), 'unit_nm' ],
           [ Sequelize.col('stdProd.rev'), 'rev' ],
           [ Sequelize.col('stdProd.prod_std'), 'prod_std' ],
           'lot_no',
           'qty',
           'c_usage',
-					[ Sequelize.col('stdUnit.uuid'), 'unit_uuid' ],
-          [ Sequelize.col('stdUnit.unit_cd'), 'unit_cd' ],
-          [ Sequelize.col('stdUnit.unit_nm'), 'unit_nm' ],
           [ Sequelize.col('fromStore.uuid'), 'from_store_uuid' ],
           [ Sequelize.col('fromStore.store_cd'), 'from_store_cd' ],
           [ Sequelize.col('fromStore.store_nm'), 'from_store_nm' ],
@@ -166,9 +166,9 @@ class OutWorkInputRepo {
               { model: this.sequelize.models.StdItemType, attributes: [], required: false },
               { model: this.sequelize.models.StdProdType, attributes: [], required: false },
               { model: this.sequelize.models.StdModel, attributes: [], required: false },
+              { model: this.sequelize.models.StdUnit, attributes: [], required: false },
             ],
           },
-          { model: this.sequelize.models.StdUnit, attributes: [], required: true },
           { model: this.sequelize.models.StdStore, as: 'fromStore',attributes: [], required: true },
           { model: this.sequelize.models.StdLocation, as: 'fromLocation', attributes: [], required: false },
           { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
@@ -192,14 +192,14 @@ class OutWorkInputRepo {
           [ Sequelize.col('stdProd.stdModel.uuid'), 'model_uuid' ],
           [ Sequelize.col('stdProd.stdModel.model_cd'), 'model_cd' ],
           [ Sequelize.col('stdProd.stdModel.model_nm'), 'model_nm' ],
+          [ Sequelize.col('stdProd.stdUnit.uuid'), 'unit_uuid' ],
+          [ Sequelize.col('stdProd.stdUnit.unit_cd'), 'unit_cd' ],
+          [ Sequelize.col('stdProd.stdUnit.unit_nm'), 'unit_nm' ],
           [ Sequelize.col('stdProd.rev'), 'rev' ],
           [ Sequelize.col('stdProd.prod_std'), 'prod_std' ],
           'lot_no',
           'qty',
           'c_usage',
-					[ Sequelize.col('stdUnit.uuid'), 'unit_uuid' ],
-          [ Sequelize.col('stdUnit.unit_cd'), 'unit_cd' ],
-          [ Sequelize.col('stdUnit.unit_nm'), 'unit_nm' ],
           [ Sequelize.col('fromStore.uuid'), 'from_store_uuid' ],
           [ Sequelize.col('fromStore.store_cd'), 'from_store_cd' ],
           [ Sequelize.col('fromStore.store_nm'), 'from_store_nm' ],
@@ -323,6 +323,22 @@ class OutWorkInputRepo {
         return this.repo.destroy({ where: { uuid: workInput.uuid }, transaction});
       });
       const count = _.sum(await Promise.all(promises));
+
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.OutWorkInput.getTableName() as string, previousRaws, uid, transaction);
+      return { count, raws: previousRaws };
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  //#endregion
+
+  // 📒 Fn[deleteByReceiveDetailIds]: 외주 입하상세 기준 외주투입 데이터 삭제
+  public deleteByReceiveDetailIds = async(ids: number[], uid: number, transaction?: Transaction) => {
+    try {      
+      const previousRaws = await this.repo.findAll({ where: { receive_detail_id: { [Op.in]: ids } }, transaction });
+
+      const count = await this.repo.destroy({ where: { receive_detail_id: { [Op.in]: ids }}, transaction });
 
       await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.OutWorkInput.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };

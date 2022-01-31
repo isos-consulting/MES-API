@@ -4,56 +4,50 @@ import OutReceiveDetailCtl from '../controllers/out/receive-detail.controller';
 import OutReceiveCtl from '../controllers/out/receive.controller';
 import OutReleaseDetailCtl from '../controllers/out/release-detail.controller';
 import OutReleaseCtl from '../controllers/out/release.controller';
-import OutWorkInputCtl from '../controllers/out/work-input.controller';
+import validationCallback from '../utils/validationCallback';
+import outReceiveDetailValidation from '../validations/out/receive-detail.validation';
+import outReceiveValidation from '../validations/out/receive.validation';
+import outReleaseDetailValidation from '../validations/out/release-detail.validation';
+import outReleaseValidation from '../validations/out/release.validation';
 
 const router = express.Router();
 
 //#region ✅ Receive (외주입하)
 const receive = new OutReceiveCtl();
-router.route('/receives/report').get(receive.readReport);
-router.route('/receive/:uuid').get(receive.read);
-router.route('/receive/:uuid/include-details').get(receive.readIncludeDetails);
-router.route('/receive/:uuid/details').get(receive.readDetails);
-router.route('/receives').get(receive.read);
-router.route('/receives').post(receive.create);
-router.route('/receives').put(receive.update);
-router.route('/receives').patch(receive.patch);
-router.route('/receives').delete(receive.delete);
+router.route('/receives/report').get(outReceiveValidation.readReport, validationCallback, receive.readReport);
+router.route('/receive/:uuid').get(outReceiveValidation.readByUuid, validationCallback, receive.readByUuid);
+router.route('/receive/:uuid/include-details').get(outReceiveValidation.readIncludeDetails, validationCallback, receive.readIncludeDetails);
+router.route('/receive/:uuid/details').get(outReceiveValidation.readDetails, validationCallback, receive.readDetails);
+router.route('/receives').get(outReceiveValidation.read, validationCallback, receive.read);
+router.route('/receives').post(outReceiveValidation.create, validationCallback, receive.create);
+router.route('/receives').put(outReceiveValidation.update, validationCallback, receive.update);
+router.route('/receives').patch(outReceiveValidation.patch, validationCallback, receive.patch);
+router.route('/receives').delete(outReceiveValidation.delete, validationCallback, receive.delete);
 //#endregion
 
 //#region ✅ ReceiveDetail (외주입하상세)
 const receiveDetail = new OutReceiveDetailCtl();
-router.route('/receive-detail/:uuid').get(receiveDetail.read);
-router.route('/receive-details').get(receiveDetail.read);
+router.route('/receive-detail/:uuid').get(outReceiveDetailValidation.readByUuid, validationCallback, receiveDetail.readByUuid);
+router.route('/receive-details').get(outReceiveDetailValidation.read, validationCallback, receiveDetail.read);
 //#endregion
 
 //#region ✅ Release (외주출고)
 const release = new OutReleaseCtl();
-router.route('/releases/report').get(release.readReport);
-router.route('/release/:uuid').get(release.read);
-router.route('/release/:uuid/include-details').get(release.readIncludeDetails);
-router.route('/release/:uuid/details').get(release.readDetails);
-router.route('/releases').get(release.read);
-router.route('/releases').post(release.create);
-router.route('/releases').put(release.update);
-router.route('/releases').patch(release.patch);
-router.route('/releases').delete(release.delete);
+router.route('/releases/report').get(outReleaseValidation.readReport, validationCallback, release.readReport);
+router.route('/release/:uuid').get(outReleaseValidation.readByUuid, validationCallback, release.readByUuid);
+router.route('/release/:uuid/include-details').get(outReleaseValidation.readIncludeDetails, validationCallback, release.readIncludeDetails);
+router.route('/release/:uuid/details').get(outReleaseValidation.readDetails, validationCallback, release.readDetails);
+router.route('/releases').get(outReleaseValidation.read, validationCallback, release.read);
+router.route('/releases').post(outReleaseValidation.create, validationCallback, release.create);
+router.route('/releases').put(outReleaseValidation.update, validationCallback, release.update);
+router.route('/releases').patch(outReleaseValidation.patch, validationCallback, release.patch);
+router.route('/releases').delete(outReleaseValidation.delete, validationCallback, release.delete);
 //#endregion
 
 //#region ✅ ReleaseDetail (외주출고상세)
 const releaseDetail = new OutReleaseDetailCtl();
-router.route('/release-detail/:uuid').get(releaseDetail.read);
-router.route('/release-details').get(releaseDetail.read);
-//#endregion
-
-//#region ✅ WokrInput (외주투입)
-const workInput = new OutWorkInputCtl();
-router.route('/work-input/:uuid').get(workInput.read);
-router.route('/work-inputs').get(workInput.read);
-router.route('/work-inputs').post(workInput.create);
-router.route('/work-inputs').put(workInput.update);
-router.route('/work-inputs').patch(workInput.patch);
-router.route('/work-inputs').delete(workInput.delete);
+router.route('/release-detail/:uuid').get(outReleaseDetailValidation.readByUuid, validationCallback, releaseDetail.readByUuid);
+router.route('/release-details').get(outReleaseDetailValidation.read, validationCallback, releaseDetail.read);
 //#endregion
 
 

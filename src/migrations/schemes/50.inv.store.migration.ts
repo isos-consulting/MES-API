@@ -8,7 +8,7 @@ let seedDatas: IInvStore[] = [
   {
 		"tran_id" : 2,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -25,7 +25,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 3,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -42,7 +42,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 4,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -59,7 +59,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 5,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -76,7 +76,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 6,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -93,7 +93,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 7,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -110,7 +110,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 8,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -127,7 +127,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 9,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -144,7 +144,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 10,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -161,7 +161,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 11,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -178,7 +178,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 12,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -195,7 +195,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 13,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -212,7 +212,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 14,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -229,7 +229,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 15,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -246,7 +246,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 16,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -263,7 +263,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 17,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -280,7 +280,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 18,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -297,7 +297,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 19,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -314,7 +314,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 20,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -331,7 +331,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 21,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-07T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -348,7 +348,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 22,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-07T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -365,7 +365,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 23,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-07T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -382,7 +382,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 24,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-07T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -399,7 +399,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 25,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-07T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -416,7 +416,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 26,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-07T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -433,7 +433,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 27,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-07T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -450,7 +450,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 28,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-07T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -467,7 +467,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 29,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-07T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -484,7 +484,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 43,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-07T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -501,7 +501,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 30,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -518,7 +518,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 31,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -535,7 +535,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 32,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -552,7 +552,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 33,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -569,7 +569,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 34,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -586,7 +586,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 35,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -603,7 +603,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 36,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -620,7 +620,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 37,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -637,7 +637,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 38,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -654,7 +654,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 39,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -671,7 +671,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 40,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -688,7 +688,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 41,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -705,7 +705,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 42,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-07T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -722,7 +722,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 44,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-07T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -739,7 +739,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 45,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-07T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -756,7 +756,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 46,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-07T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -773,7 +773,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 47,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-07T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -790,7 +790,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 48,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-07T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -807,7 +807,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 49,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -824,7 +824,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 50,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -841,7 +841,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 51,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -858,7 +858,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 52,
 		"inout_fg" : true,
-		"tran_cd" : "MI",
+		// "tran_cd" : "MI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -875,7 +875,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 53,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -892,7 +892,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 54,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -909,7 +909,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 55,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -926,7 +926,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 56,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -943,7 +943,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 57,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -960,7 +960,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 58,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -977,7 +977,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 59,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -994,7 +994,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 60,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -1011,7 +1011,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 61,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -1028,7 +1028,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 62,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -1045,7 +1045,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 63,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -1062,7 +1062,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 64,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -1079,7 +1079,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 65,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -1096,7 +1096,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 66,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -1113,7 +1113,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 67,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -1130,7 +1130,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 68,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -1147,7 +1147,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 69,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -1164,7 +1164,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 70,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -1181,7 +1181,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 71,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -1198,7 +1198,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 72,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -1215,7 +1215,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 1,
 		"inout_fg" : false,
-		"tran_cd" : "IM",
+		// "tran_cd" : "IM",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -1232,7 +1232,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 1,
 		"inout_fg" : true,
-		"tran_cd" : "IM",
+		// "tran_cd" : "IM",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -1249,7 +1249,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 2,
 		"inout_fg" : false,
-		"tran_cd" : "IM",
+		// "tran_cd" : "IM",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -1266,7 +1266,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 2,
 		"inout_fg" : true,
-		"tran_cd" : "IM",
+		// "tran_cd" : "IM",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -1283,7 +1283,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 3,
 		"inout_fg" : false,
-		"tran_cd" : "IM",
+		// "tran_cd" : "IM",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -1300,7 +1300,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 3,
 		"inout_fg" : true,
-		"tran_cd" : "IM",
+		// "tran_cd" : "IM",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -1317,7 +1317,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 4,
 		"inout_fg" : false,
-		"tran_cd" : "IM",
+		// "tran_cd" : "IM",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -1334,7 +1334,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 4,
 		"inout_fg" : true,
-		"tran_cd" : "IM",
+		// "tran_cd" : "IM",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -1351,7 +1351,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 5,
 		"inout_fg" : false,
-		"tran_cd" : "IM",
+		// "tran_cd" : "IM",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -1368,7 +1368,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 5,
 		"inout_fg" : true,
-		"tran_cd" : "IM",
+		// "tran_cd" : "IM",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -1385,7 +1385,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 73,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -1402,7 +1402,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 74,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -1419,7 +1419,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 1,
 		"inout_fg" : false,
-		"tran_cd" : "",
+		// "tran_cd" : "",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -1436,7 +1436,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 2,
 		"inout_fg" : false,
-		"tran_cd" : "",
+		// "tran_cd" : "",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -1453,7 +1453,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 3,
 		"inout_fg" : false,
-		"tran_cd" : "",
+		// "tran_cd" : "",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -1470,7 +1470,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 4,
 		"inout_fg" : false,
-		"tran_cd" : "",
+		// "tran_cd" : "",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -1487,7 +1487,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 5,
 		"inout_fg" : false,
-		"tran_cd" : "",
+		// "tran_cd" : "",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -1504,7 +1504,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 6,
 		"inout_fg" : false,
-		"tran_cd" : "",
+		// "tran_cd" : "",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -1521,7 +1521,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 7,
 		"inout_fg" : false,
-		"tran_cd" : "",
+		// "tran_cd" : "",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-07T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -1538,7 +1538,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 8,
 		"inout_fg" : false,
-		"tran_cd" : "",
+		// "tran_cd" : "",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-07T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -1555,7 +1555,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 9,
 		"inout_fg" : false,
-		"tran_cd" : "",
+		// "tran_cd" : "",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -1572,7 +1572,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 10,
 		"inout_fg" : false,
-		"tran_cd" : "",
+		// "tran_cd" : "",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-31T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -1589,7 +1589,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 11,
 		"inout_fg" : false,
-		"tran_cd" : "",
+		// "tran_cd" : "",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-31T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -1606,7 +1606,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 12,
 		"inout_fg" : false,
-		"tran_cd" : "",
+		// "tran_cd" : "",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-31T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -1623,7 +1623,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 13,
 		"inout_fg" : false,
-		"tran_cd" : "",
+		// "tran_cd" : "",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-31T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -1640,7 +1640,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 14,
 		"inout_fg" : false,
-		"tran_cd" : "",
+		// "tran_cd" : "",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-31T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -1657,7 +1657,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 15,
 		"inout_fg" : false,
-		"tran_cd" : "",
+		// "tran_cd" : "",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-31T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -1674,7 +1674,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 16,
 		"inout_fg" : false,
-		"tran_cd" : "",
+		// "tran_cd" : "",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-01T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -1691,7 +1691,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 17,
 		"inout_fg" : false,
-		"tran_cd" : "",
+		// "tran_cd" : "",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-01T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -1708,7 +1708,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 18,
 		"inout_fg" : false,
-		"tran_cd" : "",
+		// "tran_cd" : "",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-01T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -1725,7 +1725,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 19,
 		"inout_fg" : false,
-		"tran_cd" : "",
+		// "tran_cd" : "",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-06T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -1742,7 +1742,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 20,
 		"inout_fg" : false,
-		"tran_cd" : "",
+		// "tran_cd" : "",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -1759,7 +1759,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 21,
 		"inout_fg" : false,
-		"tran_cd" : "",
+		// "tran_cd" : "",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -1776,7 +1776,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 75,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -1793,7 +1793,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 76,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -1810,7 +1810,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 77,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -1827,7 +1827,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 78,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -1844,7 +1844,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 22,
 		"inout_fg" : false,
-		"tran_cd" : "",
+		// "tran_cd" : "",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -1861,7 +1861,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 23,
 		"inout_fg" : false,
-		"tran_cd" : "",
+		// "tran_cd" : "",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-06T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -1878,7 +1878,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 24,
 		"inout_fg" : false,
-		"tran_cd" : "",
+		// "tran_cd" : "",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -1895,7 +1895,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 25,
 		"inout_fg" : false,
-		"tran_cd" : "",
+		// "tran_cd" : "",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-07T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -1912,7 +1912,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 26,
 		"inout_fg" : false,
-		"tran_cd" : "",
+		// "tran_cd" : "",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-07T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -1929,7 +1929,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 27,
 		"inout_fg" : false,
-		"tran_cd" : "",
+		// "tran_cd" : "",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-08T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -1946,7 +1946,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 28,
 		"inout_fg" : false,
-		"tran_cd" : "",
+		// "tran_cd" : "",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-08T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -1963,7 +1963,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 6,
 		"inout_fg" : false,
-		"tran_cd" : "IM",
+		// "tran_cd" : "IM",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-31T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -1980,7 +1980,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 6,
 		"inout_fg" : true,
-		"tran_cd" : "IM",
+		// "tran_cd" : "IM",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-31T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -1997,7 +1997,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 7,
 		"inout_fg" : false,
-		"tran_cd" : "IM",
+		// "tran_cd" : "IM",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-31T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -2014,7 +2014,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 7,
 		"inout_fg" : true,
-		"tran_cd" : "IM",
+		// "tran_cd" : "IM",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-31T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -2031,7 +2031,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 8,
 		"inout_fg" : false,
-		"tran_cd" : "IM",
+		// "tran_cd" : "IM",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-31T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -2048,7 +2048,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 8,
 		"inout_fg" : true,
-		"tran_cd" : "IM",
+		// "tran_cd" : "IM",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-31T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -2065,7 +2065,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 9,
 		"inout_fg" : false,
-		"tran_cd" : "IM",
+		// "tran_cd" : "IM",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-01T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -2082,7 +2082,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 9,
 		"inout_fg" : true,
-		"tran_cd" : "IM",
+		// "tran_cd" : "IM",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-01T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -2099,7 +2099,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 10,
 		"inout_fg" : false,
-		"tran_cd" : "IM",
+		// "tran_cd" : "IM",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-01T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -2116,7 +2116,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 10,
 		"inout_fg" : true,
-		"tran_cd" : "IM",
+		// "tran_cd" : "IM",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-01T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -2133,7 +2133,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 11,
 		"inout_fg" : false,
-		"tran_cd" : "IM",
+		// "tran_cd" : "IM",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-01T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -2150,7 +2150,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 11,
 		"inout_fg" : true,
-		"tran_cd" : "IM",
+		// "tran_cd" : "IM",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-01T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -2167,7 +2167,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 12,
 		"inout_fg" : false,
-		"tran_cd" : "IM",
+		// "tran_cd" : "IM",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-01T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -2184,7 +2184,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 12,
 		"inout_fg" : true,
-		"tran_cd" : "IM",
+		// "tran_cd" : "IM",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-01T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -2201,7 +2201,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 1,
 		"inout_fg" : false,
-		"tran_cd" : "IR",
+		// "tran_cd" : "IR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -2218,7 +2218,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 1,
 		"inout_fg" : true,
-		"tran_cd" : "IR",
+		// "tran_cd" : "IR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -2235,7 +2235,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 2,
 		"inout_fg" : false,
-		"tran_cd" : "IR",
+		// "tran_cd" : "IR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -2252,7 +2252,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 2,
 		"inout_fg" : true,
-		"tran_cd" : "IR",
+		// "tran_cd" : "IR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -2269,7 +2269,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 3,
 		"inout_fg" : false,
-		"tran_cd" : "IR",
+		// "tran_cd" : "IR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -2286,7 +2286,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 3,
 		"inout_fg" : true,
-		"tran_cd" : "IR",
+		// "tran_cd" : "IR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -2303,7 +2303,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 4,
 		"inout_fg" : false,
-		"tran_cd" : "IR",
+		// "tran_cd" : "IR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-31T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -2320,7 +2320,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 4,
 		"inout_fg" : true,
-		"tran_cd" : "IR",
+		// "tran_cd" : "IR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-31T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -2337,7 +2337,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 5,
 		"inout_fg" : false,
-		"tran_cd" : "IR",
+		// "tran_cd" : "IR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-31T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -2354,7 +2354,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 5,
 		"inout_fg" : true,
-		"tran_cd" : "IR",
+		// "tran_cd" : "IR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-31T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -2371,7 +2371,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 6,
 		"inout_fg" : false,
-		"tran_cd" : "IR",
+		// "tran_cd" : "IR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-31T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -2388,7 +2388,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 6,
 		"inout_fg" : true,
-		"tran_cd" : "IR",
+		// "tran_cd" : "IR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-31T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -2405,7 +2405,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 7,
 		"inout_fg" : false,
-		"tran_cd" : "IR",
+		// "tran_cd" : "IR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-30T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -2422,7 +2422,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 7,
 		"inout_fg" : true,
-		"tran_cd" : "IR",
+		// "tran_cd" : "IR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-30T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -2439,7 +2439,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 8,
 		"inout_fg" : false,
-		"tran_cd" : "IR",
+		// "tran_cd" : "IR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-30T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -2456,7 +2456,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 8,
 		"inout_fg" : true,
-		"tran_cd" : "IR",
+		// "tran_cd" : "IR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-30T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -2473,7 +2473,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 9,
 		"inout_fg" : false,
-		"tran_cd" : "IR",
+		// "tran_cd" : "IR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-30T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -2490,7 +2490,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 9,
 		"inout_fg" : true,
-		"tran_cd" : "IR",
+		// "tran_cd" : "IR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-30T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -2507,7 +2507,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 5,
 		"inout_fg" : false,
-		"tran_cd" : "MOPI",
+		// "tran_cd" : "MOPI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -2524,7 +2524,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 5,
 		"inout_fg" : true,
-		"tran_cd" : "MOPI",
+		// "tran_cd" : "MOPI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -2541,7 +2541,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 6,
 		"inout_fg" : false,
-		"tran_cd" : "MOPI",
+		// "tran_cd" : "MOPI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -2558,7 +2558,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 6,
 		"inout_fg" : true,
-		"tran_cd" : "MOPI",
+		// "tran_cd" : "MOPI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -2575,7 +2575,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 7,
 		"inout_fg" : false,
-		"tran_cd" : "MOPI",
+		// "tran_cd" : "MOPI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -2592,7 +2592,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 7,
 		"inout_fg" : true,
-		"tran_cd" : "MOPI",
+		// "tran_cd" : "MOPI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -2609,7 +2609,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 8,
 		"inout_fg" : false,
-		"tran_cd" : "MOPI",
+		// "tran_cd" : "MOPI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -2626,7 +2626,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 8,
 		"inout_fg" : true,
-		"tran_cd" : "MOPI",
+		// "tran_cd" : "MOPI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -2643,7 +2643,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 9,
 		"inout_fg" : false,
-		"tran_cd" : "MOPI",
+		// "tran_cd" : "MOPI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -2660,7 +2660,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 9,
 		"inout_fg" : true,
-		"tran_cd" : "MOPI",
+		// "tran_cd" : "MOPI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -2677,7 +2677,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 10,
 		"inout_fg" : false,
-		"tran_cd" : "MOPI",
+		// "tran_cd" : "MOPI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -2694,7 +2694,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 10,
 		"inout_fg" : true,
-		"tran_cd" : "MOPI",
+		// "tran_cd" : "MOPI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -2711,7 +2711,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 11,
 		"inout_fg" : false,
-		"tran_cd" : "MOPI",
+		// "tran_cd" : "MOPI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -2728,7 +2728,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 11,
 		"inout_fg" : true,
-		"tran_cd" : "MOPI",
+		// "tran_cd" : "MOPI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -2745,7 +2745,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 12,
 		"inout_fg" : false,
-		"tran_cd" : "MOPI",
+		// "tran_cd" : "MOPI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -2762,7 +2762,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 12,
 		"inout_fg" : true,
-		"tran_cd" : "MOPI",
+		// "tran_cd" : "MOPI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -2779,7 +2779,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 1,
 		"inout_fg" : true,
-		"tran_cd" : "QRIR",
+		// "tran_cd" : "QRIR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -2796,7 +2796,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 1,
 		"inout_fg" : true,
-		"tran_cd" : "OI",
+		// "tran_cd" : "OI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -2813,7 +2813,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 2,
 		"inout_fg" : true,
-		"tran_cd" : "OI",
+		// "tran_cd" : "OI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -2830,7 +2830,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 16,
 		"inout_fg" : false,
-		"tran_cd" : "QD",
+		// "tran_cd" : "QD",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-16T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -2847,7 +2847,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 3,
 		"inout_fg" : true,
-		"tran_cd" : "QRIR",
+		// "tran_cd" : "QRIR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -2864,7 +2864,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 4,
 		"inout_fg" : true,
-		"tran_cd" : "QRIR",
+		// "tran_cd" : "QRIR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -2881,7 +2881,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 3,
 		"inout_fg" : true,
-		"tran_cd" : "OI",
+		// "tran_cd" : "OI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-13T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -2898,7 +2898,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 4,
 		"inout_fg" : true,
-		"tran_cd" : "OI",
+		// "tran_cd" : "OI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-13T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -2915,7 +2915,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 5,
 		"inout_fg" : true,
-		"tran_cd" : "OI",
+		// "tran_cd" : "OI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-13T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -2932,7 +2932,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 8,
 		"inout_fg" : true,
-		"tran_cd" : "QRIR",
+		// "tran_cd" : "QRIR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-13T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -2949,7 +2949,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 6,
 		"inout_fg" : true,
-		"tran_cd" : "OI",
+		// "tran_cd" : "OI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-13T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -2966,7 +2966,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 1,
 		"inout_fg" : false,
-		"tran_cd" : "QDP",
+		// "tran_cd" : "QDP",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-13T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -2983,7 +2983,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 2,
 		"inout_fg" : false,
-		"tran_cd" : "QDP",
+		// "tran_cd" : "QDP",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-13T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -3000,7 +3000,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 3,
 		"inout_fg" : false,
-		"tran_cd" : "QDP",
+		// "tran_cd" : "QDP",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-13T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -3017,7 +3017,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 4,
 		"inout_fg" : false,
-		"tran_cd" : "QR",
+		// "tran_cd" : "QR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-13T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -3034,7 +3034,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 4,
 		"inout_fg" : true,
-		"tran_cd" : "QR",
+		// "tran_cd" : "QR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-13T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -3051,7 +3051,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 5,
 		"inout_fg" : false,
-		"tran_cd" : "QR",
+		// "tran_cd" : "QR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-13T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -3068,7 +3068,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 5,
 		"inout_fg" : true,
-		"tran_cd" : "QR",
+		// "tran_cd" : "QR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-13T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -3085,7 +3085,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 6,
 		"inout_fg" : false,
-		"tran_cd" : "QRW",
+		// "tran_cd" : "QRW",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-13T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -3102,7 +3102,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 6,
 		"inout_fg" : true,
-		"tran_cd" : "QRW",
+		// "tran_cd" : "QRW",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-13T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -3119,7 +3119,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 17,
 		"inout_fg" : false,
-		"tran_cd" : "QDP",
+		// "tran_cd" : "QDP",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-03T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -3136,7 +3136,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 9,
 		"inout_fg" : true,
-		"tran_cd" : "QRIR",
+		// "tran_cd" : "QRIR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-14T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -3153,7 +3153,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 10,
 		"inout_fg" : true,
-		"tran_cd" : "QRIR",
+		// "tran_cd" : "QRIR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-14T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -3170,7 +3170,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 7,
 		"inout_fg" : false,
-		"tran_cd" : "QR",
+		// "tran_cd" : "QR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-16T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -3187,7 +3187,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 7,
 		"inout_fg" : true,
-		"tran_cd" : "QR",
+		// "tran_cd" : "QR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-16T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -3204,7 +3204,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 8,
 		"inout_fg" : false,
-		"tran_cd" : "QR",
+		// "tran_cd" : "QR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-16T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -3221,7 +3221,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 8,
 		"inout_fg" : true,
-		"tran_cd" : "QR",
+		// "tran_cd" : "QR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-16T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -3238,7 +3238,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 9,
 		"inout_fg" : false,
-		"tran_cd" : "QR",
+		// "tran_cd" : "QR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-16T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -3255,7 +3255,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 9,
 		"inout_fg" : true,
-		"tran_cd" : "QR",
+		// "tran_cd" : "QR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-16T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -3272,7 +3272,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 10,
 		"inout_fg" : false,
-		"tran_cd" : "QDP",
+		// "tran_cd" : "QDP",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-16T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -3289,7 +3289,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 11,
 		"inout_fg" : false,
-		"tran_cd" : "QDP",
+		// "tran_cd" : "QDP",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-16T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -3306,7 +3306,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 13,
 		"inout_fg" : false,
-		"tran_cd" : "QD",
+		// "tran_cd" : "QD",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-16T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -3323,7 +3323,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 2,
 		"inout_fg" : true,
-		"tran_cd" : "QDI",
+		// "tran_cd" : "QDI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-16T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -3340,7 +3340,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 2,
 		"inout_fg" : true,
-		"tran_cd" : "QDRW",
+		// "tran_cd" : "QDRW",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-16T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -3357,7 +3357,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 3,
 		"inout_fg" : true,
-		"tran_cd" : "QDI",
+		// "tran_cd" : "QDI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-16T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -3374,7 +3374,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 3,
 		"inout_fg" : true,
-		"tran_cd" : "QDRW",
+		// "tran_cd" : "QDRW",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-16T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -3391,7 +3391,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 4,
 		"inout_fg" : true,
-		"tran_cd" : "QDI",
+		// "tran_cd" : "QDI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-16T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -3408,7 +3408,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 4,
 		"inout_fg" : true,
-		"tran_cd" : "QDRW",
+		// "tran_cd" : "QDRW",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-16T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -3425,7 +3425,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 5,
 		"inout_fg" : true,
-		"tran_cd" : "QDI",
+		// "tran_cd" : "QDI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-16T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -3442,7 +3442,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 5,
 		"inout_fg" : true,
-		"tran_cd" : "QDRW",
+		// "tran_cd" : "QDRW",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-16T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -3459,7 +3459,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 18,
 		"inout_fg" : false,
-		"tran_cd" : "QDP",
+		// "tran_cd" : "QDP",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-03T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -3476,7 +3476,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 19,
 		"inout_fg" : false,
-		"tran_cd" : "QDP",
+		// "tran_cd" : "QDP",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-03T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -3493,7 +3493,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 20,
 		"inout_fg" : false,
-		"tran_cd" : "QDP",
+		// "tran_cd" : "QDP",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-03T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -3510,7 +3510,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 21,
 		"inout_fg" : false,
-		"tran_cd" : "QDP",
+		// "tran_cd" : "QDP",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-03T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -3527,7 +3527,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 22,
 		"inout_fg" : false,
-		"tran_cd" : "QDP",
+		// "tran_cd" : "QDP",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-03T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -3544,7 +3544,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 23,
 		"inout_fg" : false,
-		"tran_cd" : "QDP",
+		// "tran_cd" : "QDP",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-03T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -3561,7 +3561,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 24,
 		"inout_fg" : false,
-		"tran_cd" : "QDP",
+		// "tran_cd" : "QDP",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-03T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -3578,7 +3578,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 1,
 		"inout_fg" : false,
-		"tran_cd" : "POSI",
+		// "tran_cd" : "POSI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-03T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -3595,7 +3595,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 1,
 		"inout_fg" : true,
-		"tran_cd" : "POSI",
+		// "tran_cd" : "POSI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-03T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -3612,7 +3612,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 2,
 		"inout_fg" : false,
-		"tran_cd" : "POSI",
+		// "tran_cd" : "POSI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-03T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -3629,7 +3629,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 2,
 		"inout_fg" : true,
-		"tran_cd" : "POSI",
+		// "tran_cd" : "POSI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-03T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -3646,7 +3646,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 3,
 		"inout_fg" : false,
-		"tran_cd" : "POSI",
+		// "tran_cd" : "POSI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-03T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -3663,7 +3663,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 3,
 		"inout_fg" : true,
-		"tran_cd" : "POSI",
+		// "tran_cd" : "POSI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-03T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -3680,7 +3680,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 9,
 		"inout_fg" : false,
-		"tran_cd" : "POSI",
+		// "tran_cd" : "POSI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-30T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -3697,7 +3697,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 9,
 		"inout_fg" : true,
-		"tran_cd" : "POSI",
+		// "tran_cd" : "POSI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-30T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -3714,7 +3714,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 10,
 		"inout_fg" : false,
-		"tran_cd" : "POSI",
+		// "tran_cd" : "POSI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-30T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -3731,7 +3731,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 10,
 		"inout_fg" : true,
-		"tran_cd" : "POSI",
+		// "tran_cd" : "POSI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-30T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -3748,7 +3748,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 11,
 		"inout_fg" : false,
-		"tran_cd" : "POSI",
+		// "tran_cd" : "POSI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-30T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -3765,7 +3765,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 11,
 		"inout_fg" : true,
-		"tran_cd" : "POSI",
+		// "tran_cd" : "POSI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-30T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -3782,7 +3782,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 12,
 		"inout_fg" : false,
-		"tran_cd" : "POSI",
+		// "tran_cd" : "POSI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-30T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -3799,7 +3799,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 12,
 		"inout_fg" : true,
-		"tran_cd" : "POSI",
+		// "tran_cd" : "POSI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-30T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -3816,7 +3816,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 13,
 		"inout_fg" : false,
-		"tran_cd" : "POSI",
+		// "tran_cd" : "POSI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-30T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -3833,7 +3833,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 13,
 		"inout_fg" : true,
-		"tran_cd" : "POSI",
+		// "tran_cd" : "POSI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-30T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -3850,7 +3850,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 14,
 		"inout_fg" : false,
-		"tran_cd" : "POSI",
+		// "tran_cd" : "POSI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-30T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -3867,7 +3867,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 14,
 		"inout_fg" : true,
-		"tran_cd" : "POSI",
+		// "tran_cd" : "POSI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-30T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -3884,7 +3884,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 15,
 		"inout_fg" : false,
-		"tran_cd" : "POSI",
+		// "tran_cd" : "POSI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-16T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -3901,7 +3901,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 15,
 		"inout_fg" : true,
-		"tran_cd" : "POSI",
+		// "tran_cd" : "POSI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-16T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -3918,7 +3918,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 16,
 		"inout_fg" : false,
-		"tran_cd" : "POSI",
+		// "tran_cd" : "POSI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-16T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -3935,7 +3935,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 16,
 		"inout_fg" : true,
-		"tran_cd" : "POSI",
+		// "tran_cd" : "POSI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-16T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -3952,7 +3952,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 17,
 		"inout_fg" : false,
-		"tran_cd" : "POSI",
+		// "tran_cd" : "POSI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-16T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -3969,7 +3969,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 17,
 		"inout_fg" : true,
-		"tran_cd" : "POSI",
+		// "tran_cd" : "POSI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-16T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -3986,7 +3986,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 18,
 		"inout_fg" : false,
-		"tran_cd" : "POSI",
+		// "tran_cd" : "POSI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-16T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -4003,7 +4003,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 18,
 		"inout_fg" : true,
-		"tran_cd" : "POSI",
+		// "tran_cd" : "POSI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-16T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -4020,7 +4020,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 79,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -4037,7 +4037,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 80,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -4054,7 +4054,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 81,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -4071,7 +4071,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 82,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -4088,7 +4088,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 83,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -4105,7 +4105,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 84,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -4122,7 +4122,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 85,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -4139,7 +4139,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 86,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -4156,7 +4156,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 87,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -4173,7 +4173,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 88,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -4190,7 +4190,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 89,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -4207,7 +4207,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 90,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -4224,7 +4224,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 91,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -4241,7 +4241,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 92,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -4258,7 +4258,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 93,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -4275,7 +4275,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 94,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -4292,7 +4292,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 95,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -4309,7 +4309,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 96,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -4326,7 +4326,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 97,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -4343,7 +4343,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 98,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -4360,7 +4360,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 99,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -4377,7 +4377,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 100,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -4394,7 +4394,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 101,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -4411,7 +4411,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 102,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -4428,7 +4428,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 103,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -4445,7 +4445,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 104,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -4462,7 +4462,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 105,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -4479,7 +4479,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 106,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -4496,7 +4496,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 107,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -4513,7 +4513,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 108,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -4530,7 +4530,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 109,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -4547,7 +4547,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 110,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -4564,7 +4564,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 111,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -4581,7 +4581,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 112,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -4598,7 +4598,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 113,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -4615,7 +4615,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 114,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -4632,7 +4632,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 115,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -4649,7 +4649,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 116,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -4666,7 +4666,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 117,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -4683,7 +4683,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 118,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -4700,7 +4700,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 119,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -4717,7 +4717,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 120,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -4734,7 +4734,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 121,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -4751,7 +4751,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 122,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -4768,7 +4768,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 123,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -4785,7 +4785,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 124,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -4802,7 +4802,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 125,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -4819,7 +4819,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 126,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -4836,7 +4836,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 127,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -4853,7 +4853,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 128,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -4870,7 +4870,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 129,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -4887,7 +4887,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 130,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -4904,7 +4904,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 131,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -4921,7 +4921,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 132,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -4938,7 +4938,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 133,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -4955,7 +4955,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 134,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -4972,7 +4972,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 135,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -4989,7 +4989,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 136,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -5006,7 +5006,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 137,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -5023,7 +5023,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 138,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -5040,7 +5040,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 139,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -5057,7 +5057,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 140,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -5074,7 +5074,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 141,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -5091,7 +5091,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 142,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -5108,7 +5108,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 143,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -5125,7 +5125,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 144,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -5142,7 +5142,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 145,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -5159,7 +5159,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 1,
 		"inout_fg" : false,
-		"tran_cd" : "SOWI",
+		// "tran_cd" : "SOWI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -5176,7 +5176,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 1,
 		"inout_fg" : true,
-		"tran_cd" : "SOWI",
+		// "tran_cd" : "SOWI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -5193,7 +5193,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 2,
 		"inout_fg" : false,
-		"tran_cd" : "SOWI",
+		// "tran_cd" : "SOWI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -5210,7 +5210,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 2,
 		"inout_fg" : true,
-		"tran_cd" : "SOWI",
+		// "tran_cd" : "SOWI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -5227,7 +5227,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 3,
 		"inout_fg" : false,
-		"tran_cd" : "SOWI",
+		// "tran_cd" : "SOWI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -5244,7 +5244,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 3,
 		"inout_fg" : true,
-		"tran_cd" : "SOWI",
+		// "tran_cd" : "SOWI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -5261,7 +5261,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 4,
 		"inout_fg" : false,
-		"tran_cd" : "SOWI",
+		// "tran_cd" : "SOWI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -5278,7 +5278,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 4,
 		"inout_fg" : true,
-		"tran_cd" : "SOWI",
+		// "tran_cd" : "SOWI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -5295,7 +5295,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 146,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -5312,7 +5312,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 147,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -5329,7 +5329,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 148,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -5346,7 +5346,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 5,
 		"inout_fg" : false,
-		"tran_cd" : "SOWI",
+		// "tran_cd" : "SOWI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -5363,7 +5363,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 5,
 		"inout_fg" : true,
-		"tran_cd" : "SOWI",
+		// "tran_cd" : "SOWI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -5380,7 +5380,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 6,
 		"inout_fg" : false,
-		"tran_cd" : "SOWI",
+		// "tran_cd" : "SOWI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -5397,7 +5397,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 6,
 		"inout_fg" : true,
-		"tran_cd" : "SOWI",
+		// "tran_cd" : "SOWI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -5414,7 +5414,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 7,
 		"inout_fg" : false,
-		"tran_cd" : "SOWI",
+		// "tran_cd" : "SOWI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -5431,7 +5431,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 7,
 		"inout_fg" : true,
-		"tran_cd" : "SOWI",
+		// "tran_cd" : "SOWI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -5448,7 +5448,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 8,
 		"inout_fg" : false,
-		"tran_cd" : "SOWI",
+		// "tran_cd" : "SOWI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -5465,7 +5465,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 8,
 		"inout_fg" : true,
-		"tran_cd" : "SOWI",
+		// "tran_cd" : "SOWI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-10T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -5482,7 +5482,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 9,
 		"inout_fg" : false,
-		"tran_cd" : "SOWI",
+		// "tran_cd" : "SOWI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-01T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -5499,7 +5499,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 9,
 		"inout_fg" : true,
-		"tran_cd" : "SOWI",
+		// "tran_cd" : "SOWI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-01T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -5516,7 +5516,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 10,
 		"inout_fg" : false,
-		"tran_cd" : "SOWI",
+		// "tran_cd" : "SOWI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-01T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -5533,7 +5533,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 10,
 		"inout_fg" : true,
-		"tran_cd" : "SOWI",
+		// "tran_cd" : "SOWI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-01T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -5550,7 +5550,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 11,
 		"inout_fg" : false,
-		"tran_cd" : "SOWI",
+		// "tran_cd" : "SOWI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-01T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -5567,7 +5567,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 11,
 		"inout_fg" : true,
-		"tran_cd" : "SOWI",
+		// "tran_cd" : "SOWI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-01T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -5584,7 +5584,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 12,
 		"inout_fg" : false,
-		"tran_cd" : "SOWI",
+		// "tran_cd" : "SOWI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-01T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -5601,7 +5601,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 12,
 		"inout_fg" : true,
-		"tran_cd" : "SOWI",
+		// "tran_cd" : "SOWI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-01T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -5618,7 +5618,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 13,
 		"inout_fg" : false,
-		"tran_cd" : "SOWI",
+		// "tran_cd" : "SOWI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-01T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -5635,7 +5635,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 13,
 		"inout_fg" : true,
-		"tran_cd" : "SOWI",
+		// "tran_cd" : "SOWI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-01T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -5652,7 +5652,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 14,
 		"inout_fg" : false,
-		"tran_cd" : "SOWI",
+		// "tran_cd" : "SOWI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-01T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -5669,7 +5669,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 14,
 		"inout_fg" : true,
-		"tran_cd" : "SOWI",
+		// "tran_cd" : "SOWI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-01T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -5686,7 +5686,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 15,
 		"inout_fg" : false,
-		"tran_cd" : "SOWI",
+		// "tran_cd" : "SOWI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-01T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -5703,7 +5703,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 15,
 		"inout_fg" : true,
-		"tran_cd" : "SOWI",
+		// "tran_cd" : "SOWI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-01T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -5720,7 +5720,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 16,
 		"inout_fg" : false,
-		"tran_cd" : "SOWI",
+		// "tran_cd" : "SOWI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-24T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -5737,7 +5737,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 16,
 		"inout_fg" : true,
-		"tran_cd" : "SOWI",
+		// "tran_cd" : "SOWI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-24T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -5754,7 +5754,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 149,
 		"inout_fg" : true,
-		"tran_cd" : "INV",
+		// "tran_cd" : "INV",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-09-30T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -5771,7 +5771,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 17,
 		"inout_fg" : false,
-		"tran_cd" : "SOWI",
+		// "tran_cd" : "SOWI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-24T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -5788,7 +5788,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 17,
 		"inout_fg" : true,
-		"tran_cd" : "SOWI",
+		// "tran_cd" : "SOWI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-24T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -5805,7 +5805,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 1,
 		"inout_fg" : false,
-		"tran_cd" : "WO",
+		// "tran_cd" : "WO",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-09-30T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -5822,7 +5822,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 1,
 		"inout_fg" : true,
-		"tran_cd" : "SR",
+		// "tran_cd" : "SR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-09-30T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -5839,7 +5839,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 2,
 		"inout_fg" : true,
-		"tran_cd" : "SR",
+		// "tran_cd" : "SR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-09-30T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -5856,7 +5856,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 3,
 		"inout_fg" : true,
-		"tran_cd" : "SR",
+		// "tran_cd" : "SR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-09-30T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -5873,7 +5873,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 4,
 		"inout_fg" : true,
-		"tran_cd" : "SR",
+		// "tran_cd" : "SR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-09-30T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -5890,7 +5890,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 5,
 		"inout_fg" : true,
-		"tran_cd" : "SR",
+		// "tran_cd" : "SR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-09-30T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -5907,7 +5907,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 6,
 		"inout_fg" : true,
-		"tran_cd" : "SR",
+		// "tran_cd" : "SR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-09-30T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -5924,7 +5924,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 7,
 		"inout_fg" : true,
-		"tran_cd" : "SR",
+		// "tran_cd" : "SR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-09-30T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -5941,7 +5941,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 8,
 		"inout_fg" : true,
-		"tran_cd" : "SR",
+		// "tran_cd" : "SR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-09-30T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -5958,7 +5958,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 9,
 		"inout_fg" : true,
-		"tran_cd" : "SR",
+		// "tran_cd" : "SR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-09-30T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -5975,7 +5975,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 10,
 		"inout_fg" : true,
-		"tran_cd" : "SR",
+		// "tran_cd" : "SR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-02T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -5992,7 +5992,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 11,
 		"inout_fg" : true,
-		"tran_cd" : "SR",
+		// "tran_cd" : "SR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-02T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -6009,7 +6009,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 12,
 		"inout_fg" : true,
-		"tran_cd" : "SR",
+		// "tran_cd" : "SR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-02T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -6026,7 +6026,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 13,
 		"inout_fg" : true,
-		"tran_cd" : "SR",
+		// "tran_cd" : "SR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-02T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -6043,7 +6043,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 14,
 		"inout_fg" : true,
-		"tran_cd" : "SR",
+		// "tran_cd" : "SR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-02T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -6060,7 +6060,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 15,
 		"inout_fg" : true,
-		"tran_cd" : "SR",
+		// "tran_cd" : "SR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-02T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -6077,7 +6077,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 16,
 		"inout_fg" : true,
-		"tran_cd" : "SR",
+		// "tran_cd" : "SR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-02T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -6094,7 +6094,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 17,
 		"inout_fg" : true,
-		"tran_cd" : "SR",
+		// "tran_cd" : "SR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-02T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -6111,7 +6111,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 18,
 		"inout_fg" : true,
-		"tran_cd" : "SR",
+		// "tran_cd" : "SR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-02T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -6128,7 +6128,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 19,
 		"inout_fg" : true,
-		"tran_cd" : "SR",
+		// "tran_cd" : "SR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-02T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -6145,7 +6145,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 20,
 		"inout_fg" : true,
-		"tran_cd" : "SR",
+		// "tran_cd" : "SR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-02T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -6162,7 +6162,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 21,
 		"inout_fg" : true,
-		"tran_cd" : "SR",
+		// "tran_cd" : "SR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-02T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -6179,7 +6179,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 22,
 		"inout_fg" : true,
-		"tran_cd" : "SR",
+		// "tran_cd" : "SR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-02T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -6196,7 +6196,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 23,
 		"inout_fg" : true,
-		"tran_cd" : "SR",
+		// "tran_cd" : "SR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-02T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -6213,7 +6213,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 24,
 		"inout_fg" : true,
-		"tran_cd" : "SR",
+		// "tran_cd" : "SR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-02T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -6230,7 +6230,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 27,
 		"inout_fg" : true,
-		"tran_cd" : "SR",
+		// "tran_cd" : "SR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-02T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -6247,7 +6247,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 28,
 		"inout_fg" : true,
-		"tran_cd" : "SR",
+		// "tran_cd" : "SR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-02T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -6264,7 +6264,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 29,
 		"inout_fg" : true,
-		"tran_cd" : "SR",
+		// "tran_cd" : "SR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-02T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -6281,7 +6281,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 31,
 		"inout_fg" : true,
-		"tran_cd" : "SR",
+		// "tran_cd" : "SR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-02T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -6298,7 +6298,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 2,
 		"inout_fg" : true,
-		"tran_cd" : "PI",
+		// "tran_cd" : "PI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-24T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -6315,7 +6315,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 1,
 		"inout_fg" : true,
-		"tran_cd" : "PI",
+		// "tran_cd" : "PI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-24T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -6332,7 +6332,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 4,
 		"inout_fg" : true,
-		"tran_cd" : "PI",
+		// "tran_cd" : "PI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-18T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -6349,7 +6349,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 3,
 		"inout_fg" : true,
-		"tran_cd" : "PI",
+		// "tran_cd" : "PI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-18T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -6366,7 +6366,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 5,
 		"inout_fg" : true,
-		"tran_cd" : "PI",
+		// "tran_cd" : "PI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-24T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -6383,7 +6383,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 6,
 		"inout_fg" : true,
-		"tran_cd" : "PI",
+		// "tran_cd" : "PI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-18T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -6400,7 +6400,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 7,
 		"inout_fg" : true,
-		"tran_cd" : "PI",
+		// "tran_cd" : "PI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-18T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -6417,7 +6417,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 8,
 		"inout_fg" : true,
-		"tran_cd" : "PI",
+		// "tran_cd" : "PI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-18T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -6434,7 +6434,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 9,
 		"inout_fg" : true,
-		"tran_cd" : "PI",
+		// "tran_cd" : "PI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-18T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -6451,7 +6451,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 14,
 		"inout_fg" : true,
-		"tran_cd" : "PI",
+		// "tran_cd" : "PI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-18T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -6468,7 +6468,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 13,
 		"inout_fg" : true,
-		"tran_cd" : "PI",
+		// "tran_cd" : "PI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-18T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -6485,7 +6485,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 11,
 		"inout_fg" : true,
-		"tran_cd" : "PI",
+		// "tran_cd" : "PI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-18T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -6502,7 +6502,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 17,
 		"inout_fg" : true,
-		"tran_cd" : "PI",
+		// "tran_cd" : "PI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-24T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -6519,7 +6519,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 16,
 		"inout_fg" : true,
-		"tran_cd" : "PI",
+		// "tran_cd" : "PI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-18T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -6536,7 +6536,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 15,
 		"inout_fg" : true,
-		"tran_cd" : "PI",
+		// "tran_cd" : "PI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-18T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -6553,7 +6553,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 25,
 		"inout_fg" : false,
-		"tran_cd" : "QD",
+		// "tran_cd" : "QD",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-16T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -6570,7 +6570,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 18,
 		"inout_fg" : true,
-		"tran_cd" : "QDI",
+		// "tran_cd" : "QDI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-16T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -6587,7 +6587,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 18,
 		"inout_fg" : true,
-		"tran_cd" : "QDRW",
+		// "tran_cd" : "QDRW",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-16T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -6604,7 +6604,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 19,
 		"inout_fg" : true,
-		"tran_cd" : "QDI",
+		// "tran_cd" : "QDI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-16T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -6621,7 +6621,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 19,
 		"inout_fg" : true,
-		"tran_cd" : "QDRW",
+		// "tran_cd" : "QDRW",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-16T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -6638,7 +6638,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 20,
 		"inout_fg" : true,
-		"tran_cd" : "QDI",
+		// "tran_cd" : "QDI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-16T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -6655,7 +6655,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 20,
 		"inout_fg" : true,
-		"tran_cd" : "QDRW",
+		// "tran_cd" : "QDRW",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-16T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -6672,7 +6672,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 26,
 		"inout_fg" : false,
-		"tran_cd" : "QD",
+		// "tran_cd" : "QD",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-16T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -6689,7 +6689,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 12,
 		"inout_fg" : true,
-		"tran_cd" : "QDI",
+		// "tran_cd" : "QDI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-16T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -6706,7 +6706,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 12,
 		"inout_fg" : true,
-		"tran_cd" : "QDRW",
+		// "tran_cd" : "QDRW",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-16T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -6723,7 +6723,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 13,
 		"inout_fg" : true,
-		"tran_cd" : "QDI",
+		// "tran_cd" : "QDI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-16T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -6740,7 +6740,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 13,
 		"inout_fg" : true,
-		"tran_cd" : "QDRW",
+		// "tran_cd" : "QDRW",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-16T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -6757,7 +6757,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 14,
 		"inout_fg" : true,
-		"tran_cd" : "QDI",
+		// "tran_cd" : "QDI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-16T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -6774,7 +6774,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 14,
 		"inout_fg" : true,
-		"tran_cd" : "QDRW",
+		// "tran_cd" : "QDRW",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-16T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -6791,7 +6791,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 27,
 		"inout_fg" : false,
-		"tran_cd" : "QD",
+		// "tran_cd" : "QD",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-16T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -6808,7 +6808,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 15,
 		"inout_fg" : true,
-		"tran_cd" : "QDI",
+		// "tran_cd" : "QDI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-16T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -6825,7 +6825,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 15,
 		"inout_fg" : true,
-		"tran_cd" : "QDRW",
+		// "tran_cd" : "QDRW",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-16T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -6842,7 +6842,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 16,
 		"inout_fg" : true,
-		"tran_cd" : "QDI",
+		// "tran_cd" : "QDI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-16T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -6859,7 +6859,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 16,
 		"inout_fg" : true,
-		"tran_cd" : "QDRW",
+		// "tran_cd" : "QDRW",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-16T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -6876,7 +6876,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 17,
 		"inout_fg" : true,
-		"tran_cd" : "QDI",
+		// "tran_cd" : "QDI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-16T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -6893,7 +6893,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 17,
 		"inout_fg" : true,
-		"tran_cd" : "QDRW",
+		// "tran_cd" : "QDRW",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-16T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -6910,7 +6910,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 43,
 		"inout_fg" : false,
-		"tran_cd" : "QD",
+		// "tran_cd" : "QD",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-24T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -6927,7 +6927,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 21,
 		"inout_fg" : true,
-		"tran_cd" : "QDI",
+		// "tran_cd" : "QDI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-24T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -6944,7 +6944,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 22,
 		"inout_fg" : true,
-		"tran_cd" : "QDI",
+		// "tran_cd" : "QDI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-24T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -6961,7 +6961,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 23,
 		"inout_fg" : true,
-		"tran_cd" : "QDI",
+		// "tran_cd" : "QDI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-24T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -6978,7 +6978,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 44,
 		"inout_fg" : false,
-		"tran_cd" : "QD",
+		// "tran_cd" : "QD",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-24T15:00:00.000Z").toString(),
 		"store_id" : 5,
@@ -6995,7 +6995,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 24,
 		"inout_fg" : true,
-		"tran_cd" : "QDI",
+		// "tran_cd" : "QDI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-24T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -7012,7 +7012,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 25,
 		"inout_fg" : true,
-		"tran_cd" : "QDI",
+		// "tran_cd" : "QDI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-24T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -7029,7 +7029,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 26,
 		"inout_fg" : true,
-		"tran_cd" : "QDI",
+		// "tran_cd" : "QDI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-24T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -7046,7 +7046,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 2,
 		"inout_fg" : false,
-		"tran_cd" : "WO",
+		// "tran_cd" : "WO",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-24T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -7063,7 +7063,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 3,
 		"inout_fg" : false,
-		"tran_cd" : "WO",
+		// "tran_cd" : "WO",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-24T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -7080,7 +7080,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 4,
 		"inout_fg" : false,
-		"tran_cd" : "WO",
+		// "tran_cd" : "WO",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-24T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -7097,7 +7097,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 5,
 		"inout_fg" : false,
-		"tran_cd" : "WO",
+		// "tran_cd" : "WO",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-24T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -7114,7 +7114,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 6,
 		"inout_fg" : false,
-		"tran_cd" : "WO",
+		// "tran_cd" : "WO",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-24T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -7131,7 +7131,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 7,
 		"inout_fg" : false,
-		"tran_cd" : "WO",
+		// "tran_cd" : "WO",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-24T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -7148,7 +7148,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 8,
 		"inout_fg" : false,
-		"tran_cd" : "WO",
+		// "tran_cd" : "WO",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-24T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -7165,7 +7165,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 9,
 		"inout_fg" : false,
-		"tran_cd" : "WO",
+		// "tran_cd" : "WO",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-24T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -7182,7 +7182,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 10,
 		"inout_fg" : false,
-		"tran_cd" : "WO",
+		// "tran_cd" : "WO",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-24T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -7199,7 +7199,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 11,
 		"inout_fg" : false,
-		"tran_cd" : "WO",
+		// "tran_cd" : "WO",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-24T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -7216,7 +7216,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 12,
 		"inout_fg" : false,
-		"tran_cd" : "WO",
+		// "tran_cd" : "WO",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-24T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -7233,7 +7233,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 13,
 		"inout_fg" : false,
-		"tran_cd" : "WO",
+		// "tran_cd" : "WO",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-24T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -7250,7 +7250,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 14,
 		"inout_fg" : false,
-		"tran_cd" : "WO",
+		// "tran_cd" : "WO",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-24T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -7267,7 +7267,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 15,
 		"inout_fg" : false,
-		"tran_cd" : "WO",
+		// "tran_cd" : "WO",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-24T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -7284,7 +7284,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 16,
 		"inout_fg" : false,
-		"tran_cd" : "WO",
+		// "tran_cd" : "WO",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-24T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -7301,7 +7301,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 17,
 		"inout_fg" : false,
-		"tran_cd" : "WO",
+		// "tran_cd" : "WO",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-24T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -7318,7 +7318,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 18,
 		"inout_fg" : false,
-		"tran_cd" : "WO",
+		// "tran_cd" : "WO",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-24T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -7335,7 +7335,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 19,
 		"inout_fg" : false,
-		"tran_cd" : "WO",
+		// "tran_cd" : "WO",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-24T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -7352,7 +7352,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 20,
 		"inout_fg" : false,
-		"tran_cd" : "WO",
+		// "tran_cd" : "WO",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-24T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -7369,7 +7369,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 21,
 		"inout_fg" : false,
-		"tran_cd" : "WO",
+		// "tran_cd" : "WO",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-24T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -7386,7 +7386,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 22,
 		"inout_fg" : false,
-		"tran_cd" : "WO",
+		// "tran_cd" : "WO",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-24T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -7403,7 +7403,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 23,
 		"inout_fg" : false,
-		"tran_cd" : "WO",
+		// "tran_cd" : "WO",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-24T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -7420,7 +7420,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 24,
 		"inout_fg" : false,
-		"tran_cd" : "WO",
+		// "tran_cd" : "WO",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-24T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -7437,7 +7437,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 25,
 		"inout_fg" : false,
-		"tran_cd" : "WO",
+		// "tran_cd" : "WO",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-24T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -7454,7 +7454,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 26,
 		"inout_fg" : false,
-		"tran_cd" : "WO",
+		// "tran_cd" : "WO",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-24T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -7471,7 +7471,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 27,
 		"inout_fg" : false,
-		"tran_cd" : "WO",
+		// "tran_cd" : "WO",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-24T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -7488,7 +7488,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 1,
 		"inout_fg" : false,
-		"tran_cd" : "MR",
+		// "tran_cd" : "MR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-24T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -7505,7 +7505,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 2,
 		"inout_fg" : false,
-		"tran_cd" : "MR",
+		// "tran_cd" : "MR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-24T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -7522,7 +7522,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 3,
 		"inout_fg" : false,
-		"tran_cd" : "MR",
+		// "tran_cd" : "MR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-24T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -7539,7 +7539,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 4,
 		"inout_fg" : false,
-		"tran_cd" : "MR",
+		// "tran_cd" : "MR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-24T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -7556,7 +7556,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 5,
 		"inout_fg" : false,
-		"tran_cd" : "MR",
+		// "tran_cd" : "MR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-24T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -7573,7 +7573,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 6,
 		"inout_fg" : false,
-		"tran_cd" : "MR",
+		// "tran_cd" : "MR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-24T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -7590,7 +7590,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 7,
 		"inout_fg" : false,
-		"tran_cd" : "MR",
+		// "tran_cd" : "MR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-24T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -7607,7 +7607,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 8,
 		"inout_fg" : false,
-		"tran_cd" : "MR",
+		// "tran_cd" : "MR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-24T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -7624,7 +7624,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 9,
 		"inout_fg" : false,
-		"tran_cd" : "MR",
+		// "tran_cd" : "MR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-24T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -7641,7 +7641,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 10,
 		"inout_fg" : false,
-		"tran_cd" : "MR",
+		// "tran_cd" : "MR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-24T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -7658,7 +7658,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 11,
 		"inout_fg" : false,
-		"tran_cd" : "MR",
+		// "tran_cd" : "MR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-24T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -7675,7 +7675,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 12,
 		"inout_fg" : false,
-		"tran_cd" : "MR",
+		// "tran_cd" : "MR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-24T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -7692,7 +7692,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 13,
 		"inout_fg" : false,
-		"tran_cd" : "MR",
+		// "tran_cd" : "MR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-24T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -7709,7 +7709,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 14,
 		"inout_fg" : false,
-		"tran_cd" : "MR",
+		// "tran_cd" : "MR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-24T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -7726,7 +7726,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 15,
 		"inout_fg" : false,
-		"tran_cd" : "MR",
+		// "tran_cd" : "MR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-24T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -7743,7 +7743,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 16,
 		"inout_fg" : false,
-		"tran_cd" : "MR",
+		// "tran_cd" : "MR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-24T15:00:00.000Z").toString(),
 		"store_id" : 4,
@@ -7760,7 +7760,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 17,
 		"inout_fg" : false,
-		"tran_cd" : "MR",
+		// "tran_cd" : "MR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-24T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -7777,7 +7777,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 18,
 		"inout_fg" : false,
-		"tran_cd" : "MR",
+		// "tran_cd" : "MR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-24T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -7794,7 +7794,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 19,
 		"inout_fg" : false,
-		"tran_cd" : "MR",
+		// "tran_cd" : "MR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-24T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -7811,7 +7811,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 20,
 		"inout_fg" : false,
-		"tran_cd" : "MR",
+		// "tran_cd" : "MR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-24T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -7828,7 +7828,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 21,
 		"inout_fg" : false,
-		"tran_cd" : "MR",
+		// "tran_cd" : "MR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-24T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -7845,7 +7845,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 22,
 		"inout_fg" : false,
-		"tran_cd" : "MR",
+		// "tran_cd" : "MR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-24T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -7862,7 +7862,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 23,
 		"inout_fg" : false,
-		"tran_cd" : "MR",
+		// "tran_cd" : "MR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-24T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -7879,7 +7879,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 24,
 		"inout_fg" : false,
-		"tran_cd" : "MR",
+		// "tran_cd" : "MR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-24T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -7896,7 +7896,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 25,
 		"inout_fg" : false,
-		"tran_cd" : "MR",
+		// "tran_cd" : "MR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-24T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -7913,7 +7913,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 26,
 		"inout_fg" : false,
-		"tran_cd" : "MR",
+		// "tran_cd" : "MR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-24T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -7930,7 +7930,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 27,
 		"inout_fg" : false,
-		"tran_cd" : "MR",
+		// "tran_cd" : "MR",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-24T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -7947,7 +7947,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 13,
 		"inout_fg" : false,
-		"tran_cd" : "MOPI",
+		// "tran_cd" : "MOPI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-01T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -7964,7 +7964,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 13,
 		"inout_fg" : true,
-		"tran_cd" : "MOPI",
+		// "tran_cd" : "MOPI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-01T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -7981,7 +7981,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 14,
 		"inout_fg" : false,
-		"tran_cd" : "MOPI",
+		// "tran_cd" : "MOPI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-01T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -7998,7 +7998,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 14,
 		"inout_fg" : true,
-		"tran_cd" : "MOPI",
+		// "tran_cd" : "MOPI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-01T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -8015,7 +8015,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 20,
 		"inout_fg" : true,
-		"tran_cd" : "PI",
+		// "tran_cd" : "PI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-18T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -8032,7 +8032,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 19,
 		"inout_fg" : true,
-		"tran_cd" : "PI",
+		// "tran_cd" : "PI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-18T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -8049,7 +8049,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 18,
 		"inout_fg" : true,
-		"tran_cd" : "PI",
+		// "tran_cd" : "PI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-03T15:00:00.000Z").toString(),
 		"store_id" : 2,
@@ -8066,7 +8066,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 1,
 		"inout_fg" : false,
-		"tran_cd" : "POMI",
+		// "tran_cd" : "POMI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-24T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -8083,7 +8083,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 1,
 		"inout_fg" : true,
-		"tran_cd" : "POMI",
+		// "tran_cd" : "POMI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-24T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -8100,7 +8100,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 2,
 		"inout_fg" : false,
-		"tran_cd" : "POMI",
+		// "tran_cd" : "POMI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-24T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -8117,7 +8117,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 2,
 		"inout_fg" : true,
-		"tran_cd" : "POMI",
+		// "tran_cd" : "POMI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-24T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -8134,7 +8134,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 3,
 		"inout_fg" : false,
-		"tran_cd" : "POMI",
+		// "tran_cd" : "POMI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-24T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -8151,7 +8151,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 3,
 		"inout_fg" : true,
-		"tran_cd" : "POMI",
+		// "tran_cd" : "POMI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-10-24T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -8168,7 +8168,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 4,
 		"inout_fg" : false,
-		"tran_cd" : "POMI",
+		// "tran_cd" : "POMI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-01T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -8185,7 +8185,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 4,
 		"inout_fg" : true,
-		"tran_cd" : "POMI",
+		// "tran_cd" : "POMI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-01T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -8202,7 +8202,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 5,
 		"inout_fg" : false,
-		"tran_cd" : "POMI",
+		// "tran_cd" : "POMI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-01T15:00:00.000Z").toString(),
 		"store_id" : 3,
@@ -8219,7 +8219,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 5,
 		"inout_fg" : true,
-		"tran_cd" : "POMI",
+		// "tran_cd" : "POMI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-01T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -8236,7 +8236,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 6,
 		"inout_fg" : false,
-		"tran_cd" : "POMI",
+		// "tran_cd" : "POMI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-01T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -8253,7 +8253,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 6,
 		"inout_fg" : true,
-		"tran_cd" : "POMI",
+		// "tran_cd" : "POMI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-11-01T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -8270,7 +8270,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 7,
 		"inout_fg" : false,
-		"tran_cd" : "POMI",
+		// "tran_cd" : "POMI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-15T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -8287,7 +8287,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 7,
 		"inout_fg" : true,
-		"tran_cd" : "POMI",
+		// "tran_cd" : "POMI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-15T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -8304,7 +8304,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 8,
 		"inout_fg" : false,
-		"tran_cd" : "POMI",
+		// "tran_cd" : "POMI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-15T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -8321,7 +8321,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 8,
 		"inout_fg" : true,
-		"tran_cd" : "POMI",
+		// "tran_cd" : "POMI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-15T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -8338,7 +8338,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 9,
 		"inout_fg" : false,
-		"tran_cd" : "POMI",
+		// "tran_cd" : "POMI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-15T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -8355,7 +8355,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 9,
 		"inout_fg" : true,
-		"tran_cd" : "POMI",
+		// "tran_cd" : "POMI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-15T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -8372,7 +8372,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 10,
 		"inout_fg" : false,
-		"tran_cd" : "POMI",
+		// "tran_cd" : "POMI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-15T15:00:00.000Z").toString(),
 		"store_id" : 1,
@@ -8389,7 +8389,7 @@ let seedDatas: IInvStore[] = [
 	{
 		"tran_id" : 10,
 		"inout_fg" : true,
-		"tran_cd" : "POMI",
+		// "tran_cd" : "POMI",
 		"factory_id" : 1,
 		"reg_date" : moment("2021-12-15T15:00:00.000Z").toString(),
 		"store_id" : 1,

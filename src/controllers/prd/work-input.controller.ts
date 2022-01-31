@@ -16,6 +16,7 @@ import response from '../../utils/response';
 import testErrorHandlingHelper from '../../utils/testErrorHandlingHelper';
 import BaseCtl from '../base.controller';
 import config from '../../configs/config';
+import AdmTranTypeService from '../../services/adm/tran-type.service';
 
 class PrdWorkInputCtl extends BaseCtl {
   //#region ✅ Constructor
@@ -272,7 +273,9 @@ class PrdWorkInputCtl extends BaseCtl {
 
       // 📌 수불이력을 삭제할 항목 추가
       const storeBody: IInvStore[] = [];
-      workInputRead.raws.forEach((workInput: any) => { storeBody.push({ tran_id: workInput.work_input_id, inout_fg: false, tran_cd: getTranTypeCd('PRD_INPUT') }); });
+      const tranTypeService = new AdmTranTypeService(req.tenant.uuid);
+      const tranTypeId = await tranTypeService.getIdByCd('PRD_INPUT');
+      workInputRead.raws.forEach((workInput: any) => { storeBody.push({ tran_id: workInput.work_input_id, inout_fg: false, tran_type_id: tranTypeId }); });
 
       await sequelize.transaction(async(tran) => { 
         // 📌 창고 수불이력 삭제
@@ -312,9 +315,12 @@ class PrdWorkInputCtl extends BaseCtl {
       // 📌 수불이력을 삭제할 항목 추가
       const workIds: number[] = req.body.map((data: any) => { return data.work_id });
       const storeBody: IInvStore[] = [];
+
+      const tranTypeService = new AdmTranTypeService(req.tenant.uuid);
+      const tranTypeId = await tranTypeService.getIdByCd('PRD_INPUT');
       for await (const workId of workIds) {
         const workInputs = await repo.readRawsByWorkId(workId);
-        workInputs.raws.forEach((workInput: any) => { storeBody.push({ tran_id: workInput.work_input_id, inout_fg: false, tran_cd: getTranTypeCd('PRD_INPUT') }); });
+        workInputs.raws.forEach((workInput: any) => { storeBody.push({ tran_id: workInput.work_input_id, inout_fg: false, tran_type_id: tranTypeId }); });
       }
       
       await sequelize.transaction(async(tran) => { 

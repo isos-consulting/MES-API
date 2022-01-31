@@ -3,7 +3,7 @@ get:
     수불유형 데이터 목록을 조회합니다.
   summary: 수불유형 데이터 조회
   tags:
-    - 수불유형(Transaction)
+    - 수불유형(TranType)
 
   responses:
     200:
@@ -33,11 +33,11 @@ get:
                         type: array
                         items:
                           allOf:
-                            - $ref: ../../schemas/adm/transaction.schema.yaml#/uuid
-                            - $ref: ../../schemas/adm/transaction.schema.yaml#/tran_cd
-                            - $ref: ../../schemas/adm/transaction.schema.yaml#/tran_nm
-                            - $ref: ../../schemas/adm/transaction.schema.yaml#/remark
-                            - $ref: ../../schemas/adm/transaction.schema.yaml#/sortby
+                            - $ref: ../../schemas/adm/tran-type.schema.yaml#/tran_type_uuid
+                            - $ref: ../../schemas/adm/tran-type.schema.yaml#/tran_type_cd
+                            - $ref: ../../schemas/adm/tran-type.schema.yaml#/tran_type_nm
+                            - $ref: ../../schemas/adm/tran-type.schema.yaml#/remark
+                            - $ref: ../../schemas/adm/tran-type.schema.yaml#/sortby
                             - $ref: ../../schemas/common/timestamp.schema.yaml
     500:
       $ref: ../../responses/common/general-error.response.yaml
@@ -47,19 +47,19 @@ post:
     수불유형 데이터를 생성합니다.
   summary: 수불유형 데이터 생성
   tags:
-    - 수불유형(Transaction)
+    - 수불유형(TranType)
   requestBody:
     content:
       application/json:
         schema:
           required:
-            - tran_cd
-            - tran_nm
+            - tran_type_cd
+            - tran_type_nm
           allOf:
-            - $ref: ../../schemas/adm/transaction.schema.yaml#/tran_cd
-            - $ref: ../../schemas/adm/transaction.schema.yaml#/tran_nm
-            - $ref: ../../schemas/adm/transaction.schema.yaml#/remark
-            - $ref: ../../schemas/adm/transaction.schema.yaml#/sortby
+            - $ref: ../../schemas/adm/tran-type.schema.yaml#/tran_type_cd
+            - $ref: ../../schemas/adm/tran-type.schema.yaml#/tran_type_nm
+            - $ref: ../../schemas/adm/tran-type.schema.yaml#/sortby
+            - $ref: ../../schemas/adm/tran-type.schema.yaml#/remark
   responses:
     201:
       $ref: ../../responses/common/succeed-create.response.yaml
@@ -71,21 +71,21 @@ put:
     수불유형 데이터를 행(Row) 단위로 수정합니다.
   summary: 수불유형 데이터 수정
   tags:
-    - 수불유형(Transaction)
+    - 수불유형(TranType)
   requestBody:
     content:
       application/json:
         schema:
           required:
             - uuid
-            - tran_cd
-            - tran_nm
+            - tran_type_cd
+            - tran_type_nm
           allOf:
-            - $ref: ../../schemas/adm/transaction.schema.yaml#/uuid
-            - $ref: ../../schemas/adm/transaction.schema.yaml#/tran_cd
-            - $ref: ../../schemas/adm/transaction.schema.yaml#/tran_nm
-            - $ref: ../../schemas/adm/transaction.schema.yaml#/remark
-            - $ref: ../../schemas/adm/transaction.schema.yaml#/sortby
+            - $ref: ../../schemas/adm/tran-type.schema.yaml#/uuid
+            - $ref: ../../schemas/adm/tran-type.schema.yaml#/tran_type_cd
+            - $ref: ../../schemas/adm/tran-type.schema.yaml#/tran_type_nm
+            - $ref: ../../schemas/adm/tran-type.schema.yaml#/sortby
+            - $ref: ../../schemas/adm/tran-type.schema.yaml#/remark
   responses:
     201:
       $ref: ../../responses/common/succeed-update.response.yaml
@@ -97,7 +97,7 @@ patch:
     수불유형 데이터를 개별 항목 단위로 수정합니다.
   summary: 수불유형 데이터 수정
   tags:
-    - 수불유형(Transaction)
+    - 수불유형(TranType)
   requestBody:
     content:
       application/json:
@@ -105,11 +105,11 @@ patch:
           required:
             - uuid
           allOf:
-            - $ref: ../../schemas/adm/transaction.schema.yaml#/uuid
-            - $ref: ../../schemas/adm/transaction.schema.yaml#/tran_cd
-            - $ref: ../../schemas/adm/transaction.schema.yaml#/tran_nm
-            - $ref: ../../schemas/adm/transaction.schema.yaml#/remark
-            - $ref: ../../schemas/adm/transaction.schema.yaml#/sortby
+            - $ref: ../../schemas/adm/tran-type.schema.yaml#/uuid
+            - $ref: ../../schemas/adm/tran-type.schema.yaml#/tran_type_cd
+            - $ref: ../../schemas/adm/tran-type.schema.yaml#/tran_type_nm
+            - $ref: ../../schemas/adm/tran-type.schema.yaml#/sortby
+            - $ref: ../../schemas/adm/tran-type.schema.yaml#/remark
   responses:
     201:
       $ref: ../../responses/common/succeed-update.response.yaml
@@ -121,7 +121,7 @@ delete:
     수불유형 데이터를 삭제합니다.
   summary: 수불유형 데이터 삭제
   tags:
-    - 수불유형(Transaction)
+    - 수불유형(TranType)
   requestBody:
     content:
       application/json:
@@ -129,7 +129,7 @@ delete:
           required:
             - uuid
           allOf:
-            - $ref: ../../schemas/adm/transaction.schema.yaml#/uuid
+            - $ref: ../../schemas/adm/tran-type.schema.yaml#/uuid
   responses:
     200:
       $ref: ../../responses/common/succeed-delete.response.yaml

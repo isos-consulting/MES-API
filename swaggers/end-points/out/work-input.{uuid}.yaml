@@ -64,7 +64,7 @@ get:
                             - $ref: ../../schemas/out/work-input.schema.yaml#/lot_no
                             - $ref: ../../schemas/out/work-input.schema.yaml#/qty
                             - $ref: ../../schemas/out/work-input.schema.yaml#/c_usage
-                            - $ref: ../../schemas/out/work-input.schema.yaml#/unit_uuid
+                            - $ref: ../../schemas/std/prod.schema.yaml#/unit_uuid
                             - $ref: ../../schemas/out/work-input.schema.yaml#/unit_cd
                             - $ref: ../../schemas/out/work-input.schema.yaml#/unit_nm
                             - $ref: ../../schemas/out/work-input.schema.yaml#/from_store_uuid

@@ -6,7 +6,6 @@ import StdProdRepo from '../../repositories/std/prod.repository';
 import StdRejectRepo from '../../repositories/std/reject.repository';
 import StdPartnerRepo from '../../repositories/std/partner.repository';
 import StdStoreRepo from '../../repositories/std/store.repository';
-import getTranTypeCd from '../../utils/getTranTypeCd';
 import getTranTypeCdByApiParams from '../../utils/getTranTypeCdByApiParams';
 import isDateFormat from '../../utils/isDateFormat';
 import isUuid from '../../utils/isUuid';
@@ -16,6 +15,7 @@ import BaseCtl from '../base.controller';
 import { getSequelize } from '../../utils/getSequelize';
 import ApiResult from '../../interfaces/common/api-result.interface';
 import config from '../../configs/config';
+import AdmTranTypeService from '../../services/adm/tran-type.service';
 
 class InvStoreCtl extends BaseCtl {
   // ✅ Inherited Functions Variable
@@ -104,15 +104,17 @@ class InvStoreCtl extends BaseCtl {
       
       const sequelize = getSequelize(req.tenant.uuid);
       const repo = new InvStoreRepo(req.tenant.uuid);
+      const tranTypeService = new AdmTranTypeService(req.tenant.uuid);
       let result: ApiResult<any> = { count: 0, raws: [] };
 
       await sequelize.transaction(async(tran) => {
         // 📌 재고실사 관련 Max 전표번호 생성
-        let maxTranId = await repo.getMaxTranId(getTranTypeCd('INVENTORY'), tran);
+        const tranTypeId = await tranTypeService.getIdByCd('INVENTORY');
+        let maxTranId = await repo.getMaxTranId(tranTypeId, tran);
 
         for await (const data of req.body) {
           data.tran_id = ++maxTranId;
-          data.tran_cd = getTranTypeCd('INVENTORY');
+          data.tran_type_id = tranTypeId;
 
           const params = {
             factory_uuid: data.factory_uuid,

@@ -1,16 +1,15 @@
 import { Sequelize, Table, Column, Model, DataType, CreatedAt, UpdatedAt, BelongsTo, Unique } from 'sequelize-typescript'
-import IAdmTransaction from '../../interfaces/adm/transaction.interface';
+import IAdmTranType from '../../interfaces/adm/tran-type.interface';
 import AutUser from '../aut/user.model';
 
 @Table({
-  // tableName: 'ADM_TRANSACTION_TB',
-  tableName: 'ADM_TRANSACTION_VW',
-  modelName: 'AdmTransaction',
-  comment: '수불 유형 정보 뷰',
+  tableName: 'ADM_TRAN_TYPE_TB',
+  modelName: 'AdmTranType',
+  comment: '수불 유형 정보 테이블',
   timestamps: true,
   underscored: true,
 })
-export default class AdmTransaction extends Model<IAdmTransaction> {
+export default class AdmTranType extends Model<IAdmTranType> {
   @Column({
     comment: '수불 유형ID',
     type: DataType.INTEGER,
@@ -19,22 +18,22 @@ export default class AdmTransaction extends Model<IAdmTransaction> {
 		autoIncrement: true,
     autoIncrementIdentity: true,
   })
-  tran_id: number;
+  tran_type_id: number;
 
-  @Unique('adm_transaction_tb_tran_cd_un')
+  @Unique('adm_tran_type_tb_tran_type_cd_un')
   @Column({
     comment: '수불 유형코드',
-    type: DataType.STRING(20),
+    type: DataType.STRING(50),
     allowNull: false,
   })
-  tran_cd: string;
+  tran_type_cd: string;
 
   @Column({
     comment: '수불 유형명',
     type: DataType.STRING(50),
     allowNull: false,
   })
-  tran_nm: string;
+  tran_type_nm: string;
 
 	@Column({
     comment: '정렬',
@@ -44,7 +43,7 @@ export default class AdmTransaction extends Model<IAdmTransaction> {
 
   @Column({
     comment: '비고',
-    type: DataType.STRING,
+    type: DataType.STRING(250),
   })
   remark: string;
 
@@ -80,7 +79,7 @@ export default class AdmTransaction extends Model<IAdmTransaction> {
   })
   updated_uid: number;
 
-	@Unique('adm_transaction_tb_uuid_un')
+	@Unique('adm_tran_type_tb_uuid_un')
   @Column({
     comment: '수불 유형UUID',
     type: DataType.UUID,

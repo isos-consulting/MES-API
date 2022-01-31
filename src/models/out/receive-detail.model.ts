@@ -130,7 +130,7 @@ export default class OutReceiveDetail extends Model<IOutReceiveDetail> {
     allowNull: false,
     defaultValue: false,
   })
-  insp_fg: number;
+  insp_fg: boolean;
 
   @Column({
     comment: '이월 여부',
@@ -138,7 +138,7 @@ export default class OutReceiveDetail extends Model<IOutReceiveDetail> {
     allowNull: false,
     defaultValue: false,
   })
-  carry_fg: number;
+  carry_fg: boolean;
 
   @ForeignKey(() => MatOrderDetail)
   @Column({
