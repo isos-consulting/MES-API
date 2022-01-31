@@ -23,6 +23,8 @@ import admFileMgmtDetailTypeValidation from '../validations/adm/file-mgmt-detail
 import AdmFileMgmtDetailTypeCtl from '../controllers/adm/file-mgmt-detail-type.controller';
 import admFileMgmtValidation from '../validations/adm/file-mgmt.validation';
 import admTranTypeValidation from '../validations/adm/tran-type.validation';
+import AdmBomInputTypeCtl from '../controllers/adm/bom-input-type.controller';
+import admBomInputTypeValidation from '../validations/adm/bom-input-type.validation';
 
 const router = express.Router();
 
@@ -34,6 +36,16 @@ router.route('/bom-types').post(bomType.create);
 router.route('/bom-types').put(bomType.update);
 router.route('/bom-types').patch(bomType.patch);
 router.route('/bom-types').delete(bomType.delete);
+//#endregion
+
+//#region ✅ BomType (BOM 투입 유형)
+const bomInputType = new AdmBomInputTypeCtl();
+router.route('/bom-input-type/:uuid').get(admBomInputTypeValidation.readByUuid, validationCallback, bomInputType.readByUuid);
+router.route('/bom-input-types').get(admBomInputTypeValidation.read, validationCallback, bomInputType.read);
+router.route('/bom-input-types').post(admBomInputTypeValidation.create, validationCallback, bomInputType.create);
+router.route('/bom-input-types').put(admBomInputTypeValidation.update, validationCallback, bomInputType.update);
+router.route('/bom-input-types').patch(admBomInputTypeValidation.patch, validationCallback, bomInputType.patch);
+router.route('/bom-input-types').delete(admBomInputTypeValidation.delete, validationCallback, bomInputType.delete);
 //#endregion
 
 //#region ✅ InspType (검사 유형)

@@ -1,0 +1,51 @@
+# ADM_DEMAND_TYPE_TB
+
+# Columns
+bom_input_type_id:
+  type: object
+  properties:
+    bom_input_type_id:
+      description: BOM 투입유형ID
+      type: number
+      format: int4
+
+bom_input_type_cd:
+  type: object
+  properties:
+    bom_input_type_cd:
+      description: BOM 투입유형코드
+      type: string
+      format: varchar(20)
+
+bom_input_type_nm:
+  type: object
+  properties:
+    bom_input_type_nm:
+      description: BOM 투입유형명
+      type: string
+      format: varchar(50)
+
+sortby:
+  type: object
+  properties:
+    sortby:
+      description: 정렬
+      type: number
+      format: int4
+
+uuid:
+  type: object
+  properties:
+    uuid:
+      description: BOM 투입유형UUID
+      type: string
+      format: uuid
+
+# Uuids
+bom_input_type_uuid:
+  type: object
+  properties:
+    bom_input_type_uuid:
+      description: BOM 투입유형UUID
+      type: string
+      format: uuid
