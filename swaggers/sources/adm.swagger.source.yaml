@@ -50,6 +50,12 @@ paths:
   /adm/bom-types:
     $ref: ../end-points/adm/bom-types.yaml
 
+  # ✅ BomInputType (BOM 투입 유형)
+  /adm/bom-input-type/{uuid}:
+    $ref: ../end-points/adm/bom-input-type.{uuid}.yaml
+  /adm/bom-input-types:
+    $ref: ../end-points/adm/bom-input-types.yaml
+
   # ✅ InspType (검사 유형)
   /adm/insp-type/{uuid}:
     $ref: ../end-points/adm/insp-type.{uuid}.yaml
