@@ -36,6 +36,7 @@ import StdRoutingCtl from '../controllers/std/routing.controller';
 import StdShiftCtl from '../controllers/std/shift.controller';
 import StdStoreCtl from '../controllers/std/store.controller';
 import StdSupplierCtl from '../controllers/std/supplier.controller';
+import StdTenantOptCtl from '../controllers/std/tenant-opt.controller';
 import StdUnitConvertCtl from '../controllers/std/unit-convert.controller';
 import StdUnitCtl from '../controllers/std/unit.controller';
 import StdVendorPriceCtl from '../controllers/std/vendor-price.controller';
@@ -48,6 +49,7 @@ import stdDowntimeValidation from '../validations/std/downtime.validation';
 import stdEquipValidation from '../validations/std/equip.validation';
 import stdInspItemValidation from '../validations/std/insp-item.validation';
 import stdRoutingResourceValidation from '../validations/std/routing-resource.validation';
+import stdTenantOptValidation from '../validations/std/tenant-opt.validation';
 
 const router = express.Router();
 
@@ -312,6 +314,16 @@ router.route('/downtimes').post(stdDowntimeValidation.create, validationCallback
 router.route('/downtimes').put(stdDowntimeValidation.update, validationCallback, downtime.update);
 router.route('/downtimes').patch(stdDowntimeValidation.patch, validationCallback, downtime.patch);
 router.route('/downtimes').delete(stdDowntimeValidation.delete, validationCallback, downtime.delete);
+//#endregion
+
+//#region ✅ TenantOpt (사용자정의옵션)
+const tenantOpt = new StdTenantOptCtl();
+router.route('/tenant-opt/:uuid').get(stdTenantOptValidation.readByUuid, validationCallback, tenantOpt.readByUuid);
+router.route('/tenant-opts').get(stdTenantOptValidation.read, validationCallback, tenantOpt.read);
+router.route('/tenant-opts').post(stdTenantOptValidation.create, validationCallback, tenantOpt.create);
+router.route('/tenant-opts').put(stdTenantOptValidation.update, validationCallback, tenantOpt.update);
+router.route('/tenant-opts').patch(stdTenantOptValidation.patch, validationCallback, tenantOpt.patch);
+router.route('/tenant-opts').delete(stdTenantOptValidation.delete, validationCallback, tenantOpt.delete);
 //#endregion
 
 //#region ✅ Emp (사원)

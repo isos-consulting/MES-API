@@ -238,6 +238,12 @@ paths:
   /std/downtimes:
     $ref: ../end-points/std/downtimes.yaml
 
+  # ✅ TenantOpt (사용자정의옵션)
+  /std/tenant-opt/{uuid}:
+    $ref: ../end-points/std/tenant-opt.{uuid}.yaml
+  /std/tenant-opts:
+    $ref: ../end-points/std/tenant-opts.yaml
+
   # ✅ Emp (사원)
   /std/emps/excel-upload:
     $ref: ../end-points/std/emps.excel-upload.yaml

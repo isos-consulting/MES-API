@@ -17,6 +17,8 @@ import OutIncomeService from '../../services/out/income.service';
 import OutWorkInputService from '../../services/out/work-input.service';
 import StdStoreService from '../../services/std/store.service';
 import InvStoreService from '../../services/inv/store.service';
+import StdTenantOptService from '../../services/std/tenant-opt.service';
+import { OUT_AUTO_PULL } from '../../types/tenant-opt.type';
 
 class OutReceiveCtl {
   stateTag: string
@@ -43,6 +45,7 @@ class OutReceiveCtl {
       const inventoryService = new InvStoreService(req.tenant.uuid);
       const patternOptService = new AdmPatternOptService(req.tenant.uuid);
       const patternService = new AdmPatternHistoryService(req.tenant.uuid);
+      const tenantOptService = new StdTenantOptService(req.tenant.uuid);
 
       const matched = matchedData(req, { locations: [ 'body' ] });
       const data = {
@@ -121,8 +124,11 @@ class OutReceiveCtl {
         // 📌 외주투입 및 수불 데이터 생성
         let inputResult: ApiResult<any> = { count: 0, raws: [] };
         let fromStoreResult: ApiResult<any> = { count: 0, raws: [] };
-        const isPullOption = true; // Default로 pull(선입선출 옵션)로 동작 (현재는 pull로만 생성)
-        if (isPullOption) {
+
+        // 📌 외주투입의 자동 선입선출 옵션이 Enable인 경우에 투입 진행
+        const isPullOption = await tenantOptService.getTenantOptValue('OUT_AUTO_PULL', tran);
+
+        if (isPullOption === OUT_AUTO_PULL.ENABLE) {
           for await (const data of datasForInventory) {
             const inputBody = await inputService.getPullInputBody(data, regDate, partnerId, isPullOption);
             await storeService.validateStoreTypeByIds(inputBody.map(body => body.from_store_id), 'OUTSOURCING', tran);
@@ -290,6 +296,7 @@ class OutReceiveCtl {
       const inputService = new OutWorkInputService(req.tenant.uuid);
       const storeService = new StdStoreService(req.tenant.uuid);
       const inventoryService = new InvStoreService(req.tenant.uuid);
+      const tenantOptService = new StdTenantOptService(req.tenant.uuid);
 
       const matched = matchedData(req, { locations: [ 'body' ] });
       const data = {
@@ -327,11 +334,11 @@ class OutReceiveCtl {
           req.user?.uid as number, tran
         );
 
-        // 📌 외주투입 자동 선입선출 옵션
-        const isPullOption = true; // Default로 pull(선입선출 옵션)로 동작 (현재는 pull로만 생성)
+        // 📌 외주투입의 자동 선입선출 옵션이 Enable인 경우에 투입 진행
+        const isPullOption = await tenantOptService.getTenantOptValue('OUT_AUTO_PULL', tran);
 
         // 📌 외주투입 및 수불 데이터 삭제
-        if (isPullOption) {
+        if (isPullOption === OUT_AUTO_PULL.ENABLE) {
           const receiveDetailIds = detailResult.raws.map(raw => raw.receive_id);
           const deleted = await inputService.deleteByReceiveDetailIds(receiveDetailIds, req.user?.uid as number, tran);
           await inventoryService.transactInventory(
@@ -345,7 +352,7 @@ class OutReceiveCtl {
         let inputResult: ApiResult<any> = { count: 0, raws: [] };
         let fromStoreResult: ApiResult<any> = { count: 0, raws: [] };
 
-        if (isPullOption) {
+        if (isPullOption === OUT_AUTO_PULL.ENABLE) {
           for await (const detail of data.details) {
             const inputBody = await inputService.getPullInputBody(detail, regDate, partnerId, isPullOption);
             await storeService.validateStoreTypeByIds(inputBody.map(body => body.from_store_id), 'OUTSOURCING', tran);
@@ -404,6 +411,7 @@ class OutReceiveCtl {
       const inputService = new OutWorkInputService(req.tenant.uuid);
       const storeService = new StdStoreService(req.tenant.uuid);
       const inventoryService = new InvStoreService(req.tenant.uuid);
+      const tenantOptService = new StdTenantOptService(req.tenant.uuid);
 
       const matched = matchedData(req, { locations: [ 'body' ] });
       const data = {
@@ -441,11 +449,11 @@ class OutReceiveCtl {
           req.user?.uid as number, tran
         );
 
-        // 📌 외주투입 자동 선입선출 옵션
-        const isPullOption = true; // Default로 pull(선입선출 옵션)로 동작 (현재는 pull로만 생성)
+        // 📌 외주투입의 자동 선입선출 옵션이 Enable인 경우에 투입 진행
+        const isPullOption = await tenantOptService.getTenantOptValue('OUT_AUTO_PULL', tran);
 
         // 📌 외주투입 및 수불 데이터 삭제
-        if (isPullOption) {
+        if (isPullOption === OUT_AUTO_PULL.ENABLE) {
           const receiveDetailIds = detailResult.raws.map(raw => raw.receive_id);
           const deleted = await inputService.deleteByReceiveDetailIds(receiveDetailIds, req.user?.uid as number, tran);
           await inventoryService.transactInventory(
@@ -459,7 +467,7 @@ class OutReceiveCtl {
         let inputResult: ApiResult<any> = { count: 0, raws: [] };
         let fromStoreResult: ApiResult<any> = { count: 0, raws: [] };
 
-        if (isPullOption) {
+        if (isPullOption === OUT_AUTO_PULL.ENABLE) {
           for await (const detail of data.details) {
             const inputBody = await inputService.getPullInputBody(detail, regDate, partnerId, isPullOption);
             await storeService.validateStoreTypeByIds(inputBody.map(body => body.from_store_id), 'OUTSOURCING', tran);
