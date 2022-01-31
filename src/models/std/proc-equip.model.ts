@@ -1,28 +1,29 @@
 import { Sequelize, Table, Column, Model, DataType, CreatedAt, UpdatedAt, BelongsTo, Unique, ForeignKey } from 'sequelize-typescript'
-import IStdRoutingResource from '../../interfaces/std/routing-resource.interface';
+import IStdProcEquip from '../../interfaces/std/proc-equip.interface';
 import AutUser from '../aut/user.model';
+import StdEquip from './equip.model';
 import StdFactory from './factory.model';
-import StdRouting from './routing.model';
+import StdProc from './proc.model';
 
 @Table({
-  tableName: 'STD_ROUTING_RESOURCE_TB',
-  modelName: 'StdRoutingResource',
-  comment: '생산자원 정보 테이블 (작업인원관리)',
+  tableName: 'STD_PROC_EQUIP_TB',
+  modelName: 'StdProcEquip',
+  comment: '공정별 설비정보 테이블',
   timestamps: true,
   underscored: true,
 })
-export default class StdRoutingResource extends Model<IStdRoutingResource> {
+export default class StdProcEquip extends Model<IStdProcEquip> {
   @Column({
-    comment: '생산자원ID',
+    comment: '공정별 설비정보ID',
     primaryKey: true,
     autoIncrement: true,
     autoIncrementIdentity: true,
     type: DataType.INTEGER,
     allowNull: false,
   })
-  routing_resource_id: number;
+  proc_equip_id: number;
 
-  @Unique('std_routing_resource_tb_factory_id_routing_id_emp_cnt_un')
+  @Unique('std_proc_equip_tb_factory_id_proc_id_equip_id_un')
   @ForeignKey(() => StdFactory)
   @Column({
     comment: '공장ID',
@@ -31,34 +32,23 @@ export default class StdRoutingResource extends Model<IStdRoutingResource> {
   })
   factory_id: number;
 
-  @Unique('std_routing_resource_tb_factory_id_routing_id_emp_cnt_un')
-  @ForeignKey(() => StdRouting)
+  @Unique('std_proc_equip_tb_factory_id_proc_id_equip_id_un')
+  @ForeignKey(() => StdProc)
   @Column({
-    comment: '라우팅ID',
+    comment: '공정ID',
     type: DataType.INTEGER,
     allowNull: false,
   })
-  routing_id: number;
+  proc_id: number;
 
-  @Unique('std_routing_resource_tb_factory_id_routing_id_emp_cnt_un')
+  @Unique('std_proc_equip_tb_factory_id_proc_id_equip_id_un')
+  @ForeignKey(() => StdEquip)
   @Column({
-    comment: '인원',
+    comment: '설비ID',
     type: DataType.INTEGER,
-  })
-  emp_cnt: number;
-
-  @Column({
-    comment: 'Cycle Time',
-    type: DataType.DECIMAL(19, 6),
     allowNull: false,
   })
-  cycle_time: number;
-
-  @Column({
-    comment: 'UPH',
-    type: DataType.DECIMAL(19, 6),
-  })
-  uph: number;
+  equip_id: number;
 
   @CreatedAt
   @Column({
@@ -92,9 +82,9 @@ export default class StdRoutingResource extends Model<IStdRoutingResource> {
   })
   updated_uid: number;
 
-  @Unique('std_routing_resource_tb_uuid_un')
+  @Unique('std_proc_equip_tb_uuid_un')
   @Column({
-    comment: '생산자원UUID',
+    comment: '공정별 설비정보UUID',
     type: DataType.UUID,
     allowNull: false,
     defaultValue: Sequelize.fn('gen_random_uuid')
@@ -111,8 +101,11 @@ export default class StdRoutingResource extends Model<IStdRoutingResource> {
   @BelongsTo(() => StdFactory, { foreignKey: 'factory_id', targetKey: 'factory_id', onDelete: 'restrict', onUpdate: 'cascade' })
   stdFactory: StdFactory;
 
-  @BelongsTo(() => StdRouting, { foreignKey: 'routing_id', targetKey: 'routing_id', onDelete: 'restrict', onUpdate: 'cascade' })
-  stdRouting: StdRouting;
+  @BelongsTo(() => StdProc, { foreignKey: 'proc_id', targetKey: 'proc_id', onDelete: 'restrict', onUpdate: 'cascade' })
+  stdProc: StdProc;
+
+  @BelongsTo(() => StdEquip, { foreignKey: 'equip_id', targetKey: 'equip_id', onDelete: 'restrict', onUpdate: 'cascade' })
+  stdEquip: StdEquip;
 
   // HasMany
   //#endregion

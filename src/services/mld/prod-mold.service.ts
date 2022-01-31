@@ -1,19 +1,20 @@
 import { Transaction } from "sequelize/types";
-import StdRoutingResourceRepo from "../../repositories/std/routing-resource.repository";
+import MldMoldRepo from "../../repositories/mld/mold.repository";
+import MldProdMoldRepo from '../../repositories/mld/prod-mold.repository';
 import StdFactoryRepo from "../../repositories/std/factory.repository";
+import StdProdRepo from "../../repositories/std/prod.repository";
 import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
-import StdRoutingRepo from "../../repositories/std/routing.repository";
 
-class StdRoutingResourceService {
+class MldProdMoldService {
   tenant: string;
   stateTag: string;
-  repo: StdRoutingResourceRepo;
+  repo: MldProdMoldRepo;
   fkIdInfos: getFkIdInfo[];
 
   constructor(tenant: string) {
     this.tenant = tenant;
-    this.stateTag = 'stdRoutingResource';
-    this.repo = new StdRoutingResourceRepo(tenant);
+    this.stateTag = 'mldProdMold';
+    this.repo = new MldProdMoldRepo(tenant);
 
     this.fkIdInfos = [
       {
@@ -22,11 +23,17 @@ class StdRoutingResourceService {
         idName: 'factory_id',
         uuidName: 'factory_uuid'
       },
-      {
-        key: 'routing',
-        TRepo: StdRoutingRepo,
-        idName: 'routing_id',
-        uuidName: 'routing_uuid'
+			{
+        key: 'prod',
+        TRepo: StdProdRepo,
+        idName: 'prod_id',
+        uuidName: 'prod_uuid'
+      },
+			{
+        key: 'mold',
+        TRepo: MldMoldRepo,
+        idName: 'mold_id',
+        uuidName: 'mold_uuid'
       }
     ];
   }
@@ -38,33 +45,33 @@ class StdRoutingResourceService {
 
   public create = async (datas: any[], uid: number, tran: Transaction) => {
     try { return await this.repo.create(datas, uid, tran); } 
-    catch (error) { throw error; }
+		catch (error) { throw error; }
   }
 
   public read = async (params: any) => {
     try { return await this.repo.read(params); } 
-    catch (error) { throw error; }
+		catch (error) { throw error; }
   };
   
   public readByUuid = async (uuid: string) => {
     try { return await this.repo.readByUuid(uuid); } 
-    catch (error) { throw error; }
+		catch (error) { throw error; }
   };
 
   public update = async (datas: any[], uid: number, tran: Transaction) => {
-    try { return await this.repo.update(datas, uid, tran); } 
-    catch (error) { throw error; }
+    try { return await this.repo.update(datas, uid, tran); }
+		catch (error) { throw error; }
   }
 
   public patch = async (datas: any[], uid: number, tran: Transaction) => {
-    try { return await this.repo.patch(datas, uid, tran); } 
-    catch (error) { throw error; }
+    try { return await this.repo.patch(datas, uid, tran); }
+		catch (error) { throw error; }
   }
 
   public delete = async (datas: any[], uid: number, tran: Transaction) => {
-    try { return await this.repo.delete(datas, uid, tran); } 
-    catch (error) { throw error; }
+    try { return await this.repo.delete(datas, uid, tran); }
+		catch (error) { throw error; }
   }
 }
 
-export default StdRoutingResourceService;
+export default MldProdMoldService;

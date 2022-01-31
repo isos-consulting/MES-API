@@ -1,28 +1,29 @@
 import { Sequelize, Table, Column, Model, DataType, CreatedAt, UpdatedAt, BelongsTo, Unique, ForeignKey } from 'sequelize-typescript'
-import IStdRoutingResource from '../../interfaces/std/routing-resource.interface';
+import IMldProdMold from '../../interfaces/mld/prod-mold.interface';
 import AutUser from '../aut/user.model';
-import StdFactory from './factory.model';
-import StdRouting from './routing.model';
+import StdFactory from '../std/factory.model';
+import StdProd from '../std/prod.model';
+import MldMold from './mold.model';
 
 @Table({
-  tableName: 'STD_ROUTING_RESOURCE_TB',
-  modelName: 'StdRoutingResource',
-  comment: '생산자원 정보 테이블 (작업인원관리)',
+  tableName: 'MLD_PROD_MOLD_TB',
+  modelName: 'MldProdMold',
+  comment: '품목별 금형정보 테이블',
   timestamps: true,
   underscored: true,
 })
-export default class StdRoutingResource extends Model<IStdRoutingResource> {
+export default class MldProdMold extends Model<IMldProdMold> {
   @Column({
-    comment: '생산자원ID',
+    comment: '품목별 금형정보ID',
     primaryKey: true,
     autoIncrement: true,
     autoIncrementIdentity: true,
     type: DataType.INTEGER,
     allowNull: false,
   })
-  routing_resource_id: number;
+  proc_equip_id: number;
 
-  @Unique('std_routing_resource_tb_factory_id_routing_id_emp_cnt_un')
+  @Unique('mld_prod_mold_tb_factory_id_prod_id_mold_id_un')
   @ForeignKey(() => StdFactory)
   @Column({
     comment: '공장ID',
@@ -31,34 +32,23 @@ export default class StdRoutingResource extends Model<IStdRoutingResource> {
   })
   factory_id: number;
 
-  @Unique('std_routing_resource_tb_factory_id_routing_id_emp_cnt_un')
-  @ForeignKey(() => StdRouting)
+  @Unique('mld_prod_mold_tb_factory_id_prod_id_mold_id_un')
+  @ForeignKey(() => StdProd)
   @Column({
-    comment: '라우팅ID',
+    comment: '품목ID',
     type: DataType.INTEGER,
     allowNull: false,
   })
-  routing_id: number;
+  prod_id: number;
 
-  @Unique('std_routing_resource_tb_factory_id_routing_id_emp_cnt_un')
+  @Unique('mld_prod_mold_tb_factory_id_prod_id_mold_id_un')
+  @ForeignKey(() => MldMold)
   @Column({
-    comment: '인원',
+    comment: '금형ID',
     type: DataType.INTEGER,
-  })
-  emp_cnt: number;
-
-  @Column({
-    comment: 'Cycle Time',
-    type: DataType.DECIMAL(19, 6),
     allowNull: false,
   })
-  cycle_time: number;
-
-  @Column({
-    comment: 'UPH',
-    type: DataType.DECIMAL(19, 6),
-  })
-  uph: number;
+  mold_id: number;
 
   @CreatedAt
   @Column({
@@ -92,14 +82,14 @@ export default class StdRoutingResource extends Model<IStdRoutingResource> {
   })
   updated_uid: number;
 
-  @Unique('std_routing_resource_tb_uuid_un')
+  @Unique('mld_mold_tb_uuid_un')
   @Column({
-    comment: '생산자원UUID',
+    comment: '품목별 금형정보UUID',
     type: DataType.UUID,
     allowNull: false,
     defaultValue: Sequelize.fn('gen_random_uuid')
   })
-  uuid: string
+  uuid: string;
 
   //#region ✅ Define Association
   // BelongTo
@@ -111,8 +101,11 @@ export default class StdRoutingResource extends Model<IStdRoutingResource> {
   @BelongsTo(() => StdFactory, { foreignKey: 'factory_id', targetKey: 'factory_id', onDelete: 'restrict', onUpdate: 'cascade' })
   stdFactory: StdFactory;
 
-  @BelongsTo(() => StdRouting, { foreignKey: 'routing_id', targetKey: 'routing_id', onDelete: 'restrict', onUpdate: 'cascade' })
-  stdRouting: StdRouting;
+  @BelongsTo(() => StdProd, { foreignKey: 'prod_id', targetKey: 'prod_id', onDelete: 'restrict', onUpdate: 'cascade' })
+  stdProd: StdProd;
+
+  @BelongsTo(() => MldMold, { foreignKey: 'mold_id', targetKey: 'mold_id', onDelete: 'restrict', onUpdate: 'cascade' })
+  mldMold: MldMold;
 
   // HasMany
   //#endregion

@@ -1,10 +1,12 @@
 import * as express from 'express';
 import MldMoldCtl from '../controllers/mld/mold.controller';
 import MldProblemCtl from '../controllers/mld/problem.controller';
+import MldProdMoldCtl from '../controllers/mld/prod-mold.controller';
 import MldRepairHistoryCtl from '../controllers/mld/repair-history.controller';
 import validationCallback from '../utils/validationCallback';
 import mldMoldValidation from '../validations/mld/mold.validation';
 import mldProblemValidation from '../validations/mld/problem.validation';
+import mldProdMoldValidation from '../validations/mld/prod-mold.validation';
 import mldRepairHistoryValidation from '../validations/mld/repair-history.validation';
 
 const router = express.Router();
@@ -38,6 +40,16 @@ router.route('/repair-histories').post(mldRepairHistoryValidation.create, valida
 router.route('/repair-histories').put(mldRepairHistoryValidation.update, validationCallback, repairHistory.update);
 router.route('/repair-histories').patch(mldRepairHistoryValidation.patch, validationCallback, repairHistory.patch);
 router.route('/repair-histories').delete(mldRepairHistoryValidation.delete, validationCallback, repairHistory.delete);
+//#endregion
+
+//#region ✅ ProdMold (품목별 금형정보)
+const prodMold = new MldProdMoldCtl();
+router.route('/prod-mold/:uuid').get(mldProdMoldValidation.readByUuid, validationCallback, prodMold.readByUuid);
+router.route('/prod-molds').get(mldProdMoldValidation.read, validationCallback, prodMold.read);
+router.route('/prod-molds').post(mldProdMoldValidation.create, validationCallback, prodMold.create);
+router.route('/prod-molds').put(mldProdMoldValidation.update, validationCallback, prodMold.update);
+router.route('/prod-molds').patch(mldProdMoldValidation.patch, validationCallback, prodMold.patch);
+router.route('/prod-molds').delete(mldProdMoldValidation.delete, validationCallback, prodMold.delete);
 //#endregion
 
 export default router;

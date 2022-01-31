@@ -24,6 +24,7 @@ import StdPartnerProdCtl from '../controllers/std/partner-prod.controller';
 import StdPartnerTypeCtl from '../controllers/std/partner-type.controller';
 import StdPartnerCtl from '../controllers/std/partner.controller';
 import StdPriceTypeCtl from '../controllers/std/price-type.controller';
+import StdProcEquipCtl from '../controllers/std/proc-equip.controller';
 import StdProcRejectCtl from '../controllers/std/proc-reject.controller';
 import StdProcCtl from '../controllers/std/proc.controller';
 import StdProdTypeCtl from '../controllers/std/prod-type.controller';
@@ -48,6 +49,7 @@ import validationCallback from '../utils/validationCallback';
 import stdDowntimeValidation from '../validations/std/downtime.validation';
 import stdEquipValidation from '../validations/std/equip.validation';
 import stdInspItemValidation from '../validations/std/insp-item.validation';
+import stdProcEquipValidation from '../validations/std/proc-equip.validation';
 import stdRoutingResourceValidation from '../validations/std/routing-resource.validation';
 import stdTenantOptValidation from '../validations/std/tenant-opt.validation';
 
@@ -183,6 +185,16 @@ router.route('/procs').post(proc.create);
 router.route('/procs').put(proc.update);
 router.route('/procs').patch(proc.patch);
 router.route('/procs').delete(proc.delete);
+//#endregion
+
+//#region ✅ ProcEquip (공정별 설비정보)
+const procEquip = new StdProcEquipCtl();
+router.route('/proc-equip/:uuid').get(stdProcEquipValidation.readByUuid, validationCallback, procEquip.readByUuid);
+router.route('/proc-equips').get(stdProcEquipValidation.read, validationCallback, procEquip.read);
+router.route('/proc-equips').post(stdProcEquipValidation.create, validationCallback, procEquip.create);
+router.route('/proc-equips').put(stdProcEquipValidation.update, validationCallback, procEquip.update);
+router.route('/proc-equips').patch(stdProcEquipValidation.patch, validationCallback, procEquip.patch);
+router.route('/proc-equips').delete(stdProcEquipValidation.delete, validationCallback, procEquip.delete);
 //#endregion
 
 //#region ✅ ProcReject (공정별 부적합)

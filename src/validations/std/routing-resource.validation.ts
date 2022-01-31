@@ -10,9 +10,6 @@ const stdRoutingResourceValidation = {
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'factory_uuid', '공장UUID')),
     query('routing_uuid', '라우팅UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'routing_uuid', '라우팅UUID')),
-    query('resource_type', '자원유형')
-      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'resource_type', '자원유형'))
-      .isIn([ 'all', 'equip', 'mold', 'emp' ]).withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'resource_type', '자원유형')),
   ],
   readByUuid: [ 
     param('uuid', '생산자원UUID')
@@ -25,13 +22,6 @@ const stdRoutingResourceValidation = {
     body('*.routing_uuid', '라우팅UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'routing_uuid', '라우팅UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'routing_uuid', '라우팅UUID')),
-    body('*.resource_type', '자원유형')
-      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'resource_type', '자원유형'))
-      .isIn([ '설비', '금형', '인원' ]).withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'resource_type', '자원유형')),
-    body('*.equip_uuid', '설비UUID').optional({ nullable: true })
-      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'equip_uuid', '설비UUID')),
-    body('*.mold_uuid', '금형UUID').optional({ nullable: true })
-      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'mold_uuid', '금형UUID')),
     body('*.emp_cnt', '인원').optional({ nullable: true })
       .isInt().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'emp_cnt', '인원')),
     body('*.cycle_time', 'Cycle Time')
@@ -44,13 +34,6 @@ const stdRoutingResourceValidation = {
     body('*.uuid', '생산자원UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '생산자원UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '생산자원UUID')),
-    body('*.resource_type', '자원유형')
-      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'resource_type', '자원유형'))
-      .isIn([ '설비', '금형', '인원' ]).withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'resource_type', '자원유형')),
-    body('*.equip_uuid', '설비UUID').optional({ nullable: true })
-      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'equip_uuid', '설비UUID')),
-    body('*.mold_uuid', '금형UUID').optional({ nullable: true })
-      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'mold_uuid', '금형UUID')),
     body('*.emp_cnt', '인원').optional({ nullable: true })
       .isInt().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'emp_cnt', '인원')),
     body('*.cycle_time', 'Cycle Time')
@@ -63,12 +46,6 @@ const stdRoutingResourceValidation = {
     body('*.uuid', '생산자원UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '생산자원UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '생산자원UUID')),
-    body('*.resource_type', '자원유형').optional({ nullable: true })
-      .isIn([ '설비', '금형', '인원' ]).withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'resource_type', '자원유형')),
-    body('*.equip_uuid', '설비UUID').optional({ nullable: true })
-      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'equip_uuid', '설비UUID')),
-    body('*.mold_uuid', '금형UUID').optional({ nullable: true })
-      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'mold_uuid', '금형UUID')),
     body('*.emp_cnt', '인원').optional({ nullable: true })
       .isInt().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'emp_cnt', '인원')),
     body('*.cycle_time', 'Cycle Time').optional({ nullable: true })
