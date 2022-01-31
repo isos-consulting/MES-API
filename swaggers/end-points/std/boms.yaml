@@ -91,6 +91,9 @@ get:
                             - $ref: ../../schemas/std/bom.schema.yaml#/c_unit_nm
                             - $ref: ../../schemas/std/bom.schema.yaml#/c_usage
                             - $ref: ../../schemas/std/bom.schema.yaml#/sortby
+                            - $ref: ../../schemas/std/bom.schema.yaml#/bom_input_type_uuid
+                            - $ref: ../../schemas/adm/bom-input-type.schema.yaml#/bom_input_type_cd
+                            - $ref: ../../schemas/adm/bom-input-type.schema.yaml#/bom_input_type_nm
                             - $ref: ../../schemas/std/bom.schema.yaml#/from_store_uuid
                             - $ref: ../../schemas/std/store.schema.yaml#/from_store_cd
                             - $ref: ../../schemas/std/store.schema.yaml#/from_store_nm
@@ -126,6 +129,7 @@ post:
             - $ref: ../../schemas/std/bom.schema.yaml#/c_usage
             - $ref: ../../schemas/std/bom.schema.yaml#/unit_uuid
             - $ref: ../../schemas/std/bom.schema.yaml#/sortby
+            - $ref: ../../schemas/std/bom.schema.yaml#/bom_input_type_uuid
             - $ref: ../../schemas/std/bom.schema.yaml#/from_store_uuid
             - $ref: ../../schemas/std/bom.schema.yaml#/from_location_uuid
             - $ref: ../../schemas/std/bom.schema.yaml#/remark
@@ -155,6 +159,7 @@ put:
             - $ref: ../../schemas/std/bom.schema.yaml#/c_usage
             - $ref: ../../schemas/std/bom.schema.yaml#/unit_uuid
             - $ref: ../../schemas/std/bom.schema.yaml#/sortby
+            - $ref: ../../schemas/std/bom.schema.yaml#/bom_input_type_uuid
             - $ref: ../../schemas/std/bom.schema.yaml#/from_store_uuid
             - $ref: ../../schemas/std/bom.schema.yaml#/from_location_uuid
             - $ref: ../../schemas/std/bom.schema.yaml#/remark
@@ -181,6 +186,7 @@ patch:
             - $ref: ../../schemas/std/bom.schema.yaml#/c_usage
             - $ref: ../../schemas/std/bom.schema.yaml#/unit_uuid
             - $ref: ../../schemas/std/bom.schema.yaml#/sortby
+            - $ref: ../../schemas/std/bom.schema.yaml#/bom_input_type_uuid
             - $ref: ../../schemas/std/bom.schema.yaml#/from_store_uuid
             - $ref: ../../schemas/std/bom.schema.yaml#/from_location_uuid
             - $ref: ../../schemas/std/bom.schema.yaml#/remark
