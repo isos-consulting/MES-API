@@ -25,35 +25,11 @@ routing_id:
       type: number
       format: int4
       
-resource_type: 
-  type: object
-  properties: 
-    resource_type:
-      description: 자원 유형(설비, 금형, 인원)
-      type: string
-      format: varchar(10)
-
-equip_id: 
-  type: object
-  properties: 
-    equip_id:
-      description: 설비ID (자원이 설비일 경우)
-      type: number
-      format: int4
-
-mold_id: 
-  type: object
-  properties: 
-    mold_id:
-      description: 금형ID (자원이 금형일 경우)
-      type: number
-      format: int4
-
 emp_cnt: 
   type: object
   properties: 
     emp_cnt:
-      description: 인원 (자원이 인원일 경우)
+      description: 인원
       type: number
       format: int4
 
@@ -103,21 +79,5 @@ routing_uuid:
   properties: 
     routing_uuid:
       description: 라우팅UUID
-      type: string
-      format: uuid
-
-equip_uuid:
-  type: object
-  properties: 
-    equip_uuid:
-      description: 설비UUID
-      type: string
-      format: uuid
-
-mold_uuid:
-  type: object
-  properties: 
-    mold_uuid:
-      description: 금형UUID
       type: string
       format: uuid

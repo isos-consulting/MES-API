@@ -32,9 +32,6 @@ class StdRoutingResourceCtl {
       const matched = matchedData(req, { locations: [ 'body' ] });
       let datas = await service.convertFk(Object.values(matched));
 
-      // 📌 자원유형(설비, 금형, 인원)에 따르는 필요 데이터 검증
-      service.validateResourceType(datas);
-
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
         result = await service.create(datas, req.user?.uid as number, tran)
       });
@@ -107,9 +104,6 @@ class StdRoutingResourceCtl {
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
         result = await service.update(datas, req.user?.uid as number, tran);
-
-        // 📌 자원유형(설비, 금형, 인원)에 따르는 필요 데이터 검증
-        service.validateResourceType(result.raws);
       });
 
       return createApiResult(res, result , 200, '데이터 수정 성공', this.stateTag, successState.UPDATE);
@@ -137,9 +131,6 @@ class StdRoutingResourceCtl {
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
         result = await service.patch(datas, req.user?.uid as number, tran)
-
-        // 📌 자원유형(설비, 금형, 인원)에 따르는 필요 데이터 검증
-        service.validateResourceType(result.raws);
       });
 
       return createApiResult(res, result, 200, '데이터 수정 성공', this.stateTag, successState.PATCH);

@@ -24,6 +24,7 @@ import StdPartnerProdCtl from '../controllers/std/partner-prod.controller';
 import StdPartnerTypeCtl from '../controllers/std/partner-type.controller';
 import StdPartnerCtl from '../controllers/std/partner.controller';
 import StdPriceTypeCtl from '../controllers/std/price-type.controller';
+import StdProcEquipCtl from '../controllers/std/proc-equip.controller';
 import StdProcRejectCtl from '../controllers/std/proc-reject.controller';
 import StdProcCtl from '../controllers/std/proc.controller';
 import StdProdTypeCtl from '../controllers/std/prod-type.controller';
@@ -36,6 +37,7 @@ import StdRoutingCtl from '../controllers/std/routing.controller';
 import StdShiftCtl from '../controllers/std/shift.controller';
 import StdStoreCtl from '../controllers/std/store.controller';
 import StdSupplierCtl from '../controllers/std/supplier.controller';
+import StdTenantOptCtl from '../controllers/std/tenant-opt.controller';
 import StdUnitConvertCtl from '../controllers/std/unit-convert.controller';
 import StdUnitCtl from '../controllers/std/unit.controller';
 import StdVendorPriceCtl from '../controllers/std/vendor-price.controller';
@@ -47,7 +49,9 @@ import validationCallback from '../utils/validationCallback';
 import stdDowntimeValidation from '../validations/std/downtime.validation';
 import stdEquipValidation from '../validations/std/equip.validation';
 import stdInspItemValidation from '../validations/std/insp-item.validation';
+import stdProcEquipValidation from '../validations/std/proc-equip.validation';
 import stdRoutingResourceValidation from '../validations/std/routing-resource.validation';
+import stdTenantOptValidation from '../validations/std/tenant-opt.validation';
 
 const router = express.Router();
 
@@ -183,6 +187,16 @@ router.route('/procs').patch(proc.patch);
 router.route('/procs').delete(proc.delete);
 //#endregion
 
+//#region ✅ ProcEquip (공정별 설비정보)
+const procEquip = new StdProcEquipCtl();
+router.route('/proc-equip/:uuid').get(stdProcEquipValidation.readByUuid, validationCallback, procEquip.readByUuid);
+router.route('/proc-equips').get(stdProcEquipValidation.read, validationCallback, procEquip.read);
+router.route('/proc-equips').post(stdProcEquipValidation.create, validationCallback, procEquip.create);
+router.route('/proc-equips').put(stdProcEquipValidation.update, validationCallback, procEquip.update);
+router.route('/proc-equips').patch(stdProcEquipValidation.patch, validationCallback, procEquip.patch);
+router.route('/proc-equips').delete(stdProcEquipValidation.delete, validationCallback, procEquip.delete);
+//#endregion
+
 //#region ✅ ProcReject (공정별 부적합)
 const procReject = new StdProcRejectCtl();
 router.route('/proc-rejects/excel-upload').post(procReject.upsertBulkDatasFromExcel);
@@ -312,6 +326,16 @@ router.route('/downtimes').post(stdDowntimeValidation.create, validationCallback
 router.route('/downtimes').put(stdDowntimeValidation.update, validationCallback, downtime.update);
 router.route('/downtimes').patch(stdDowntimeValidation.patch, validationCallback, downtime.patch);
 router.route('/downtimes').delete(stdDowntimeValidation.delete, validationCallback, downtime.delete);
+//#endregion
+
+//#region ✅ TenantOpt (사용자정의옵션)
+const tenantOpt = new StdTenantOptCtl();
+router.route('/tenant-opt/:uuid').get(stdTenantOptValidation.readByUuid, validationCallback, tenantOpt.readByUuid);
+router.route('/tenant-opts').get(stdTenantOptValidation.read, validationCallback, tenantOpt.read);
+router.route('/tenant-opts').post(stdTenantOptValidation.create, validationCallback, tenantOpt.create);
+router.route('/tenant-opts').put(stdTenantOptValidation.update, validationCallback, tenantOpt.update);
+router.route('/tenant-opts').patch(stdTenantOptValidation.patch, validationCallback, tenantOpt.patch);
+router.route('/tenant-opts').delete(stdTenantOptValidation.delete, validationCallback, tenantOpt.delete);
 //#endregion
 
 //#region ✅ Emp (사원)

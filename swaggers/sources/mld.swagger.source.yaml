@@ -63,3 +63,9 @@ paths:
     $ref: ../end-points/mld/repair-history.{uuid}.yaml
   /mld/repair-histories:
     $ref: ../end-points/mld/repair-histories.yaml
+
+  # ✅ ProdMold (품목별 금형정보)
+  /mld/prod-mold/{uuid}:
+    $ref: ../end-points/mld/prod-mold.{uuid}.yaml
+  /mld/prod-molds:
+    $ref: ../end-points/mld/prod-molds.yaml

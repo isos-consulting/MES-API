@@ -1,7 +1,7 @@
 import express from 'express';
 import { matchedData } from 'express-validator';
 import config from '../../configs/config';
-import AdmBomInputTypeService from '../../services/adm/bom-input-type.service';
+import StdTenantOptService from '../../services/std/tenant-opt.service';
 import createDatabaseError from '../../utils/createDatabaseError';
 import createUnknownError from '../../utils/createUnknownError';
 import { sequelizes } from '../../utils/getSequelize';
@@ -11,12 +11,12 @@ import createApiResult from '../../utils/createApiResult_new';
 import { successState } from '../../states/common.state';
 import ApiResult from '../../interfaces/common/api-result.interface';
 
-class AdmBomInputTypeCtl {
+class StdTenantOptCtl {
   stateTag: string
 
   //#region ✅ Constructor
   constructor() {
-    this.stateTag = 'admBomInputType'
+    this.stateTag = 'stdTenantOpt'
   };
   //#endregion
 
@@ -28,7 +28,7 @@ class AdmBomInputTypeCtl {
   public create = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       let result: ApiResult<any> = { count:0, raws: [] };
-      const service = new AdmBomInputTypeService(req.tenant.uuid);
+      const service = new StdTenantOptService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
       const datas = Object.values(matched);
 
@@ -55,7 +55,7 @@ class AdmBomInputTypeCtl {
   public read = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       let result: ApiResult<any> = { count:0, raws: [] };
-      const service = new AdmBomInputTypeService(req.tenant.uuid);
+      const service = new StdTenantOptService(req.tenant.uuid);
       const params = matchedData(req, { locations: [ 'query', 'params' ] });
 
       result = await service.read(params);
@@ -75,7 +75,7 @@ class AdmBomInputTypeCtl {
   public readByUuid = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       let result: ApiResult<any> = { count:0, raws: [] };
-      const service = new AdmBomInputTypeService(req.tenant.uuid);
+      const service = new StdTenantOptService(req.tenant.uuid);
 
       result = await service.readByUuid(req.params.uuid);
 
@@ -98,7 +98,7 @@ class AdmBomInputTypeCtl {
   public update = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       let result: ApiResult<any> = { count:0, raws: [] };
-      const service = new AdmBomInputTypeService(req.tenant.uuid);
+      const service = new StdTenantOptService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
       const datas = Object.values(matched);
 
@@ -125,7 +125,7 @@ class AdmBomInputTypeCtl {
   public patch = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       let result: ApiResult<any> = { count:0, raws: [] };
-      const service = new AdmBomInputTypeService(req.tenant.uuid);
+      const service = new StdTenantOptService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
       const datas = Object.values(matched);
 
@@ -152,7 +152,7 @@ class AdmBomInputTypeCtl {
   public delete = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       let result: ApiResult<any> = { count:0, raws: [] };
-      const service = new AdmBomInputTypeService(req.tenant.uuid);
+      const service = new StdTenantOptService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
       const datas = Object.values(matched);
 
@@ -176,4 +176,4 @@ class AdmBomInputTypeCtl {
   //#endregion
 }
 
-export default AdmBomInputTypeCtl;
+export default StdTenantOptCtl;

@@ -1,7 +1,7 @@
 import express from 'express';
 import { matchedData } from 'express-validator';
 import config from '../../configs/config';
-import AdmBomInputTypeService from '../../services/adm/bom-input-type.service';
+import StdProcEquipService from '../../services/std/proc-equip.service';
 import createDatabaseError from '../../utils/createDatabaseError';
 import createUnknownError from '../../utils/createUnknownError';
 import { sequelizes } from '../../utils/getSequelize';
@@ -11,12 +11,12 @@ import createApiResult from '../../utils/createApiResult_new';
 import { successState } from '../../states/common.state';
 import ApiResult from '../../interfaces/common/api-result.interface';
 
-class AdmBomInputTypeCtl {
+class StdProcEquipCtl {
   stateTag: string
 
   //#region ✅ Constructor
   constructor() {
-    this.stateTag = 'admBomInputType'
+    this.stateTag = 'stdProcEquip'
   };
   //#endregion
 
@@ -28,16 +28,16 @@ class AdmBomInputTypeCtl {
   public create = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       let result: ApiResult<any> = { count:0, raws: [] };
-      const service = new AdmBomInputTypeService(req.tenant.uuid);
+      const service = new StdProcEquipService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
-      const datas = Object.values(matched);
-
+      const datas: any[] = await service.convertFk(Object.values(matched));
+			
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
-        result = await service.create(datas, req.user?.uid as number, tran)
+        result = await service.create(datas, req.user?.uid as number, tran);
       });
-
+			
       return createApiResult(res, result, 201, '데이터 생성 성공', this.stateTag, successState.CREATE);
-    } catch (error) {
+    } catch (error) {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
       if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
 
       const dbError = createDatabaseError(error, this.stateTag);
@@ -55,11 +55,11 @@ class AdmBomInputTypeCtl {
   public read = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       let result: ApiResult<any> = { count:0, raws: [] };
-      const service = new AdmBomInputTypeService(req.tenant.uuid);
+      const service = new StdProcEquipService(req.tenant.uuid);
       const params = matchedData(req, { locations: [ 'query', 'params' ] });
 
       result = await service.read(params);
-			
+
       return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
     } catch (error) {
       if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
@@ -75,7 +75,7 @@ class AdmBomInputTypeCtl {
   public readByUuid = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       let result: ApiResult<any> = { count:0, raws: [] };
-      const service = new AdmBomInputTypeService(req.tenant.uuid);
+      const service = new StdProcEquipService(req.tenant.uuid);
 
       result = await service.readByUuid(req.params.uuid);
 
@@ -98,9 +98,9 @@ class AdmBomInputTypeCtl {
   public update = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       let result: ApiResult<any> = { count:0, raws: [] };
-      const service = new AdmBomInputTypeService(req.tenant.uuid);
+      const service = new StdProcEquipService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
-      const datas = Object.values(matched);
+      const datas = await service.convertFk(Object.values(matched));
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
         result = await service.update(datas, req.user?.uid as number, tran)
@@ -125,9 +125,9 @@ class AdmBomInputTypeCtl {
   public patch = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       let result: ApiResult<any> = { count:0, raws: [] };
-      const service = new AdmBomInputTypeService(req.tenant.uuid);
+      const service = new StdProcEquipService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
-      const datas = Object.values(matched);
+      const datas = await service.convertFk(Object.values(matched));
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
         result = await service.patch(datas, req.user?.uid as number, tran)
@@ -152,12 +152,12 @@ class AdmBomInputTypeCtl {
   public delete = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       let result: ApiResult<any> = { count:0, raws: [] };
-      const service = new AdmBomInputTypeService(req.tenant.uuid);
+      const service = new StdProcEquipService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
       const datas = Object.values(matched);
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
-        result = await service.delete(datas, req.user?.uid as number, tran)
+        result = await service.delete(datas, req.user?.uid as number, tran);
       });
 
       return createApiResult(res, result, 200, '데이터 삭제 성공', this.stateTag, successState.DELETE);
@@ -176,4 +176,4 @@ class AdmBomInputTypeCtl {
   //#endregion
 }
 
-export default AdmBomInputTypeCtl;
+export default StdProcEquipCtl;

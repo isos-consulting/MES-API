@@ -1,6 +1,6 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
-import StdRoutingResource from '../../models/std/routing-resource.model';
-import IStdRoutingResource from '../../interfaces/std/routing-resource.interface';
+import StdProcEquip from '../../models/std/proc-equip.model';
+import IStdProcEquip from '../../interfaces/std/proc-equip.interface';
 import { Sequelize } from 'sequelize-typescript';
 import _ from 'lodash';
 import convertResult from '../../utils/convertResult';
@@ -11,8 +11,8 @@ import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
 import ApiResult from '../../interfaces/common/api-result.interface';
 
-class StdRoutingResourceRepo {
-  repo: Repository<StdRoutingResource>;
+class StdProcEquipRepo {
+  repo: Repository<StdProcEquip>;
   sequelize: Sequelize;
   tenant: string;
 
@@ -20,7 +20,7 @@ class StdRoutingResourceRepo {
   constructor(tenant: string) {
     this.tenant = tenant;
     this.sequelize = getSequelize(tenant);
-    this.repo = this.sequelize.getRepository(StdRoutingResource);
+    this.repo = this.sequelize.getRepository(StdProcEquip);
   }
   //#endregion
 
@@ -29,16 +29,14 @@ class StdRoutingResourceRepo {
   //#region 🟢 Create Functions
 
   // 📒 Fn[create]: Default Create Function
-  public create = async(body: IStdRoutingResource[], uid: number, transaction?: Transaction) => {
+  public create = async(body: IStdProcEquip[], uid: number, transaction?: Transaction) => {
     try {
-      const promises = body.map((routingResource: any) => {
+      const promises = body.map((procEquip: any) => {
         return this.repo.create(
           {
-            factory_id: routingResource.factory_id,
-            routing_id: routingResource.routing_id,
-            emp_cnt: routingResource.emp_cnt,
-            cycle_time: routingResource.cycle_time,
-            uph: routingResource.uph,
+            factory_id: procEquip.factory_id,
+            proc_id: procEquip.proc_id,
+            equip_id: procEquip.equip_id,
             created_uid: uid,
             updated_uid: uid,
           },
@@ -67,31 +65,49 @@ class StdRoutingResourceRepo {
             model: this.sequelize.models.StdFactory, 
             attributes: [], 
             required: true, 
-            where: { uuid: params.factory_uuid ? params.factory_uuid : { [Op.ne]: null } }
+            where: { uuid: params.factory_uuid ?? { [Op.ne]: null } }
           },
           { 
-            model: this.sequelize.models.StdRouting, 
+            model: this.sequelize.models.StdProc, 
             attributes: [], 
-            where: { uuid: params.routing_uuid ? params.routing_uuid : { [Op.ne]: null } }
+            required: true, 
+            where: { uuid: params.proc_uuid ?? { [Op.ne]: null } }
+          },
+          { 
+            model: this.sequelize.models.StdEquip, 
+            attributes: [], 
+            required: true, 
+            include: [{ model: this.sequelize.models.StdEquipType, attributes: [], required: false }],
+            where: {
+              [Op.and]: [
+                { use_fg: params.use_fg != null ? params.use_fg : { [Op.ne]: null } },
+                { prd_fg: params.prd_fg != null ? params.prd_fg : { [Op.ne]: null } }
+              ]
+            }
           },
           { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
-          [ Sequelize.col('stdRoutingResource.uuid'), 'routing_resource_uuid' ],
-          [ Sequelize.col('stdRouting.uuid'), 'routing_uuid' ],
+          [ Sequelize.col('stdProcEquip.uuid'), 'proc_equip_uuid' ],
           [ Sequelize.col('stdFactory.uuid'), 'factory_uuid' ],
           [ Sequelize.col('stdFactory.factory_cd'), 'factory_cd' ],
           [ Sequelize.col('stdFactory.factory_nm'), 'factory_nm' ],
-          'emp_cnt',
-          'cycle_time',
-          'uph',
+          [ Sequelize.col('stdProc.uuid'), 'proc_uuid' ],
+          [ Sequelize.col('stdProc.proc_cd'), 'proc_cd' ],
+          [ Sequelize.col('stdProc.proc_nm'), 'proc_nm' ],
+          [ Sequelize.col('stdEquip.stdEquipType.uuid'), 'equip_type_uuid' ],
+          [ Sequelize.col('stdEquip.stdEquipType.equip_type_cd'), 'equip_type_cd' ],
+          [ Sequelize.col('stdEquip.stdEquipType.equip_type_nm'), 'equip_type_nm' ],
+          [ Sequelize.col('stdEquip.uuid'), 'equip_uuid' ],
+          [ Sequelize.col('stdEquip.equip_cd'), 'equip_cd' ],
+          [ Sequelize.col('stdEquip.equip_nm'), 'equip_nm' ],
           'created_at',
           [ Sequelize.col('createUser.user_nm'), 'created_nm' ],
           'updated_at',
           [ Sequelize.col('updateUser.user_nm'), 'updated_nm' ]
         ],
-        order: [ 'factory_id', 'routing_id', 'routing_resource_id' ],
+        order: [ 'factory_id', 'proc_id' ]
       });
 
       return convertReadResult(result);
@@ -106,25 +122,36 @@ class StdRoutingResourceRepo {
       const result = await this.repo.findOne({ 
         include: [
           { model: this.sequelize.models.StdFactory, attributes: [], required: true },
-          { model: this.sequelize.models.StdRouting, attributes: [], required: false },
+          { model: this.sequelize.models.StdProc, attributes: [], required: true },
+          { 
+            model: this.sequelize.models.StdEquip, 
+            attributes: [], 
+            required: true, 
+            include: [{ model: this.sequelize.models.StdEquipType, attributes: [], required: false }],
+          },
           { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
-          [ Sequelize.col('stdRoutingResource.uuid'), 'routing_resource_uuid' ],
-          [ Sequelize.col('stdRouting.uuid'), 'routing_uuid' ],
+          [ Sequelize.col('stdProcEquip.uuid'), 'proc_equip_uuid' ],
           [ Sequelize.col('stdFactory.uuid'), 'factory_uuid' ],
           [ Sequelize.col('stdFactory.factory_cd'), 'factory_cd' ],
           [ Sequelize.col('stdFactory.factory_nm'), 'factory_nm' ],
-          'emp_cnt',
-          'cycle_time',
-          'uph',
+          [ Sequelize.col('stdProc.uuid'), 'proc_uuid' ],
+          [ Sequelize.col('stdProc.proc_cd'), 'proc_cd' ],
+          [ Sequelize.col('stdProc.proc_nm'), 'proc_nm' ],
+          [ Sequelize.col('stdEquip.stdEquipType.uuid'), 'equip_type_uuid' ],
+          [ Sequelize.col('stdEquip.stdEquipType.equip_type_cd'), 'equip_type_cd' ],
+          [ Sequelize.col('stdEquip.stdEquipType.equip_type_nm'), 'equip_type_nm' ],
+          [ Sequelize.col('stdEquip.uuid'), 'equip_uuid' ],
+          [ Sequelize.col('stdEquip.equip_cd'), 'equip_cd' ],
+          [ Sequelize.col('stdEquip.equip_nm'), 'equip_nm' ],
           'created_at',
           [ Sequelize.col('createUser.user_nm'), 'created_nm' ],
           'updated_at',
           [ Sequelize.col('updateUser.user_nm'), 'updated_nm' ]
         ],
-        where: { uuid },
+        where: { uuid }
       });
 
       return convertReadResult(result);
@@ -147,14 +174,14 @@ class StdRoutingResourceRepo {
 
   // 📒 Fn[readRawByUnique]: Unique Key를 통하여 Raw Data Read Function
   public readRawByUnique = async(
-    params: { factory_id: number, routing_id: number, emp_cnt: number }
+    params: { factory_id: number, proc_id: number, equip_id: number }
   ) => {
     const result = await this.repo.findOne({ 
       where: {
         [Op.and]: [
           { factory_id: params.factory_id },
-          { routing_id: params.routing_id },
-          { emp_cnt: params.emp_cnt },
+          { proc_id: params.proc_id },
+          { equip_id: params.equip_id }
         ]
       }
     });
@@ -166,20 +193,19 @@ class StdRoutingResourceRepo {
   //#region 🟡 Update Functions
   
   // 📒 Fn[update]: Default Update Function
-  public update = async(body: IStdRoutingResource[], uid: number, transaction?: Transaction) => {
+  public update = async(body: IStdProcEquip[], uid: number, transaction?: Transaction) => {
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      const promises = body.map((routingResource: any) => {
+      const promises = body.map((procEquip: any) => {
         return this.repo.update(
           {
-            emp_cnt: routingResource.emp_cnt ?? null,
-            cycle_time: routingResource.cycle_time ?? null,
-            uph: routingResource.uph ?? null,
+            proc_id: procEquip.proc_id ?? null,
+            equip_id: procEquip.equip_id ?? null,
             updated_uid: uid,
           } as any,
           { 
-            where: { uuid: routingResource.uuid },
+            where: { uuid: procEquip.uuid },
             returning: true,
             individualHooks: true,
             transaction
@@ -188,7 +214,7 @@ class StdRoutingResourceRepo {
       });
       const raws = await Promise.all(promises);
 
-      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdRoutingResource.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdProcEquip.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -201,20 +227,19 @@ class StdRoutingResourceRepo {
   //#region 🟠 Patch Functions
   
   // 📒 Fn[patch]: Default Patch Function
-  public patch = async(body: IStdRoutingResource[], uid: number, transaction?: Transaction) => {
+  public patch = async(body: IStdProcEquip[], uid: number, transaction?: Transaction) => {
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      const promises = body.map((routingResource: any) => {
+      const promises = body.map((procEquip: any) => {
         return this.repo.update(
           {
-            emp_cnt: routingResource.emp_cnt,
-            cycle_time: routingResource.cycle_time,
-            uph: routingResource.uph,
+            proc_id: procEquip.proc_id,
+            equip_id: procEquip.equip_id,
             updated_uid: uid,
           },
           { 
-            where: { uuid: routingResource.uuid },
+            where: { uuid: procEquip.uuid },
             returning: true,
             individualHooks: true,
             transaction
@@ -223,7 +248,7 @@ class StdRoutingResourceRepo {
       });
       const raws = await Promise.all(promises);
 
-      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdRoutingResource.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdProcEquip.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -236,16 +261,16 @@ class StdRoutingResourceRepo {
   //#region 🔴 Delete Functions
   
   // 📒 Fn[delete]: Default Delete Function
-  public delete = async(body: IStdRoutingResource[], uid: number, transaction?: Transaction) => {
+  public delete = async(body: IStdProcEquip[], uid: number, transaction?: Transaction) => {
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      const promises = body.map((routingResource: any) => {
-        return this.repo.destroy({ where: { uuid: routingResource.uuid }, transaction});
+      const promises = body.map((procEquip: any) => {
+        return this.repo.destroy({ where: { uuid: procEquip.uuid }, transaction});
       });
       const count = _.sum(await Promise.all(promises));
 
-      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.StdRoutingResource.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.StdProcEquip.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
     } catch (error) {
       throw error;
@@ -257,4 +282,4 @@ class StdRoutingResourceRepo {
   //#endregion
 }
 
-export default StdRoutingResourceRepo;
+export default StdProcEquipRepo;

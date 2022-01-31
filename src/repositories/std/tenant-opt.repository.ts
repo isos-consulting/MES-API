@@ -1,6 +1,6 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
-import AdmBomInputType from '../../models/adm/bom-input-type.model';
-import IAdmBomInputType from '../../interfaces/adm/bom-input-type.interface';
+import StdTenantOpt from '../../models/std/tenant-opt.model';
+import IStdTenantOpt from '../../interfaces/std/tenant-opt.interface';
 import { Sequelize } from 'sequelize-typescript';
 import _ from 'lodash';
 import convertResult from '../../utils/convertResult';
@@ -11,8 +11,8 @@ import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
 import ApiResult from '../../interfaces/common/api-result.interface';
 
-class AdmBomInputTypeRepo {
-  repo: Repository<AdmBomInputType>;
+class StdTenantOptRepo {
+  repo: Repository<StdTenantOpt>;
   sequelize: Sequelize;
   tenant: string;
 
@@ -20,21 +20,22 @@ class AdmBomInputTypeRepo {
   constructor(tenant: string) {
     this.tenant = tenant;
     this.sequelize = getSequelize(tenant);
-    this.repo = this.sequelize.getRepository(AdmBomInputType);
+    this.repo = this.sequelize.getRepository(StdTenantOpt);
   }
   //#endregion
 
   //#region ✅ CRUD Functions
 
 // 📒 Fn[create]: Default Create Function
-public create = async(body: IAdmBomInputType[], uid: number, transaction?: Transaction) => {
+public create = async(body: IStdTenantOpt[], uid: number, transaction?: Transaction) => {
 	try {
-		const promises = body.map((bomInputType: any) => {
+		const promises = body.map((tenantOpt: any) => {
         return this.repo.create(
           {
-            bom_input_type_cd: bomInputType.bom_input_type_cd,
-            bom_input_type_nm: bomInputType.bom_input_type_nm,
-            sortby: bomInputType.sortby,
+            tenant_opt_cd: tenantOpt.tenant_opt_cd,
+            tenant_opt_nm: tenantOpt.tenant_opt_nm,
+            value: tenantOpt.value,
+            remark: tenantOpt.remark,
             created_uid: uid,
             updated_uid: uid,
           },
@@ -62,17 +63,18 @@ public create = async(body: IAdmBomInputType[], uid: number, transaction?: Trans
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
-					[ Sequelize.col('admBomInputType.uuid'), 'bom_input_type_uuid' ],
-          'bom_input_type_cd',
-          'bom_input_type_nm',
-					'sortby',
+					[ Sequelize.col('stdTenantOpt.uuid'), 'tenant_opt_uuid' ],
+          'tenant_opt_cd',
+          'tenant_opt_nm',
+          'value',
+          'remark',
           'created_at',
           [ Sequelize.col('createUser.user_nm'), 'created_nm' ],
           'updated_at',
           [ Sequelize.col('updateUser.user_nm'), 'updated_nm' ]
         ],
-        where: { bom_input_type_cd: params.bom_input_type_cd ?? { [Op.ne]: null } },
-        order: [ 'sortby' ],
+        where: { tenant_opt_cd: params.tenant_opt_cd ?? { [Op.ne]: null } },
+        order: [ 'tenant_opt_id' ],
       });
 
       return convertReadResult(result);
@@ -92,10 +94,11 @@ public create = async(body: IAdmBomInputType[], uid: number, transaction?: Trans
 					{ model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
 				],
 				attributes: [
-					[ Sequelize.col('admBomInputType.uuid'), 'bom_input_type_uuid' ],
-					'bom_input_type_cd',
-          'bom_input_type_nm',
-          'sortby',
+					[ Sequelize.col('stdTenantOpt.uuid'), 'tenant_opt_uuid' ],
+					'tenant_opt_cd',
+          'tenant_opt_nm',
+          'value',
+          'remark',
           'created_at',
 					[ Sequelize.col('createUser.user_nm'), 'created_nm' ],
 					'updated_at',
@@ -123,8 +126,8 @@ public create = async(body: IAdmBomInputType[], uid: number, transaction?: Trans
 	};
 
 	// 📒 Fn[readRawByUnique]: Unique Key를 통하여 Raw Data Read Function
-	public readRawByUnique = async(params: { bom_input_type_cd: string }) => {
-		const result = await this.repo.findOne({ where: { bom_input_type_cd: params.bom_input_type_cd } });
+	public readRawByUnique = async(params: { tenant_opt_cd: string }) => {
+		const result = await this.repo.findOne({ where: { tenant_opt_cd: params.tenant_opt_cd } });
 		return convertReadResult(result);
 	};
 
@@ -133,20 +136,21 @@ public create = async(body: IAdmBomInputType[], uid: number, transaction?: Trans
   //#region 🟡 Update Functions
   
   // 📒 Fn[update]: Default Update Function
-  public update = async(body: IAdmBomInputType[], uid: number, transaction?: Transaction) => {
+  public update = async(body: IStdTenantOpt[], uid: number, transaction?: Transaction) => {
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      const promises = body.map((bomInputType: any) => {
+      const promises = body.map((tenantOpt: any) => {
         return this.repo.update(
           {
-            bom_input_type_cd: bomInputType.bom_input_type_cd ?? null,
-						bom_input_type_nm: bomInputType.bom_input_type_nm ?? null,
-						sortby: bomInputType.sortby ?? null,
+            tenant_opt_cd: tenantOpt.tenant_opt_cd ?? null,
+						tenant_opt_nm: tenantOpt.tenant_opt_nm ?? null,
+						value: tenantOpt.value ?? null,
+						remark: tenantOpt.remark ?? null,
             updated_uid: uid,
           } as any,
           { 
-            where: { uuid: bomInputType.uuid },
+            where: { uuid: tenantOpt.uuid },
             returning: true,
             individualHooks: true,
             transaction
@@ -155,7 +159,7 @@ public create = async(body: IAdmBomInputType[], uid: number, transaction?: Trans
       });
       const raws = await Promise.all(promises);
 
-      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.AdmBomInputType.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdTenantOpt.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -168,20 +172,21 @@ public create = async(body: IAdmBomInputType[], uid: number, transaction?: Trans
   //#region 🟠 Patch Functions
   
   // 📒 Fn[patch]: Default Patch Function
-  public patch = async(body: IAdmBomInputType[], uid: number, transaction?: Transaction) => {
+  public patch = async(body: IStdTenantOpt[], uid: number, transaction?: Transaction) => {
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      const promises = body.map((bomInputType: any) => {
+      const promises = body.map((tenantOpt: any) => {
         return this.repo.update(
           {
-						bom_input_type_cd: bomInputType.bom_input_type_cd,
-						bom_input_type_nm: bomInputType.bom_input_type_nm,
-						sortby: bomInputType.sortby,
+						tenant_opt_cd: tenantOpt.tenant_opt_cd,
+						tenant_opt_nm: tenantOpt.tenant_opt_nm,
+						value: tenantOpt.value,
+						remark: tenantOpt.remark,
             updated_uid: uid,
           },
           { 
-            where: { uuid: bomInputType.uuid },
+            where: { uuid: tenantOpt.uuid },
             returning: true,
             individualHooks: true,
             transaction
@@ -190,7 +195,7 @@ public create = async(body: IAdmBomInputType[], uid: number, transaction?: Trans
       });
       const raws = await Promise.all(promises);
 
-      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.AdmBomInputType.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdTenantOpt.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -203,16 +208,16 @@ public create = async(body: IAdmBomInputType[], uid: number, transaction?: Trans
 	//#region 🔴 Delete Functions
   
   // 📒 Fn[delete]: Default Delete Function
-  public delete = async(body: IAdmBomInputType[], uid: number, transaction?: Transaction) => {
+  public delete = async(body: IStdTenantOpt[], uid: number, transaction?: Transaction) => {
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      const promises = body.map((bomInputType: any) => {
-        return this.repo.destroy({ where: { uuid: bomInputType.uuid }, transaction});
+      const promises = body.map((tenantOpt: any) => {
+        return this.repo.destroy({ where: { uuid: tenantOpt.uuid }, transaction});
       });
       const count = _.sum(await Promise.all(promises));
 
-      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.AdmBomInputType.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.StdTenantOpt.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
     } catch (error) {
       throw error;
@@ -224,4 +229,4 @@ public create = async(body: IAdmBomInputType[], uid: number, transaction?: Trans
   //#endregion
 }
 
-export default AdmBomInputTypeRepo;
+export default StdTenantOptRepo;

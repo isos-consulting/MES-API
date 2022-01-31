@@ -1,0 +1,59 @@
+# STD_TENANT_OPT_TB
+
+# Columns
+tenant_opt_id:
+  type: object
+  properties:
+    tenant_opt_id:
+      description: 사용자정의옵션ID
+      type: number
+      format: int4
+
+tenant_opt_cd:
+  type: object
+  properties:
+    tenant_opt_cd:
+      description: 사용자정의옵션코드
+      type: string
+      format: varchar(50)
+
+tenant_opt_nm:
+  type: object
+  properties:
+    tenant_opt_nm:
+      description: 사용자정의옵션명
+      type: string
+      format: varchar(50)
+
+value:
+  type: object
+  properties:
+    value:
+      description: 사용자정의옵션 값
+      type: number
+      format: int4
+
+remark:
+  type: object
+  properties:
+    remark:
+      description: 비고
+      type: string
+      format: varchar(250)
+
+uuid:
+  type: object
+  properties:
+    uuid:
+      description: 사용자정의옵션UUID
+      type: string
+      format: uuid
+
+# Uuids
+tenant_opt_uuid:
+  type: object
+  properties:
+    tenant_opt_uuid:
+      description: 사용자정의옵션UUID
+      type: string
+      format: uuid

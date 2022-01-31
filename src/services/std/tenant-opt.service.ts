@@ -1,15 +1,18 @@
 import { Transaction } from "sequelize/types";
-import AdmBomInputTypeRepo from "../../repositories/adm/bom-input-type.repository";
+import StdTenantOptRepo from "../../repositories/std/tenant-opt.repository";
+import { errorState } from "../../states/common.state";
+import TTenantOpt from "../../types/tenant-opt.type";
+import createApiError from "../../utils/createApiError";
 
-class AdmBomInputTypeService {
+class StdTenantOptService {
   tenant: string;
   stateTag: string;
-  repo: AdmBomInputTypeRepo;
+  repo: StdTenantOptRepo;
 
   constructor(tenant: string) {
     this.tenant = tenant;
-    this.stateTag = 'admBomInputType';
-    this.repo = new AdmBomInputTypeRepo(tenant);
+    this.stateTag = 'stdTenantOpt';
+    this.repo = new StdTenantOptRepo(tenant);
   }
 
   public create = async (datas: any[], uid: number, tran: Transaction) => {
@@ -41,6 +44,20 @@ class AdmBomInputTypeService {
     try { return await this.repo.delete(datas, uid, tran); } 
 		catch (error) { throw error; }
   }
+
+  public getTenantOptValue = async (tenantOpt: TTenantOpt, tran?: Transaction) => {
+    const option = await (await this.repo.read({ tenant_opt_cd: tenantOpt })).raws[0];
+    if (!option) {
+      throw createApiError(
+        400, 
+        `유효하지 않은 사용자정의옵션입니다. [${tenantOpt}]`, 
+        this.stateTag, 
+        errorState.INVALID_DATA
+      );
+    }
+
+    return option.value;
+  }
 }
 
-export default AdmBomInputTypeService;
+export default StdTenantOptService;

@@ -1,0 +1,75 @@
+# STD_PROC_EQUIP_TB
+
+# Columns
+proc_equip_id:
+  type: object
+  properties:
+    proc_equip_id:
+      description: 공정별 설비정보ID
+      type: number
+      format: int4
+
+factory_id:
+  type: object
+  properties:
+    factory_id:
+      description: 공장ID
+      type: number
+      format: int4
+
+proc_id:
+  type: object
+  properties:
+    proc_id:
+      description: 공정ID
+      type: number
+      format: int4
+
+equip_id:
+  type: object
+  properties:
+    equip_id:
+      description: 설비ID
+      type: number
+      format: int4
+
+uuid:
+  type: object
+  properties:
+    uuid:
+      description: 공정별 설비정보UUID
+      type: string
+      format: uuid
+
+# Uuids
+proc_equip_uuid:
+  type: object
+  properties:
+    proc_equip_uuid:
+      description: 공정별 설비정보UUID
+      type: string
+      format: uuid
+
+factory_uuid:
+  type: object
+  properties:
+    factory_uuid:
+      description: 공장UUID
+      type: string
+      format: uuid
+
+proc_uuid:
+  type: object
+  properties:
+    proc_uuid:
+      description: 공정UUID
+      type: string
+      format: uuid
+
+equip_uuid:
+  type: object
+  properties:
+    equip_uuid:
+      description: 설비UUID
+      type: string
+      format: uuid

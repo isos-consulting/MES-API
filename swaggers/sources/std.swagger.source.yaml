@@ -142,6 +142,12 @@ paths:
   /std/procs:
     $ref: ../end-points/std/procs.yaml
 
+  # ✅ ProcEquip (공정별 설비정보)
+  /std/proc-equip/{uuid}:
+    $ref: ../end-points/std/proc-equip.{uuid}.yaml
+  /std/proc-equips:
+    $ref: ../end-points/std/proc-equips.yaml
+
   # ✅ ProcReject (공정별 부적합)
   /std/proc-rejects/excel-upload:
     $ref: ../end-points/std/proc-rejects.excel-upload.yaml
@@ -237,6 +243,12 @@ paths:
     $ref: ../end-points/std/downtime.{uuid}.yaml
   /std/downtimes:
     $ref: ../end-points/std/downtimes.yaml
+
+  # ✅ TenantOpt (사용자정의옵션)
+  /std/tenant-opt/{uuid}:
+    $ref: ../end-points/std/tenant-opt.{uuid}.yaml
+  /std/tenant-opts:
+    $ref: ../end-points/std/tenant-opts.yaml
 
   # ✅ Emp (사원)
   /std/emps/excel-upload:
