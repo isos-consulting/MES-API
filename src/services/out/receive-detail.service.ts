@@ -8,7 +8,6 @@ import StdProdRepo from "../../repositories/std/prod.repository";
 import StdStoreRepo from "../../repositories/std/store.repository";
 import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
 import InvStoreRepo from "../../repositories/inv/store.repository";
-import StdStoreService from "../std/store.service";
 import createApiError from "../../utils/createApiError";
 import { errorState } from "../../states/common.state";
 import OutReceiveRepo from "../../repositories/out/receive.repository";
@@ -163,37 +162,6 @@ class OutReceiveDetailService {
       data.total_price = data.qty * data.price * data.exchange; 
       return data;
     });
-  }
-
-  /**
-   * 외주입하상세 데이터의 창고가 유효한 데이터인지 검증  
-   * 입고(가용창고)
-   * @param datas 외주입하상세 데이터
-   * @param tran DB Transaction
-   * @returns 검증 성공시 true, 실패시 Error Throw
-   */
-  public validateStoreType = async (datas: any[], tran: Transaction) => {
-    const storeService = new StdStoreService(this.tenant);
-    let toStoreIds = new Set<number>();
-
-    datas.forEach(data => { toStoreIds.add(data.to_store_id); });
-
-    await Promise.all([
-      // 📌 입고창고가 가용창고가 아닌 경우에 대한 Valdation
-      toStoreIds.forEach(async (id) => {
-        const validated = await storeService.validateStoreType(id, 'AVAILABLE', tran);
-        if (!validated) {
-          throw createApiError(
-            400, 
-            `유효하지 않은 입고창고 유형입니다.`, 
-            this.stateTag, 
-            errorState.INVALID_DATA
-          );
-        }
-      }),
-    ]);
-
-    return true;
   }
 
   public validateHasInspResultByUuids = async (uuids: string[]) => {
