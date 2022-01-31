@@ -1,4 +1,5 @@
 import { Transaction } from "sequelize/types";
+import AdmBomInputTypeRepo from "../../repositories/adm/bom-input-type.repository";
 import StdBomRepo from "../../repositories/std/bom.repository";
 import StdFactoryRepo from "../../repositories/std/factory.repository";
 import StdLocationRepo from '../../repositories/std/location.repository';
@@ -45,6 +46,12 @@ class StdBomService {
         TRepo: StdUnitRepo,
         idName: 'unit_id',
         uuidName: 'unit_uuid'
+      },
+      {
+        key: 'bom_input_type',
+        TRepo: AdmBomInputTypeRepo,
+        idName: 'bom_input_type_id',
+        uuidName: 'bom_input_type_uuid'
       },
       {
         key: 'store',
