@@ -5,103 +5,24 @@ import PrdOrderRoutingRepo from '../../repositories/prd/order-routing.repository
 import PrdOrderWorkerRepo from '../../repositories/prd/order-worker.repository';
 import PrdOrderRepo from '../../repositories/prd/order.repository';
 import PrdWorkRepo from '../../repositories/prd/work.repository';
-import SalOrderDetailRepo from '../../repositories/sal/order-detail.repository';
 import StdBomRepo from '../../repositories/std/bom.repository';
-import StdEquipRepo from '../../repositories/std/equip.repository';
-import StdFactoryRepo from '../../repositories/std/factory.repository';
-import StdProcRepo from '../../repositories/std/proc.repository';
-import StdProdRepo from '../../repositories/std/prod.repository';
 import StdRoutingRepo from '../../repositories/std/routing.repository';
-import StdShiftRepo from '../../repositories/std/shift.repository';
 import StdWorkerGroupWorkerRepo from '../../repositories/std/worker-group-worker.repository';
-import StdWorkerGroupRepo from '../../repositories/std/worker-group.repository';
-import StdWorkingsRepo from '../../repositories/std/workings.repository';
 import checkArray from '../../utils/checkArray';
 import { getSequelize } from '../../utils/getSequelize';
 import response from '../../utils/response';
 import testErrorHandlingHelper from '../../utils/testErrorHandlingHelper';
 import unsealArray from '../../utils/unsealArray';
 import AdmPatternHistoryCtl from '../adm/pattern-history.controller';
-import BaseCtl from '../base.controller';
 import config from '../../configs/config';
-import MldMoldRepo from '../../repositories/mld/mold.repository';
+import prdOrderService from '../../services/prd/order.service';
+import { matchedData } from 'express-validator';
 
-class PrdOrderCtl extends BaseCtl {
+class PrdOrderCtl {
+  stateTag: string;
   //#region ✅ Constructor
   constructor() {
-    // ✅ 부모 Controller (Base Controller) 의 CRUD Function 과 상속 받는 자식 Controller(this) 의 Repository 를 연결하기 위하여 생성자에서 Repository 생성
-    super(PrdOrderRepo);
-
-    // ✅ CUD 연산이 실행되기 전 Fk Table 의 uuid 로 id 를 검색하여 request body 에 삽입하기 위하여 정보 Setting
-    this.fkIdInfos = [
-      {
-        key: 'uuid',
-        TRepo: PrdOrderRepo,
-        idName: 'order_id',
-        uuidName: 'uuid'
-      },
-      {
-        key: 'order',
-        TRepo: PrdOrderRepo,
-        idName: 'order_id',
-        uuidName: 'order_uuid'
-      },
-      {
-        key: 'factory',
-        TRepo: StdFactoryRepo,
-        idName: 'factory_id',
-        uuidName: 'factory_uuid'
-      },
-      {
-        key: 'proc',
-        TRepo: StdProcRepo,
-        idName: 'proc_id',
-        uuidName: 'proc_uuid'
-      },
-      {
-        key: 'workings',
-        TRepo: StdWorkingsRepo,
-        idName: 'workings_id',
-        uuidName: 'workings_uuid'
-      },
-      {
-        key: 'equip',
-        TRepo: StdEquipRepo,
-        idName: 'equip_id',
-        uuidName: 'equip_uuid'
-      },
-      {
-        key: 'mold',
-        TRepo: MldMoldRepo,
-        idName: 'mold_id',
-        uuidName: 'mold_uuid'
-      },
-      {
-        key: 'prod',
-        TRepo: StdProdRepo,
-        idName: 'prod_id',
-        uuidName: 'prod_uuid'
-      },
-      {
-        key: 'shift',
-        TRepo: StdShiftRepo,
-        idName: 'shift_id',
-        uuidName: 'shift_uuid'
-      },
-      {
-        key: 'worker_group',
-        TRepo: StdWorkerGroupRepo,
-        idName: 'worker_group_id',
-        uuidName: 'worker_group_uuid'
-      },
-      {
-        key: 'salOrderDetail',
-        TRepo: SalOrderDetailRepo,
-        idAlias: 'sal_order_detail_id',
-        idName: 'order_detail_id',
-        uuidName: 'sal_order_detail_uuid'
-      }
-    ];
+    this.stateTag = 'prdOrder';
   };
   //#endregion
 
@@ -112,7 +33,6 @@ class PrdOrderCtl extends BaseCtl {
   // 📒 Fn[create] (✅ Inheritance): Default Create Function
   public create = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      req.body = await this.getFkId(req.tenant.uuid, req.body, this.fkIdInfos);
       
       const sequelize = getSequelize(req.tenant.uuid);
       const repo = new PrdOrderRepo(req.tenant.uuid);
@@ -122,10 +42,15 @@ class PrdOrderCtl extends BaseCtl {
       const workerGroupWorkerRepo = new StdWorkerGroupWorkerRepo(req.tenant.uuid);
       const bomRepo = new StdBomRepo(req.tenant.uuid);
       const stdRoutingRepo = new StdRoutingRepo(req.tenant.uuid);
+
+
       let result: ApiResult<any> = { count: 0, raws: [] };
+      const service = new prdOrderService(req.tenant.uuid);
+      const matched = matchedData(req, { locations: ['body'] })
+      let datas = await service.convertFk(Object.values(matched));
 
       await sequelize.transaction(async(tran) => { 
-        for await (const data of req.body) {
+        for await (const data of datas) {
           // 📌 전표번호가 수기 입력되지 않고 자동발행 Option일 경우 번호 자동발행
           if (!data.order_no) { 
             data.order_no = await new AdmPatternHistoryCtl().getPattern({
@@ -143,6 +68,8 @@ class PrdOrderCtl extends BaseCtl {
           }
 
           // 📌 작업지시 데이터 생성
+          result = await service.create(datas, req.user?.uid as number, tran);
+
           const orderResult = await repo.create(checkArray(data), req.user?.uid as number, tran);
           const order = unsealArray(orderResult.raws);
 
@@ -227,7 +154,6 @@ class PrdOrderCtl extends BaseCtl {
   // 📒 Fn[update] (✅ Inheritance): Default Update Function
   public update = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      req.body = await this.getFkId(req.tenant.uuid, req.body, this.fkIdInfos);
 
       const sequelize = getSequelize(req.tenant.uuid);
       const repo = new PrdOrderRepo(req.tenant.uuid);
@@ -290,7 +216,6 @@ class PrdOrderCtl extends BaseCtl {
   // 📒 Fn[updateWorkerGroup]: 작업조(worker_group) 수정
   public updateWorkerGroup = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      req.body = await this.getFkId(req.tenant.uuid, req.body, this.fkIdInfos);
       
       const sequelize = getSequelize(req.tenant.uuid);
       const repo = new PrdOrderRepo(req.tenant.uuid);
@@ -353,7 +278,6 @@ class PrdOrderCtl extends BaseCtl {
   // 📒 Fn[patch] (✅ Inheritance): Default Patch Function
   public patch = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      req.body = await this.getFkId(req.tenant.uuid, req.body, this.fkIdInfos);
 
       const sequelize = getSequelize(req.tenant.uuid);
       const repo = new PrdOrderRepo(req.tenant.uuid);
@@ -388,7 +312,6 @@ class PrdOrderCtl extends BaseCtl {
   // 📒 Fn[delete] (✅ Inheritance): Default Delete Function
   public delete = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      req.body = await this.getFkId(req.tenant.uuid, req.body, this.fkIdInfos);
 
       const sequelize = getSequelize(req.tenant.uuid);
       const repo = new PrdOrderRepo(req.tenant.uuid);

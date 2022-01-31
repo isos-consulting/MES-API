@@ -69,7 +69,7 @@ router.route('/work-inputs').post(workInput.create);
 router.route('/work-inputs').put(workInput.update);
 router.route('/work-inputs').patch(workInput.patch);
 router.route('/work-inputs').delete(workInput.delete);
-router.route('/work-inputs/by-work').delete(workInput.deleteByWork);
+// router.route('/work-inputs/by-work').delete(workInput.deleteByWork);
 //#endregion
 
 //#region ✅ WorkWorker (실적-작업자투입)

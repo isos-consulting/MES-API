@@ -2,6 +2,7 @@ export default interface IPrdWorkWorker {
   work_worker_id?: number,
   factory_id?: number,
   work_id?: number,
+  work_routing_id?: number,
   worker_id?: number,
   start_date?: string | null,
   end_date?: string | null,

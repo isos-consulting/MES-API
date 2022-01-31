@@ -5,6 +5,7 @@ export default interface IPrdOrderInput { // 투입 이력(지시)
   prod_id?: number,
   c_usage?: number,
   unit_id?: number,
+  bom_input_type_id?: number,
   from_store_id?: number,
   from_location_id?: number | null,
   remark?: string | null,

@@ -6,6 +6,7 @@ import StdFactory from '../std/factory.model';
 import StdProc from '../std/proc.model';
 import StdWorkings from '../std/workings.model';
 import PrdWork from './work.model';
+import MldMold from '../mld/mold.model';
 
 @Table({
   tableName: 'PRD_WORK_ROUTING_TB',
@@ -73,6 +74,19 @@ export default class PrdWorkRouting extends Model<IPrdWorkRouting> {
   })
   equip_id: number;
 
+  @ForeignKey(() => MldMold)
+  @Column({
+    comment: '금형ID',
+    type: DataType.INTEGER,
+  })
+  mold_id: number;
+
+  @Column({
+    comment: 'Cavity',
+    type: DataType.INTEGER,
+  })
+  cavity: number;
+
   @Column({
     comment: '수량',
     type: DataType.DECIMAL(19,6),
@@ -96,6 +110,12 @@ export default class PrdWorkRouting extends Model<IPrdWorkRouting> {
     type: DataType.INTEGER,
   })
   work_time: number;
+
+  @Column({
+    comment: '작업중인 공정 여부',
+    type: DataType.BOOLEAN,
+  })
+  ongoing_fg: boolean;
 
   @Column({
     comment: '비고',
@@ -165,6 +185,10 @@ export default class PrdWorkRouting extends Model<IPrdWorkRouting> {
 
   @BelongsTo(() => StdEquip, { foreignKey: 'equip_id', targetKey: 'equip_id', onDelete: 'restrict', onUpdate: 'cascade' })
   stdEquip: StdEquip;
+
+  @BelongsTo(() => MldMold, { foreignKey: 'mold_id', targetKey: 'mold_id', onDelete: 'restrict', onUpdate: 'cascade' })
+  mldMold: MldMold;
+  
 
   // HasMany
   //#endregion

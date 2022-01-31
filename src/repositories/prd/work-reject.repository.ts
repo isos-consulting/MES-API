@@ -252,21 +252,6 @@ class PrdWorkRejectRepo {
       throw error;
     }
   };
-
-  // 📒 Fn[getWorkRejectIdsByWorkId]: 생산실적의 Id를 이용하여 PK Read Function
-  public getWorkRejectIdsByWorkId = async(workId: number, transaction?: Transaction) => {
-    const result = await this.repo.findAll({
-      attributes: [ 'work_reject_id' ],
-      where: { work_id: workId }, 
-      transaction 
-    });
-    const converted = convertReadResult(result);
-    const workRejectIds: number[] = []; 
-    converted.raws.forEach((raw: any) => { workRejectIds.push(raw.work_reject_id); });
-
-    return workRejectIds;
-  };
-
   // 📒 Fn[readByWork]: 생산실적 기준 공정별 부적합 List 및 현재 등록되어있는 부적합 조회
   public readByWork = async(params?: any) => {
     try {

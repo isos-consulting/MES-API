@@ -36,6 +36,7 @@ class PrdWorkWorkerRepo {
           {
             factory_id: workWorker.factory_id,
             work_id: workWorker.work_id,
+            work_routing_id: workWorker.work_routing_id,
             worker_id: workWorker.worker_id,
             start_date: workWorker.start_date,
             end_date: workWorker.end_date,
@@ -76,6 +77,12 @@ class PrdWorkWorkerRepo {
             required: true,
             where: params.work_uuid ? { uuid: params.work_uuid } : {}
           },
+          { 
+            model: this.sequelize.models.PrdWorkRouting,
+            attributes: [], 
+            required: true,
+            where: params.work_routing_uuid ? { uuid: params.work_routing_uuid } : {}
+          },
           { model: this.sequelize.models.StdWorker, attributes: [], required: true },
           { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
@@ -86,6 +93,7 @@ class PrdWorkWorkerRepo {
           [ Sequelize.col('stdFactory.factory_cd'), 'factory_cd' ],
           [ Sequelize.col('stdFactory.factory_nm'), 'factory_nm' ],
           [ Sequelize.col('prdWork.uuid'), 'work_uuid' ],
+          [ Sequelize.col('prdWorkRouting.uuid'), 'work_routing_uuid' ],
           [ Sequelize.col('stdWorker.uuid'), 'worker_uuid' ],
           [ Sequelize.col('stdWorker.worker_nm'), 'worker_nm' ],
           'start_date',
@@ -98,7 +106,7 @@ class PrdWorkWorkerRepo {
           'updated_at',
           [ Sequelize.col('updateUser.user_nm'), 'updated_nm' ]
         ],
-        order: [ 'factory_id', 'work_id', 'worker_id' ]
+        order: [ 'factory_id', 'work_id', 'work_routing_id', 'worker_id' ]
       });
 
       return convertReadResult(result);
@@ -114,6 +122,7 @@ class PrdWorkWorkerRepo {
         include: [
           { model: this.sequelize.models.StdFactory, attributes: [], required: true },
           { model: this.sequelize.models.PrdWork, attributes: [], required: true },
+          { model: this.sequelize.models.PrdWorkRouting, attributes: [], required: true },
           { model: this.sequelize.models.StdWorker, attributes: [], required: true },
           { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
@@ -124,6 +133,7 @@ class PrdWorkWorkerRepo {
           [ Sequelize.col('stdFactory.factory_cd'), 'factory_cd' ],
           [ Sequelize.col('stdFactory.factory_nm'), 'factory_nm' ],
           [ Sequelize.col('prdWork.uuid'), 'work_uuid' ],
+          [ Sequelize.col('prdWorkRouting.uuid'), 'work_routing_uuid' ],
           [ Sequelize.col('stdWorker.uuid'), 'worker_uuid' ],
           [ Sequelize.col('stdWorker.worker_nm'), 'worker_nm' ],
           'start_date',

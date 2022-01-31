@@ -1,11 +1,8 @@
 import { Sequelize, Table, Column, Model, DataType, CreatedAt, UpdatedAt, BelongsTo, Unique, ForeignKey } from 'sequelize-typescript'
 import IPrdWork from '../../interfaces/prd/work.interface';
 import AutUser from '../aut/user.model';
-import MldMold from '../mld/mold.model';
-import StdEquip from '../std/equip.model';
 import StdFactory from '../std/factory.model';
 import StdLocation from '../std/location.model';
-import StdProc from '../std/proc.model';
 import StdProd from '../std/prod.model';
 import StdShift from '../std/shift.model';
 import StdStore from '../std/store.model';
@@ -59,14 +56,6 @@ export default class PrdWork extends Model<IPrdWork> {
   })
   seq: number;
 
-  @ForeignKey(() => StdProc)
-  @Column({
-    comment: '공정ID',
-    type: DataType.INTEGER,
-    allowNull: false,
-  })
-  proc_id: number;
-
   @ForeignKey(() => StdWorkings)
   @Column({
     comment: '작업장ID',
@@ -74,26 +63,6 @@ export default class PrdWork extends Model<IPrdWork> {
     allowNull: false,
   })
   workings_id: number;
-
-  @ForeignKey(() => StdEquip)
-  @Column({
-    comment: '설비ID',
-    type: DataType.INTEGER,
-  })
-  equip_id: number;
-
-  @ForeignKey(() => MldMold)
-  @Column({
-    comment: '금형ID',
-    type: DataType.INTEGER,
-  })
-  mold_id: number;
-
-  @Column({
-    comment: '금형 Cavity',
-    type: DataType.INTEGER,
-  })
-  mold_cavity: number;
 
   @ForeignKey(() => StdProd)
   @Column({
@@ -123,25 +92,6 @@ export default class PrdWork extends Model<IPrdWork> {
     allowNull: false,
   })
   reject_qty: number;
-
-  @Column({
-    comment: '생산 시작 일시',
-    type: 'timestamp',
-    allowNull: false,
-  })
-  start_date: string;
-
-  @Column({
-    comment: '생산 종료 일시',
-    type: 'timestamp',
-  })
-  end_date: string;
-
-  @Column({
-    comment: '작업시간',
-    type: DataType.INTEGER,
-  })
-  work_time: number;
 
   @ForeignKey(() => StdShift)
   @Column({
@@ -233,17 +183,8 @@ export default class PrdWork extends Model<IPrdWork> {
   @BelongsTo(() => PrdOrder, { foreignKey: 'order_id', targetKey: 'order_id', onDelete: 'restrict', onUpdate: 'cascade' })
   prdOrder: PrdOrder;
 
-  @BelongsTo(() => StdProc, { foreignKey: 'proc_id', targetKey: 'proc_id', onDelete: 'restrict', onUpdate: 'cascade' })
-  stdProc: StdProc;
-
   @BelongsTo(() => StdWorkings, { foreignKey: 'workings_id', targetKey: 'workings_id', onDelete: 'restrict', onUpdate: 'cascade' })
   stdWorkings: StdWorkings;
-
-  @BelongsTo(() => StdEquip, { foreignKey: 'equip_id', targetKey: 'equip_id', onDelete: 'restrict', onUpdate: 'cascade' })
-  stdEquip: StdEquip;
-
-  @BelongsTo(() => MldMold, { foreignKey: 'mold_id', targetKey: 'mold_id', onDelete: 'restrict', onUpdate: 'cascade' })
-  mldMold: MldMold;
 
   @BelongsTo(() => StdProd, { foreignKey: 'prod_id', targetKey: 'prod_id', onDelete: 'restrict', onUpdate: 'cascade' })
   stdProd: StdProd;

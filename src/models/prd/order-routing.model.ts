@@ -5,6 +5,7 @@ import StdEquip from '../std/equip.model';
 import StdFactory from '../std/factory.model';
 import StdProc from '../std/proc.model';
 import StdWorkings from '../std/workings.model';
+import MldMold from '../mld/mold.model';
 import PrdOrder from './order.model';
 
 @Table({
@@ -73,6 +74,19 @@ export default class PrdOrderRouting extends Model<IPrdOrderRouting> {
   })
   equip_id: number;
 
+  @ForeignKey(() => MldMold)
+  @Column({
+    comment: '금형ID',
+    type: DataType.INTEGER,
+  })
+  mold_id: number;
+
+  @Column({
+    comment: 'Cavity',
+    type: DataType.INTEGER,
+  })
+  cavity: number;
+
   @Column({
     comment: '비고',
     type: DataType.STRING(250),
@@ -140,7 +154,10 @@ export default class PrdOrderRouting extends Model<IPrdOrderRouting> {
   stdWorkings: StdWorkings;
 
   @BelongsTo(() => StdEquip, { foreignKey: 'equip_id', targetKey: 'equip_id', onDelete: 'restrict', onUpdate: 'cascade' })
-  stdEquip: StdProc;
+  stdEquip: StdEquip;
+
+  @BelongsTo(() => MldMold, { foreignKey: 'mold_id', targetKey: 'mold_id', onDelete: 'restrict', onUpdate: 'cascade' })
+  mldMold: MldMold;
 
   // HasMany
   //#endregion
