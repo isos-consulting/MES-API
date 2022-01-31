@@ -8,8 +8,11 @@ import StdProdRepo from "../../repositories/std/prod.repository";
 import StdRejectRepo from "../../repositories/std/reject.repository";
 import StdStoreRepo from "../../repositories/std/store.repository";
 import { errorState } from "../../states/common.state";
+import TTranType from "../../types/tran-type.type";
 import createApiError from "../../utils/createApiError";
 import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
+import getStoreBody from "../../utils/getStoreBody_new";
+import AdmTranTypeService from "../adm/tran-type.service";
 
 class InvStoreService {
   tenant: string;
@@ -101,6 +104,49 @@ class InvStoreService {
   public delete = async (datas: any[], uid: number, tran: Transaction) => {
     try { return await this.repo.delete(datas, uid, tran); }
 		catch (error) { throw error; }
+  }
+
+  /**
+   * 수불관련 데이터(입고, 출고 등)를 통하여 창고에 재고를 입력, 수정, 삭제
+   * @param datas 수불관련 데이터(입고, 출고 등)
+   * @param type 데이터 저장 유형(생성, 수정, 삭제)
+   * @param tranOpt 수불 데이터 생성에 필요한 Option
+   * @param uid 입력 사용자ID
+   * @param tran DB Transaction
+   * @returns 창고수불 Result
+   */
+   public transactInventory = async (
+    datas: any[], 
+    type: 'CREATE' | 'UPDATE' | 'DELETE',
+    tranOpt: {
+      inout: 'FROM' | 'TO',         // FROM: 출고, TO: 입고
+      tran_type: TTranType,         // 수불 유형
+      reg_date: string,             // 수불 기준일자
+      tran_id_alias: string,        // 수불 데이터의 ID Column명
+      qty_alias?: string,           // 수불 데이터의 Qty Column명
+      store_alias?: string,         // 수불 데이터의 Store(창고) Column명
+      location_alias?: string       // 수불 데이터의 Location(위치) Column명
+    }, 
+    uid: number, 
+    tran: Transaction
+  ) => {
+    // 📌 수불 유형에 해당하는 ID 검색
+    const tranTypeService = new AdmTranTypeService(this.tenant);
+    const tranTypeId = await tranTypeService.getIdByCd(tranOpt.tran_type);
+
+    // 📌 수불 입력 데이터 생성
+    const storeBody = getStoreBody({
+      datas,
+      tran_type_id: tranTypeId,
+      ...tranOpt
+    });
+
+    // 📌 수불 유형에 따라 수불 함수 호출
+    switch (type) {
+      case 'CREATE': return await this.repo.create(storeBody, uid, tran);
+      case 'UPDATE': return await this.repo.updateToTransaction(storeBody, uid, tran);
+      case 'DELETE': return await this.repo.deleteToTransaction(storeBody, uid, tran);
+    }
   }
 
   /**

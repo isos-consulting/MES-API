@@ -15,6 +15,8 @@ import AdmPatternHistoryService from '../../services/adm/pattern-history.service
 import AdmPatternOptService from '../../services/adm/pattern-opt.service';
 import OutIncomeService from '../../services/out/income.service';
 import OutWorkInputService from '../../services/out/work-input.service';
+import StdStoreService from '../../services/std/store.service';
+import InvStoreService from '../../services/inv/store.service';
 
 class OutReceiveCtl {
   stateTag: string
@@ -37,6 +39,8 @@ class OutReceiveCtl {
       const detailService = new OutReceiveDetailService(req.tenant.uuid);
       const incomeService = new OutIncomeService(req.tenant.uuid);
       const inputService = new OutWorkInputService(req.tenant.uuid);
+      const storeService = new StdStoreService(req.tenant.uuid);
+      const inventoryService = new InvStoreService(req.tenant.uuid);
       const patternOptService = new AdmPatternOptService(req.tenant.uuid);
       const patternService = new AdmPatternHistoryService(req.tenant.uuid);
 
@@ -106,9 +110,13 @@ class OutReceiveCtl {
 
         // 📌 외주입고 및 수불 데이터 생성
         const incomeBody = await incomeService.getIncomeBody(datasForInventory, regDate);
-        await incomeService.validateStoreType(incomeBody, tran);
+        await storeService.validateStoreTypeByIds(incomeBody.map(body => body.to_store_id), 'AVAILABLE', tran);
         const incomeResult = await incomeService.create(incomeBody, req.user?.uid as number, tran);
-        const toStoreResult = await incomeService.inputInInventory(incomeBody, regDate, req.user?.uid as number, tran);
+        const toStoreResult = await inventoryService.transactInventory(
+          incomeBody, 'CREATE', 
+          { inout: 'TO', tran_type: 'OUT_INCOME', reg_date: regDate, tran_id_alias: 'income_id' },
+          req.user?.uid as number, tran
+        );
 
         // 📌 외주투입 및 수불 데이터 생성
         let inputResult: ApiResult<any> = { count: 0, raws: [] };
@@ -117,9 +125,13 @@ class OutReceiveCtl {
         if (isPullOption) {
           for await (const data of datasForInventory) {
             const inputBody = await inputService.getPullInputBody(data, regDate, partnerId, isPullOption);
-            await inputService.validateStoreType(inputBody, tran);
+            await storeService.validateStoreTypeByIds(inputBody.map(body => body.from_store_id), 'OUTSOURCING', tran);
             const tempInputResult = await inputService.create(inputBody, req.user?.uid as number, tran);
-            const tempFromStoreResult = await inputService.inputInInventory(inputBody, regDate, req.user?.uid as number, tran);  
+            const tempFromStoreResult = await inventoryService.transactInventory(
+              inputBody, 'CREATE', 
+              { inout: 'FROM', tran_type: 'OUT_INPUT', reg_date: regDate, tran_id_alias: 'work_input_id' },
+              req.user?.uid as number, tran
+            );
 
             inputResult = {
               raws: [...inputResult.raws, ...tempInputResult.raws],
@@ -276,6 +288,8 @@ class OutReceiveCtl {
       const detailService = new OutReceiveDetailService(req.tenant.uuid);
       const incomeService = new OutIncomeService(req.tenant.uuid);
       const inputService = new OutWorkInputService(req.tenant.uuid);
+      const storeService = new StdStoreService(req.tenant.uuid);
+      const inventoryService = new InvStoreService(req.tenant.uuid);
 
       const matched = matchedData(req, { locations: [ 'body' ] });
       const data = {
@@ -305,9 +319,13 @@ class OutReceiveCtl {
 
         // 📌 외주입고 및 수불 데이터 수정
         const incomeBody = await incomeService.getIncomeBody(data.details, regDate);
-        await incomeService.validateStoreType(incomeBody, tran);
+        await storeService.validateStoreTypeByIds(incomeBody.map(body => body.to_store_id), 'AVAILABLE', tran);
         const incomeResult = await incomeService.update(incomeBody, req.user?.uid as number, tran);
-        const toStoreResult = await incomeService.changeInInventory(incomeBody, regDate, req.user?.uid as number, tran);
+        const toStoreResult = await inventoryService.transactInventory(
+          incomeBody, 'UPDATE', 
+          { inout: 'TO', tran_type: 'OUT_INCOME', reg_date: regDate, tran_id_alias: 'income_id' },
+          req.user?.uid as number, tran
+        );
 
         // 📌 외주투입 자동 선입선출 옵션
         const isPullOption = true; // Default로 pull(선입선출 옵션)로 동작 (현재는 pull로만 생성)
@@ -316,7 +334,11 @@ class OutReceiveCtl {
         if (isPullOption) {
           const receiveDetailIds = detailResult.raws.map(raw => raw.receive_id);
           const deleted = await inputService.deleteByReceiveDetailIds(receiveDetailIds, req.user?.uid as number, tran);
-          await inputService.removeInInventory(deleted.raws, req.user?.uid as number, tran);
+          await inventoryService.transactInventory(
+            deleted.raws, 'DELETE', 
+            { inout: 'FROM', tran_type: 'OUT_INPUT', reg_date: regDate, tran_id_alias: 'work_input_id' },
+            req.user?.uid as number, tran
+          );
         }
 
         // 📌 외주투입 및 수불 데이터 생성
@@ -326,9 +348,13 @@ class OutReceiveCtl {
         if (isPullOption) {
           for await (const detail of data.details) {
             const inputBody = await inputService.getPullInputBody(detail, regDate, partnerId, isPullOption);
-            await inputService.validateStoreType(inputBody, tran);
+            await storeService.validateStoreTypeByIds(inputBody.map(body => body.from_store_id), 'OUTSOURCING', tran);
             const tempInputResult = await inputService.create(inputBody, req.user?.uid as number, tran);
-            const tempFromStoreResult = await inputService.inputInInventory(inputBody, regDate, req.user?.uid as number, tran);
+            const tempFromStoreResult = await inventoryService.transactInventory(
+              inputBody, 'CREATE', 
+              { inout: 'FROM', tran_type: 'OUT_INPUT', reg_date: regDate, tran_id_alias: 'work_input_id' },
+              req.user?.uid as number, tran
+            );
 
             inputResult = {
               raws: [...inputResult.raws, ...tempInputResult.raws],
@@ -376,6 +402,8 @@ class OutReceiveCtl {
       const detailService = new OutReceiveDetailService(req.tenant.uuid);
       const incomeService = new OutIncomeService(req.tenant.uuid);
       const inputService = new OutWorkInputService(req.tenant.uuid);
+      const storeService = new StdStoreService(req.tenant.uuid);
+      const inventoryService = new InvStoreService(req.tenant.uuid);
 
       const matched = matchedData(req, { locations: [ 'body' ] });
       const data = {
@@ -405,9 +433,13 @@ class OutReceiveCtl {
 
         // 📌 외주입고 및 수불 데이터 수정
         const incomeBody = await incomeService.getIncomeBody(data.details, regDate);
-        await incomeService.validateStoreType(incomeBody, tran);
+        await storeService.validateStoreTypeByIds(incomeBody.map(body => body.to_store_id), 'AVAILABLE', tran);
         const incomeResult = await incomeService.update(incomeBody, req.user?.uid as number, tran);
-        const toStoreResult = await incomeService.changeInInventory(incomeBody, regDate, req.user?.uid as number, tran);
+        const toStoreResult = await inventoryService.transactInventory(
+          incomeBody, 'UPDATE', 
+          { inout: 'TO', tran_type: 'OUT_INCOME', reg_date: regDate, tran_id_alias: 'income_id' },
+          req.user?.uid as number, tran
+        );
 
         // 📌 외주투입 자동 선입선출 옵션
         const isPullOption = true; // Default로 pull(선입선출 옵션)로 동작 (현재는 pull로만 생성)
@@ -416,7 +448,11 @@ class OutReceiveCtl {
         if (isPullOption) {
           const receiveDetailIds = detailResult.raws.map(raw => raw.receive_id);
           const deleted = await inputService.deleteByReceiveDetailIds(receiveDetailIds, req.user?.uid as number, tran);
-          await inputService.removeInInventory(deleted.raws, req.user?.uid as number, tran);
+          await inventoryService.transactInventory(
+            deleted.raws, 'DELETE', 
+            { inout: 'FROM', tran_type: 'OUT_INPUT', reg_date: regDate, tran_id_alias: 'work_input_id' },
+            req.user?.uid as number, tran
+          );
         }
 
         // 📌 외주투입 및 수불 데이터 생성
@@ -426,9 +462,13 @@ class OutReceiveCtl {
         if (isPullOption) {
           for await (const detail of data.details) {
             const inputBody = await inputService.getPullInputBody(detail, regDate, partnerId, isPullOption);
-            await inputService.validateStoreType(inputBody, tran);
+            await storeService.validateStoreTypeByIds(inputBody.map(body => body.from_store_id), 'OUTSOURCING', tran);
             const tempInputResult = await inputService.create(inputBody, req.user?.uid as number, tran);
-            const tempFromStoreResult = await inputService.inputInInventory(inputBody, regDate, req.user?.uid as number, tran);
+            const tempFromStoreResult = await inventoryService.transactInventory(
+              inputBody, 'CREATE', 
+              { inout: 'FROM', tran_type: 'OUT_INPUT', reg_date: regDate, tran_id_alias: 'work_input_id' },
+              req.user?.uid as number, tran
+            );
 
             inputResult = {
               raws: [...inputResult.raws, ...tempInputResult.raws],
@@ -475,6 +515,7 @@ class OutReceiveCtl {
       const detailService = new OutReceiveDetailService(req.tenant.uuid);
       const incomeService = new OutIncomeService(req.tenant.uuid);
       const inputService = new OutWorkInputService(req.tenant.uuid);
+      const inventoryService = new InvStoreService(req.tenant.uuid);
       
       const matched = matchedData(req, { locations: [ 'body' ] });
       const data = {
@@ -502,13 +543,21 @@ class OutReceiveCtl {
 
         // 📌 외주입고 및 수불 데이터 삭제
         const incomeBody = await incomeService.getIncomeBody(data.details, headerResult.raws[0].reg_date);
-        await incomeService.validateStoreType(incomeBody, tran);
         const incomeResult = await incomeService.delete(incomeBody, req.user?.uid as number, tran);
-        const toStoreResult = await incomeService.removeInInventory(incomeBody, req.user?.uid as number, tran);
+        const toStoreResult = await inventoryService.transactInventory(
+          incomeBody, 'DELETE', 
+          { inout: 'TO', tran_type: 'OUT_INCOME', reg_date: '', tran_id_alias: 'income_id' },
+          req.user?.uid as number, tran
+        );
 
-        const receiveDetailIds = detailResult.raws.map(raw => raw.receive_id);
+        // 📌 외주투입 및 수불 데이터 삭제
+        const receiveDetailIds = detailResult.raws.map(raw => raw.receive_detail_id);
         const inputResult = await inputService.deleteByReceiveDetailIds(receiveDetailIds, req.user?.uid as number, tran);
-        const fromStoreResult = await inputService.removeInInventory(inputResult.raws, req.user?.uid as number, tran);
+        const fromStoreResult = await inventoryService.transactInventory(
+          incomeBody, 'DELETE', 
+          { inout: 'FROM', tran_type: 'OUT_INPUT', reg_date: '', tran_id_alias: 'work_input_id' },
+          req.user?.uid as number, tran
+        );
 
         result.raws = [{
           header: headerResult.raws[0],

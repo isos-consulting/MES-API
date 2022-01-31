@@ -5,15 +5,12 @@ import StdProdRepo from "../../repositories/std/prod.repository";
 import StdStoreRepo from "../../repositories/std/store.repository";
 import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
 import InvStoreRepo from "../../repositories/inv/store.repository";
-import StdStoreService from "../std/store.service";
 import createApiError from "../../utils/createApiError";
 import { errorState } from "../../states/common.state";
 import OutWorkInputRepo from "../../repositories/out/work-input.repository";
 import OutReceiveDetailRepo from "../../repositories/out/receive-detail.repository";
 import StdBomRepo from "../../repositories/std/bom.repository";
 import InvStoreService from "../inv/store.service";
-import AdmTranTypeService from "../adm/tran-type.service";
-import getStoreBody from "../../utils/getStoreBody_new";
 
 class OutWorkInputService {
   tenant: string;
@@ -197,81 +194,6 @@ class OutWorkInputService {
     resultArray.forEach(data => { result = [...result, ...data]; });
 
     return result;
-  }
-
-  /**
-   * 외주투입에 의한 창고수불 데이터 생성 (외주창고 =>)
-   * @param datas 외주투입상세 데이터
-   * @param regDate 외주투입전표 기준일자
-   * @param uid 입력 사용자ID
-   * @param tran DB Transaction
-   * @returns 창고수불 Result
-   */
-  public inputInInventory = async (datas: any[], regDate: string, uid: number, tran: Transaction) => {
-    const tranTypeService = new AdmTranTypeService(this.tenant);
-    const tranTypeId = await tranTypeService.getIdByCd('OUT_INPUT');
-
-    const storeBody = getStoreBody({
-      datas,
-      inout: 'FROM',
-      tran_type_id: tranTypeId,
-      reg_date: regDate,
-      tran_id_alias: 'work_input_id'
-    });
-
-    return await this.storeRepo.create(storeBody, uid, tran);
-  }
-
-  /**
-   * 외주투입에 의한 창고수불 데이터 삭제 (가용창고 => 외주창고)
-   * @param datas 외주투입상세 데이터
-   * @param uid 입력 사용자ID
-   * @param tran DB Transaction
-   * @returns 창고수불 Result
-   */
-  public removeInInventory = async (datas: any[], uid: number, tran: Transaction) => {
-    const tranTypeService = new AdmTranTypeService(this.tenant);
-    const tranTypeId = await tranTypeService.getIdByCd('OUT_INPUT');
-
-    const storeBody = getStoreBody({
-      datas,
-      inout: 'FROM',
-      tran_type_id: tranTypeId,
-      tran_id_alias: 'work_input_id'
-    });
-
-    return await this.storeRepo.deleteToTransaction(storeBody, uid, tran);
-  }
-
-  /**
-   * 외주투입 데이터의 창고가 유효한 데이터인지 검증  
-   * 출고(외주창고)
-   * @param datas 외주투입 데이터
-   * @param tran DB Transaction
-   * @returns 검증 성공시 true, 실패시 Error Throw
-   */
-  public validateStoreType = async (datas: any[], tran: Transaction) => {
-    const storeService = new StdStoreService(this.tenant);
-    let fromStoreIds = new Set<number>();
-
-    datas.forEach(data => { fromStoreIds.add(data.from_store_id); });
-
-    await Promise.all([
-      // 📌 출고창고가 외주창고가 아닌 경우에 대한 Valdation
-      fromStoreIds.forEach(async (id) => {
-        const validated = await storeService.validateStoreType(id, 'OUTSOURCING', tran);
-        if (!validated) {
-          throw createApiError(
-            400, 
-            `유효하지 않은 출고창고 유형입니다.`, 
-            this.stateTag, 
-            errorState.INVALID_DATA
-          );
-        }
-      }),
-    ]);
-
-    return true;
   }
 
   /**

@@ -67,9 +67,9 @@ class StdStoreService {
    * @param storeId 창고ID
    * @param storeType 창고유형
    * @param tran DB Transaction
-   * @returns 
+   * @returns 검증 성공시 true, 실패시 Error Throw
    */
-  public validateStoreType = async (storeId: number, storeType: TStoreType, tran?: Transaction) => {
+  private validateStoreTypeById = async (storeId: number, storeType: TStoreType, tran?: Transaction) => {
     try { 
       const read = await this.repo.readRawById(storeId, tran);
       if (read.count === 0) {
@@ -91,6 +91,33 @@ class StdStoreService {
       }
     } 
 		catch (error) { throw error; }
+  }
+
+  /**
+   * 입력한 여러개의 창고가 해당 창고유형에 속하는지 검증
+   * @param storeIds 여러개의 창고ID
+   * @param tran DB Transaction
+   * @returns 검증 성공시 true, 실패시 Error Throw
+   */
+   public validateStoreTypeByIds = async (storeIds: number[], storeType: TStoreType, tran?: Transaction) => {
+    const storeIdSet = new Set(storeIds);
+
+    await Promise.all([
+      // 📌 입고창고가 가용창고가 아닌 경우에 대한 Valdation
+      storeIdSet.forEach(async (id) => {
+        const validated = await this.validateStoreTypeById(id, storeType, tran);
+        if (!validated) {
+          throw createApiError(
+            400, 
+            `유효하지 않은 창고 유형입니다. [창고유형: ${storeType}]`, 
+            this.stateTag, 
+            errorState.INVALID_DATA
+          );
+        }
+      }),
+    ]);
+
+    return true;
   }
 }
 

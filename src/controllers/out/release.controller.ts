@@ -13,6 +13,8 @@ import { successState } from '../../states/common.state';
 import ApiResult from '../../interfaces/common/api-result.interface';
 import AdmPatternHistoryService from '../../services/adm/pattern-history.service';
 import AdmPatternOptService from '../../services/adm/pattern-opt.service';
+import StdStoreService from '../../services/std/store.service';
+import InvStoreService from '../../services/inv/store.service';
 
 class OutReleaseCtl {
   stateTag: string
@@ -33,6 +35,8 @@ class OutReleaseCtl {
       let result: ApiResult<any> = { count:0, raws: [] };
       const service = new OutReleaseService(req.tenant.uuid);
       const detailService = new OutReleaseDetailService(req.tenant.uuid);
+      const storeService = new StdStoreService(req.tenant.uuid);
+      const inventoryService = new InvStoreService(req.tenant.uuid);
       const patternOptService = new AdmPatternOptService(req.tenant.uuid);
       const patternService = new AdmPatternHistoryService(req.tenant.uuid);
 
@@ -94,17 +98,28 @@ class OutReleaseCtl {
 
         // 📌 입력 창고유형에 대한 유효성 검사
         //    (From: 가용창고 => To: 외주창고 (Available => Outsourcing))
-        await detailService.validateStoreType(detailResult.raws, tran);
+        await storeService.validateStoreTypeByIds(detailResult.raws.map(raw => raw.from_store_id), 'AVAILABLE', tran);
+        await storeService.validateStoreTypeByIds(detailResult.raws.map(raw => raw.to_store_id), 'OUTSOURCING', tran);
 
         // 📌 수불 데이터 생성
-        const storeResult = await detailService.inputInInventory(detailResult.raws, regDate, req.user?.uid as number, tran);
+        const fromStoreResult = await inventoryService.transactInventory(
+          detailResult.raws, 'CREATE', 
+          { inout: 'FROM', tran_type: 'OUT_RELEASE', reg_date: regDate, tran_id_alias: 'release_detail_id' },
+          req.user?.uid as number, tran
+        );
+        const toStoreResult = await inventoryService.transactInventory(
+          detailResult.raws, 'CREATE', 
+          { inout: 'TO', tran_type: 'OUT_RELEASE', reg_date: regDate, tran_id_alias: 'release_detail_id' },
+          req.user?.uid as number, tran
+        );
 
         result.raws = [{
           header: headerResult.raws[0],
           details: detailResult.raws,
-          store: storeResult.raws,
+          fromStore: fromStoreResult.raws,
+          toStore: toStoreResult.raws,
         }];
-        result.count = headerResult.count + detailResult.count + storeResult.count;
+        result.count = headerResult.count + detailResult.count + fromStoreResult.count + toStoreResult.count;
       });
 
       return createApiResult(res, result, 201, '데이터 생성 성공', this.stateTag, successState.CREATE);
@@ -237,6 +252,7 @@ class OutReleaseCtl {
       let result: ApiResult<any> = { count:0, raws: [] };
       const service = new OutReleaseService(req.tenant.uuid);
       const detailService = new OutReleaseDetailService(req.tenant.uuid);
+      const inventoryService = new InvStoreService(req.tenant.uuid);
 
       const matched = matchedData(req, { locations: [ 'body' ] });
       const data = {
@@ -260,15 +276,25 @@ class OutReleaseCtl {
         const regDate = headerResult.raws[0].reg_date;
         headerResult = await service.updateTotal(releaseId, releaseUuid, req.user?.uid as number, tran);
 
-        // 📌 수불 데이터 생성
-        const storeResult = await detailService.changeInInventory(detailResult.raws, regDate, req.user?.uid as number, tran);
+        // 📌 수불 데이터 수정
+        const fromStoreResult = await inventoryService.transactInventory(
+          detailResult.raws, 'UPDATE', 
+          { inout: 'FROM', tran_type: 'OUT_RELEASE', reg_date: regDate, tran_id_alias: 'release_detail_id' },
+          req.user?.uid as number, tran
+        );
+        const toStoreResult = await inventoryService.transactInventory(
+          detailResult.raws, 'UPDATE', 
+          { inout: 'TO', tran_type: 'OUT_RELEASE', reg_date: regDate, tran_id_alias: 'release_detail_id' },
+          req.user?.uid as number, tran
+        );
 
         result.raws = [{
           header: headerResult.raws[0],
           details: detailResult.raws,
-          store: storeResult.raws
+          fromStore: fromStoreResult.raws,
+          toStore: toStoreResult.raws,
         }];
-        result.count = headerResult.count + detailResult.count + storeResult.count;
+        result.count = headerResult.count + detailResult.count + fromStoreResult.count + toStoreResult.count;
       });
 
       return createApiResult(res, result, 200, '데이터 수정 성공', this.stateTag, successState.UPDATE);
@@ -292,6 +318,7 @@ class OutReleaseCtl {
       let result: ApiResult<any> = { count:0, raws: [] };
       const service = new OutReleaseService(req.tenant.uuid);
       const detailService = new OutReleaseDetailService(req.tenant.uuid);
+      const inventoryService = new InvStoreService(req.tenant.uuid);
 
       const matched = matchedData(req, { locations: [ 'body' ] });
       const data = {
@@ -315,15 +342,25 @@ class OutReleaseCtl {
         const regDate = headerResult.raws[0].reg_date;
         headerResult = await service.updateTotal(releaseId, releaseUuid, req.user?.uid as number, tran);
 
-        // 📌 수불 데이터 생성
-        const storeResult = await detailService.changeInInventory(detailResult.raws, regDate, req.user?.uid as number, tran);
+        // 📌 수불 데이터 수정
+        const fromStoreResult = await inventoryService.transactInventory(
+          detailResult.raws, 'UPDATE', 
+          { inout: 'FROM', tran_type: 'OUT_RELEASE', reg_date: regDate, tran_id_alias: 'release_detail_id' },
+          req.user?.uid as number, tran
+        );
+        const toStoreResult = await inventoryService.transactInventory(
+          detailResult.raws, 'UPDATE', 
+          { inout: 'TO', tran_type: 'OUT_RELEASE', reg_date: regDate, tran_id_alias: 'release_detail_id' },
+          req.user?.uid as number, tran
+        );
 
         result.raws = [{
           header: headerResult.raws[0],
           details: detailResult.raws,
-          store: storeResult.raws
+          fromStore: fromStoreResult.raws,
+          toStore: toStoreResult.raws,
         }];
-        result.count = headerResult.count + detailResult.count + storeResult.count;
+        result.count = headerResult.count + detailResult.count + fromStoreResult.count + toStoreResult.count;
       });
 
       return createApiResult(res, result, 200, '데이터 수정 성공', this.stateTag, successState.PATCH);
@@ -346,6 +383,7 @@ class OutReleaseCtl {
       let result: ApiResult<any> = { count:0, raws: [] };
       const service = new OutReleaseService(req.tenant.uuid);
       const detailService = new OutReleaseDetailService(req.tenant.uuid);
+      const inventoryService = new InvStoreService(req.tenant.uuid);
       
       const matched = matchedData(req, { locations: [ 'body' ] });
       const data = {
@@ -355,7 +393,16 @@ class OutReleaseCtl {
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
         // 📌 수불 데이터 삭제
-        const storeResult = await detailService.removeInInventory(data.details, req.user?.uid as number, tran);
+        const fromStoreResult = await inventoryService.transactInventory(
+          data.details, 'DELETE', 
+          { inout: 'FROM', tran_type: 'OUT_RELEASE', reg_date: '', tran_id_alias: 'release_detail_id' },
+          req.user?.uid as number, tran
+        );
+        const toStoreResult = await inventoryService.transactInventory(
+          data.details, 'DELETE', 
+          { inout: 'TO', tran_type: 'OUT_RELEASE', reg_date: '', tran_id_alias: 'release_detail_id' },
+          req.user?.uid as number, tran
+        );
 
         // 📌 외주출고상세 삭제
         const detailResult = await detailService.delete(data.details, req.user?.uid as number, tran);
@@ -374,9 +421,10 @@ class OutReleaseCtl {
         result.raws = [{
           header: headerResult.raws[0],
           details: detailResult.raws,
-          store: storeResult.raws
+          fromStore: fromStoreResult.raws,
+          toStore: toStoreResult.raws,
         }];
-        result.count = headerResult.count + detailResult.count + storeResult.count;
+        result.count = headerResult.count + detailResult.count + fromStoreResult.count + toStoreResult.count;
       });
 
       return createApiResult(res, result, 200, '데이터 삭제 성공', this.stateTag, successState.DELETE);
