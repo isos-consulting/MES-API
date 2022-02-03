@@ -275,7 +275,7 @@ class OutReleaseCtl {
 
         // 📌 합계수량 및 합계금액 계산
         const releaseId = headerResult.raws[0].release_id;
-        const releaseUuid = headerResult.raws[0].release_uuid;
+        const releaseUuid = headerResult.raws[0].uuid;
         const regDate = headerResult.raws[0].reg_date;
         headerResult = await service.updateTotal(releaseId, releaseUuid, req.user?.uid as number, tran);
 
@@ -341,7 +341,7 @@ class OutReleaseCtl {
 
         // 📌 합계수량 및 합계금액 계산
         const releaseId = headerResult.raws[0].release_id;
-        const releaseUuid = headerResult.raws[0].release_uuid;
+        const releaseUuid = headerResult.raws[0].uuid;
         const regDate = headerResult.raws[0].reg_date;
         headerResult = await service.updateTotal(releaseId, releaseUuid, req.user?.uid as number, tran);
 
