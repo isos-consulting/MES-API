@@ -15,7 +15,7 @@ const readStoreHistoryByTransaction = (
       tran_id int, 
       tran_uuid uuid,
       inout_state TEXT, 
-      tran_cd varchar(20), 
+      tran_type_id int, 
       reg_date timestamp, 
       factory_id int,
       store_id int, 
@@ -54,7 +54,7 @@ const readStoreHistoryByTransaction = (
   //#endregion
 
   //#region 📌 수불이력 데이터 삽입
-  searchQuery = `WHERE i_s.tran_cd = '${params.tran_type_cd}'`;
+  searchQuery = `WHERE a_tt.tran_type_cd = '${params.tran_type_cd}'`;
   if (params.factory_uuid) { searchQuery += ` AND s_f.uuid = '${params.factory_uuid}'`; }
   if (params.store_uuid) { searchQuery += ` AND s_s.uuid = '${params.store_uuid}'`; }
   if (params.location_uuid) { searchQuery += ` AND s_l.uuid = '${params.location_uuid}'`; }
@@ -65,7 +65,7 @@ const readStoreHistoryByTransaction = (
       i_s.tran_id,
       i_s.uuid,
       CASE WHEN i_s.inout_fg = TRUE THEN '입고' ELSE '출고' END,
-      i_s.tran_cd,
+      i_s.tran_type_id,
       i_s.reg_date,
       i_s.factory_id,
       i_s.store_id,
@@ -82,6 +82,7 @@ const readStoreHistoryByTransaction = (
     FROM inv_store_tb i_s 
     JOIN std_factory_tb s_f ON s_f.factory_id = i_s.factory_id 
     JOIN std_store_tb s_s ON s_s.store_id = i_s.store_id 
+    JOIN adm_tran_type_tb a_tt ON a_tt.tran_type_id = i_s.tran_type_id 
     LEFT JOIN std_location_tb s_l ON s_l.location_id = i_s.location_id 
     ${searchQuery};
   `;
@@ -117,8 +118,9 @@ const readStoreHistoryByTransaction = (
     SELECT 
       t_th.tran_uuid,
       t_th.inout_state,
-      t_th.tran_cd,
-      a_t.tran_nm,
+      a_tt.uuid as tran_type_uuid,
+      a_tt.tran_type_cd,
+      a_tt.tran_type_nm,
       t_th.reg_date,
       s_f.uuid as factory_uuid,
       s_f.factory_cd,
@@ -160,7 +162,7 @@ const readStoreHistoryByTransaction = (
       t_th.updated_uid,
       a_uu.user_nm as updated_nm
     FROM temp_tran_history t_th
-    JOIN adm_transaction_vw a_t ON a_t.tran_cd = t_th.tran_cd 
+    JOIN adm_tran_type_tb a_tt ON a_tt.tran_type_id = t_th.tran_type_id 
     JOIN std_factory_tb s_f ON s_f.factory_id = t_th.factory_id 
     JOIN std_store_tb s_s ON s_s.store_id = t_th.store_id 
     LEFT JOIN std_location_tb s_l ON s_l.location_id = t_th.location_id 

@@ -121,6 +121,7 @@ post:
             - c_prod_uuid
             - c_usage
             - unit_uuid
+            - bom_input_type_uuid
             - from_store_uuid
           allOf:
             - $ref: ../../schemas/std/bom.schema.yaml#/factory_uuid
@@ -153,6 +154,7 @@ put:
             - uuid
             - c_usage
             - unit_uuid
+            - bom_input_type_uuid
             - from_store_uuid
           allOf:
             - $ref: ../../schemas/std/bom.schema.yaml#/uuid

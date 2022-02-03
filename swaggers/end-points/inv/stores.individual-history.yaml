@@ -100,7 +100,8 @@ get:
                             - $ref: ../../schemas/inv/store.schema.yaml#/location_uuid
                             - $ref: ../../schemas/std/location.schema.yaml#/location_cd
                             - $ref: ../../schemas/std/location.schema.yaml#/location_nm
-                            - $ref: ../../schemas/inv/store.schema.yaml#/tran_cd
+                            - $ref: ../../schemas/inv/store.schema.yaml#/tran_type_uuid
+                            - $ref: ../../schemas/adm/tran-type.schema.yaml#/tran_type_cd
                             - $ref: ../../schemas/adm/tran-type.schema.yaml#/tran_type_nm
                             - $ref: ../../schemas/inv/store.schema.yaml#/basic_stock
                             - $ref: ../../schemas/inv/store.schema.yaml#/in_qty

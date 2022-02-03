@@ -6,7 +6,6 @@ import StdProdRepo from '../../repositories/std/prod.repository';
 import StdRejectRepo from '../../repositories/std/reject.repository';
 import StdPartnerRepo from '../../repositories/std/partner.repository';
 import StdStoreRepo from '../../repositories/std/store.repository';
-import getTranTypeCdByApiParams from '../../utils/getTranTypeCdByApiParams';
 import isDateFormat from '../../utils/isDateFormat';
 import isUuid from '../../utils/isUuid';
 import response from '../../utils/response';
@@ -196,7 +195,6 @@ class InvStoreCtl extends BaseCtl {
       if (!isDateFormat(params.start_date)) { throw new Error('잘못된 start_date(기준시작일자) 입력') };
       if (!isDateFormat(params.end_date)) { throw new Error('잘못된 end_date(기준종료일자) 입력') };
 
-      params.tran_type_cd = getTranTypeCdByApiParams(params.tran_type) as string;
       const result = await repo.readStoreHistoryByTransaction(params);
 
       return response(res, result.raws, { count: result.count });
