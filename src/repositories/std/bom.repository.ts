@@ -304,7 +304,7 @@ class StdBomRepo {
 
   public readToTrees = async(params?: any) => {
     try {
-      const result = await this.sequelize.query(readBomTrees(params.factory_uuid, params.prod_id));
+      const result = await this.sequelize.query(readBomTrees(params.factory_uuid, params.prod_uuid));
       return convertReadResult(result[0]);
     } catch (error) {
       throw error;

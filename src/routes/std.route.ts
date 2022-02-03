@@ -46,6 +46,7 @@ import StdWorkerGroupCtl from '../controllers/std/worker-group.controller';
 import StdWorkerCtl from '../controllers/std/worker.controller';
 import StdWorkingsCtl from '../controllers/std/workings.controller';
 import validationCallback from '../utils/validationCallback';
+import stdBomValidation from '../validations/std/bom.validation';
 import stdDowntimeValidation from '../validations/std/downtime.validation';
 import stdEquipValidation from '../validations/std/equip.validation';
 import stdInspItemValidation from '../validations/std/insp-item.validation';
@@ -57,13 +58,13 @@ const router = express.Router();
 
 //#region ✅ BOM (BOM)
 const bom = new StdBomCtl();
-router.route('/boms/trees').get(bom.readToTrees);
-router.route('/bom/:uuid').get(bom.read);
-router.route('/boms').get(bom.read);
-router.route('/boms').post(bom.create);
-router.route('/boms').put(bom.update);
-router.route('/boms').patch(bom.patch);
-router.route('/boms').delete(bom.delete);
+router.route('/boms/trees').get(stdBomValidation.readToTrees, validationCallback, bom.readToTrees);
+router.route('/bom/:uuid').get(stdBomValidation.readByUuid, validationCallback, bom.readByUuid);
+router.route('/boms').get(stdBomValidation.read, validationCallback, bom.read);
+router.route('/boms').post(stdBomValidation.create, validationCallback, bom.create);
+router.route('/boms').put(stdBomValidation.update, validationCallback, bom.update);
+router.route('/boms').patch(stdBomValidation.patch, validationCallback, bom.patch);
+router.route('/boms').delete(stdBomValidation.delete, validationCallback, bom.delete);
 //#endregion
 
 //#region ✅ PartnerType (거래처 유형)

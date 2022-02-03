@@ -1,4 +1,4 @@
-const readBomTrees = (factoryUuid?: string, prodId?: number) => {
+const readBomTrees = (factoryUuid?: string, prodUuid?: string) => {
   const createTempTable = `
     -- ✅ 품목을 선택하여 BOM Tree를 조회할 경우를 위하여 임시테이블 생성
     CREATE TEMP TABLE temp_bom_tree_vw (
@@ -20,7 +20,17 @@ const readBomTrees = (factoryUuid?: string, prodId?: number) => {
   
     INSERT INTO temp_bom_tree_vw
     SELECT * FROM std_bom_tree_vw s_bt
-    ${prodId ? `WHERE s_bt.main_prod_id IN (SELECT DISTINCT a.main_prod_id FROM std_bom_tree_vw a WHERE a.prod_id = ${prodId})` : '' };
+    ${prodUuid ? 
+      `
+        WHERE s_bt.main_prod_id IN (
+          SELECT DISTINCT s_bt.main_prod_id 
+          FROM std_bom_tree_vw s_bt 
+          JOIN std_prod_tb s_p ON s_p.prod_id = s_bt.prod_id
+          WHERE s_p.uuid = '${prodUuid}'
+        )
+      ` 
+      : '' 
+    };
   `;
 
   const query = `
