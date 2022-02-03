@@ -301,7 +301,21 @@ class OutIncomeRepo {
     }
   };
 
-  // 📒 Fn[update]: Pk(income_id)를 통하여 입고 데이터 삭제
+  // 📒 Fn[deleteByReceiveDetailIds]: 외주 입하상세 기준 외주투입 데이터 삭제
+  public deleteByReceiveDetailIds = async(ids: number[], uid: number, transaction?: Transaction) => {
+    try {      
+      const previousRaws = await this.repo.findAll({ where: { receive_detail_id: { [Op.in]: ids } }, transaction });
+
+      const count = await this.repo.destroy({ where: { receive_detail_id: { [Op.in]: ids }}, transaction });
+
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.OutIncome.getTableName() as string, previousRaws, uid, transaction);
+      return { count, raws: previousRaws };
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  // 📒 Fn[deleteToPk]: Pk(income_id)를 통하여 입고 데이터 삭제
   deleteToPk = async(body: IOutIncome[], uid: number, transaction?: Transaction) => {
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);

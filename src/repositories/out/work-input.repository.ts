@@ -40,7 +40,6 @@ class OutWorkInputRepo {
             lot_no: workInput.lot_no,
             qty: workInput.qty,
             c_usage: workInput.c_usage,
-            unit_id: workInput.unit_id,
             from_store_id: workInput.from_store_id,
             from_location_id: workInput.from_location_id,
             created_uid: uid,
