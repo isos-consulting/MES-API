@@ -5,6 +5,7 @@ import StdFactory from '../std/factory.model';
 import StdLocation from '../std/location.model';
 import StdProd from '../std/prod.model';
 import StdStore from '../std/store.model';
+import StdUnit from '../std/unit.model';
 import OutReceiveDetail from './receive-detail.model';
 
 @Table({
@@ -69,6 +70,14 @@ export default class OutWorkInput extends Model<IOutWorkInput> {
     allowNull: false,
   })
   c_usage: number;
+
+  @ForeignKey(() => StdUnit)
+  @Column({
+    comment: '단위ID',
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  unit_id: number;
 
   @ForeignKey(() => StdStore)
   @Column({
@@ -140,6 +149,9 @@ export default class OutWorkInput extends Model<IOutWorkInput> {
 
   @BelongsTo(() => StdProd, { foreignKey: 'prod_id', targetKey: 'prod_id', onDelete: 'restrict', onUpdate: 'cascade' })
   stdProd: StdProd;
+
+  @BelongsTo(() => StdUnit, { foreignKey: 'unit_id', targetKey: 'unit_id', onDelete: 'restrict', onUpdate: 'cascade' })
+  stdUnit: StdUnit;
   
   @BelongsTo(() => StdStore, { as:'fromStore',foreignKey: 'from_store_id', targetKey: 'store_id', onDelete: 'restrict', onUpdate: 'cascade' })
   fromStdStore: StdStore;

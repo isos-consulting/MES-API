@@ -48,7 +48,8 @@ const readStocks = (
       lot_no varchar(25),
       qty numeric(19, 6),
       store_id int,
-      location_id int
+      location_id int,
+      partner_id int
     );
     CREATE INDEX ON temp_base_store(prod_id, lot_no);
 
@@ -61,7 +62,8 @@ const readStocks = (
       i_s.lot_no,
       sum(CASE WHEN i_s.inout_fg = FALSE THEN COALESCE(i_s.qty,0) * -1 ELSE COALESCE(i_s.qty,0) END) AS qty,
       i_s.store_id,
-      i_s.location_id
+      i_s.location_id,
+      i_s.partner_id
     FROM inv_store_tb i_s
     JOIN std_factory_tb s_f ON s_f.factory_id = i_s.factory_id
     JOIN std_prod_tb s_p ON s_p.prod_id = i_s.prod_id
@@ -70,7 +72,7 @@ const readStocks = (
     LEFT JOIN std_reject_tb s_r ON s_r.reject_id = i_s.reject_id
     WHERE CAST(i_s.reg_date AS DATE) <= '${params.reg_date}'
     ${searchQuery}
-    GROUP BY s_f.uuid, i_s.factory_id, i_s.prod_id, i_s.reject_id, i_s.lot_no, i_s.store_id, i_s.location_id
+    GROUP BY s_f.uuid, i_s.factory_id, i_s.prod_id, i_s.reject_id, i_s.lot_no, i_s.store_id, i_s.location_id, i_s.partner_id
     ORDER BY i_s.prod_id, i_s.lot_no;
   `;
   //#endregion
@@ -82,16 +84,16 @@ const readStocks = (
     case 'all':
       break;
     case 'factory':
-      groupedStockQuery = `GROUP BY i_s.factory_uuid, i_s.factory_id, i_s.prod_id, i_s.reject_id`;
+      groupedStockQuery = `GROUP BY i_s.factory_uuid, i_s.factory_id, i_s.prod_id, i_s.reject_id, i_s.partner_id`;
       break;
     case 'store':
-      groupedStockQuery = `GROUP BY i_s.factory_uuid, i_s.factory_id, i_s.prod_id, i_s.store_id, i_s.reject_id`;
+      groupedStockQuery = `GROUP BY i_s.factory_uuid, i_s.factory_id, i_s.prod_id, i_s.store_id, i_s.reject_id, i_s.partner_id`;
       break;
     case 'lotNo':
-      groupedStockQuery = `GROUP BY i_s.factory_uuid, i_s.factory_id, i_s.prod_id, i_s.store_id, i_s.lot_no, i_s.reject_id`;
+      groupedStockQuery = `GROUP BY i_s.factory_uuid, i_s.factory_id, i_s.prod_id, i_s.store_id, i_s.lot_no, i_s.reject_id, i_s.partner_id`;
       break;
     case 'location':
-      groupedStockQuery = `GROUP BY i_s.factory_uuid, i_s.factory_id, i_s.prod_id, i_s.store_id, i_s.location_id, i_s.reject_id`;
+      groupedStockQuery = `GROUP BY i_s.factory_uuid, i_s.factory_id, i_s.prod_id, i_s.store_id, i_s.location_id, i_s.reject_id, i_s.partner_id`;
       break;
     default:
       break;
@@ -108,12 +110,13 @@ const readStocks = (
       lot_no varchar(25),
       qty numeric(19,6),
       store_id int,
-      location_id int
+      location_id int,
+      partner_id int
     );
     CREATE INDEX ON temp_store(prod_id, lot_no);
 
-    INSERT INTO temp_store(factory_uuid, factory_id, prod_id, reject_id, lot_no, qty, store_id, location_id)
-    SELECT i_s.factory_uuid, i_s.factory_id, i_s.prod_id, i_s.reject_id, i_s.lot_no, i_s.qty, i_s.store_id, i_s.location_id
+    INSERT INTO temp_store(factory_uuid, factory_id, prod_id, reject_id, lot_no, qty, store_id, location_id, partner_id)
+    SELECT i_s.factory_uuid, i_s.factory_id, i_s.prod_id, i_s.reject_id, i_s.lot_no, i_s.qty, i_s.store_id, i_s.location_id, i_s.partner_id
     FROM temp_base_store i_s
     ${groupedStockQuery};
   `;
@@ -163,7 +166,7 @@ const readStocks = (
         FROM std_vendor_price_tb s_vp
         JOIN std_prod_tb s_p ON s_p.prod_id = s_vp.prod_id AND s_p.mat_order_fg = TRUE 
         JOIN std_partner_tb s_pa ON s_pa.partner_id = s_vp.partner_id
-        JOIN temp_store t_s ON t_s.prod_id = s_vp.prod_id 
+        JOIN temp_store t_s ON t_s.prod_id = s_vp.prod_id
         WHERE '${params.reg_date}' BETWEEN s_vp.start_date AND s_vp.end_date 
         ${searchQuery};
       `;
@@ -188,14 +191,14 @@ const readStocks = (
         FROM std_customer_price_tb s_cp
         JOIN std_prod_tb s_p ON s_p.prod_id = s_cp.prod_id AND s_p.sal_order_fg = TRUE 
         JOIN std_partner_tb s_pa ON s_pa.partner_id = s_cp.partner_id
-        JOIN temp_store t_s ON t_s.prod_id = s_cp.prod_id 
+        JOIN temp_store t_s ON t_s.prod_id = s_cp.prod_id
         WHERE '${params.reg_date}' BETWEEN s_cp.start_date AND s_cp.end_date 
         ${searchQuery};
       `;
       break;
     default:
       createMainStockReadingTempTable += `
-        INSERT INTO temp_store_main(factory_uuid, factory_id, prod_id, reject_id, lot_no, qty, store_id, location_id)
+        INSERT INTO temp_store_main(factory_uuid, factory_id, prod_id, reject_id, lot_no, qty, store_id, location_id, partner_id)
         SELECT * FROM temp_store t_s;
       `;
       break;

@@ -112,12 +112,13 @@ class OutReceiveCtl {
         // 📌 수입검사 미진행 항목(무검사 항목) 수불데이터 생성
         const datasForInventory = detailResult.raws.filter(raw => !raw.insp_fg);
 
+        // console.log(datasForInventory);
         // 📌 외주입고 및 수불 데이터 생성
         const incomeBody = await incomeService.getIncomeBody(datasForInventory, regDate);
         await storeService.validateStoreTypeByIds(incomeBody.map(body => body.to_store_id), 'AVAILABLE', tran);
         const incomeResult = await incomeService.create(incomeBody, req.user?.uid as number, tran);
         const toStoreResult = await inventoryService.transactInventory(
-          incomeBody, 'CREATE', 
+          incomeResult.raws, 'CREATE', 
           { inout: 'TO', tran_type: 'OUT_INCOME', reg_date: regDate, tran_id_alias: 'income_id' },
           req.user?.uid as number, tran
         );
@@ -128,15 +129,14 @@ class OutReceiveCtl {
 
         // 📌 외주투입의 자동 선입선출 옵션이 Enable인 경우에 투입 진행
         const isPullOption = await tenantOptService.getTenantOptValue('OUT_AUTO_PULL', tran);
-
         if (isPullOption === OUT_AUTO_PULL.ENABLE) {
           for await (const data of datasForInventory) {
             const inputBody = await inputService.getPullInputBody(data, regDate, partnerId, isPullOption);
             await storeService.validateStoreTypeByIds(inputBody.map(body => body.from_store_id), 'OUTSOURCING', tran);
             const tempInputResult = await inputService.create(inputBody, req.user?.uid as number, tran);
             const tempFromStoreResult = await inventoryService.transactInventory(
-              inputBody, 'CREATE', 
-              { inout: 'FROM', tran_type: 'OUT_INPUT', reg_date: regDate, tran_id_alias: 'work_input_id' },
+              tempInputResult.raws, 'CREATE', 
+              { inout: 'FROM', tran_type: 'OUT_INPUT', reg_date: regDate, tran_id_alias: 'work_input_id', partner_id: headerResult.raws[0].partner_id },
               req.user?.uid as number, tran
             );
 
@@ -230,7 +230,7 @@ class OutReceiveCtl {
 
       result.raws = [{ 
         header: headerResult.raws[0] ?? {}, 
-        deatils: detailsResult.raws 
+        details: detailsResult.raws 
       }];
       result.count = headerResult.count + detailsResult.count;
       

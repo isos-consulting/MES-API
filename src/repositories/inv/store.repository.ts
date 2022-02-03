@@ -261,7 +261,7 @@ class InvStoreRepo {
     try {
       const result = await this.repo.findAll({ 
         attributes: [
-          [ Sequelize.literal('SUM(invStore.qty * invStore.inout_fg:: int'), 'qty' ],
+          [ Sequelize.literal('SUM(invStore.qty * invStore.inout_fg::int)'), 'qty' ],
           'factory_id',
           'prod_id',
           'store_id',
@@ -284,8 +284,8 @@ class InvStoreRepo {
           ]
         },
         group: [ 'factory_id', 'prod_id', 'store_id', 'location_id', 'lot_no', 'reject_id', 'partner_id' ],
-        having: Sequelize.where(Sequelize.literal('SUM(invStore.qty * invStore.inout_fg:: int'), '>', '0'),
-        order: [ 'reg_date' ],
+        having: Sequelize.where(Sequelize.literal('SUM(invStore.qty * invStore.inout_fg::int)'), '>', '0'),
+        order: [ 'lot_no' ],
       });
 
       return convertReadResult(result);

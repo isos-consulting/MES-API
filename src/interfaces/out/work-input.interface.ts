@@ -6,6 +6,7 @@ export default interface IOutWorkInput {
 	lot_no?: string,
 	qty?: number,
 	c_usage?: number,
+  unit_id?: number,
 	from_store_id?: number,
 	from_location_id?: number | null,
   created_at?: Date,

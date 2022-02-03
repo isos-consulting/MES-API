@@ -9,7 +9,8 @@ const getStoreBody = (params: {
   tran_id_alias: string,
   qty_alias?: string,
   store_alias?: string,
-  location_alias?: string
+  location_alias?: string,
+  partner_id?: number,
 }) => {
   const datas = checkArray(params.datas);
 
@@ -29,6 +30,7 @@ const getStoreBody = (params: {
       prod_id: data.prod_id,
       lot_no: data.lot_no,
       qty: data[qtyAlias],
+      partner_id: params.partner_id
     };
   });
 

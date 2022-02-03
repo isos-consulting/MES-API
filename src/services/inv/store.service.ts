@@ -125,7 +125,8 @@ class InvStoreService {
       tran_id_alias: string,        // 수불 데이터의 ID Column명
       qty_alias?: string,           // 수불 데이터의 Qty Column명
       store_alias?: string,         // 수불 데이터의 Store(창고) Column명
-      location_alias?: string       // 수불 데이터의 Location(위치) Column명
+      location_alias?: string,      // 수불 데이터의 Location(위치) Column명
+      partner_id?: number,          // 거래처 ID (외주창고 한정)      -- partner_id는 Header에 있고 수불은 Detail 기준으로 들어오기 때문
     }, 
     uid: number, 
     tran: Transaction

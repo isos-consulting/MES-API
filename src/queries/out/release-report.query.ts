@@ -1,3 +1,5 @@
+import moment from "moment";
+
 const readReleaseReport = (
   params: {
     sort_type?: 'partner' | 'prod' | 'date',
@@ -8,8 +10,9 @@ const readReleaseReport = (
     factory_uuid?: string,
   }
 ) => {
+
   let searchQuery: string = '';
-  
+
   const createReleaseTempTable = `
     CREATE TEMP TABLE temp_release(
       release_detail_id int, 
@@ -35,8 +38,8 @@ const readReleaseReport = (
   `;
 
   if (params.factory_uuid) { searchQuery += ` AND s_f.uuid = '${params.factory_uuid}'`; }
-  if (params.start_reg_date && params.end_reg_date) { searchQuery += ` AND date(o_r.reg_date) BETWEEN '${params.start_reg_date}' AND '${params.end_reg_date}'`; }
-  if (params.start_due_date && params.end_due_date) { searchQuery += ` AND date(m_od.due_date) BETWEEN '${params.start_due_date}' AND '${params.end_due_date}'`; }
+  if (params.start_reg_date && params.end_reg_date) { searchQuery += ` AND date(o_r.reg_date) BETWEEN '${moment(params.start_reg_date).format('yyyy-MM-DD')}' AND '${moment(params.end_reg_date).format('yyyy-MM-DD')}'`; }
+  if (params.start_due_date && params.end_due_date) { searchQuery += ` AND date(m_od.due_date) BETWEEN '${moment(params.start_due_date).format('yyyy-MM-DD')}' AND '${moment(params.end_due_date).format('yyyy-MM-DD')}'`; }
 
   if (searchQuery.length > 0) {
     searchQuery = searchQuery.substring(4, searchQuery.length);
