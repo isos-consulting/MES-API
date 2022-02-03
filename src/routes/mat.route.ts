@@ -7,6 +7,9 @@ import MatOrderCtl from '../controllers/mat/order.controller';
 import MatReceiveDetailCtl from '../controllers/mat/receive-detail.controller';
 import MatReceiveCtl from '../controllers/mat/receive.controller';
 import MatReleaseCtl from '../controllers/mat/release.controller';
+import matReceiveValidation from '../validations/mat/receive.validation';
+import validationCallback from '../utils/validationCallback';
+import matReceiveDetailValidation from '../validations/mat/receive-detail.validation';
 
 const router = express.Router();
 
@@ -62,22 +65,22 @@ router.route('/order-details').get(orderDetail.read);
 
 //#region ✅ Receive (자재입하)
 const receive = new MatReceiveCtl();
-router.route('/receives/lot-tracking').get(receive.readLotTracking);
-router.route('/receives/report').get(receive.readReport);
-router.route('/receive/:uuid').get(receive.read);
-router.route('/receive/:uuid/include-details').get(receive.readIncludeDetails);
-router.route('/receive/:uuid/details').get(receive.readDetails);
-router.route('/receives').get(receive.read);
-router.route('/receives').post(receive.create);
-router.route('/receives').put(receive.update);
-router.route('/receives').patch(receive.patch);
-router.route('/receives').delete(receive.delete);
+router.route('/receives/lot-tracking').get(matReceiveValidation.readLotTracking, validationCallback, receive.readLotTracking);
+router.route('/receives/report').get(matReceiveValidation.readReport, validationCallback, receive.readReport);
+router.route('/receive/:uuid').get(matReceiveValidation.readByUuid, validationCallback, receive.readByUuid);
+router.route('/receive/:uuid/include-details').get(matReceiveValidation.readIncludeDetails, validationCallback, receive.readIncludeDetails);
+router.route('/receive/:uuid/details').get(matReceiveValidation.readDetails, validationCallback, receive.readDetails);
+router.route('/receives').get(matReceiveValidation.read, validationCallback, receive.read);
+router.route('/receives').post(matReceiveValidation.create, validationCallback, receive.create);
+router.route('/receives').put(matReceiveValidation.update, validationCallback, receive.update);
+router.route('/receives').patch(matReceiveValidation.patch, validationCallback, receive.patch);
+router.route('/receives').delete(matReceiveValidation.delete, validationCallback, receive.delete);
 //#endregion
 
 //#region ✅ ReceiveDetail (자재입하상세)
 const receiveDetail = new MatReceiveDetailCtl();
-router.route('/receive-detail/:uuid').get(receiveDetail.read);
-router.route('/receive-details').get(receiveDetail.read);
+router.route('/receive-detail/:uuid').get(matReceiveDetailValidation.readByUuid, validationCallback, receiveDetail.readByUuid);
+router.route('/receive-details').get(matReceiveDetailValidation.read, validationCallback, receiveDetail.read);
 //#endregion
 
 //#endregion

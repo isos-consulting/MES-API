@@ -1,5 +1,5 @@
 import { Transaction } from "sequelize/types";
-import OutReceiveDetailRepo from "../../repositories/out/receive-detail.repository";
+import MatReceiveDetailRepo from "../../repositories/mat/receive-detail.repository";
 import MatOrderDetailRepo from "../../repositories/mat/order-detail.repository";
 import StdFactoryRepo from "../../repositories/std/factory.repository";
 import StdLocationRepo from "../../repositories/std/location.repository";
@@ -10,41 +10,41 @@ import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
 import InvStoreRepo from "../../repositories/inv/store.repository";
 import createApiError from "../../utils/createApiError";
 import { errorState } from "../../states/common.state";
-import OutReceiveRepo from "../../repositories/out/receive.repository";
+import MatReceiveRepo from "../../repositories/mat/receive.repository";
 import StdUnitRepo from "../../repositories/std/unit.repository";
 import QmsInspResultRepo from "../../repositories/qms/insp-result.repository";
 
-class OutReceiveDetailService {
+class MatReceiveDetailService {
   tenant: string;
   stateTag: string;
-  repo: OutReceiveDetailRepo;
+  repo: MatReceiveDetailRepo;
   storeRepo: InvStoreRepo;
   inspResultRepo: QmsInspResultRepo;
   fkIdInfos: getFkIdInfo[];
 
   constructor(tenant: string) {
     this.tenant = tenant;
-    this.stateTag = 'outReceiveDetail';
-    this.repo = new OutReceiveDetailRepo(tenant);
+    this.stateTag = 'matReceiveDetail';
+    this.repo = new MatReceiveDetailRepo(tenant);
     this.storeRepo = new InvStoreRepo(tenant);
     this.inspResultRepo = new QmsInspResultRepo(tenant);
 
     this.fkIdInfos = [
       {
         key: 'uuid',
-        TRepo: OutReceiveDetailRepo,
+        TRepo: MatReceiveDetailRepo,
         idName: 'receive_detail_id',
         uuidName: 'uuid'
       },
       {
         key: 'receiveDetail',
-        TRepo: OutReceiveDetailRepo,
+        TRepo: MatReceiveDetailRepo,
         idName: 'receive_detail_id',
         uuidName: 'receive_detail_uuid'
       },
       {
         key: 'receive',
-        TRepo: OutReceiveRepo,
+        TRepo: MatReceiveRepo,
         idName: 'receive_id',
         uuidName: 'receive_uuid'
       },
@@ -166,7 +166,7 @@ class OutReceiveDetailService {
 
   public validateHasInspResultByUuids = async (uuids: string[]) => {
     try {
-      const read = await this.inspResultRepo.readOutReceiveByReceiveUuids(uuids);
+      const read = await this.inspResultRepo.readMatReceiveByReceiveUuids(uuids);
       if (read.raws.length > 0) {
         throw createApiError(
           400, 
@@ -181,4 +181,4 @@ class OutReceiveDetailService {
   }
 }
 
-export default OutReceiveDetailService;
+export default MatReceiveDetailService;

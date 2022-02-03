@@ -140,48 +140,6 @@ class OutIncomeRepo {
     return convertReadResult(result);
   };
 
-  // 📒 Fn[readIncomeIdsToReceiveDetailUuids]: 입하 상세의 Uuid를 통하여 Id 를 포함한 Raw Data Read Function
-  public readIncomeIdsToReceiveDetailUuids = async(uuids: string[]) => {
-    const result = await this.repo.findAll({ 
-      include: [
-        { 
-          model: this.sequelize.models.OutReceiveDetail, 
-          attributes: [], 
-          required: true,
-          where: { uuid: uuids }
-        },
-      ],
-      attributes: [ 'income_id' ],
-    });
-
-    const incomeIds = convertReadResult(result).raws.map((data: any) => {
-      return data.income_id;
-    })
-
-    return incomeIds;
-  };
-
-  // 📒 Fn[readIncomeIdsToReceiveDetailIds]: 입하 상세의 Id를 통하여 Id 를 포함한 Raw Data Read Function
-  public readIncomeIdsToReceiveDetailIds = async(ids: number[]) => {
-    const result = await this.repo.findAll({ 
-      include: [
-        { 
-          model: this.sequelize.models.OutReceiveDetail, 
-          attributes: [], 
-          required: true,
-          where: { receive_detail_id: ids }
-        },
-      ],
-      attributes: [ 'income_id' ],
-    });
-
-    const incomeIds = convertReadResult(result).raws.map((data: any) => {
-      return data.income_id;
-    })
-
-    return incomeIds;
-  };
-
   //#endregion
 
   //#region 🟡 Update Functions
@@ -301,7 +259,7 @@ class OutIncomeRepo {
     }
   };
 
-  // 📒 Fn[deleteByReceiveDetailIds]: 외주 입하상세 기준 외주투입 데이터 삭제
+  // 📒 Fn[deleteByReceiveDetailIds]: 외주입하상세 기준 외주입고 데이터 삭제
   public deleteByReceiveDetailIds = async(ids: number[], uid: number, transaction?: Transaction) => {
     try {      
       const previousRaws = await this.repo.findAll({ where: { receive_detail_id: { [Op.in]: ids } }, transaction });

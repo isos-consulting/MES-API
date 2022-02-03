@@ -5,28 +5,28 @@ import StdProdRepo from "../../repositories/std/prod.repository";
 import StdStoreRepo from "../../repositories/std/store.repository";
 import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
 import InvStoreRepo from "../../repositories/inv/store.repository";
-import OutIncomeRepo from "../../repositories/out/income.repository";
-import OutReceiveDetailRepo from "../../repositories/out/receive-detail.repository";
+import MatIncomeRepo from "../../repositories/mat/income.repository";
+import MatReceiveDetailRepo from "../../repositories/mat/receive-detail.repository";
 import StdUnitConvertService from "../std/unit-convert.service";
-import IOutIncome from "../../interfaces/out/income.interface";
+import IMatIncome from "../../interfaces/mat/income.interface";
 
-class OutIncomeService {
+class MatIncomeService {
   tenant: string;
   stateTag: string;
-  repo: OutIncomeRepo;
+  repo: MatIncomeRepo;
   storeRepo: InvStoreRepo;
   fkIdInfos: getFkIdInfo[];
 
   constructor(tenant: string) {
     this.tenant = tenant;
-    this.stateTag = 'outIncome';
-    this.repo = new OutIncomeRepo(tenant);
+    this.stateTag = 'matIncome';
+    this.repo = new MatIncomeRepo(tenant);
     this.storeRepo = new InvStoreRepo(tenant);
 
     this.fkIdInfos = [
       {
         key: 'income',
-        TRepo: OutIncomeRepo,
+        TRepo: MatIncomeRepo,
         idName: 'income_id',
         uuidName: 'income_uuid'
       },
@@ -44,7 +44,7 @@ class OutIncomeService {
       },
       {
         key: 'receiveDetail',
-        TRepo: OutReceiveDetailRepo,
+        TRepo: MatReceiveDetailRepo,
         idName: 'receive_detail_id',
         uuidName: 'receive_detail_uuid'
       },
@@ -70,7 +70,7 @@ class OutIncomeService {
     return await getFkIdByUuid(this.tenant, datas, this.fkIdInfos);
   }
 
-  public create = async (datas: IOutIncome[], uid: number, tran: Transaction) => {
+  public create = async (datas: IMatIncome[], uid: number, tran: Transaction) => {
     try { return await this.repo.create(datas, uid, tran); } 
     catch (error) { throw error; }
   }
@@ -85,17 +85,17 @@ class OutIncomeService {
     catch (error) { throw error; }
   };
 
-  public update = async (datas: IOutIncome[], uid: number, tran: Transaction) => {
+  public update = async (datas: IMatIncome[], uid: number, tran: Transaction) => {
     try { return await this.repo.update(datas, uid, tran); } 
     catch (error) { throw error; }
   }
 
-  public patch = async (datas: IOutIncome[], uid: number, tran: Transaction) => {
+  public patch = async (datas: IMatIncome[], uid: number, tran: Transaction) => {
     try { return await this.repo.patch(datas, uid, tran); } 
     catch (error) { throw error; }
   }
 
-  public delete = async (datas: IOutIncome[], uid: number, tran: Transaction) => {
+  public delete = async (datas: IMatIncome[], uid: number, tran: Transaction) => {
     try { return await this.repo.delete(datas, uid, tran); } 
     catch (error) { throw error; }
   }
@@ -108,8 +108,6 @@ class OutIncomeService {
    */
   getIncomeBody = async (datas: any[], regDate: string) => {
     const unitConvertService = new StdUnitConvertService(this.tenant);
-
-    console.log(datas);
 
     const result = await Promise.all(
       datas.map(async (data: any) => {
@@ -134,11 +132,11 @@ class OutIncomeService {
   }
 
   /**
-   * 외주입하상세ID를 기준으로 외주입고 데이터 삭제
-   * @param ids 외주입하상세ID 리스트
+   * 자재입하상세ID를 기준으로 자재입고 데이터 삭제
+   * @param ids 자재입하상세ID 리스트
    * @param uid 입력 사용자ID
    * @param tran DB Transaction
-   * @returns 외주입고 Result
+   * @returns 자재입고 Result
    */
    public deleteByReceiveDetailIds = async (ids: number[], uid: number, tran: Transaction) => {
     try { return await this.repo.deleteByReceiveDetailIds(ids, uid, tran); }
@@ -146,4 +144,4 @@ class OutIncomeService {
   }
 }
 
-export default OutIncomeService;
+export default MatIncomeService;
