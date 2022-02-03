@@ -63,6 +63,32 @@ class StdStoreService {
   }
 
   /**
+   * 외주투입 선입선출에서 사용하는 외주창고의 ID 반환
+   * @param tran DB Transaction
+   * @returns 외주창고가 있을 경우 ID 반환, 없을 경우 Error Throw
+   */
+   public getOutsourcingStoreId = async (tran?: Transaction) => {
+    try { 
+      const read = await this.repo.readRawAll(tran);
+      const outsourcingStore = read.raws.filter(raw => raw.outsourcing_fg === true);
+
+      const storeId = outsourcingStore[0]?.store_id;
+
+      if (!storeId) {
+        throw createApiError(
+          400, 
+          `외주창고가 존재하지 않습니다.`, 
+          this.stateTag, 
+          errorState.NO_DATA
+        );
+      }
+
+      return storeId;
+    } 
+		catch (error) { throw error; }
+  }
+
+  /**
    * 입력한 창고가 해당 창고유형에 속하는지 검증
    * @param storeId 창고ID
    * @param storeType 창고유형

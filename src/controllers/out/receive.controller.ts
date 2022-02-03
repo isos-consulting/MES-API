@@ -99,6 +99,7 @@ class OutReceiveCtl {
         data.details = data.details.map((detail: any) => {
           detail.receive_id = receiveId;
           detail.seq = ++maxSeq;
+          detail.total_price = detail.qty * detail.price * detail.exchange; 
           return detail;
         });
       

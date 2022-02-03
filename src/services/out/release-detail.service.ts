@@ -9,6 +9,7 @@ import StdStoreRepo from "../../repositories/std/store.repository";
 import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
 import InvStoreRepo from "../../repositories/inv/store.repository";
 import OutReleaseRepo from "../../repositories/out/release.repository";
+import StdStoreService from "../std/store.service";
 
 class OutReleaseDetailService {
   tenant: string;
@@ -103,7 +104,18 @@ class OutReleaseDetailService {
   }
 
   public create = async (datas: any[], uid: number, tran: Transaction) => {
-    try { return await this.repo.create(datas, uid, tran); } 
+    try { 
+      // 📌 입고창고에 외주창고 입력
+      const storeService = new StdStoreService(this.tenant);
+      const storeId = await storeService.getOutsourcingStoreId();
+
+      datas.map(data => {
+        data.to_store_id = storeId;
+        return data;
+      })
+      
+      return await this.repo.create(datas, uid, tran); 
+    } 
     catch (error) { throw error; }
   }
 

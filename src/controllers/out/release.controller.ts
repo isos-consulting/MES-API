@@ -87,6 +87,7 @@ class OutReleaseCtl {
         data.details = data.details.map((detail: any) => {
           detail.release_id = releaseId;
           detail.seq = ++maxSeq;
+          detail.total_price = detail.qty * detail.price * detail.exchange; 
           return detail;
         });
       
