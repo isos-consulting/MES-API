@@ -561,7 +561,7 @@ class OutReceiveCtl {
         const count = await detailService.getCountInHeader(data.header.receive_id, tran);
         let headerResult: ApiResult<any>;
         if (count == 0) {
-          headerResult = await service.delete(data.header, req.user?.uid as number, tran);
+          headerResult = await service.delete([data.header], req.user?.uid as number, tran);
         } else {
           headerResult = await service.updateTotal(data.header.receive_id, data.header.uuid, req.user?.uid as number, tran);
         }
