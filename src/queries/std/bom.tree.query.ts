@@ -69,7 +69,7 @@ const readBomTrees = (factoryUuid?: string, prodId?: number) => {
     LEFT JOIN std_prod_type_tb s_pt ON s_pt.prod_type_id = s_p.prod_type_id
     LEFT JOIN std_model_tb s_m ON s_m.model_id = s_p.model_id
     LEFT JOIN std_unit_tb s_u ON s_u.unit_id = t_b.unit_id
-    LEFT JOIN adm_bom_input_type_tb ON a_bit.bom_input_type_id = t_b.bom_input_type_id
+    LEFT JOIN adm_bom_input_type_tb a_bit ON a_bit.bom_input_type_id = t_b.bom_input_type_id
     LEFT JOIN std_store_tb s_s ON s_s.store_id = t_b.from_store_id
     LEFT JOIN std_location_tb s_l ON s_l.location_id = t_b.from_location_id
     ${factoryUuid? `WHERE s_f.uuid = '${factoryUuid}'`: ''}
