@@ -1,5 +1,6 @@
 import { Sequelize, Table, Column, Model, DataType, CreatedAt, UpdatedAt, BelongsTo, Unique, ForeignKey } from 'sequelize-typescript'
 import IInvStore from '../../interfaces/inv/store.interface';
+import AdmTranType from '../adm/tran-type.model';
 import AutUser from '../aut/user.model';
 import StdFactory from '../std/factory.model';
 import StdLocation from '../std/location.model';
@@ -32,13 +33,14 @@ export default class InvStore extends Model<IInvStore> {
   })
   inout_fg: boolean;
 
+  @ForeignKey(() => AdmTranType)
   @Column({
-    comment: '입출고 타입 코드',
+    comment: '수불 유형ID',
     primaryKey: true,
-    type: DataType.STRING(20),
+    type: DataType.INTEGER,
     allowNull: false,
   })
-  tran_cd: string;
+  tran_type_id: string;
 
   @ForeignKey(() => StdFactory)
   @Column({
@@ -160,6 +162,9 @@ export default class InvStore extends Model<IInvStore> {
 
   @BelongsTo(() => AutUser, { as: 'updateUser', foreignKey: 'updated_uid', targetKey: 'uid', onDelete: 'restrict', onUpdate: 'cascade' })
   updateUser: AutUser;
+
+  @BelongsTo(() => AdmTranType, { foreignKey: 'tran_type_id', targetKey: 'tran_type_id', onDelete: 'restrict', onUpdate: 'cascade' })
+  admTranType: AdmTranType;
 
   @BelongsTo(() => StdFactory, { foreignKey: 'factory_id', targetKey: 'factory_id', onDelete: 'restrict', onUpdate: 'cascade' })
   stdFactory: StdFactory;

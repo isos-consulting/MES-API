@@ -5,38 +5,39 @@ get:
   tags:
     - 재고관리(Store)
   parameters:
-    - name: tran_type
+    - name: tran_type_cd
       in: query
       required: true
       description: |
         데이터 조회시 수불 유형을 입력합니다. <br/> 
-        [matIncome]: 자재입하 수불내역 조회 <br/>
-        [matReturn]: 자재반출 수불내역 조회 <br/>
-        [matRelease]: 공정출고 수불내역 조회 <br/>
-        [prdReturn]: 자재반납 수불내역 조회 <br/>
-        [prdOutput]: 생산입고 수불내역 조회 <br/>
-        [prdInput]: 생산투입 수불내역 조회 <br/>
-        [prdReject]: 생산부적합 수불내역 조회 <br/>
-        [salIncome]: 제품입고 수불내역 조회 <br/>
-        [salRelease]: 제품출고 수불내역 조회 <br/>
-        [salOutgo]: 제품출하 수불내역 조회 <br/>
-        [salReturn]: 제품반입 수불내역 조회 <br/>
-        [outIncome]: 사급입고 수불내역 조회 <br/>
-        [outRelease]: 사급출고 수불내역 조회 <br/>
-        [inventory]: 재고실사 수불내역 조회 <br/>
-        [invMove]: 재고이동 수불내역 조회 <br/>
-        [invReject]: 재고부적합 수불내역 조회 <br/>
-        [qmsReceiveInspReject]: 수입검사부적합 수불내역 조회 <br/>
-        [qmsFinalInspIncome]: 최종검사입고 수불내역 조회 <br/>
-        [qmsFinalInspReject]: 최종검사부적합 수불내역 조회 <br/>
-        [qmsRework]: 부적합품판정(재작업) 수불내역 조회 <br/>
-        [qmsDisposal]: 부적합품판정(폐기) 수불내역 조회 <br/>
-        [qmsReturn]: 부적합품판정(반출대기) 수불내역 조회 <br/>
-        [qmsDisassemble]: 부적합품판정(분해) 수불내역 조회 <br/>
-        [qmsDisassembleIncome]: 부적합품판정(분해입고) 수불내역 조회 <br/>
-        [qmsDisassembleReturn]: 부적합품판정(분해반출대기) 수불내역 조회 <br/>
-        [etcIncome]: 기타입고 수불내역 조회 <br/>
-        [etcRelease]: 기타출고 수불내역 조회 <br/>
+        [MAT_INCOME]: 자재입하 수불내역 조회 <br/>
+        [MAT_RETURN]: 자재반출 수불내역 조회 <br/>
+        [MAT_RELEASE]: 공정출고 수불내역 조회 <br/>
+        [PRD_RETURN]: 자재반납 수불내역 조회 <br/>
+        [PRD_OUTPUT]: 생산입고 수불내역 조회 <br/>
+        [PRD_INPUT]: 생산투입 수불내역 조회 <br/>
+        [PRD_REJECT]: 생산부적합 수불내역 조회 <br/>
+        [SAL_INCOME]: 제품입고 수불내역 조회 <br/>
+        [SAL_RELEASE]: 제품출고 수불내역 조회 <br/>
+        [SAL_OUTGO]: 제품출하 수불내역 조회 <br/>
+        [SAL_RETURN]: 제품반입 수불내역 조회 <br/>
+        [OUT_INCOME]: 사급입고 수불내역 조회 <br/>
+        [OUT_INPUT]: 사급투입 수불내역 조회 <br/>
+        [OUT_RELEASE]: 사급출고 수불내역 조회 <br/>
+        [INVENTORY]: 재고실사 수불내역 조회 <br/>
+        [INV_MOVE]: 재고이동 수불내역 조회 <br/>
+        [INV_REJECT]: 재고부적합 수불내역 조회 <br/>
+        [QMS_RECEIVE_INSP_REJECT]: 수입검사부적합 수불내역 조회 <br/>
+        [QMS_FINAL_INSP_INCOME]: 최종검사입고 수불내역 조회 <br/>
+        [QMS_FINAL_INSP_REJECT]: 최종검사부적합 수불내역 조회 <br/>
+        [QMS_REWORK]: 부적합품판정(재작업) 수불내역 조회 <br/>
+        [QMS_DISPOSAL]: 부적합품판정(폐기) 수불내역 조회 <br/>
+        [QMS_RETURN]: 부적합품판정(반출대기) 수불내역 조회 <br/>
+        [QMS_DISASSEMBLE]: 부적합품판정(분해) 수불내역 조회 <br/>
+        [QMS_DISASSEMBLE_INCOME]: 부적합품판정(분해입고) 수불내역 조회 <br/>
+        [QMS_DISASSEMBLE_RETURN]: 부적합품판정(분해반출대기) 수불내역 조회 <br/>
+        [ETC_INCOME]: 기타입고 수불내역 조회 <br/>
+        [ETC_RELEASE]: 기타출고 수불내역 조회 <br/>
       schema:
         type: string
         format: string
@@ -116,7 +117,8 @@ get:
                           allOf:
                             - $ref: ../../schemas/inv/store.schema.yaml#/tran_uuid
                             - $ref: ../../schemas/inv/store.schema.yaml#/inout_state
-                            - $ref: ../../schemas/inv/store.schema.yaml#/tran_cd
+                            - $ref: ../../schemas/inv/store.schema.yaml#/tran_type_uuid
+                            - $ref: ../../schemas/adm/tran-type.schema.yaml#/tran_type_cd
                             - $ref: ../../schemas/adm/tran-type.schema.yaml#/tran_type_nm
                             - $ref: ../../schemas/inv/store.schema.yaml#/reg_date
                             - $ref: ../../schemas/inv/store.schema.yaml#/factory_uuid

@@ -2,7 +2,7 @@ import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repos
 import { Sequelize } from 'sequelize-typescript';
 import _ from 'lodash';
 import convertResult from '../../utils/convertResult';
-import { Op, Transaction, UniqueConstraintError, WhereOptions } from 'sequelize';
+import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
@@ -10,7 +10,6 @@ import { getSequelize } from '../../utils/getSequelize';
 import ApiResult from '../../interfaces/common/api-result.interface';
 import InvStore from '../../models/inv/store.model';
 import IInvStore from '../../interfaces/inv/store.interface';
-import getTranTypeCd from '../../utils/getTranTypeCd';
 import { readStocks } from '../../queries/inv/store.query';
 import { readStoreTotalInventory } from '../../queries/inv/store-total-history.query';
 import { readStoreIndividualHistory } from '../../queries/inv/store-individual-history.query';
@@ -85,6 +84,12 @@ class InvStoreRepo {
             where: { uuid: params.factory_uuid ? params.factory_uuid : { [Op.ne]: null } }
           },
           { 
+            model: this.sequelize.models.AdmTranType, 
+            attributes: [], 
+            required: true, 
+            where: { tran_type_cd: params.tran_type_cd ? params.tran_type_cd : { [Op.ne]: null } }
+          },
+          { 
             model: this.sequelize.models.StdProd, 
             attributes: [], 
             required: true,
@@ -113,6 +118,9 @@ class InvStoreRepo {
           [ Sequelize.col('stdFactory.uuid'), 'factory_uuid' ],
           [ Sequelize.col('stdFactory.factory_cd'), 'factory_cd' ],
           [ Sequelize.col('stdFactory.factory_nm'), 'factory_nm' ],
+          [ Sequelize.col('admTranType.uuid'), 'tran_type_uuid' ],
+          [ Sequelize.col('admTranType.tran_type_cd'), 'tran_type_cd' ],
+          [ Sequelize.col('admTranType.tran_type_nm'), 'tran_type_nm' ],
           'reg_date',
           [ Sequelize.col('stdProd.uuid'), 'prod_uuid' ],
           [ Sequelize.col('stdProd.prod_no'), 'prod_no' ],
@@ -154,7 +162,6 @@ class InvStoreRepo {
         ],
         where: { 
           [Op.and]: [
-            this.getTranTypeWhereOptions(params.tran_type),
             Sequelize.where(Sequelize.fn('date', Sequelize.col('invStore.reg_date')), '>=', params.start_date),
             Sequelize.where(Sequelize.fn('date', Sequelize.col('invStore.reg_date')), '<=', params.end_date),
           ]
@@ -174,6 +181,7 @@ class InvStoreRepo {
       const result = await this.repo.findAll({ 
         include: [
           { model: this.sequelize.models.StdFactory, attributes: [], required: true },
+          { model: this.sequelize.models.AdmTranType, attributes: [], required: true },
           { 
             model: this.sequelize.models.StdProd, 
             attributes: [], 
@@ -197,6 +205,9 @@ class InvStoreRepo {
           [ Sequelize.col('stdFactory.uuid'), 'factory_uuid' ],
           [ Sequelize.col('stdFactory.factory_cd'), 'factory_cd' ],
           [ Sequelize.col('stdFactory.factory_nm'), 'factory_nm' ],
+          [ Sequelize.col('admTranType.uuid'), 'tran_type_uuid' ],
+          [ Sequelize.col('admTranType.tran_type_cd'), 'tran_type_cd' ],
+          [ Sequelize.col('admTranType.tran_type_nm'), 'tran_type_nm' ],
           'reg_date',
           [ Sequelize.col('stdProd.uuid'), 'prod_uuid' ],
           [ Sequelize.col('stdProd.prod_no'), 'prod_no' ],
@@ -546,69 +557,69 @@ class InvStoreRepo {
    * @param tranType 수불 유형 Parameter
    * @returns 유형에 따른 재고수불 조회 조건문
    */
-  getTranTypeWhereOptions = (tranType: string) => {
-    let whereOptions: WhereOptions<InvStore> = {};
-    let tranCd: string | undefined;
+  // getTranTypeWhereOptions = (tranType: string) => {
+  //   let whereOptions: WhereOptions<InvStore> = {};
+  //   let tranCd: string | undefined;
 
-    switch (tranType) {
-      // 📌 수불유형 전체 조회
-      case 'all': break;
-      // 📌 자재입하 수불내역 조회
-      case 'matIncome': tranCd = getTranTypeCd('MAT_INCOME'); break;
-      // 📌 자재반출 수불내역 조회
-      case 'matReturn': tranCd = getTranTypeCd('MAT_RETURN'); break;
-      // 📌 공정출고 수불내역 조회
-      case 'matRelease': tranCd = getTranTypeCd('MAT_RELEASE'); break;
-      // 📌 자재반납 수불내역 조회
-      case 'prdReturn': tranCd = getTranTypeCd('PRD_RETURN'); break;
-      // 📌 생산입고 수불내역 조회
-      case 'prdOutput': tranCd = getTranTypeCd('PRD_OUTPUT'); break;
-      // 📌 생산투입 수불내역 조회
-      case 'prdInput': tranCd = getTranTypeCd('PRD_INPUT'); break;
-      // 📌 생산부적합 수불내역 조회
-      case 'prdReject': tranCd = getTranTypeCd('PRD_REJECT'); break;
-      // 📌 제품입고 수불내역 조회
-      case 'salRelease': tranCd = getTranTypeCd('SAL_INCOME'); break;
-      // 📌 제품출고 수불내역 조회
-      case 'salRelease': tranCd = getTranTypeCd('SAL_RELEASE'); break;
-      // 📌 제품출하 수불내역 조회
-      case 'salOutgo': tranCd = getTranTypeCd('SAL_OUTGO'); break;
-      // 📌 제품반입 수불내역 조회
-      case 'salReturn': tranCd = getTranTypeCd('SAL_RETURN'); break;
-      // 📌 사급입고 수불내역 조회
-      case 'outIncome': tranCd = getTranTypeCd('OUT_INCOME'); break;
-      // 📌 사급출고 수불내역 조회
-      case 'outRelease': tranCd = getTranTypeCd('OUT_RELEASE'); break;
-      // 📌 재고실사 수불내역 조회
-      case 'inventory': tranCd = getTranTypeCd('INVENTORY'); break;
-      // 📌 재고이동 수불내역 조회
-      case 'invMove': tranCd = getTranTypeCd('INV_MOVE'); break;
-      // 📌 재고부적합 수불내역 조회
-      case 'invReject': tranCd = getTranTypeCd('INV_REJECT'); break;
-      // 📌 부적합품판정(재작업) 수불내역 조회
-      case 'qmsRework': tranCd = getTranTypeCd('QMS_REWORK'); break;
-      // 📌 부적합품판정(폐기) 수불내역 조회
-      case 'qmsDisposal': tranCd = getTranTypeCd('QMS_DISPOSAL'); break;
-      // 📌 부적합품판정(반출대기) 수불내역 조회
-      case 'qmsReturn': tranCd = getTranTypeCd('QMS_RETURN'); break;
-      // 📌 부적합품판정(분해) 수불내역 조회
-      case 'qmsDisassemble': tranCd = getTranTypeCd('QMS_DISASSEMBLE'); break;
-      // 📌 부적합품판정(분해입고) 수불내역 조회
-      case 'qmsDisassembleIncome': tranCd = getTranTypeCd('QMS_DISASSEMBLE_INCOME'); break;
-      // 📌 부적합품판정(분해반출대기) 수불내역 조회
-      case 'qmsDisassembleReturn': tranCd = getTranTypeCd('QMS_DISASSEMBLE_RETURN'); break;
-      // 📌 기타입고 수불내역 조회
-      case 'etcIncome': tranCd = getTranTypeCd('ETC_INCOME'); break;
-      // 📌 기타출고 수불내역 조회
-      case 'etcRelease': tranCd = getTranTypeCd('ETC_RELEASE'); break;
+  //   switch (tranType) {
+  //     // 📌 수불유형 전체 조회
+  //     case 'all': break;
+  //     // 📌 자재입하 수불내역 조회
+  //     case 'matIncome': tranCd = getTranTypeCd('MAT_INCOME'); break;
+  //     // 📌 자재반출 수불내역 조회
+  //     case 'matReturn': tranCd = getTranTypeCd('MAT_RETURN'); break;
+  //     // 📌 공정출고 수불내역 조회
+  //     case 'matRelease': tranCd = getTranTypeCd('MAT_RELEASE'); break;
+  //     // 📌 자재반납 수불내역 조회
+  //     case 'prdReturn': tranCd = getTranTypeCd('PRD_RETURN'); break;
+  //     // 📌 생산입고 수불내역 조회
+  //     case 'prdOutput': tranCd = getTranTypeCd('PRD_OUTPUT'); break;
+  //     // 📌 생산투입 수불내역 조회
+  //     case 'prdInput': tranCd = getTranTypeCd('PRD_INPUT'); break;
+  //     // 📌 생산부적합 수불내역 조회
+  //     case 'prdReject': tranCd = getTranTypeCd('PRD_REJECT'); break;
+  //     // 📌 제품입고 수불내역 조회
+  //     case 'salRelease': tranCd = getTranTypeCd('SAL_INCOME'); break;
+  //     // 📌 제품출고 수불내역 조회
+  //     case 'salRelease': tranCd = getTranTypeCd('SAL_RELEASE'); break;
+  //     // 📌 제품출하 수불내역 조회
+  //     case 'salOutgo': tranCd = getTranTypeCd('SAL_OUTGO'); break;
+  //     // 📌 제품반입 수불내역 조회
+  //     case 'salReturn': tranCd = getTranTypeCd('SAL_RETURN'); break;
+  //     // 📌 사급입고 수불내역 조회
+  //     case 'outIncome': tranCd = getTranTypeCd('OUT_INCOME'); break;
+  //     // 📌 사급출고 수불내역 조회
+  //     case 'outRelease': tranCd = getTranTypeCd('OUT_RELEASE'); break;
+  //     // 📌 재고실사 수불내역 조회
+  //     case 'inventory': tranCd = getTranTypeCd('INVENTORY'); break;
+  //     // 📌 재고이동 수불내역 조회
+  //     case 'invMove': tranCd = getTranTypeCd('INV_MOVE'); break;
+  //     // 📌 재고부적합 수불내역 조회
+  //     case 'invReject': tranCd = getTranTypeCd('INV_REJECT'); break;
+  //     // 📌 부적합품판정(재작업) 수불내역 조회
+  //     case 'qmsRework': tranCd = getTranTypeCd('QMS_REWORK'); break;
+  //     // 📌 부적합품판정(폐기) 수불내역 조회
+  //     case 'qmsDisposal': tranCd = getTranTypeCd('QMS_DISPOSAL'); break;
+  //     // 📌 부적합품판정(반출대기) 수불내역 조회
+  //     case 'qmsReturn': tranCd = getTranTypeCd('QMS_RETURN'); break;
+  //     // 📌 부적합품판정(분해) 수불내역 조회
+  //     case 'qmsDisassemble': tranCd = getTranTypeCd('QMS_DISASSEMBLE'); break;
+  //     // 📌 부적합품판정(분해입고) 수불내역 조회
+  //     case 'qmsDisassembleIncome': tranCd = getTranTypeCd('QMS_DISASSEMBLE_INCOME'); break;
+  //     // 📌 부적합품판정(분해반출대기) 수불내역 조회
+  //     case 'qmsDisassembleReturn': tranCd = getTranTypeCd('QMS_DISASSEMBLE_RETURN'); break;
+  //     // 📌 기타입고 수불내역 조회
+  //     case 'etcIncome': tranCd = getTranTypeCd('ETC_INCOME'); break;
+  //     // 📌 기타출고 수불내역 조회
+  //     case 'etcRelease': tranCd = getTranTypeCd('ETC_RELEASE'); break;
 
-      default: break;
-    }
+  //     default: break;
+  //   }
 
-    if (tranCd) { whereOptions = { tran_cd: tranCd }; }
+  //   if (tranCd) { whereOptions = { tran_cd: tranCd }; }
 
-    return whereOptions;
-  }
+  //   return whereOptions;
+  // }
 
   // 📒 Fn[getCurrentStock]: 
   getCurrentStock = async(prodId: number, storeId: number, lotNo?: string, locationNo?: number) => {
@@ -642,7 +653,7 @@ class InvStoreRepo {
           [ Sequelize.fn('max', Sequelize.col('tran_id')), 'tran_id' ],
         ],
         where: { tran_type_id: tranTypeId },
-        group: [ 'tran_cd' ],
+        group: [ 'tran_type_id' ],
         transaction
       });
 

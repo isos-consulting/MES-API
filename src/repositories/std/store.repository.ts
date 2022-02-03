@@ -179,7 +179,7 @@ class StdStoreRepo {
 
   // 📒 Fn[readRawAll]: Raw Data 전체 Read Function
   public readRawAll = async(tran?: Transaction) => {
-    const result = await this.repo.findOne({ transaction: tran });
+    const result = await this.repo.findAll({ transaction: tran });
     return convertReadResult(result);
   };
 
