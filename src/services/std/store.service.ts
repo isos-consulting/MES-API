@@ -70,7 +70,7 @@ class StdStoreService {
    public getOutsourcingStoreId = async (tran?: Transaction) => {
     try { 
       const read = await this.repo.readRawAll(tran);
-      const outsourcingStore = read.raws.filter(raw => raw.outsourcing_fg === true);
+      const outsourcingStore = read.raws.filter(raw => raw.outsourcing_store_fg === true);
 
       const storeId = outsourcingStore[0]?.store_id;
 
