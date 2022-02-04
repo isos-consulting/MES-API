@@ -17,7 +17,6 @@ const seedDatas: ISalIncome[] = [
 		"to_store_id" : 3,
 		"to_location_id" : 3,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "c443fa54-cee2-4463-a597-807daefc2cf8"
@@ -34,7 +33,6 @@ const seedDatas: ISalIncome[] = [
 		"to_store_id" : 3,
 		"to_location_id" : 3,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "24be13df-9757-45dc-8e38-224f3b61d040"
@@ -51,7 +49,6 @@ const seedDatas: ISalIncome[] = [
 		"to_store_id" : 3,
 		"to_location_id" : 3,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "2bdf68c8-e7f7-4b74-99a5-f6492535970d"
@@ -68,7 +65,6 @@ const seedDatas: ISalIncome[] = [
 		"to_store_id" : 3,
 		"to_location_id" : 3,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "4d13543b-f1a7-4f11-8242-6ed0369ec545"
@@ -85,7 +81,6 @@ const seedDatas: ISalIncome[] = [
 		"to_store_id" : 3,
 		"to_location_id" : 3,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "5ca5a7f3-0ad7-45f9-a2e6-8c897a0cb7a2"
@@ -102,7 +97,6 @@ const seedDatas: ISalIncome[] = [
 		"to_store_id" : 3,
 		"to_location_id" : 3,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "df0b340d-2fee-437a-83fc-2718703a236d"
@@ -119,7 +113,6 @@ const seedDatas: ISalIncome[] = [
 		"to_store_id" : 3,
 		"to_location_id" : 3,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "259fa35b-939e-436e-8f76-6dd4e00268a9"
@@ -136,7 +129,6 @@ const seedDatas: ISalIncome[] = [
 		"to_store_id" : 3,
 		"to_location_id" : 3,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "0ea307f5-3044-41cc-aa80-e7725ba657c9"
@@ -153,7 +145,6 @@ const seedDatas: ISalIncome[] = [
 		"to_store_id" : 3,
 		"to_location_id" : 3,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "5b573880-dd63-4db6-9492-74ea2886475e"
@@ -170,7 +161,6 @@ const seedDatas: ISalIncome[] = [
 		"to_store_id" : 3,
 		"to_location_id" : 3,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "43745b76-f94f-4c6b-b71a-c1ba8d70cc45"
@@ -187,7 +177,6 @@ const seedDatas: ISalIncome[] = [
 		"to_store_id" : 3,
 		"to_location_id" : 3,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "c104e251-f8ff-48d2-afa9-e40fdfc6cbc7"
@@ -204,7 +193,6 @@ const seedDatas: ISalIncome[] = [
 		"to_store_id" : 3,
 		"to_location_id" : 3,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "177d1bcb-32d1-4d8b-84f2-f745b656695c"
@@ -221,7 +209,6 @@ const seedDatas: ISalIncome[] = [
 		"to_store_id" : 3,
 		"to_location_id" : 3,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "049f31ae-ac34-4dd7-b72c-651358898c61"
