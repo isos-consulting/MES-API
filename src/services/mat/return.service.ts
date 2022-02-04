@@ -1,6 +1,6 @@
 import { Transaction } from "sequelize/types";
-import MatReturnDetailRepo from "../../repositories/mat/receive-detail.repository";
-import MatReturnRepo from "../../repositories/mat/receive.repository";
+import MatReturnDetailRepo from "../../repositories/mat/return-detail.repository";
+import MatReturnRepo from "../../repositories/mat/return.repository";
 import StdSupplierRepo from "../../repositories/std/supplier.repository";
 import StdFactoryRepo from "../../repositories/std/factory.repository";
 import StdPartnerRepo from "../../repositories/std/partner.repository";
@@ -82,11 +82,6 @@ class MatReturnService {
 
   public readReport = async (params: any) => {
     try { return await this.repo.readReport(params); } 
-    catch (error) { throw error; }
-  };
-
-  public readLotTracking = async (params: any) => {
-    try { return await this.repo.readLotTrackingToReverse(params); } 
     catch (error) { throw error; }
   };
 
