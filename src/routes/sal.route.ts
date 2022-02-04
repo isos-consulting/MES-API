@@ -15,26 +15,28 @@ import validationCallback from '../utils/validationCallback';
 import salOutgoValidation from '../validations/sal/outgo.validation';
 import salOutgoDetailValidation from '../validations/sal/outgo-detail.validation';
 import salReleaseValidation from '../validations/sal/release.validation';
+import salReturnValidation from '../validations/sal/return.validation';
+import matReturnDetailValidation from '../validations/mat/return-detail.validation';
 
 const router = express.Router();
 
 //#region ✅ Return (제품반입)
 const returnHeader = new SalReturnCtl();
-router.route('/returns/report').get(returnHeader.readReport);
-router.route('/return/:uuid').get(returnHeader.read);
-router.route('/return/:uuid/include-details').get(returnHeader.readIncludeDetails);
-router.route('/return/:uuid/details').get(returnHeader.readDetails);
-router.route('/returns').get(returnHeader.read);
-router.route('/returns').post(returnHeader.create);
-router.route('/returns').put(returnHeader.update);
-router.route('/returns').patch(returnHeader.patch);
-router.route('/returns').delete(returnHeader.delete);
+router.route('/returns/report').get(salReturnValidation.readReport, validationCallback, returnHeader.readReport);
+router.route('/return/:uuid').get(salReturnValidation.readByUuid, validationCallback, returnHeader.readByUuid);
+router.route('/return/:uuid/include-details').get(salReturnValidation.readIncludeDetails, validationCallback, returnHeader.readIncludeDetails);
+router.route('/return/:uuid/details').get(salReturnValidation.readDetails, validationCallback, returnHeader.readDetails);
+router.route('/returns').get(salReturnValidation.read, validationCallback, returnHeader.read);
+router.route('/returns').post(salReturnValidation.create, validationCallback, returnHeader.create);
+router.route('/returns').put(salReturnValidation.update, validationCallback, returnHeader.update);
+router.route('/returns').patch(salReturnValidation.patch, validationCallback, returnHeader.patch);
+router.route('/returns').delete(salReturnValidation.delete, validationCallback, returnHeader.delete);
 //#endregion
 
 //#region ✅ ReturnDetail (제품반입상세)
 const returnDetail = new SalReturnDetailCtl();
-router.route('/return-detail/:uuid').get(returnDetail.read);
-router.route('/return-details').get(returnDetail.read);
+router.route('/return-detail/:uuid').get(matReturnDetailValidation.readByUuid, validationCallback, returnDetail.readByUuid);
+router.route('/return-details').get(matReturnDetailValidation.read, validationCallback, returnDetail.read);
 //#endregion
 
 //#region ✅ Order (제품수주)
