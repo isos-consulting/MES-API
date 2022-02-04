@@ -121,8 +121,8 @@ class InvStoreService {
     tranOpt: {
       inout: 'FROM' | 'TO',         // FROM: 출고, TO: 입고
       tran_type: TTranType,         // 수불 유형
-      reg_date: string,             // 수불 기준일자
       tran_id_alias: string,        // 수불 데이터의 ID Column명
+      reg_date?: string,            // 수불 기준일자
       qty_alias?: string,           // 수불 데이터의 Qty Column명
       store_alias?: string,         // 수불 데이터의 Store(창고) Column명
       location_alias?: string,      // 수불 데이터의 Location(위치) Column명

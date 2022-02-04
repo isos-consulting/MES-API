@@ -23,7 +23,7 @@ const getStoreBody = (params: {
       factory_id: data.factory_id,
       tran_id: data[params.tran_id_alias],
       inout_fg: params.inout === 'FROM' ? false : true,
-      reg_date: params.reg_date,
+      reg_date: params.reg_date ?? data.reg_date,
       tran_type_id: params.tran_type_id,
       store_id: data[storeAlias],
       location_id: data[locationAlias],

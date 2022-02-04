@@ -12,18 +12,19 @@ import validationCallback from '../utils/validationCallback';
 import matReceiveDetailValidation from '../validations/mat/receive-detail.validation';
 import matReturnValidation from '../validations/mat/return.validation';
 import matReturnDetailValidation from '../validations/mat/return-detail.validation';
+import matReleaseValidation from '../validations/mat/release.validation';
 
 const router = express.Router();
 
-//#region ✅ Release (자재공정출고)
+//#region ✅ Release (자재출고)
 const release = new MatReleaseCtl();
-router.route('/releases/report').get(release.readReport);
-router.route('/release/:uuid').get(release.read);
-router.route('/releases').get(release.read);
-router.route('/releases').post(release.create);
-router.route('/releases').put(release.update);
-router.route('/releases').patch(release.patch);
-router.route('/releases').delete(release.delete);
+router.route('/releases/report').get(matReleaseValidation.readReport, validationCallback, release.readReport);
+router.route('/release/:uuid').get(matReleaseValidation.readByUuid, validationCallback, release.readByUuid);
+router.route('/releases').get(matReleaseValidation.read, validationCallback, release.read);
+router.route('/releases').post(matReleaseValidation.create, validationCallback, release.create);
+router.route('/releases').put(matReleaseValidation.update, validationCallback, release.update);
+router.route('/releases').patch(matReleaseValidation.patch, validationCallback, release.patch);
+router.route('/releases').delete(matReleaseValidation.delete, validationCallback, release.delete);
 //#endregion
 
 //#region ✅ Return (자재반출)

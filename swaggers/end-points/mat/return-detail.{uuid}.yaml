@@ -70,6 +70,7 @@ get:
                             - $ref: ../../schemas/std/unit.schema.yaml#/unit_nm
                             - $ref: ../../schemas/mat/return-detail.schema.yaml#/lot_no
                             - $ref: ../../schemas/mat/return-detail.schema.yaml#/receive_qty
+                            - $ref: ../../schemas/mat/return-detail.schema.yaml#/return_qty
                             - $ref: ../../schemas/mat/return-detail.schema.yaml#/qty
                             - $ref: ../../schemas/mat/return-detail.schema.yaml#/convert_value
                             - $ref: ../../schemas/mat/return-detail.schema.yaml#/price
