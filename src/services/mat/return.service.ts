@@ -24,14 +24,14 @@ class MatReturnService {
       {
         key: 'uuid',
         TRepo: MatReturnRepo,
-        idName: 'receive_id',
+        idName: 'return_id',
         uuidName: 'uuid'
       },
       {
-        key: 'receive',
+        key: 'return',
         TRepo: MatReturnRepo,
-        idName: 'receive_id',
-        uuidName: 'receive_uuid'
+        idName: 'return_id',
+        uuidName: 'return_uuid'
       },
       {
         key: 'factory',
