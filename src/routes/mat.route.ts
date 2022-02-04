@@ -10,6 +10,8 @@ import MatReleaseCtl from '../controllers/mat/release.controller';
 import matReceiveValidation from '../validations/mat/receive.validation';
 import validationCallback from '../utils/validationCallback';
 import matReceiveDetailValidation from '../validations/mat/receive-detail.validation';
+import matReturnValidation from '../validations/mat/return.validation';
+import matReturnDetailValidation from '../validations/mat/return-detail.validation';
 
 const router = express.Router();
 
@@ -26,21 +28,21 @@ router.route('/releases').delete(release.delete);
 
 //#region ✅ Return (자재반출)
 const returnHeader = new MatReturnCtl();
-router.route('/returns/report').get(returnHeader.readReport);
-router.route('/return/:uuid').get(returnHeader.read);
-router.route('/return/:uuid/include-details').get(returnHeader.readIncludeDetails);
-router.route('/return/:uuid/details').get(returnHeader.readDetails);
-router.route('/returns').get(returnHeader.read);
-router.route('/returns').post(returnHeader.create);
-router.route('/returns').put(returnHeader.update);
-router.route('/returns').patch(returnHeader.patch);
-router.route('/returns').delete(returnHeader.delete);
+router.route('/returns/report').get(matReturnValidation.readReport, validationCallback, returnHeader.readReport);
+router.route('/return/:uuid').get(matReturnValidation.readByUuid, validationCallback, returnHeader.readByUuid);
+router.route('/return/:uuid/include-details').get(matReturnValidation.readIncludeDetails, validationCallback, returnHeader.readIncludeDetails);
+router.route('/return/:uuid/details').get(matReturnValidation.readDetails, validationCallback, returnHeader.readDetails);
+router.route('/returns').get(matReturnValidation.read, validationCallback, returnHeader.read);
+router.route('/returns').post(matReturnValidation.create, validationCallback, returnHeader.create);
+router.route('/returns').put(matReturnValidation.update, validationCallback, returnHeader.update);
+router.route('/returns').patch(matReturnValidation.patch, validationCallback, returnHeader.patch);
+router.route('/returns').delete(matReturnValidation.delete, validationCallback, returnHeader.delete);
 //#endregion
 
 //#region ✅ ReturnDetail (자재반출상세)
 const returnDetail = new MatReturnDetailCtl();
-router.route('/return-detail/:uuid').get(returnDetail.read);
-router.route('/return-details').get(returnDetail.read);
+router.route('/return-detail/:uuid').get(matReturnDetailValidation.readByUuid, validationCallback, returnDetail.readByUuid);
+router.route('/return-details').get(matReturnDetailValidation.read, validationCallback, returnDetail.read);
 //#endregion
 
 //#region ✅ Order (자재발주)

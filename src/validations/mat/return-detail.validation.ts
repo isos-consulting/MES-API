@@ -2,9 +2,9 @@ import { param, query } from 'express-validator';
 import { errorState } from '../../states/common.state';
 import createValidationError from '../../utils/createValidationError';
 
-const stateTag = 'outReleaseDetail';
+const stateTag = 'matReturnDetail';
 
-const outReleaseDetailValidation = {
+const matReturnDetailValidation = {
   read: [
     query('factory_uuid', '공장UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'factory_uuid', '공장UUID')),
@@ -18,9 +18,9 @@ const outReleaseDetailValidation = {
       .isISO8601().toDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'end_date', '기준 종료일자'))
   ],
   readByUuid: [
-    param('uuid', '외주출고상세UUID')
-      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'uuid', '외주입하UUID'))
+    param('uuid', '자재반출상세UUID')
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'uuid', '자재반출UUID'))
   ],
 };
 
-export default outReleaseDetailValidation;
+export default matReturnDetailValidation;
