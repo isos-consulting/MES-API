@@ -153,15 +153,19 @@ class MatReceiveDetailService {
   }
 
   /**
-   * 외주입하상세 데이터의 입하수량 * 단가 * 환율을 합계금액(total_price)로 추가하여 반환
-   * @param datas 외주입하상세 데이터
-   * @returns total_price가 추가 된 외주입하상세 데이터
+   * 자재입하상세 데이터의 입하수량 * 단가 * 환율을 합계금액(total_price)로 입력하여 수정
+   * @param datas 자재입하상세 데이터
+   * @param uid 입력 사용자ID
+   * @param tran DB Transaction
+   * @returns total_price가 추가 된 자재입하상세 데이터
    */
-  public calculateTotalPrice = (datas: any[]) => {
-    return datas.map((data: any) => {
+   public updateTotalPrice = async (datas: any[], uid: number, tran?: Transaction) => {
+    datas = datas.map((data: any) => {
       data.total_price = data.qty * data.price * data.exchange; 
       return data;
     });
+
+    return await this.repo.patch(datas, uid, tran);
   }
 
   public validateHasInspResultByUuids = async (uuids: string[]) => {

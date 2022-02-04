@@ -99,14 +99,14 @@ class OutReceiveCtl {
         data.details = data.details.map((detail: any) => {
           detail.receive_id = receiveId;
           detail.seq = ++maxSeq;
-          detail.total_price = detail.qty * detail.price * detail.exchange; 
           return detail;
         });
       
-        // 📌 세부 외주입하 등록
-        const detailResult = await detailService.create(data.details, req.user?.uid as number, tran);
+        // 📌 외주입하상세 등록 및 합계금액 계산
+        let detailResult = await detailService.create(data.details, req.user?.uid as number, tran);
+        detailResult = await detailService.updateTotalPrice(detailResult.raws, req.user?.uid as number, tran);
 
-        // 📌 합계수량 및 합계금액 계산
+        // 📌 외주입하의 합계수량 및 합계금액 계산
         headerResult = await service.updateTotal(receiveId, receiveUuid, req.user?.uid as number, tran);
 
         // 📌 수입검사 미진행 항목(무검사 항목) 수불데이터 생성
@@ -308,16 +308,14 @@ class OutReceiveCtl {
         // 📌 수입검사 이력이 있을 경우 Interlock
         await detailService.validateHasInspResultByUuids(data.details.map((detail: any) => detail.uuid));
 
-        // 📌 외주입하상세 합계금액 계산
-        data.details = detailService.calculateTotalPrice(data.details);
-
         // 📌 외주입하 수정
         let headerResult = await service.update([data.header], req.user?.uid as number, tran);
 
-        // 📌 외주입하상세 수정
-        const detailResult = await detailService.update(data.details, req.user?.uid as number, tran);
+        // 📌 외주입하상세 수정 및 합계금액 계산
+        let detailResult = await detailService.patch(data.details, req.user?.uid as number, tran);
+        detailResult = await detailService.updateTotalPrice(detailResult.raws, req.user?.uid as number, tran);
 
-        // 📌 합계수량 및 합계금액 계산
+        // 📌 외주입하의 합계수량 및 합계금액 계산
         const receiveId = headerResult.raws[0].receive_id;
         const receiveUuid = headerResult.raws[0].uuid;
         const regDate = headerResult.raws[0].reg_date;
@@ -434,16 +432,14 @@ class OutReceiveCtl {
         // 📌 수입검사 이력이 있을 경우 Interlock
         await detailService.validateHasInspResultByUuids(data.details.map((detail: any) => detail.uuid));
 
-        // 📌 외주입하상세 합계금액 계산
-        data.details = detailService.calculateTotalPrice(data.details);
-
         // 📌 외주입하 수정
         let headerResult = await service.patch([data.header], req.user?.uid as number, tran);
 
-        // 📌 외주입하상세 수정
-        const detailResult = await detailService.patch(data.details, req.user?.uid as number, tran);
+        // 📌 외주입하상세 수정 및 합계금액 계산
+        let detailResult = await detailService.patch(data.details, req.user?.uid as number, tran);
+        detailResult = await detailService.updateTotalPrice(detailResult.raws, req.user?.uid as number, tran);
 
-        // 📌 합계수량 및 합계금액 계산
+        // 📌 외주입하의 합계수량 및 합계금액 계산
         const receiveId = headerResult.raws[0].receive_id;
         const receiveUuid = headerResult.raws[0].uuid;
         const regDate = headerResult.raws[0].reg_date;

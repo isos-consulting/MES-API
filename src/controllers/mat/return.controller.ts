@@ -84,7 +84,7 @@ class MatReturnCtl {
           maxSeq = await detailService.getMaxSeq(returnId, tran) as number;
         }
 
-        // 📌 자재반출상세 데이터에 Seq 발행
+        // 📌 생성된 반출ID 입력 및 Max Seq 기준 Seq 발행
         data.details = data.details.map((detail: any) => {
           detail.return_id = returnId;
           detail.seq = ++maxSeq;
