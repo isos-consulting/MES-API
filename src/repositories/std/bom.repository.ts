@@ -148,7 +148,7 @@ class StdBomRepo {
           [ Sequelize.col('stdUnit.unit_nm'), 'c_unit_nm' ],
           'c_usage',
           'sortby',
-          [ Sequelize.col('admBomInputType.bom_input_type_uuid'), 'bom_input_type_uuid' ],
+          [ Sequelize.col('admBomInputType.uuid'), 'bom_input_type_uuid' ],
           [ Sequelize.col('admBomInputType.bom_input_type_cd'), 'bom_input_type_cd' ],
           [ Sequelize.col('admBomInputType.bom_input_type_nm'), 'bom_input_type_nm' ],
           [ Sequelize.col('stdStore.uuid'), 'from_store_uuid' ],
@@ -250,7 +250,7 @@ class StdBomRepo {
             [ Sequelize.col('stdUnit.unit_nm'), 'c_unit_nm' ],
             'c_usage',
             'sortby',
-            [ Sequelize.col('admBomInputType.bom_input_type_uuid'), 'bom_input_type_uuid' ],
+            [ Sequelize.col('admBomInputType.uuid'), 'bom_input_type_uuid' ],
             [ Sequelize.col('admBomInputType.bom_input_type_cd'), 'bom_input_type_cd' ],
             [ Sequelize.col('admBomInputType.bom_input_type_nm'), 'bom_input_type_nm' ],
             [ Sequelize.col('stdStore.uuid'), 'from_store_uuid' ],
@@ -304,7 +304,7 @@ class StdBomRepo {
 
   public readToTrees = async(params?: any) => {
     try {
-      const result = await this.sequelize.query(readBomTrees(params.factory_uuid, params.prod_id));
+      const result = await this.sequelize.query(readBomTrees(params.factory_uuid, params.prod_uuid));
       return convertReadResult(result[0]);
     } catch (error) {
       throw error;

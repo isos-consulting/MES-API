@@ -19,7 +19,7 @@ class OutIncomeService {
 
   constructor(tenant: string) {
     this.tenant = tenant;
-    this.stateTag = 'outIncomeDetail';
+    this.stateTag = 'outIncome';
     this.repo = new OutIncomeRepo(tenant);
     this.storeRepo = new InvStoreRepo(tenant);
 
@@ -106,8 +106,10 @@ class OutIncomeService {
    * @param regDate 수불일시
    * @returns 입고 데이터
    */
-   getIncomeBody = async (datas: any[], regDate: string) => {
+  getIncomeBody = async (datas: any[], regDate: string) => {
     const unitConvertService = new StdUnitConvertService(this.tenant);
+
+    console.log(datas);
 
     const result = await Promise.all(
       datas.map(async (data: any) => {
@@ -129,6 +131,18 @@ class OutIncomeService {
     );
 
     return result;
+  }
+
+  /**
+   * 외주입하상세ID를 기준으로 외주입고 데이터 삭제
+   * @param ids 외주입하상세ID 리스트
+   * @param uid 입력 사용자ID
+   * @param tran DB Transaction
+   * @returns 외주입고 Result
+   */
+   public deleteByReceiveDetailIds = async (ids: number[], uid: number, tran: Transaction) => {
+    try { return await this.repo.deleteByReceiveDetailIds(ids, uid, tran); }
+    catch (error) { throw error; }
   }
 }
 

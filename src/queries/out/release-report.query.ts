@@ -1,3 +1,5 @@
+
+
 const readReleaseReport = (
   params: {
     sort_type?: 'partner' | 'prod' | 'date',
@@ -8,8 +10,9 @@ const readReleaseReport = (
     factory_uuid?: string,
   }
 ) => {
+
   let searchQuery: string = '';
-  
+
   const createReleaseTempTable = `
     CREATE TEMP TABLE temp_release(
       release_detail_id int, 

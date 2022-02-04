@@ -10,6 +10,8 @@ import SalOutgoOrderCtl from '../controllers/sal/outgo-order.controller';
 import SalOutgoOrderDetailCtl from '../controllers/sal/outgo-order-detail.controller';
 import SalOutgoCtl from '../controllers/sal/outgo.controller';
 import SalOutgoDetailCtl from '../controllers/sal/outgo-detail.controller';
+import salIncomeValidation from '../validations/sal/income.validation';
+import validationCallback from '../utils/validationCallback';
 
 const router = express.Router();
 
@@ -54,13 +56,13 @@ router.route('/order-details').get(orderDetail.read);
 
 //#region ✅ Move (제품입고)
 const income = new SalIncomeCtl();
-router.route('/incomes/report').get(income.readReport);
-router.route('/income/:uuid').get(income.read);
-router.route('/incomes').get(income.read);
-router.route('/incomes').post(income.create);
-router.route('/incomes').put(income.update);
-router.route('/incomes').patch(income.patch);
-router.route('/incomes').delete(income.delete);
+router.route('/incomes/report').get(salIncomeValidation.readReport, validationCallback, income.readReport);
+router.route('/income/:uuid').get(salIncomeValidation.readByUuid, validationCallback, income.readByUuid);
+router.route('/incomes').get(salIncomeValidation.read, validationCallback, income.read);
+router.route('/incomes').post(salIncomeValidation.create, validationCallback, income.create);
+router.route('/incomes').put(salIncomeValidation.update, validationCallback, income.update);
+router.route('/incomes').patch(salIncomeValidation.patch, validationCallback, income.patch);
+router.route('/incomes').delete(salIncomeValidation.delete, validationCallback, income.delete);
 //#endregion
 
 //#region ✅ Release (제품출고)

@@ -17,13 +17,13 @@ inout_fg:
       type: boolean
       format: boolean
 
-tran_cd:
+tran_type_id:
   type: object
   properties:
-    tran_cd:
-      description: 입출고 타입 코드
-      type: string
-      format: varchar(20)
+    tran_type_id:
+      description: 수불유형ID
+      type: number
+      format: int4
 
 factory_id:
   type: object
@@ -119,6 +119,14 @@ tran_uuid:
   properties:
     tran_uuid:
       description: 재고수불UUID
+      type: string
+      format: uuid
+
+tran_type_uuid:
+  type: object
+  properties:
+    tran_type_uuid:
+      description: 수불유형UUID
       type: string
       format: uuid
 

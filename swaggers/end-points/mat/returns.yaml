@@ -132,7 +132,6 @@ post:
                   - from_location_uuid
                 type: object
                 allOf:        
-                  - $ref: ../../schemas/mat/return-detail.schema.yaml#/return_uuid
                   - $ref: ../../schemas/mat/return-detail.schema.yaml#/factory_uuid
                   - $ref: ../../schemas/mat/return-detail.schema.yaml#/prod_uuid
                   - $ref: ../../schemas/mat/return-detail.schema.yaml#/unit_uuid
@@ -189,7 +188,6 @@ put:
                   - price
                   - money_unit_uuid
                   - exchange
-                  - carry_fg
                 type: object
                 allOf:        
                   - $ref: ../../schemas/mat/return-detail.schema.yaml#/uuid

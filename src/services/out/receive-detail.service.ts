@@ -132,36 +132,40 @@ class OutReceiveDetailService {
 
   /**
    * 입력한 전표에 해당하는 상세전표의 개수 조회
-   * @param inspId 전표의 ID
+   * @param id 전표의 ID
    * @param tran DB Transaction
    * @returns 상세전표의 개수
    */
-   public getCountInHeader = async (inspId: number, tran?: Transaction) => {
-    try { return await this.repo.getCount(inspId, tran); } 
+   public getCountInHeader = async (id: number, tran?: Transaction) => {
+    try { return await this.repo.getCount(id, tran); } 
     catch (error) { throw error; }
   }
 
   /**
    * 입력한 전표에 해당하는 상세전표의 Max Sequence 조회
-   * @param inspId 전표의 ID
+   * @param id 전표의 ID
    * @param tran DB Transaction
    * @returns Sequence
    */
-  public getMaxSeq = async (inspId: number, tran?: Transaction) => {
-    try { return await this.repo.getMaxSeq(inspId, tran); } 
+  public getMaxSeq = async (id: number, tran?: Transaction) => {
+    try { return await this.repo.getMaxSeq(id, tran); } 
     catch (error) { throw error; }
   }
 
   /**
-   * 외주입하상세 데이터의 입하수량 * 단가 * 환율을 합계금액(total_price)로 추가하여 반환
+   * 외주입하상세 데이터의 입하수량 * 단가 * 환율을 합계금액(total_price)로 입력하여 수정
    * @param datas 외주입하상세 데이터
+   * @param uid 입력 사용자ID
+   * @param tran DB Transaction
    * @returns total_price가 추가 된 외주입하상세 데이터
    */
-  public calculateTotalPrice = (datas: any[]) => {
-    return datas.map((data: any) => {
+   public updateTotalPrice = async (datas: any[], uid: number, tran?: Transaction) => {
+    datas = datas.map((data: any) => {
       data.total_price = data.qty * data.price * data.exchange; 
       return data;
     });
+
+    return await this.repo.patch(datas, uid, tran);
   }
 
   public validateHasInspResultByUuids = async (uuids: string[]) => {

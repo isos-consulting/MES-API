@@ -18,7 +18,7 @@ const outReleaseDetailValidation = {
       .isISO8601().toDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'end_date', '기준 종료일자'))
   ],
   readByUuid: [
-    param('uuid', '외주입하상세UUID')
+    param('uuid', '외주출고상세UUID')
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'uuid', '외주입하UUID'))
   ],
 };

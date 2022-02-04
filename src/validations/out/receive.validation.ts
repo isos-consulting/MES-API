@@ -61,8 +61,7 @@ const outReceiveValidation = {
     body('header.partner_uuid', '거래처UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'partner_uuid', '거래처UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'partner_uuid', '거래처UUID')),
-    body('header.supplier_uuid', '공급처UUID')
-      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'supplier_uuid', '공급처UUID'))
+    body('header.supplier_uuid', '공급처UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'supplier_uuid', '공급처UUID')),
     body('header.stmt_no', '전표번호').optional({ nullable: true })
         .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'stmt_no', '전표번호')),
@@ -118,8 +117,7 @@ const outReceiveValidation = {
     body('header.uuid', '외주입하UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '외주입하UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '외주입하UUID')),
-    body('header.supplier_uuid', '공급처UUID')
-      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'supplier_uuid', '공급처UUID'))
+    body('header.supplier_uuid', '공급처UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'supplier_uuid', '공급처UUID')),
     body('header.stmt_no', '전표번호').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'stmt_no', '전표번호')),

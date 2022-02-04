@@ -5,12 +5,11 @@ import StdProdRepo from "../../repositories/std/prod.repository";
 import StdStoreRepo from "../../repositories/std/store.repository";
 import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
 import InvStoreRepo from "../../repositories/inv/store.repository";
-import createApiError from "../../utils/createApiError";
-import { errorState } from "../../states/common.state";
 import OutWorkInputRepo from "../../repositories/out/work-input.repository";
 import OutReceiveDetailRepo from "../../repositories/out/receive-detail.repository";
 import StdBomRepo from "../../repositories/std/bom.repository";
 import InvStoreService from "../inv/store.service";
+import StdStoreService from "../std/store.service";
 
 class OutWorkInputService {
   tenant: string;
@@ -107,32 +106,6 @@ class OutWorkInputService {
   }
 
   /**
-   * 외주투입 선입선출에서 사용하는 외주창고의 ID 반환
-   * @param tran DB Transaction
-   * @returns 외주창고가 있을 경우 ID 반환, 없을 경우 Error Throw
-   */
-   public getOutsourcingStoreId = async (tran?: Transaction) => {
-    try { 
-      const read = await this.stdStoreRepo.readRawAll(tran);
-      const outsourcingStore = read.raws.filter(raw => raw.outsourcing_fg === true);
-
-      const storeId = outsourcingStore[0]?.store_id;
-
-      if (!storeId) {
-        throw createApiError(
-          400, 
-          `외주창고가 존재하지 않습니다.`, 
-          this.stateTag, 
-          errorState.NO_DATA
-        );
-      }
-
-      return storeId;
-    } 
-		catch (error) { throw error; }
-  }
-
-  /**
    * 입력 데이터 기반 선입선출 외주투입 데이터 생성
    * @param params 외주투입 생성에 필요한 매개변수
    * @param regDate 기준일자
@@ -145,14 +118,16 @@ class OutWorkInputService {
       factory_id: number,
       prod_id: number,
       qty: number,
+      unit_id: number,
       receive_detail_id: number
     }, 
     regDate: string, 
     partnerId: number, 
     allowMinus: boolean
   ) => {
-    const storeService = new InvStoreService(this.tenant);
-    const storeId = this.getOutsourcingStoreId();
+    const inventoryService = new InvStoreService(this.tenant);
+    const storeService = new StdStoreService(this.tenant);
+    const storeId = await storeService.getOutsourcingStoreId();
 
     // 📌 입고 품목에 대한 하위 BOM 리스트 조회
     const childs = await this.bomRepo.readByParent(params.factory_id, params.prod_id);
@@ -161,12 +136,13 @@ class OutWorkInputService {
     const resultArray = await Promise.all(
       childs.raws.map(async child => {
         // 📌 투입 품목 기준 선입선출 수불 데이터 생성
-        const calculated = await storeService.getCalculatedFifoData(
+        const calculated = await inventoryService.getCalculatedFifoData(
           {
             factory_id: child.factory_id,
-            prod_id: child.prod_id,
+            prod_id: child.c_prod_id,
             store_id: storeId,
             partner_id: partnerId,
+            unit_id: child.unit_id,
           },
           regDate,
           params.qty * child.c_usage,
@@ -182,6 +158,7 @@ class OutWorkInputService {
             lot_no: cal.lot_no,
             qty: cal.qty,
             c_usage: child.c_usage,
+            unit_id: cal.unit_id,
             from_store_id: storeId
           }
         });
@@ -193,6 +170,7 @@ class OutWorkInputService {
     let result: any[] = [];
     resultArray.forEach(data => { result = [...result, ...data]; });
 
+    // console.log(result);
     return result;
   }
 

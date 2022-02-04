@@ -15,7 +15,7 @@ const readStoreIndividualHistory = (
       lot_no varchar(25),
       store_id int,
       location_id int,
-      tran_cd varchar(25),
+      tran_type_id int,
       inout_val int,
       basic_stock numeric(19,6),
       in_qty numeric(19,6),
@@ -45,12 +45,12 @@ const readStoreIndividualHistory = (
       i_s.lot_no,
       i_s.store_id,
       i_s.location_id,
-      i_s.tran_cd,
+      i_s.tran_type_id,
       CASE WHEN i_s.inout_fg = TRUE THEN 1 ELSE 0 END,
       COALESCE(b_s.qty,0),
-      CASE WHEN i_s.tran_cd = 'INV' THEN 0 ELSE CASE WHEN i_s.inout_fg = TRUE THEN i_s.qty ELSE 0 END END,
-      CASE WHEN i_s.tran_cd = 'INV' THEN 0 ELSE CASE WHEN i_s.inout_fg = TRUE THEN 0 ELSE i_s.qty END END,
-      CASE WHEN i_s.tran_cd <> 'INV' THEN 0 ELSE CASE WHEN i_s.inout_fg = TRUE THEN i_s.qty ELSE (i_s.qty * -1) END END,
+      CASE WHEN a_tt.tran_type_cd = 'INVENTORY' THEN 0 ELSE CASE WHEN i_s.inout_fg = TRUE THEN i_s.qty ELSE 0 END END,
+      CASE WHEN a_tt.tran_type_cd = 'INVENTORY' THEN 0 ELSE CASE WHEN i_s.inout_fg = TRUE THEN 0 ELSE i_s.qty END END,
+      CASE WHEN a_tt.tran_type_cd <> 'INVENTORY' THEN 0 ELSE CASE WHEN i_s.inout_fg = TRUE THEN i_s.qty ELSE (i_s.qty * -1) END END,
       i_s.created_at,
       i_s.created_uid,
       i_s.updated_at,
@@ -58,6 +58,7 @@ const readStoreIndividualHistory = (
     FROM inv_store_tb i_s
     JOIN std_factory_tb s_f ON s_f.factory_id = i_s.factory_id
     JOIN std_store_tb s_s ON s_s.store_id = i_s.store_id
+    JOIN adm_tran_type_tb a_tt ON a_tt.tran_type_id = i_s.tran_type_id
     LEFT JOIN (	
       SELECT 	
         i_s.factory_id, i_s.prod_id, i_s.reject_id, i_s.lot_no, i_s.store_id, i_s.location_id,
@@ -112,8 +113,9 @@ const readStoreIndividualHistory = (
       s_l.uuid as location_uuid,
       s_l.location_cd,
       s_l.location_nm,
-      t_s.tran_cd,
-      a_t.tran_nm,
+      a_tt.uuid as tran_type_uuid,
+      a_tt.tran_type_cd,
+      a_tt.tran_type_nm,
       t_s.basic_stock,
       t_s.in_qty,
       t_s.out_qty,
@@ -127,7 +129,7 @@ const readStoreIndividualHistory = (
       a_uu.user_nm as updated_nm
     FROM temp_store t_s
     JOIN std_factory_tb s_f ON s_f.factory_id = t_s.factory_id
-    JOIN adm_transaction_vw a_t ON a_t.tran_cd = t_s.tran_cd
+    JOIN adm_tran_type_tb a_tt ON a_tt.tran_type_id = t_s.tran_type_id
     JOIN std_prod_tb s_p ON s_p.prod_id = t_s.prod_id
     LEFT JOIN std_item_type_tb s_it ON s_it.item_type_id = s_p.item_type_id
     LEFT JOIN std_prod_type_tb s_pt ON s_pt.prod_type_id = s_p.prod_type_id

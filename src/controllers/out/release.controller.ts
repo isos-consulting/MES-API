@@ -90,10 +90,11 @@ class OutReleaseCtl {
           return detail;
         });
       
-        // 📌 세부 외주출고 등록
-        const detailResult = await detailService.create(data.details, req.user?.uid as number, tran);
+        // 📌 외주출고상세 등록 및 합계금액 계산
+        let detailResult = await detailService.create(data.details, req.user?.uid as number, tran);
+        detailResult = await detailService.updateTotalPrice(detailResult.raws, req.user?.uid as number, tran);
 
-        // 📌 합계수량 및 합계금액 계산
+        // 📌 외주출고의 합계수량 및 합계금액 계산
         headerResult = await service.updateTotal(releaseId, releaseUuid, req.user?.uid as number, tran);
 
         // 📌 입력 창고유형에 대한 유효성 검사
@@ -104,12 +105,13 @@ class OutReleaseCtl {
         // 📌 수불 데이터 생성
         const fromStoreResult = await inventoryService.transactInventory(
           detailResult.raws, 'CREATE', 
-          { inout: 'FROM', tran_type: 'OUT_RELEASE', reg_date: regDate, tran_id_alias: 'release_detail_id' },
+          { inout: 'FROM', tran_type: 'OUT_RELEASE', reg_date: regDate, tran_id_alias: 'release_detail_id', partner_id: headerResult.raws[0].partner_id },
           req.user?.uid as number, tran
         );
+
         const toStoreResult = await inventoryService.transactInventory(
           detailResult.raws, 'CREATE', 
-          { inout: 'TO', tran_type: 'OUT_RELEASE', reg_date: regDate, tran_id_alias: 'release_detail_id' },
+          { inout: 'TO', tran_type: 'OUT_RELEASE', reg_date: regDate, tran_id_alias: 'release_detail_id', partner_id: headerResult.raws[0].partner_id },
           req.user?.uid as number, tran
         );
 
@@ -189,7 +191,7 @@ class OutReleaseCtl {
 
       result.raws = [{ 
         header: headerResult.raws[0] ?? {}, 
-        deatils: detailsResult.raws 
+        details: detailsResult.raws 
       }];
       result.count = headerResult.count + detailsResult.count;
       
@@ -229,6 +231,7 @@ class OutReleaseCtl {
       const params = matchedData(req, { locations: [ 'query', 'params' ] });
       const service = new OutReleaseService(req.tenant.uuid);
 
+      console.log(params);
       const result = await service.readReport(params);
       
       return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
@@ -261,18 +264,16 @@ class OutReleaseCtl {
       }
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
-        // 📌 외주출고상세 합계금액 계산
-        data.details = detailService.calculateTotalPrice(data.details);
-
         // 📌 외주출고 수정
         let headerResult = await service.update([data.header], req.user?.uid as number, tran);
 
-        // 📌 외주출고상세 수정
-        const detailResult = await detailService.update(data.details, req.user?.uid as number, tran);
+        // 📌 외주출고상세 수정 및 합계금액 계산
+        let detailResult = await detailService.update(data.details, req.user?.uid as number, tran);
+        detailResult = await detailService.updateTotalPrice(detailResult.raws, req.user?.uid as number, tran);
 
-        // 📌 합계수량 및 합계금액 계산
+        // 📌 외주출고의 합계수량 및 합계금액 계산
         const releaseId = headerResult.raws[0].release_id;
-        const releaseUuid = headerResult.raws[0].release_uuid;
+        const releaseUuid = headerResult.raws[0].uuid;
         const regDate = headerResult.raws[0].reg_date;
         headerResult = await service.updateTotal(releaseId, releaseUuid, req.user?.uid as number, tran);
 
@@ -327,18 +328,16 @@ class OutReleaseCtl {
       }
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
-        // 📌 외주출고상세 합계금액 계산
-        data.details = detailService.calculateTotalPrice(data.details);
-
         // 📌 외주출고 수정
         let headerResult = await service.patch([data.header], req.user?.uid as number, tran);
 
-        // 📌 외주출고상세 수정
-        const detailResult = await detailService.patch(data.details, req.user?.uid as number, tran);
+        // 📌 외주출고상세 수정 및 합계금액 계산
+        let detailResult = await detailService.patch(data.details, req.user?.uid as number, tran);
+        detailResult = await detailService.updateTotalPrice(detailResult.raws, req.user?.uid as number, tran);
 
-        // 📌 합계수량 및 합계금액 계산
+        // 📌 외주출고의 합계수량 및 합계금액 계산
         const releaseId = headerResult.raws[0].release_id;
-        const releaseUuid = headerResult.raws[0].release_uuid;
+        const releaseUuid = headerResult.raws[0].uuid;
         const regDate = headerResult.raws[0].reg_date;
         headerResult = await service.updateTotal(releaseId, releaseUuid, req.user?.uid as number, tran);
 
@@ -407,13 +406,14 @@ class OutReleaseCtl {
         // 📌 외주출고상세 삭제
         const detailResult = await detailService.delete(data.details, req.user?.uid as number, tran);
 
+        
         // 📌 전표 내 상세전표 데이터 개수 조회
         //    상세전표개수가 0개일 경우 (전표데이터 삭제)
         //    상세전표개수가 1개 이상일 경우 (전표데이터 합계 데이터 계산)
         const count = await detailService.getCountInHeader(data.header.release_id, tran);
         let headerResult: ApiResult<any>;
         if (count == 0) {
-          headerResult = await service.delete(data.header, req.user?.uid as number, tran);
+          headerResult = await service.delete([data.header], req.user?.uid as number, tran);
         } else {
           headerResult = await service.updateTotal(data.header.release_id, data.header.uuid, req.user?.uid as number, tran);
         }

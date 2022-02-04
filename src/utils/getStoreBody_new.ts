@@ -9,7 +9,8 @@ const getStoreBody = (params: {
   tran_id_alias: string,
   qty_alias?: string,
   store_alias?: string,
-  location_alias?: string
+  location_alias?: string,
+  partner_id?: number,
 }) => {
   const datas = checkArray(params.datas);
 
@@ -22,13 +23,14 @@ const getStoreBody = (params: {
       factory_id: data.factory_id,
       tran_id: data[params.tran_id_alias],
       inout_fg: params.inout === 'FROM' ? false : true,
-      reg_date: params.reg_date,
+      reg_date: params.reg_date ?? data.reg_date,
       tran_type_id: params.tran_type_id,
       store_id: data[storeAlias],
       location_id: data[locationAlias],
       prod_id: data.prod_id,
       lot_no: data.lot_no,
       qty: data[qtyAlias],
+      partner_id: params.partner_id
     };
   });
 

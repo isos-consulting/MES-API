@@ -888,7 +888,7 @@ const seedDatas: IAutMenu[] = [
 	{
 		menu_id: 64,
 		menu_type_id: null,
-		menu_nm: '자재공정출고 관리',
+		menu_nm: '자재출고 관리',
 		menu_uri: '\/mat\/release',
 		menu_form_nm: '',
 		component_nm: null,
@@ -902,7 +902,7 @@ const seedDatas: IAutMenu[] = [
 	{
 		menu_id: 65,
 		menu_type_id: 2,
-		menu_nm: '자재공정출고 등록',
+		menu_nm: '자재출고 등록',
 		menu_uri: '\/mat\/releases',
 		menu_form_nm: 'frm_MAT_Release',
 		component_nm: 'PgMatRelease',
@@ -916,7 +916,7 @@ const seedDatas: IAutMenu[] = [
 	{
 		menu_id: 66,
 		menu_type_id: 1,
-		menu_nm: '자재공정출고 현황',
+		menu_nm: '자재출고 현황',
 		menu_uri: '\/mat\/release-reports',
 		menu_form_nm: 'frm_MAT_ReleaseReport',
 		component_nm: 'PgMatReleaseReport',

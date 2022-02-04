@@ -24,7 +24,7 @@ const seedDatas: IAdmTranType[] = [
 	{
 		tran_type_id : 3,
 		tran_type_cd : "MAT_RELEASE",
-		tran_type_nm : "자재공정출고",
+		tran_type_nm : "자재출고",
 		sortby : 3,
 		remark : "",
 		created_uid : 1,

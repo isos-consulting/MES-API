@@ -254,7 +254,7 @@ class OutReleaseRepo {
   
   // 📒 Fn[delete]: Default Delete Function
   public delete = async(body: IOutRelease[], uid: number, transaction?: Transaction) => {
-    try {      
+    try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
       const promises = body.map((release: any) => {

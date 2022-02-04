@@ -98,8 +98,7 @@ export default class OutReleaseDetail extends Model<IOutReleaseDetail> {
 
   @Column({
     comment: '합계 금액',
-    type: DataType.DECIMAL(19, 6),
-    allowNull: false,
+    type: DataType.DECIMAL(19, 6)
   })
   total_price: number;
 

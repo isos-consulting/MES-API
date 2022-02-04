@@ -1,13 +1,13 @@
 get:
   description: |
-    자재공정출고현황을 조회합니다.
-  summary: 자재공정출고현황 데이터 조회
+    자재출고현황을 조회합니다.
+  summary: 자재출고현황 데이터 조회
   tags:
-    - 자재공정출고(Release)
+    - 자재출고(Release)
   parameters:
     - name: factory_uuid
       in: query
-      description: 공장의 UUID를 입력하여 공장에 따라 자재공정출고현황 데이터를 조회합니다. [전체 조회시 입력하지 않습니다.]
+      description: 공장의 UUID를 입력하여 공장에 따라 자재출고현황 데이터를 조회합니다. [전체 조회시 입력하지 않습니다.]
       schema:
         type: string
         format: uuid
@@ -66,7 +66,7 @@ get:
                             format: int32
                             minimum: 0
                       raws:
-                        description: 자재공정출고현황 데이터 조회
+                        description: 자재출고현황 데이터 조회
                         type: array
                         items:
                           allOf:

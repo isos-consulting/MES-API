@@ -102,10 +102,11 @@ class OutReceiveCtl {
           return detail;
         });
       
-        // 📌 세부 외주입하 등록
-        const detailResult = await detailService.create(data.details, req.user?.uid as number, tran);
+        // 📌 외주입하상세 등록 및 합계금액 계산
+        let detailResult = await detailService.create(data.details, req.user?.uid as number, tran);
+        detailResult = await detailService.updateTotalPrice(detailResult.raws, req.user?.uid as number, tran);
 
-        // 📌 합계수량 및 합계금액 계산
+        // 📌 외주입하의 합계수량 및 합계금액 계산
         headerResult = await service.updateTotal(receiveId, receiveUuid, req.user?.uid as number, tran);
 
         // 📌 수입검사 미진행 항목(무검사 항목) 수불데이터 생성
@@ -116,7 +117,7 @@ class OutReceiveCtl {
         await storeService.validateStoreTypeByIds(incomeBody.map(body => body.to_store_id), 'AVAILABLE', tran);
         const incomeResult = await incomeService.create(incomeBody, req.user?.uid as number, tran);
         const toStoreResult = await inventoryService.transactInventory(
-          incomeBody, 'CREATE', 
+          incomeResult.raws, 'CREATE', 
           { inout: 'TO', tran_type: 'OUT_INCOME', reg_date: regDate, tran_id_alias: 'income_id' },
           req.user?.uid as number, tran
         );
@@ -127,15 +128,14 @@ class OutReceiveCtl {
 
         // 📌 외주투입의 자동 선입선출 옵션이 Enable인 경우에 투입 진행
         const isPullOption = await tenantOptService.getTenantOptValue('OUT_AUTO_PULL', tran);
-
         if (isPullOption === OUT_AUTO_PULL.ENABLE) {
           for await (const data of datasForInventory) {
             const inputBody = await inputService.getPullInputBody(data, regDate, partnerId, isPullOption);
             await storeService.validateStoreTypeByIds(inputBody.map(body => body.from_store_id), 'OUTSOURCING', tran);
             const tempInputResult = await inputService.create(inputBody, req.user?.uid as number, tran);
             const tempFromStoreResult = await inventoryService.transactInventory(
-              inputBody, 'CREATE', 
-              { inout: 'FROM', tran_type: 'OUT_INPUT', reg_date: regDate, tran_id_alias: 'work_input_id' },
+              tempInputResult.raws, 'CREATE', 
+              { inout: 'FROM', tran_type: 'OUT_INPUT', reg_date: regDate, tran_id_alias: 'work_input_id', partner_id: headerResult.raws[0].partner_id },
               req.user?.uid as number, tran
             );
 
@@ -229,7 +229,7 @@ class OutReceiveCtl {
 
       result.raws = [{ 
         header: headerResult.raws[0] ?? {}, 
-        deatils: detailsResult.raws 
+        details: detailsResult.raws 
       }];
       result.count = headerResult.count + detailsResult.count;
       
@@ -308,28 +308,36 @@ class OutReceiveCtl {
         // 📌 수입검사 이력이 있을 경우 Interlock
         await detailService.validateHasInspResultByUuids(data.details.map((detail: any) => detail.uuid));
 
-        // 📌 외주입하상세 합계금액 계산
-        data.details = detailService.calculateTotalPrice(data.details);
-
         // 📌 외주입하 수정
         let headerResult = await service.update([data.header], req.user?.uid as number, tran);
 
-        // 📌 외주입하상세 수정
-        const detailResult = await detailService.update(data.details, req.user?.uid as number, tran);
+        // 📌 외주입하상세 수정 및 합계금액 계산
+        let detailResult = await detailService.patch(data.details, req.user?.uid as number, tran);
+        detailResult = await detailService.updateTotalPrice(detailResult.raws, req.user?.uid as number, tran);
 
-        // 📌 합계수량 및 합계금액 계산
+        // 📌 외주입하의 합계수량 및 합계금액 계산
         const receiveId = headerResult.raws[0].receive_id;
-        const receiveUuid = headerResult.raws[0].receive_uuid;
+        const receiveUuid = headerResult.raws[0].uuid;
         const regDate = headerResult.raws[0].reg_date;
         const partnerId = headerResult.raws[0].partner_id;
         headerResult = await service.updateTotal(receiveId, receiveUuid, req.user?.uid as number, tran);
 
-        // 📌 외주입고 및 수불 데이터 수정
-        const incomeBody = await incomeService.getIncomeBody(data.details, regDate);
+        // 📌 외주입고 및 수불 데이터 삭제 후 재 생성
+        // 📌 외주입고 및 수불 데이터 삭제
+        const receiveDetailIds = data.details.map((detail: any) => detail.receive_detail_id);
+        const deletedIncome = await incomeService.deleteByReceiveDetailIds(receiveDetailIds, req.user?.uid as number, tran);
+        await inventoryService.transactInventory(
+          deletedIncome.raws, 'DELETE', 
+          { inout: 'TO', tran_type: 'OUT_INCOME', reg_date: '', tran_id_alias: 'income_id' },
+          req.user?.uid as number, tran
+        );
+
+        // 📌 외주입고 및 수불 데이터 생성
+        const incomeBody = await incomeService.getIncomeBody(detailResult.raws, regDate);
         await storeService.validateStoreTypeByIds(incomeBody.map(body => body.to_store_id), 'AVAILABLE', tran);
-        const incomeResult = await incomeService.update(incomeBody, req.user?.uid as number, tran);
+        const incomeResult = await incomeService.create(incomeBody, req.user?.uid as number, tran);
         const toStoreResult = await inventoryService.transactInventory(
-          incomeBody, 'UPDATE', 
+          incomeResult.raws, 'CREATE', 
           { inout: 'TO', tran_type: 'OUT_INCOME', reg_date: regDate, tran_id_alias: 'income_id' },
           req.user?.uid as number, tran
         );
@@ -337,12 +345,13 @@ class OutReceiveCtl {
         // 📌 외주투입의 자동 선입선출 옵션이 Enable인 경우에 투입 진행
         const isPullOption = await tenantOptService.getTenantOptValue('OUT_AUTO_PULL', tran);
 
+        // 📌 외주투입 및 수불 데이터 삭제 후 재 생성
         // 📌 외주투입 및 수불 데이터 삭제
         if (isPullOption === OUT_AUTO_PULL.ENABLE) {
           const receiveDetailIds = detailResult.raws.map(raw => raw.receive_id);
-          const deleted = await inputService.deleteByReceiveDetailIds(receiveDetailIds, req.user?.uid as number, tran);
+          const deletedInput = await inputService.deleteByReceiveDetailIds(receiveDetailIds, req.user?.uid as number, tran);
           await inventoryService.transactInventory(
-            deleted.raws, 'DELETE', 
+            deletedInput.raws, 'DELETE', 
             { inout: 'FROM', tran_type: 'OUT_INPUT', reg_date: regDate, tran_id_alias: 'work_input_id' },
             req.user?.uid as number, tran
           );
@@ -353,12 +362,12 @@ class OutReceiveCtl {
         let fromStoreResult: ApiResult<any> = { count: 0, raws: [] };
 
         if (isPullOption === OUT_AUTO_PULL.ENABLE) {
-          for await (const detail of data.details) {
+          for await (const detail of detailResult.raws) {
             const inputBody = await inputService.getPullInputBody(detail, regDate, partnerId, isPullOption);
             await storeService.validateStoreTypeByIds(inputBody.map(body => body.from_store_id), 'OUTSOURCING', tran);
             const tempInputResult = await inputService.create(inputBody, req.user?.uid as number, tran);
             const tempFromStoreResult = await inventoryService.transactInventory(
-              inputBody, 'CREATE', 
+              tempInputResult.raws, 'CREATE', 
               { inout: 'FROM', tran_type: 'OUT_INPUT', reg_date: regDate, tran_id_alias: 'work_input_id' },
               req.user?.uid as number, tran
             );
@@ -423,28 +432,36 @@ class OutReceiveCtl {
         // 📌 수입검사 이력이 있을 경우 Interlock
         await detailService.validateHasInspResultByUuids(data.details.map((detail: any) => detail.uuid));
 
-        // 📌 외주입하상세 합계금액 계산
-        data.details = detailService.calculateTotalPrice(data.details);
-
         // 📌 외주입하 수정
         let headerResult = await service.patch([data.header], req.user?.uid as number, tran);
 
-        // 📌 외주입하상세 수정
-        const detailResult = await detailService.patch(data.details, req.user?.uid as number, tran);
+        // 📌 외주입하상세 수정 및 합계금액 계산
+        let detailResult = await detailService.patch(data.details, req.user?.uid as number, tran);
+        detailResult = await detailService.updateTotalPrice(detailResult.raws, req.user?.uid as number, tran);
 
-        // 📌 합계수량 및 합계금액 계산
+        // 📌 외주입하의 합계수량 및 합계금액 계산
         const receiveId = headerResult.raws[0].receive_id;
-        const receiveUuid = headerResult.raws[0].receive_uuid;
+        const receiveUuid = headerResult.raws[0].uuid;
         const regDate = headerResult.raws[0].reg_date;
         const partnerId = headerResult.raws[0].partner_id;
         headerResult = await service.updateTotal(receiveId, receiveUuid, req.user?.uid as number, tran);
 
-        // 📌 외주입고 및 수불 데이터 수정
-        const incomeBody = await incomeService.getIncomeBody(data.details, regDate);
+        // 📌 외주입고 및 수불 데이터 삭제 후 재 생성
+        // 📌 외주입고 및 수불 데이터 삭제
+        const receiveDetailIds = data.details.map((detail: any) => detail.receive_detail_id);
+        const deletedIncome = await incomeService.deleteByReceiveDetailIds(receiveDetailIds, req.user?.uid as number, tran);
+        await inventoryService.transactInventory(
+          deletedIncome.raws, 'DELETE', 
+          { inout: 'TO', tran_type: 'OUT_INCOME', reg_date: '', tran_id_alias: 'income_id' },
+          req.user?.uid as number, tran
+        );
+
+        // 📌 외주입고 및 수불 데이터 생성
+        const incomeBody = await incomeService.getIncomeBody(detailResult.raws, regDate);
         await storeService.validateStoreTypeByIds(incomeBody.map(body => body.to_store_id), 'AVAILABLE', tran);
-        const incomeResult = await incomeService.update(incomeBody, req.user?.uid as number, tran);
+        const incomeResult = await incomeService.create(incomeBody, req.user?.uid as number, tran);
         const toStoreResult = await inventoryService.transactInventory(
-          incomeBody, 'UPDATE', 
+          incomeResult.raws, 'CREATE', 
           { inout: 'TO', tran_type: 'OUT_INCOME', reg_date: regDate, tran_id_alias: 'income_id' },
           req.user?.uid as number, tran
         );
@@ -452,6 +469,7 @@ class OutReceiveCtl {
         // 📌 외주투입의 자동 선입선출 옵션이 Enable인 경우에 투입 진행
         const isPullOption = await tenantOptService.getTenantOptValue('OUT_AUTO_PULL', tran);
 
+        // 📌 외주투입 및 수불 데이터 삭제 후 재 생성
         // 📌 외주투입 및 수불 데이터 삭제
         if (isPullOption === OUT_AUTO_PULL.ENABLE) {
           const receiveDetailIds = detailResult.raws.map(raw => raw.receive_id);
@@ -468,12 +486,12 @@ class OutReceiveCtl {
         let fromStoreResult: ApiResult<any> = { count: 0, raws: [] };
 
         if (isPullOption === OUT_AUTO_PULL.ENABLE) {
-          for await (const detail of data.details) {
+          for await (const detail of detailResult.raws) {
             const inputBody = await inputService.getPullInputBody(detail, regDate, partnerId, isPullOption);
             await storeService.validateStoreTypeByIds(inputBody.map(body => body.from_store_id), 'OUTSOURCING', tran);
             const tempInputResult = await inputService.create(inputBody, req.user?.uid as number, tran);
             const tempFromStoreResult = await inventoryService.transactInventory(
-              inputBody, 'CREATE', 
+              tempInputResult.raws, 'CREATE', 
               { inout: 'FROM', tran_type: 'OUT_INPUT', reg_date: regDate, tran_id_alias: 'work_input_id' },
               req.user?.uid as number, tran
             );
@@ -535,6 +553,23 @@ class OutReceiveCtl {
         // 📌 수입검사 이력이 있을 경우 Interlock
         await detailService.validateHasInspResultByUuids(data.details.map((detail: any) => detail.uuid));
 
+        // 📌 외주입고 및 수불 데이터 삭제
+        const receiveDetailIds = data.details.map((detail: any) => detail.receive_detail_id);
+        const incomeResult = await incomeService.deleteByReceiveDetailIds(receiveDetailIds, req.user?.uid as number, tran);
+        const toStoreResult = await inventoryService.transactInventory(
+          incomeResult.raws, 'DELETE', 
+          { inout: 'TO', tran_type: 'OUT_INCOME', reg_date: '', tran_id_alias: 'income_id' },
+          req.user?.uid as number, tran
+        );
+
+        // 📌 외주투입 및 수불 데이터 삭제
+        const inputResult = await inputService.deleteByReceiveDetailIds(receiveDetailIds, req.user?.uid as number, tran);
+        const fromStoreResult = await inventoryService.transactInventory(
+          inputResult.raws, 'DELETE', 
+          { inout: 'FROM', tran_type: 'OUT_INPUT', reg_date: '', tran_id_alias: 'work_input_id' },
+          req.user?.uid as number, tran
+        );
+
         // 📌 외주입하상세 삭제
         const detailResult = await detailService.delete(data.details, req.user?.uid as number, tran);
 
@@ -544,28 +579,10 @@ class OutReceiveCtl {
         const count = await detailService.getCountInHeader(data.header.receive_id, tran);
         let headerResult: ApiResult<any>;
         if (count == 0) {
-          headerResult = await service.delete(data.header, req.user?.uid as number, tran);
+          headerResult = await service.delete([data.header], req.user?.uid as number, tran);
         } else {
           headerResult = await service.updateTotal(data.header.receive_id, data.header.uuid, req.user?.uid as number, tran);
         }
-
-        // 📌 외주입고 및 수불 데이터 삭제
-        const incomeBody = await incomeService.getIncomeBody(data.details, headerResult.raws[0].reg_date);
-        const incomeResult = await incomeService.delete(incomeBody, req.user?.uid as number, tran);
-        const toStoreResult = await inventoryService.transactInventory(
-          incomeBody, 'DELETE', 
-          { inout: 'TO', tran_type: 'OUT_INCOME', reg_date: '', tran_id_alias: 'income_id' },
-          req.user?.uid as number, tran
-        );
-
-        // 📌 외주투입 및 수불 데이터 삭제
-        const receiveDetailIds = detailResult.raws.map(raw => raw.receive_detail_id);
-        const inputResult = await inputService.deleteByReceiveDetailIds(receiveDetailIds, req.user?.uid as number, tran);
-        const fromStoreResult = await inventoryService.transactInventory(
-          incomeBody, 'DELETE', 
-          { inout: 'FROM', tran_type: 'OUT_INPUT', reg_date: '', tran_id_alias: 'work_input_id' },
-          req.user?.uid as number, tran
-        );
 
         result.raws = [{
           header: headerResult.raws[0],

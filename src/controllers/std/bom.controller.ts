@@ -98,8 +98,9 @@ class StdBomCtl {
     try {
       let result: ApiResult<any> = { count: 0, raws: [] };
       const service = new StdBomService(req.tenant.uuid);
+      const params = matchedData(req, { locations: [ 'query', 'params' ] });
 
-      result = await service.readToTrees(req.params);
+      result = await service.readToTrees(params);
 
       return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
     } catch (error) {

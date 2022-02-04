@@ -7,6 +7,7 @@ import StdProdRepo from '../../repositories/std/prod.repository';
 import StdStoreRepo from '../../repositories/std/store.repository';
 import StdUnitRepo from '../../repositories/std/unit.repository';
 import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
+import refreshMaterializedView from "../../utils/refreshMaterializedView";
 
 class StdBomService {
   tenant: string;
@@ -76,7 +77,11 @@ class StdBomService {
   };
 
   public create = async (datas: any[], uid: number, tran: Transaction) => {
-    try { return await this.repo.create(datas, uid, tran); }
+    try { 
+      const result = await this.repo.create(datas, uid, tran); 
+      await refreshMaterializedView(this.tenant, 'std_bom_tree_vw', tran);
+      return result;
+    }
 		catch (error) { throw error; }
   };
 
@@ -101,17 +106,29 @@ class StdBomService {
   };
 
   public update = async (datas: any[], uid: number, tran: Transaction) => {
-    try { return await this.repo.update(datas, uid, tran); } 
+    try { 
+      const result = await this.repo.update(datas, uid, tran);
+      await refreshMaterializedView(this.tenant, 'std_bom_tree_vw', tran);
+      return result;
+    } 
 		catch (error) { throw error; }
   };
 
   public patch = async (datas: any[], uid: number, tran: Transaction) => {
-    try { return await this.repo.patch(datas, uid, tran) }
+    try { 
+      const result = await this.repo.patch(datas, uid, tran);
+      await refreshMaterializedView(this.tenant, 'std_bom_tree_vw', tran);
+      return result;
+    }
 		catch (error) { throw error; }
   };
 
   public delete = async (datas: any[], uid: number, tran: Transaction) => {
-    try { return await this.repo.delete(datas, uid, tran); }
+    try { 
+      const result = await this.repo.delete(datas, uid, tran); 
+      await refreshMaterializedView(this.tenant, 'std_bom_tree_vw', tran);
+      return result;
+    }
 		catch (error) { throw error; }
   };
 }

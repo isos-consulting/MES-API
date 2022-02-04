@@ -121,11 +121,12 @@ class InvStoreService {
     tranOpt: {
       inout: 'FROM' | 'TO',         // FROM: 출고, TO: 입고
       tran_type: TTranType,         // 수불 유형
-      reg_date: string,             // 수불 기준일자
       tran_id_alias: string,        // 수불 데이터의 ID Column명
+      reg_date?: string,            // 수불 기준일자
       qty_alias?: string,           // 수불 데이터의 Qty Column명
       store_alias?: string,         // 수불 데이터의 Store(창고) Column명
-      location_alias?: string       // 수불 데이터의 Location(위치) Column명
+      location_alias?: string,      // 수불 데이터의 Location(위치) Column명
+      partner_id?: number,          // 거래처 ID (외주창고 한정)      -- partner_id는 Header에 있고 수불은 Detail 기준으로 들어오기 때문
     }, 
     uid: number, 
     tran: Transaction
@@ -158,7 +159,7 @@ class InvStoreService {
    * @returns 선입선출 수불 데이터 반환 / 마이너스 재고를 허용하지않고 재고수량이 부족하면 Error Throw
    */
   public getCalculatedFifoData = async (params: any, regDate: string, qty: number, allowMinus: boolean) => {
-    const stocks = await this.readStocks({
+    let stocks = await this.readStocks({
       factory_id: params.factory_id,
       prod_id: params.prod_id,
       store_id: params.store_id,
@@ -167,8 +168,11 @@ class InvStoreService {
       reject_id: params.reject_id,
       partner_id: params.partner_id,
       reg_date: regDate,
-      exclude_zero_lot_fg: false
+      exclude_zero_lot_fg: false,
     });
+
+    // 📌 재고 LOT NO에 대하여 내림차순 정렬 (array.pop()을 사용하여 배열의 마지막 인덱스부터 소모시키기 위함)
+    stocks = stocks.reverse();
 
     // 📌 마이너스 재고를 허용하지 않을경우 재고에 대한 Vaildation 진행
     if (!allowMinus) {
@@ -201,6 +205,9 @@ class InvStoreService {
    */
   public recursiveFifo = (params: any[], stocks: any[], regDate: string, currentQty: number, result: any[]) => {
     if (!result) { result = []; }
+
+    // 📌 필요 수량만큼 모두 투입되어 남은 투입수량이 0이하인 경우 Return한다.
+    if (currentQty <= 0) { return result; }
 
     // 📌 모든 재고를 투입 하였음에도 투입해야하는 재고수량이 남은경우 0 Lot로 나머지 수량을 채운다.
     if (stocks.length === 0 && currentQty) {

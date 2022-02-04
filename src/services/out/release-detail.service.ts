@@ -9,6 +9,7 @@ import StdStoreRepo from "../../repositories/std/store.repository";
 import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
 import InvStoreRepo from "../../repositories/inv/store.repository";
 import OutReleaseRepo from "../../repositories/out/release.repository";
+import StdStoreService from "../std/store.service";
 
 class OutReleaseDetailService {
   tenant: string;
@@ -103,7 +104,18 @@ class OutReleaseDetailService {
   }
 
   public create = async (datas: any[], uid: number, tran: Transaction) => {
-    try { return await this.repo.create(datas, uid, tran); } 
+    try { 
+      // 📌 입고창고에 외주창고 입력
+      const storeService = new StdStoreService(this.tenant);
+      const storeId = await storeService.getOutsourcingStoreId();
+
+      datas.map(data => {
+        data.to_store_id = storeId;
+        return data;
+      })
+      
+      return await this.repo.create(datas, uid, tran); 
+    } 
     catch (error) { throw error; }
   }
 
@@ -155,15 +167,19 @@ class OutReleaseDetailService {
   }
 
   /**
-   * 외주출고상세 데이터의 출고수량 * 단가 * 환율을 합계금액(total_price)로 추가하여 반환
+   * 외주출고상세 데이터의 출고수량 * 단가 * 환율을 합계금액(total_price)로 입력하여 수정
    * @param datas 외주출고상세 데이터
+   * @param uid 입력 사용자ID
+   * @param tran DB Transaction
    * @returns total_price가 추가 된 외주출고상세 데이터
    */
-  public calculateTotalPrice = (datas: any[]) => {
-    return datas.map((data: any) => {
+   public updateTotalPrice = async (datas: any[], uid: number, tran?: Transaction) => {
+    datas = datas.map((data: any) => {
       data.total_price = data.qty * data.price * data.exchange; 
       return data;
     });
+
+    return await this.repo.patch(datas, uid, tran);
   }
 }
 

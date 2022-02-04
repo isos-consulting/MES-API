@@ -44,7 +44,7 @@ components:
             read:pets: read your pets
 
 paths:
-  # ✅ Release (자재공정출고)
+  # ✅ Release (자재출고)
   /mat/releases/report:
     $ref: ../end-points/mat/releases.report.yaml
   /mat/release/{uuid}:

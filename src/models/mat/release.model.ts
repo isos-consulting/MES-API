@@ -10,13 +10,13 @@ import StdStore from '../std/store.model';
 @Table({
   tableName: 'MAT_RELEASE_TB',
   modelName: 'MatRelease',
-  comment: '자재공정출고 정보 테이블',
+  comment: '자재출고 정보 테이블',
   timestamps: true,
   underscored: true,
 })
 export default class MatRelease extends Model<IMatRelease> {
   @Column({
-    comment: '자재공정출고ID',
+    comment: '자재출고ID',
     primaryKey: true,
     autoIncrement: true,
     autoIncrementIdentity: true,
@@ -145,7 +145,7 @@ export default class MatRelease extends Model<IMatRelease> {
 
   @Unique('mat_release_tb_uuid_un')
   @Column({
-    comment: '자재공정출고UUID',
+    comment: '자재출고UUID',
     type: DataType.UUID,
     allowNull: false,
     defaultValue: Sequelize.fn('gen_random_uuid')

@@ -6,7 +6,6 @@ import StdProdRepo from '../../repositories/std/prod.repository';
 import StdRejectRepo from '../../repositories/std/reject.repository';
 import StdPartnerRepo from '../../repositories/std/partner.repository';
 import StdStoreRepo from '../../repositories/std/store.repository';
-import getTranTypeCdByApiParams from '../../utils/getTranTypeCdByApiParams';
 import isDateFormat from '../../utils/isDateFormat';
 import isUuid from '../../utils/isUuid';
 import response from '../../utils/response';
@@ -25,7 +24,6 @@ class InvStoreCtl extends BaseCtl {
   TRepo: InvStoreRepo;
 
   // ✅ 조회조건 Types
-  tranTypes: string[];
   groupedTypes: string[];
   stockTypes: string[];
   priceTypes: string[];
@@ -76,17 +74,6 @@ class InvStoreCtl extends BaseCtl {
     ];
 
     // ✅ 조회조건 Types Setting
-    this.tranTypes = [
-      'all', 
-      'matIncome', 'matReturn', 'matRelease',
-      'prdReturn', 'prdOutput', 'prdInput', 'prdReject',
-      'salIncome', 'salRelease', 'salOutgo', 'salReturn',
-      'outIncome', 'outRelease',
-      'inventory', 'invMove', 'invReject',
-      'qmsReceiveInspReject', 'qmsFinalInspIncome', 'qmsFinalInspReject',
-      'qmsRework', 'qmsDisposal', 'qmsReturn', 'qmsDisassemble', 'qmsDisassembleIncome', 'qmsDisassembleReturn',
-      'etcIncome', 'etcRelease'
-    ];
     this.stockTypes = [ 'all', 'available', 'reject', 'return', 'outgo', 'finalInsp', 'outsourcing' ];
     this.groupedTypes = [ 'all', 'factory', 'store', 'lotNo', 'location' ];   
     this.priceTypes = [ 'all', 'purchase', 'sales' ];
@@ -204,12 +191,10 @@ class InvStoreCtl extends BaseCtl {
       const repo = new InvStoreRepo(req.tenant.uuid);
       
       const params = Object.assign(req.query, req.params);  
-      if (!this.tranTypes.includes(params.tran_type)) { throw new Error('잘못된 tran_type(재고수불유형) 입력') };
       if (!isUuid(params.factory_uuid)) { throw new Error('잘못된 factory_uuid(공장UUID) 입력') };
       if (!isDateFormat(params.start_date)) { throw new Error('잘못된 start_date(기준시작일자) 입력') };
       if (!isDateFormat(params.end_date)) { throw new Error('잘못된 end_date(기준종료일자) 입력') };
 
-      params.tran_type_cd = getTranTypeCdByApiParams(params.tran_type) as string;
       const result = await repo.readStoreHistoryByTransaction(params);
 
       return response(res, result.raws, { count: result.count });
@@ -336,7 +321,6 @@ class InvStoreCtl extends BaseCtl {
   beforeRead = async(req: express.Request) => {
     if (isUuid(req.params.uuid)) { return; }
 
-    if (!this.tranTypes.includes(req.query.tran_type as string)) { throw new Error('잘못된 tran_type(재고수불유형) 입력') };
     if (!isDateFormat(req.query.start_date)) { throw new Error('잘못된 start_date(기준시작일자) 입력') };
     if (!isDateFormat(req.query.end_date)) { throw new Error('잘못된 end_date(기준종료일자) 입력') };
   }

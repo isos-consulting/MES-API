@@ -902,16 +902,16 @@ class QmsInspResultCtl extends BaseCtl {
 
           // ✅ 수불 데이터 및 입고내역 삭제 후 재 등록
           const deleteStoreBody: any[] = [];
-          const receiveDetailIds = headerResult.raws.map((raw: any) => { return raw.insp_reference_id; });
+          // const receiveDetailIds = headerResult.raws.map((raw: any) => { return raw.insp_reference_id; });
           let incomeIds: any[] = [];
           // 📌 자재 또는 외주 입고 내역 및 수불 내역을 삭제 목록에 추가
           switch (data.header[0].insp_detail_type_cd) {
             case 'MAT_RECEIVE': 
-              incomeIds = await matIncomeRepo.readIncomeIdsToReceiveDetailIds(receiveDetailIds);
+              // incomeIds = await matIncomeRepo.readIncomeIdsToReceiveDetailIds(receiveDetailIds);
               if (incomeIds[0]) deleteStoreBody.push({ tran_id: incomeIds[0], inout_fg: true, tran_cd: getTranTypeCd('MAT_INCOME') });
               break;
             case 'OUT_RECEIVE': 
-              incomeIds = await outIncomeRepo.readIncomeIdsToReceiveDetailIds(receiveDetailIds);
+              // incomeIds = await outIncomeRepo.readIncomeIdsToReceiveDetailIds(receiveDetailIds);
               if (incomeIds[0]) deleteStoreBody.push({ tran_id: incomeIds[0], inout_fg: true, tran_cd: getTranTypeCd('OUT_INCOME') });
               break;
             default: break;
@@ -1180,17 +1180,17 @@ class QmsInspResultCtl extends BaseCtl {
           // ✅ 5. 검사성적서 삭제
 
           const header: QmsInspResult = unsealArray((await repo.readRawByUuid(data.uuid)).raws);
-          const receiveDetailId = header.insp_reference_id;
+          // const receiveDetailId = header.insp_reference_id;
           const storeBody: any[] = [];
           let incomeIds: any[] = [];
           // 📌 자재 또는 외주 입고 내역 및 수불 내역을 삭제req.body = checkArray(req.body); 목록에 추가
           switch (data.insp_detail_type_cd) {
             case 'MAT_RECEIVE': 
-              incomeIds = await matIncomeRepo.readIncomeIdsToReceiveDetailIds([receiveDetailId]);
+              // incomeIds = await matIncomeRepo.readIncomeIdsToReceiveDetailIds([receiveDetailId]);
               if (incomeIds[0]) storeBody.push({ tran_id: incomeIds[0], inout_fg: true, tran_cd: getTranTypeCd('MAT_INCOME') });
               break;
             case 'OUT_RECEIVE': 
-              incomeIds = await outIncomeRepo.readIncomeIdsToReceiveDetailIds([receiveDetailId]);
+              // incomeIds = await outIncomeRepo.readIncomeIdsToReceiveDetailIds([receiveDetailId]);
               if (incomeIds[0]) storeBody.push({ tran_id: incomeIds[0], inout_fg: true, tran_cd: getTranTypeCd('OUT_INCOME') });
               break;
             default: break;

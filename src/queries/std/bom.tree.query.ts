@@ -1,4 +1,4 @@
-const readBomTrees = (factoryUuid?: string, prodId?: number) => {
+const readBomTrees = (factoryUuid?: string, prodUuid?: string) => {
   const createTempTable = `
     -- ✅ 품목을 선택하여 BOM Tree를 조회할 경우를 위하여 임시테이블 생성
     CREATE TEMP TABLE temp_bom_tree_vw (
@@ -20,7 +20,17 @@ const readBomTrees = (factoryUuid?: string, prodId?: number) => {
   
     INSERT INTO temp_bom_tree_vw
     SELECT * FROM std_bom_tree_vw s_bt
-    ${prodId ? `WHERE s_bt.main_prod_id IN (SELECT DISTINCT a.main_prod_id FROM std_bom_tree_vw a WHERE a.prod_id = ${prodId})` : '' };
+    ${prodUuid ? 
+      `
+        WHERE s_bt.main_prod_id IN (
+          SELECT DISTINCT s_bt.main_prod_id 
+          FROM std_bom_tree_vw s_bt 
+          JOIN std_prod_tb s_p ON s_p.prod_id = s_bt.prod_id
+          WHERE s_p.uuid = '${prodUuid}'
+        )
+      ` 
+      : '' 
+    };
   `;
 
   const query = `
@@ -69,7 +79,7 @@ const readBomTrees = (factoryUuid?: string, prodId?: number) => {
     LEFT JOIN std_prod_type_tb s_pt ON s_pt.prod_type_id = s_p.prod_type_id
     LEFT JOIN std_model_tb s_m ON s_m.model_id = s_p.model_id
     LEFT JOIN std_unit_tb s_u ON s_u.unit_id = t_b.unit_id
-    LEFT JOIN adm_bom_input_type_tb ON a_bit.bom_input_type_id = t_b.bom_input_type_id
+    LEFT JOIN adm_bom_input_type_tb a_bit ON a_bit.bom_input_type_id = t_b.bom_input_type_id
     LEFT JOIN std_store_tb s_s ON s_s.store_id = t_b.from_store_id
     LEFT JOIN std_location_tb s_l ON s_l.location_id = t_b.from_location_id
     ${factoryUuid? `WHERE s_f.uuid = '${factoryUuid}'`: ''}
