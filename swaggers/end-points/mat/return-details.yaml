@@ -102,6 +102,9 @@ get:
                             - $ref: ../../schemas/mat/return-detail.schema.yaml#/receive_qty
                             - $ref: ../../schemas/mat/return-detail.schema.yaml#/qty
                             - $ref: ../../schemas/mat/return-detail.schema.yaml#/return_qty
+                            - $ref: ../../schemas/mat/return-detail.schema.yaml#/return_unit_uuid
+                            - $ref: ../../schemas/mat/return-detail.schema.yaml#/return_unit_cd
+                            - $ref: ../../schemas/mat/return-detail.schema.yaml#/return_unit_nm
                             - $ref: ../../schemas/mat/return-detail.schema.yaml#/convert_value
                             - $ref: ../../schemas/mat/return-detail.schema.yaml#/price
                             - $ref: ../../schemas/mat/return-detail.schema.yaml#/money_unit_uuid

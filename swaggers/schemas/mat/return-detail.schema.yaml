@@ -194,10 +194,10 @@ unit_uuid:
       type: string
       format: uuid
 
-price_unit_uuid:
+return_unit_uuid:
   type: object
   properties: 
-    price_unit_uuid:
+    return_unit_uuid:
       description: 협력사 단위UUID
       type: string
       format: uuid
@@ -259,18 +259,18 @@ return_qty:
       type: number
       format: numeric(19, 6)
 
-price_unit_cd: 
+return_unit_cd: 
   type: object
   properties: 
-    price_unit_cd:
+    return_unit_cd:
       description: 협력사 단위코드
       type: string
       format: varchar(20)
 
-price_unit_nm: 
+return_unit_nm: 
   type: object
   properties: 
-    price_unit_nm:
+    return_unit_nm:
       description: 협력사 단위명
       type: string
       format: varchar(50)
