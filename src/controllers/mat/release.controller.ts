@@ -120,7 +120,7 @@ class MatReleaseCtl {
     }
   };
 
-  // 📒 Fn[readReport]: 자재반출현황 데이터 조회
+  // 📒 Fn[readReport]: 제품입고현황 데이터 조회
   public readReport = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       const params = matchedData(req, { locations: [ 'query', 'params' ] });

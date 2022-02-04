@@ -43,9 +43,9 @@ const matReturnValidation = {
     query('sort_type', '정렬유형')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'sort_type', '정렬유형'))
       .isIn([ 'partner', 'prod', 'date' ]).withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'sort_type', '정렬유형')),
-    query('start_reg_date', '기준 시작일자').optional({ nullable: true })
+    query('start_date', '기준 시작일자').optional({ nullable: true })
       .isDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'start_reg_date', '기준 시작일자')),
-    query('end_reg_date', '기준 종료일자').optional({ nullable: true })
+    query('end_date', '기준 종료일자').optional({ nullable: true })
       .isDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'end_reg_date', '기준 종료일자')),
   ],
   create: [

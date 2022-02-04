@@ -1,38 +1,28 @@
 import { Transaction } from "sequelize/types";
-import MatReleaseRepo from "../../repositories/mat/release.repository";
+import SalIncomeRepo from "../../repositories/sal/income.repository";
 import StdFactoryRepo from "../../repositories/std/factory.repository";
 import StdLocationRepo from "../../repositories/std/location.repository";
 import StdProdRepo from "../../repositories/std/prod.repository";
 import StdStoreRepo from "../../repositories/std/store.repository";
 import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
-import InvStoreRepo from "../../repositories/inv/store.repository";
-import PrdDemandRepo from "../../repositories/prd/demand.repository";
 
-class MatReleaseService {
+class SalIncomeService {
   tenant: string;
   stateTag: string;
-  repo: MatReleaseRepo;
-  storeRepo: InvStoreRepo;
+  repo: SalIncomeRepo;
   fkIdInfos: getFkIdInfo[];
 
   constructor(tenant: string) {
     this.tenant = tenant;
-    this.stateTag = 'matRelease';
-    this.repo = new MatReleaseRepo(tenant);
-    this.storeRepo = new InvStoreRepo(tenant);
+    this.stateTag = 'salIncome';
+    this.repo = new SalIncomeRepo(tenant);
 
     this.fkIdInfos = [
       {
         key: 'uuid',
-        TRepo: MatReleaseRepo,
-        idName: 'release_id',
+        TRepo: SalIncomeRepo,
+        idName: 'income_id',
         uuidName: 'uuid'
-      },
-      {
-        key: 'release',
-        TRepo: MatReleaseRepo,
-        idName: 'release_id',
-        uuidName: 'release_uuid'
       },
       {
         key: 'factory',
@@ -45,12 +35,6 @@ class MatReleaseService {
         TRepo: StdProdRepo,
         idName: 'prod_id',
         uuidName: 'prod_uuid'
-      },
-      {
-        key: 'demand',
-        TRepo: PrdDemandRepo,
-        idName: 'demand_id',
-        uuidName: 'demand_uuid'
       },
       {
         key: 'fromStore',
@@ -124,4 +108,4 @@ class MatReleaseService {
   }
 }
 
-export default MatReleaseService;
+export default SalIncomeService;
