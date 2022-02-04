@@ -49,12 +49,12 @@ class MatReleaseCtl {
         // 📌 수불 데이터 생성
         const fromStoreResult = await inventoryService.transactInventory(
           releaseResult.raws, 'CREATE', 
-          { inout: 'FROM', tran_type: 'MAT_RELEASE', tran_id_alias: 'return_detail_id' },
+          { inout: 'FROM', tran_type: 'MAT_RELEASE', tran_id_alias: 'release_id' },
           req.user?.uid as number, tran
         );
         const toStoreResult = await inventoryService.transactInventory(
           releaseResult.raws, 'CREATE', 
-          { inout: 'TO', tran_type: 'MAT_RELEASE', tran_id_alias: 'return_detail_id' },
+          { inout: 'TO', tran_type: 'MAT_RELEASE', tran_id_alias: 'release_id' },
           req.user?.uid as number, tran
         );
 
@@ -160,12 +160,12 @@ class MatReleaseCtl {
         // 📌 수불 데이터 생성
         const fromStoreResult = await inventoryService.transactInventory(
           releaseResult.raws, 'UPDATE', 
-          { inout: 'FROM', tran_type: 'MAT_RELEASE', tran_id_alias: 'return_detail_id' },
+          { inout: 'FROM', tran_type: 'MAT_RELEASE', tran_id_alias: 'release_id' },
           req.user?.uid as number, tran
         );
         const toStoreResult = await inventoryService.transactInventory(
           releaseResult.raws, 'UPDATE', 
-          { inout: 'TO', tran_type: 'MAT_RELEASE', tran_id_alias: 'return_detail_id' },
+          { inout: 'TO', tran_type: 'MAT_RELEASE', tran_id_alias: 'release_id' },
           req.user?.uid as number, tran
         );
 
@@ -209,12 +209,12 @@ class MatReleaseCtl {
         // 📌 수불 데이터 생성
         const fromStoreResult = await inventoryService.transactInventory(
           releaseResult.raws, 'UPDATE', 
-          { inout: 'FROM', tran_type: 'MAT_RELEASE', tran_id_alias: 'return_detail_id' },
+          { inout: 'FROM', tran_type: 'MAT_RELEASE', tran_id_alias: 'release_id' },
           req.user?.uid as number, tran
         );
         const toStoreResult = await inventoryService.transactInventory(
           releaseResult.raws, 'UPDATE', 
-          { inout: 'TO', tran_type: 'MAT_RELEASE', tran_id_alias: 'return_detail_id' },
+          { inout: 'TO', tran_type: 'MAT_RELEASE', tran_id_alias: 'release_id' },
           req.user?.uid as number, tran
         );
 
@@ -257,12 +257,12 @@ class MatReleaseCtl {
         // 📌 수불 데이터 삭제
         const fromStoreResult = await inventoryService.transactInventory(
           releaseResult.raws, 'DELETE', 
-          { inout: 'FROM', tran_type: 'MAT_RELEASE', tran_id_alias: 'return_detail_id' },
+          { inout: 'FROM', tran_type: 'MAT_RELEASE', tran_id_alias: 'release_id' },
           req.user?.uid as number, tran
         );
         const toStoreResult = await inventoryService.transactInventory(
           releaseResult.raws, 'DELETE', 
-          { inout: 'TO', tran_type: 'MAT_RELEASE', tran_id_alias: 'return_detail_id' },
+          { inout: 'TO', tran_type: 'MAT_RELEASE', tran_id_alias: 'release_id' },
           req.user?.uid as number, tran
         );
 
