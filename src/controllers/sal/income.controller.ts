@@ -1,7 +1,6 @@
 import express from 'express';
 import { matchedData } from 'express-validator';
 import config from '../../configs/config';
-import SalIncomeService from '../../services/sal/income.service';
 import createDatabaseError from '../../utils/createDatabaseError';
 import createUnknownError from '../../utils/createUnknownError';
 import { sequelizes } from '../../utils/getSequelize';
@@ -12,6 +11,7 @@ import { successState } from '../../states/common.state';
 import ApiResult from '../../interfaces/common/api-result.interface';
 import StdStoreService from '../../services/std/store.service';
 import InvStoreService from '../../services/inv/store.service';
+import SalIncomeService from '../../services/sal/income.service';
 
 class SalIncomeCtl {
   stateTag: string

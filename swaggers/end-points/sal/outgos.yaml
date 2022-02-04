@@ -135,7 +135,6 @@ post:
                   - from_location_uuid
                 type: object
                 allOf:        
-                  - $ref: ../../schemas/sal/outgo-detail.schema.yaml#/outgo_uuid
                   - $ref: ../../schemas/sal/outgo-detail.schema.yaml#/factory_uuid
                   - $ref: ../../schemas/sal/outgo-detail.schema.yaml#/prod_uuid
                   - $ref: ../../schemas/sal/outgo-detail.schema.yaml#/lot_no
@@ -150,7 +149,6 @@ post:
                   - $ref: ../../schemas/sal/outgo-detail.schema.yaml#/from_store_uuid
                   - $ref: ../../schemas/sal/outgo-detail.schema.yaml#/from_location_uuid
                   - $ref: ../../schemas/sal/outgo-detail.schema.yaml#/remark
-                  - $ref: ../../schemas/sal/outgo-detail.schema.yaml#/barcode
   responses:
     201:
       $ref: ../../responses/common/succeed-create.response.yaml

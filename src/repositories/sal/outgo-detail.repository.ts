@@ -52,7 +52,6 @@ class SalOutgoDetailRepo {
             from_store_id: outgoDetail.from_store_id,
             from_location_id: outgoDetail.from_location_id,
             remark: outgoDetail.remark,
-            barcode: outgoDetail.barcode,
             created_uid: uid,
             updated_uid: uid,
           },
