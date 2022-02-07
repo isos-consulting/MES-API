@@ -171,6 +171,7 @@ class PrdWorkInputService {
    */
   getWorkInputBody = async (data: any, regDate: string, isPullOption: boolean) => {
     const workInputRead = await this.repo.readRawsByWorkId(data.work_id);
+    console.log(workInputRead);
     const result = await Promise.all(
       workInputRead.raws.map(async (workInput: IPrdWorkInput) => {
         // PUSH(수동입력)

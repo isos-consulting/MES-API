@@ -122,12 +122,23 @@ class PrdOrderService {
   };
 
   // 📌 실적기준 지시 완료처리(work_fg)
-  public updateOrderCompleteByWorks = async (orderId: number, uid: number, tran: Transaction) => {
+  public updateOrderCompleteByOrderId = async (orderId: number, uid: number, tran: Transaction) => {
     try {
-      const orderService = new PrdOrderService(this.tenant);
       const incompleteWorkCount = await this.workRepo.getIncompleteCount(orderId, tran);
 
-      return await orderService.updateWorkFgById(orderId, Boolean(incompleteWorkCount), uid, tran);
+      return await this.repo.updateWorkFgById(orderId, Boolean(incompleteWorkCount), uid, tran);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // 📌 실적기준 지시 완료처리(work_fg)
+  public updateOrderCompleteByOrderUuid = async (orderUuid: string, uid: number, tran: Transaction) => {
+    try {
+      const order = await this.repo.readRawByUuid(orderUuid);
+      const incompleteWorkCount = await this.workRepo.getIncompleteCount(order.raws[0].order_id, tran);
+
+      return await this.repo.updateWorkFgById(order.raws[0].order_id, Boolean(incompleteWorkCount), uid, tran);
     } catch (error) {
       throw error;
     }

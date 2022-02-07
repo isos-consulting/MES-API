@@ -42,7 +42,7 @@ class PrdWorkCtl {
       let result: ApiResult<any> = { raws: [], count: 0 };
       const service = new PrdWorkService(req.tenant.uuid);
       const orderService = new PrdOrderService(req.tenant.uuid);
-      const workWorkerService = new PrdWorkWorkerService(req.tenant.uuid);
+      // const workWorkerService = new PrdWorkWorkerService(req.tenant.uuid);
       const workRoutingService = new PrdWorkRoutingService(req.tenant.uuid);
       const matched = matchedData(req, { locations: ['body'] });
 
@@ -65,9 +65,9 @@ class PrdWorkCtl {
           // 📌 작업지시 테이블 work_fg(생산진행여부) True로 변경
           const orderResult = await orderService.updateWorkFgById(work.order_id, true, req.user?.uid as number, tran);
 
-          // 📌 작업지시의 작업자 투입정보 기준 초기 데이터 생성
-          const workerResult = await workWorkerService.createByOrderWorker(work, req.user?.uid as number, tran);
-          result.count += workerResult.count;
+          // // 📌 작업지시의 작업자 투입정보 기준 초기 데이터 생성
+          // const workerResult = await workWorkerService.createByOrderWorker(work, req.user?.uid as number, tran);
+          // result.count += workerResult.count;
 
           // 📌 작업지시의 공정순서 정보 기준 초기 데이터 생성
           const routingResult = await workRoutingService.createByOrderRouting(work, req.user?.uid as number, tran);
@@ -76,7 +76,7 @@ class PrdWorkCtl {
           result.raws.push({
             work: work,
             order: orderResult.raws,
-            worker: workerResult.raws,
+            // worker: workerResult.raws,
             routing: routingResult.raws
           });
         }
@@ -220,7 +220,7 @@ class PrdWorkCtl {
           const workResult = await service.updateComplete({ uuid: data.uuid, work_id: data.work_id, complete_fg: true }, req.user?.uid as number, tran);
           
           // 📌 해당 실적의 작업지시에 진행중인 생산 실적이 없을 경우 작업지시의 생산진행여부(work_fg)를 False로 변경
-          const orderResult = await orderService.updateOrderCompleteByWorks(data.order_id, req.user?.uid as number, tran);
+          const orderResult = await orderService.updateOrderCompleteByOrderId(data.order_id, req.user?.uid as number, tran);
 
           // 📌 입고 창고 수불 내역 생성(생산입고)
           const toStoreResult = await inventoryService.transactInventory(
@@ -424,7 +424,7 @@ class PrdWorkCtl {
           let detailInfosResult: ApiResult<any> = { raws: [], count: 0 };
           let detailValuesResult: ApiResult<any> = { raws: [], count: 0 };
 
-          const inspResultRead = await inspResultRepo.readProcByWorkId(work.work_id);
+          const inspResultRead = await inspResultRepo.readProcByWorkId(data.work_id);
           for await (const inspResult of inspResultRead.raws) {
             // 📌 검사 성적서 상세 값을 삭제하기 위하여 검사 성적서 상세정보 Id 조회
             const detailInfos = await inspResultDetailInfoRepo.readByResultId(inspResult.insp_result_id);
@@ -451,7 +451,7 @@ class PrdWorkCtl {
           const workResult = await service.delete([data], req.user?.uid as number, tran);
 
           // 📌 해당 실적의 작업지시에 진행중인 생산 실적이 없을 경우 작업지시의 생산진행여부(work_fg)를 False로 변경
-          let orderResult = await orderService.updateOrderCompleteByWorks(data.orderId, req.user?.uid as number, tran);          
+          let orderResult = await orderService.updateOrderCompleteByOrderUuid(work.order_uuid, req.user?.uid as number, tran);          
 
           result.raws.push({
             work: workResult.raws,
