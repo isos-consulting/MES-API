@@ -88,7 +88,8 @@ class PrdWorkDowntimeRepo {
               { model: this.sequelize.models.StdProc, attributes: [], required: false },
               { model: this.sequelize.models.StdWorkings, attributes: [], required: false },
               { model: this.sequelize.models.StdEquip, attributes: [], required: false }
-            ]
+            ],
+            where: params.work_routing_uuid ? { uuid: params.work_routing_uuid } : {}
           },
           { model: this.sequelize.models.StdEquip, attributes: [], required: false },
           { 

@@ -79,7 +79,7 @@ class PrdWorkRejectRepo {
             model: this.sequelize.models.PrdWork,
             attributes: [], 
             required: true,
-          where: params.work_uuid ? { uuid: params.work_uuid } : {}
+            where: params.work_uuid ? { uuid: params.work_uuid } : {}
           },
           { 
             model: this.sequelize.models.PrdWorkRouting, 
@@ -89,7 +89,8 @@ class PrdWorkRejectRepo {
               { model: this.sequelize.models.StdProc, attributes: [], required: false },
               { model: this.sequelize.models.StdWorkings, attributes: [], required: false },
               { model: this.sequelize.models.StdEquip, attributes: [], required: false },
-            ]
+            ],
+            where: params.work_routing_uuid ? { uuid: params.work_routing_uuid } : {}
           },
           { 
             model: this.sequelize.models.StdReject,

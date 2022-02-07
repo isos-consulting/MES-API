@@ -25,6 +25,8 @@ const prdWorkDowntimeValidation = {
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'factory_uuid', '공장UUID')),
     query('work_uuid', '실적UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'work_uuid', '실적UUID')),
+    query('work_routing_uuid', '공정순서UUID').optional({ nullable: true })
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'work_routing_uuid', '공정순서UUID')),
     query('downtime_uuid', '비가동UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'downtime_uuid', '비가동UUID')),
     query('downtime_type_uuid', '비가동유형UUID').optional({ nullable: true })
