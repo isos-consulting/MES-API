@@ -450,7 +450,7 @@ class PrdWorkRepo {
 
       const count: number = (result as any).dataValues.count;
 
-      return count;
+      return Number(count);
     } catch (error) {
       throw error;
     }

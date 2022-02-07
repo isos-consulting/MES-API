@@ -125,7 +125,6 @@ class PrdOrderService {
   public updateOrderCompleteByOrderId = async (orderId: number, uid: number, tran: Transaction) => {
     try {
       const incompleteWorkCount = await this.workRepo.getIncompleteCount(orderId, tran);
-
       return await this.repo.updateWorkFgById(orderId, Boolean(incompleteWorkCount), uid, tran);
     } catch (error) {
       throw error;
