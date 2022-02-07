@@ -70,7 +70,7 @@ class PrdWorkCtl {
           result.count += workerResult.count;
 
           // 📌 작업지시의 공정순서 정보 기준 초기 데이터 생성
-          const routingResult = await workRoutingService.create(work, req.user?.uid as number, tran);
+          const routingResult = await workRoutingService.createByOrderRouting(work, req.user?.uid as number, tran);
           result.count += routingResult.count;
 
           result.raws.push({
