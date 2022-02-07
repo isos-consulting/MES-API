@@ -19,7 +19,6 @@ const seedDatas: ISalRelease[] = [
 		"to_store_id" : 3,
 		"to_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "753ef89c-827f-4a23-b98f-b99e59c39630"
@@ -38,7 +37,6 @@ const seedDatas: ISalRelease[] = [
 		"to_store_id" : 3,
 		"to_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "351cda47-a8ad-40c5-8ee3-230b6fb6d8ba"
@@ -57,7 +55,6 @@ const seedDatas: ISalRelease[] = [
 		"to_store_id" : 3,
 		"to_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "56fde063-379a-40b6-b420-0d59ad3e2bd5"
@@ -76,7 +73,6 @@ const seedDatas: ISalRelease[] = [
 		"to_store_id" : 3,
 		"to_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "43468a78-0679-44ec-9a30-39980ab52357"
@@ -95,7 +91,6 @@ const seedDatas: ISalRelease[] = [
 		"to_store_id" : 3,
 		"to_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "e5d025c2-6289-4bd5-8da4-cc2cf894a6ed"
@@ -114,7 +109,6 @@ const seedDatas: ISalRelease[] = [
 		"to_store_id" : 3,
 		"to_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "acc5dbce-60b9-4289-923d-292e2391d329"
@@ -133,7 +127,6 @@ const seedDatas: ISalRelease[] = [
 		"to_store_id" : 3,
 		"to_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "ccb5af91-12f8-44da-a43d-7943a60526b5"
@@ -152,7 +145,6 @@ const seedDatas: ISalRelease[] = [
 		"to_store_id" : 3,
 		"to_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "11c03737-3aa2-4280-8630-6e88b6477be4"
@@ -171,7 +163,6 @@ const seedDatas: ISalRelease[] = [
 		"to_store_id" : 3,
 		"to_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "7efcd517-1d57-45e3-bf7c-9abe6f92ecbf"
@@ -190,7 +181,6 @@ const seedDatas: ISalRelease[] = [
 		"to_store_id" : 3,
 		"to_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "5ecc5f8d-0090-4d08-a30c-d5f5de7b5490"
@@ -209,7 +199,6 @@ const seedDatas: ISalRelease[] = [
 		"to_store_id" : 3,
 		"to_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "a2797d5a-b299-4e3e-b2e4-5bd776dc4c99"
@@ -228,7 +217,6 @@ const seedDatas: ISalRelease[] = [
 		"to_store_id" : 3,
 		"to_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "82b2853a-ab3d-4651-b504-7ff581d5c20e"
@@ -247,7 +235,6 @@ const seedDatas: ISalRelease[] = [
 		"to_store_id" : 3,
 		"to_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "e6157a54-474a-4269-9972-eaf4debe456e"
@@ -266,7 +253,6 @@ const seedDatas: ISalRelease[] = [
 		"to_store_id" : 3,
 		"to_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "a28515db-134e-4830-85a5-8fb6d5090481"
@@ -285,7 +271,6 @@ const seedDatas: ISalRelease[] = [
 		"to_store_id" : 3,
 		"to_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "e3e66bf8-20c9-4e79-8896-db09e6eb0ae1"
@@ -304,7 +289,6 @@ const seedDatas: ISalRelease[] = [
 		"to_store_id" : 3,
 		"to_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "cb69cbfa-6ada-42e2-99aa-3f3ef1944c98"
@@ -323,7 +307,6 @@ const seedDatas: ISalRelease[] = [
 		"to_store_id" : 3,
 		"to_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "97a64961-69d9-4550-a63f-919ab60aeb53"

@@ -12,26 +12,31 @@ import SalOutgoCtl from '../controllers/sal/outgo.controller';
 import SalOutgoDetailCtl from '../controllers/sal/outgo-detail.controller';
 import salIncomeValidation from '../validations/sal/income.validation';
 import validationCallback from '../utils/validationCallback';
+import salOutgoValidation from '../validations/sal/outgo.validation';
+import salOutgoDetailValidation from '../validations/sal/outgo-detail.validation';
+import salReleaseValidation from '../validations/sal/release.validation';
+import salReturnValidation from '../validations/sal/return.validation';
+import matReturnDetailValidation from '../validations/mat/return-detail.validation';
 
 const router = express.Router();
 
 //#region ✅ Return (제품반입)
 const returnHeader = new SalReturnCtl();
-router.route('/returns/report').get(returnHeader.readReport);
-router.route('/return/:uuid').get(returnHeader.read);
-router.route('/return/:uuid/include-details').get(returnHeader.readIncludeDetails);
-router.route('/return/:uuid/details').get(returnHeader.readDetails);
-router.route('/returns').get(returnHeader.read);
-router.route('/returns').post(returnHeader.create);
-router.route('/returns').put(returnHeader.update);
-router.route('/returns').patch(returnHeader.patch);
-router.route('/returns').delete(returnHeader.delete);
+router.route('/returns/report').get(salReturnValidation.readReport, validationCallback, returnHeader.readReport);
+router.route('/return/:uuid').get(salReturnValidation.readByUuid, validationCallback, returnHeader.readByUuid);
+router.route('/return/:uuid/include-details').get(salReturnValidation.readIncludeDetails, validationCallback, returnHeader.readIncludeDetails);
+router.route('/return/:uuid/details').get(salReturnValidation.readDetails, validationCallback, returnHeader.readDetails);
+router.route('/returns').get(salReturnValidation.read, validationCallback, returnHeader.read);
+router.route('/returns').post(salReturnValidation.create, validationCallback, returnHeader.create);
+router.route('/returns').put(salReturnValidation.update, validationCallback, returnHeader.update);
+router.route('/returns').patch(salReturnValidation.patch, validationCallback, returnHeader.patch);
+router.route('/returns').delete(salReturnValidation.delete, validationCallback, returnHeader.delete);
 //#endregion
 
 //#region ✅ ReturnDetail (제품반입상세)
 const returnDetail = new SalReturnDetailCtl();
-router.route('/return-detail/:uuid').get(returnDetail.read);
-router.route('/return-details').get(returnDetail.read);
+router.route('/return-detail/:uuid').get(matReturnDetailValidation.readByUuid, validationCallback, returnDetail.readByUuid);
+router.route('/return-details').get(matReturnDetailValidation.read, validationCallback, returnDetail.read);
 //#endregion
 
 //#region ✅ Order (제품수주)
@@ -67,13 +72,13 @@ router.route('/incomes').delete(salIncomeValidation.delete, validationCallback, 
 
 //#region ✅ Release (제품출고)
 const release = new SalReleaseCtl();
-router.route('/releases/report').get(release.readReport);
-router.route('/release/:uuid').get(release.read);
-router.route('/releases').get(release.read);
-router.route('/releases').post(release.create);
-router.route('/releases').put(release.update);
-router.route('/releases').patch(release.patch);
-router.route('/releases').delete(release.delete);
+router.route('/releases/report').get(salReleaseValidation.readReport, validationCallback, release.readReport);
+router.route('/release/:uuid').get(salReleaseValidation.readByUuid, validationCallback, release.readByUuid);
+router.route('/releases').get(salReleaseValidation.read, validationCallback, release.read);
+router.route('/releases').post(salReleaseValidation.create, validationCallback, release.create);
+router.route('/releases').put(salReleaseValidation.update, validationCallback, release.update);
+router.route('/releases').patch(salReleaseValidation.patch, validationCallback, release.patch);
+router.route('/releases').delete(salReleaseValidation.delete, validationCallback, release.delete);
 //#endregion
 
 //#region ✅ OutgoOrder (제품출하지시)
@@ -98,22 +103,22 @@ router.route('/outgo-order-details').get(outgoOrderDetail.read);
 
 //#region ✅ Outgo (제품출하)
 const outgo = new SalOutgoCtl();
-router.route('/outgos/lot-tracking').get(outgo.readLotTracking);
-router.route('/outgos/report').get(outgo.readReport);
-router.route('/outgo/:uuid').get(outgo.read);
-router.route('/outgo/:uuid/include-details').get(outgo.readIncludeDetails);
-router.route('/outgo/:uuid/details').get(outgo.readDetails);
-router.route('/outgos').get(outgo.read);
-router.route('/outgos').post(outgo.create);
-router.route('/outgos').put(outgo.update);
-router.route('/outgos').patch(outgo.patch);
-router.route('/outgos').delete(outgo.delete);
+router.route('/outgos/lot-tracking').get(salOutgoValidation.readLotTracking, validationCallback, outgo.readLotTracking);
+router.route('/outgos/report').get(salOutgoValidation.readReport, validationCallback, outgo.readReport);
+router.route('/outgo/:uuid').get(salOutgoValidation.readByUuid, validationCallback, outgo.readByUuid);
+router.route('/outgo/:uuid/include-details').get(salOutgoValidation.readIncludeDetails, validationCallback, outgo.readIncludeDetails);
+router.route('/outgo/:uuid/details').get(salOutgoValidation.readDetails, validationCallback, outgo.readDetails);
+router.route('/outgos').get(salOutgoValidation.read, validationCallback, outgo.read);
+router.route('/outgos').post(salOutgoValidation.create, validationCallback, outgo.create);
+router.route('/outgos').put(salOutgoValidation.update, validationCallback, outgo.update);
+router.route('/outgos').patch(salOutgoValidation.patch, validationCallback, outgo.patch);
+router.route('/outgos').delete(salOutgoValidation.delete, validationCallback, outgo.delete);
 //#endregion
 
 //#region ✅ OutgoDetail (제품출하상세)
 const outgoDetail = new SalOutgoDetailCtl();
-router.route('/outgo-detail/:uuid').get(outgoDetail.read);
-router.route('/outgo-details').get(outgoDetail.read);
+router.route('/outgo-detail/:uuid').get(salOutgoDetailValidation.readByUuid, validationCallback, outgoDetail.readByUuid);
+router.route('/outgo-details').get(salOutgoDetailValidation.read, validationCallback, outgoDetail.read);
 //#endregion
 
 export default router;

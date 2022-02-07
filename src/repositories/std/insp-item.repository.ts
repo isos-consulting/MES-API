@@ -106,7 +106,7 @@ class StdInspItemRepo {
           [ Sequelize.col('updateUser.user_nm'), 'updated_nm' ]
         ],
         where: {
-          [Op.or]: [
+          [Op.and]: [
             { eqm_fg: params.eqm_fg != null ? params.eqm_fg : { [Op.ne]: null } },
             { qms_fg: params.qms_fg != null ? params.qms_fg : { [Op.ne]: null } }
           ]

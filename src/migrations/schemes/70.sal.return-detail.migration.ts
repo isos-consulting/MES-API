@@ -21,7 +21,6 @@ const seedDatas: ISalReturnDetail[] = [
 		"to_store_id" : 3,
 		"to_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "b020f573-7ea3-45ee-8d6b-bd7aa8b83c62"
@@ -43,7 +42,6 @@ const seedDatas: ISalReturnDetail[] = [
 		"to_store_id" : 3,
 		"to_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "9f9e78d6-aefe-4aae-93b4-635250295ef0"
@@ -65,7 +63,6 @@ const seedDatas: ISalReturnDetail[] = [
 		"to_store_id" : 3,
 		"to_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "0dfb78a1-2387-48fe-915d-6f9ae7d2f1b6"
@@ -87,7 +84,6 @@ const seedDatas: ISalReturnDetail[] = [
 		"to_store_id" : 5,
 		"to_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "c4e814be-734e-450c-9d80-5760b105f3ba"
@@ -109,7 +105,6 @@ const seedDatas: ISalReturnDetail[] = [
 		"to_store_id" : 5,
 		"to_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "c80da4a5-faa9-466f-8c15-d81d372f1bf9"
@@ -131,7 +126,6 @@ const seedDatas: ISalReturnDetail[] = [
 		"to_store_id" : 5,
 		"to_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "5c540359-bbe4-426a-a2f2-c69a32a6dc67"
@@ -153,7 +147,6 @@ const seedDatas: ISalReturnDetail[] = [
 		"to_store_id" : 1,
 		"to_location_id" : 1,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "e4033be6-4f4a-46d3-9941-57116f2a4a42"
@@ -175,7 +168,6 @@ const seedDatas: ISalReturnDetail[] = [
 		"to_store_id" : 1,
 		"to_location_id" : 1,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "4134c082-f883-45fc-a81e-cb7676ff60dc"
@@ -197,7 +189,6 @@ const seedDatas: ISalReturnDetail[] = [
 		"to_store_id" : 1,
 		"to_location_id" : 1,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "f341565d-fbc0-415b-919e-13a02b24ab7d"
@@ -219,7 +210,6 @@ const seedDatas: ISalReturnDetail[] = [
 		"to_store_id" : 5,
 		"to_location_id" : 1,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "ff253349-6598-4451-a07d-2222c8ca7581"
@@ -241,7 +231,6 @@ const seedDatas: ISalReturnDetail[] = [
 		"to_store_id" : 1,
 		"to_location_id" : 1,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "48ec525e-366e-4e29-88e4-3bbdfca76691"
@@ -263,7 +252,6 @@ const seedDatas: ISalReturnDetail[] = [
 		"to_store_id" : 1,
 		"to_location_id" : 1,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "c0c20bba-87cd-40ac-9be1-eab3f87a4ccc"
@@ -285,7 +273,6 @@ const seedDatas: ISalReturnDetail[] = [
 		"to_store_id" : 5,
 		"to_location_id" : 6,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "a5f9ac0b-f3e8-4c43-9de7-b4ffd9c1cc89"
@@ -307,7 +294,6 @@ const seedDatas: ISalReturnDetail[] = [
 		"to_store_id" : 5,
 		"to_location_id" : 6,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "eb1f2f27-dd2c-46a3-8f58-8c83232992f3"
@@ -329,7 +315,6 @@ const seedDatas: ISalReturnDetail[] = [
 		"to_store_id" : 5,
 		"to_location_id" : 6,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "7f13fb33-74f6-4ce3-b88c-fb0d5b52e18b"
@@ -351,7 +336,6 @@ const seedDatas: ISalReturnDetail[] = [
 		"to_store_id" : 5,
 		"to_location_id" : 6,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "bf47b56b-5d1a-47ab-b6ca-8322eab4ed92"
@@ -373,7 +357,6 @@ const seedDatas: ISalReturnDetail[] = [
 		"to_store_id" : 5,
 		"to_location_id" : 6,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "199a6fee-8d20-4d7d-86df-d2a5a1d13419"
@@ -395,7 +378,6 @@ const seedDatas: ISalReturnDetail[] = [
 		"to_store_id" : 5,
 		"to_location_id" : 6,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "0b1c88af-7078-4911-8273-8a501becc968"
@@ -417,7 +399,6 @@ const seedDatas: ISalReturnDetail[] = [
 		"to_store_id" : 5,
 		"to_location_id" : 6,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "1937612a-385b-430a-bfe1-536f13f7735b"
@@ -439,7 +420,6 @@ const seedDatas: ISalReturnDetail[] = [
 		"to_store_id" : 5,
 		"to_location_id" : 6,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "098c4eb4-07fe-4852-9926-9cbc4f4e26f6"
@@ -461,7 +441,6 @@ const seedDatas: ISalReturnDetail[] = [
 		"to_store_id" : 5,
 		"to_location_id" : 6,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "4413f72b-15f0-421e-a32c-bbfb133733ad"
@@ -483,7 +462,6 @@ const seedDatas: ISalReturnDetail[] = [
 		"to_store_id" : 5,
 		"to_location_id" : 6,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "5c7d381c-18f0-4335-a98e-281a4b4f9cc9"
@@ -505,7 +483,6 @@ const seedDatas: ISalReturnDetail[] = [
 		"to_store_id" : 5,
 		"to_location_id" : 6,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "50936d90-015c-4ebb-858f-553f28f03d5a"
@@ -527,7 +504,6 @@ const seedDatas: ISalReturnDetail[] = [
 		"to_store_id" : 5,
 		"to_location_id" : 6,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "cdd9916f-aaa3-4bf8-bbd5-4888d055ac34"
@@ -549,7 +525,6 @@ const seedDatas: ISalReturnDetail[] = [
 		"to_store_id" : 5,
 		"to_location_id" : 6,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "5e0f9d0f-e8a4-4499-b5b8-bcca332bf7ad"
@@ -571,7 +546,6 @@ const seedDatas: ISalReturnDetail[] = [
 		"to_store_id" : 5,
 		"to_location_id" : 6,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "1a887931-fed9-4415-bc5f-211d434840e3"
@@ -593,7 +567,6 @@ const seedDatas: ISalReturnDetail[] = [
 		"to_store_id" : 5,
 		"to_location_id" : 6,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "9e37b673-177f-446e-a98c-02fbcec4a0eb"
@@ -615,7 +588,6 @@ const seedDatas: ISalReturnDetail[] = [
 		"to_store_id" : 5,
 		"to_location_id" : 6,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "35613a5e-403c-4484-bf35-9a63449935df"

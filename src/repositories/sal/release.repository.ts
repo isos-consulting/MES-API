@@ -47,7 +47,6 @@ class SalReleaseRepo {
             to_store_id: release.to_store_id,
             to_location_id: release.to_location_id,
             remark: release.remark,
-            barcode: release.barcode,
             created_uid: uid,
             updated_uid: uid,
           },

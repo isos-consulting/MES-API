@@ -130,7 +130,6 @@ post:
                   - to_location_uuid
                 type: object
                 allOf:        
-                  - $ref: ../../schemas/sal/return-detail.schema.yaml#/return_uuid
                   - $ref: ../../schemas/sal/return-detail.schema.yaml#/factory_uuid
                   - $ref: ../../schemas/sal/return-detail.schema.yaml#/prod_uuid
                   - $ref: ../../schemas/sal/return-detail.schema.yaml#/lot_no
@@ -143,7 +142,6 @@ post:
                   - $ref: ../../schemas/sal/return-detail.schema.yaml#/to_store_uuid
                   - $ref: ../../schemas/sal/return-detail.schema.yaml#/to_location_uuid
                   - $ref: ../../schemas/sal/return-detail.schema.yaml#/remark
-                  - $ref: ../../schemas/sal/return-detail.schema.yaml#/barcode
   responses:
     201:
       $ref: ../../responses/common/succeed-create.response.yaml
