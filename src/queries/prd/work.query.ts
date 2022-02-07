@@ -33,7 +33,7 @@ const readWorks = (
     WITH complete AS
     (
       SELECT 
-        p_wr.factory_id, p_wr.work_id, p_wr.proc_id, p_wr.equip_id, p_wr.mold_id, p_wr.mold_cavity, p_wr.start_date, p_wr.end_date, 0::numeric as qty
+        p_wr.factory_id, p_wr.work_id, p_wr.proc_id, p_wr.equip_id, p_wr.mold_id, p_wr.mold_cavity, p_wr.start_date, p_wr.end_date, 0::numeric as qty,
         rank() over(PARTITION BY p_wr.factory_id, p_wr.work_id ORDER BY p_wr.proc_no DESC) AS rn
       FROM prd_work_routing_tb p_wr
       JOIN prd_work_tb p_w ON p_w.work_id = p_wr.work_id 
@@ -53,7 +53,7 @@ const readWorks = (
     WITH ongoing AS 
     (
       SELECT
-        p_wr.factory_id, p_wr.work_id, p_wr.proc_id, p_wr.equip_id, p_wr.mold_id, p_wr.mold_cavity, p_wr.start_date, p_wr.end_date, p_wr.qty
+        p_wr.factory_id, p_wr.work_id, p_wr.proc_id, p_wr.equip_id, p_wr.mold_id, p_wr.mold_cavity, p_wr.start_date, p_wr.end_date, p_wr.qty,
         max(COALESCE(p_wr.ongoing_fg,FALSE)::int * p_wr.proc_no), max((CASE WHEN COALESCE(p_wr.qty,0) > 0 THEN 1 ELSE 0 END) * p_wr.proc_no),
         rank() over(PARTITION BY p_wr.factory_id, p_wr.work_id ORDER BY max(COALESCE(p_wr.ongoing_fg,FALSE)::int * p_wr.proc_no) DESC, max((CASE WHEN COALESCE(p_wr.qty,0) > 0 THEN 1 ELSE 0 END) * p_wr.proc_no) DESC, p_wr.proc_no ASC) AS rn
       FROM prd_work_routing_tb p_wr
