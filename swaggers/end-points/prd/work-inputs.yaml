@@ -73,6 +73,9 @@ get:
                             - $ref: ../../schemas/std/prod.schema.yaml#/unit_uuid
                             - $ref: ../../schemas/std/unit.schema.yaml#/unit_cd
                             - $ref: ../../schemas/std/unit.schema.yaml#/unit_nm
+                            - $ref: ../../schemas/prd/work-input.schema.yaml#/bom_input_type_uuid
+                            - $ref: ../../schemas/adm/bom-input-type.schema.yaml#/bom_input_type_cd
+                            - $ref: ../../schemas/adm/bom-input-type.schema.yaml#/bom_input_type_nm
                             - $ref: ../../schemas/prd/work-input.schema.yaml#/lot_no
                             - $ref: ../../schemas/prd/work-input.schema.yaml#/qty
                             - $ref: ../../schemas/prd/work-input.schema.yaml#/c_usage
@@ -106,6 +109,7 @@ post:
             - qty
             - c_usage
             - unit_uuid
+            - bom_input_type_uuid
             - from_store_uuid
           allOf:
             - $ref: ../../schemas/prd/work-input.schema.yaml#/factory_uuid
@@ -115,6 +119,7 @@ post:
             - $ref: ../../schemas/prd/work-input.schema.yaml#/qty
             - $ref: ../../schemas/prd/work-input.schema.yaml#/c_usage
             - $ref: ../../schemas/prd/work-input.schema.yaml#/unit_uuid
+            - $ref: ../../schemas/prd/work-input.schema.yaml#/bom_input_type_uuid
             - $ref: ../../schemas/prd/work-input.schema.yaml#/from_store_uuid
             - $ref: ../../schemas/prd/work-input.schema.yaml#/from_location_uuid
             - $ref: ../../schemas/prd/work-input.schema.yaml#/remark
@@ -139,10 +144,12 @@ put:
             - uuid
             - lot_no
             - qty
+            - bom_input_type_uuid
           allOf:
             - $ref: ../../schemas/prd/work-input.schema.yaml#/uuid
             - $ref: ../../schemas/prd/work-input.schema.yaml#/lot_no
             - $ref: ../../schemas/prd/work-input.schema.yaml#/qty
+            - $ref: ../../schemas/prd/work-input.schema.yaml#/bom_input_type_uuid
             - $ref: ../../schemas/prd/work-input.schema.yaml#/remark
   responses:
     201:
@@ -167,6 +174,7 @@ patch:
             - $ref: ../../schemas/prd/work-input.schema.yaml#/uuid
             - $ref: ../../schemas/prd/work-input.schema.yaml#/lot_no
             - $ref: ../../schemas/prd/work-input.schema.yaml#/qty
+            - $ref: ../../schemas/prd/work-input.schema.yaml#/bom_input_type_uuid
             - $ref: ../../schemas/prd/work-input.schema.yaml#/remark
   responses:
     201:

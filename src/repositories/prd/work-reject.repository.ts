@@ -12,6 +12,7 @@ import PrdWorkReject from '../../models/prd/work-reject.model';
 import IPrdWorkReject from '../../interfaces/prd/work-reject.interface';
 import { readWorkRejectReport } from '../../queries/prd/work-reject-report.query';
 import { readWorkRejectsByWork } from '../../queries/prd/work-reject-by-work.query';
+import { readFinalRejectQtyByWork } from '../../queries/prd/work-reject-qty-by-work.query';
 
 class PrdWorkRejectRepo {
   repo: Repository<PrdWorkReject>;
@@ -262,6 +263,48 @@ class PrdWorkRejectRepo {
       throw error;
     }
   };
+
+  // 📒 Fn[getFinalRejectQtyByWork]: 생산실적 기준 마지막 공정 부적합수량 조회
+  public getFinalRejectQtyByWork = async(params?: any, transaction?: Transaction) => {
+    try {
+      const result = await this.sequelize.query(readFinalRejectQtyByWork(params));
+
+      if (!result) { return result; }
+
+      const qty: number = (result as any).dataValues.qty;
+      return qty;
+
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  // 📒 Fn[getTotalRejectQtyByWork]: 생산실적 기준 전체공정 부적합수량(합계) 조회
+  /**
+   * 전표단위의 상세전표 개수 조회
+   * @param returnId 전표 ID
+   * @param transaction Transaction
+   * @returns 전표단위의 상세전표 개수
+   */
+   getTotalRejectQtyByWork = async(workId: number, transaction?: Transaction) => {
+    try {
+      const result = await this.repo.findOne({ 
+        attributes: [
+          [ Sequelize.fn('sum', Sequelize.col('qty')), 'qty' ],
+        ],
+        where: { work_id: workId },
+        transaction
+      });
+
+      if (!result) { return result; }
+
+      const qty: number = (result as any).dataValues.qty;
+      return qty;
+      
+    } catch (error) {
+      throw error;
+    }
+  }
 
   //#endregion
 

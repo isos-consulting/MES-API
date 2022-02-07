@@ -1,6 +1,6 @@
 get:
   description: |
-    생산실적의 공정순서 데이터 목록을 조회합니다.
+    실적의 공정순서 데이터 목록을 조회합니다.
   summary: 실적-공정순서 데이터 조회
   tags:
     - 실적-공정순서(WorkRouting)
@@ -17,7 +17,7 @@ get:
     - name: work_uuid
       in: query
       description: |
-        생산실적의 UUID를 입력하여 생산실적에 따라 실적별 공정순서 데이터를 조회합니다. <br/>
+        실적의 UUID를 입력하여 실적에 따라 실적별 공정순서 데이터를 조회합니다. <br/>
         [전체 조회시 입력하지 않습니다.]
       schema:
         type: string
@@ -66,12 +66,55 @@ get:
                             - $ref: ../../schemas/prd/work-routing.schema.yaml#/equip_uuid
                             - $ref: ../../schemas/std/equip.schema.yaml#/equip_cd
                             - $ref: ../../schemas/std/equip.schema.yaml#/equip_nm
+                            - $ref: ../../schemas/prd/work-routing.schema.yaml#/mold_uuid
+                            - $ref: ../../schemas/mld/mold.schema.yaml#/mold_cd
+                            - $ref: ../../schemas/mld/mold.schema.yaml#/mold_nm
+                            - $ref: ../../schemas/prd/work-routing.schema.yaml#/mold_cavity
                             - $ref: ../../schemas/prd/work-routing.schema.yaml#/qty
                             - $ref: ../../schemas/prd/work-routing.schema.yaml#/start_date
                             - $ref: ../../schemas/prd/work-routing.schema.yaml#/end_date
                             - $ref: ../../schemas/prd/work-routing.schema.yaml#/work_time
+                            - $ref: ../../schemas/prd/work-routing.schema.yaml#/ongoing_fg
                             - $ref: ../../schemas/prd/work-routing.schema.yaml#/remark
                             - $ref: ../../schemas/common/timestamp.schema.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml
+
+post:
+  description: |
+    실적-공정순서 데이터를 생성합니다. <br/>
+    ❗ 실적이 이미 완료상태일 경우 생성이 불가능합니다.
+  summary: 실적-공정순서 데이터 생성
+  tags:
+    - 실적-공정순서(WorkRouting)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - factory_uuid
+            - work_uuid
+            - proc_uuid
+            - proc_no
+            - workings_uuid
+          allOf:
+            - $ref: ../../schemas/prd/work-routing.schema.yaml#/factory_uuid
+            - $ref: ../../schemas/prd/work-routing.schema.yaml#/work_uuid
+            - $ref: ../../schemas/prd/work-routing.schema.yaml#/proc_uuid
+            - $ref: ../../schemas/prd/work-routing.schema.yaml#/proc_no
+            - $ref: ../../schemas/prd/work-routing.schema.yaml#/workings_uuid
+            - $ref: ../../schemas/prd/work-routing.schema.yaml#/equip_uuid
+            - $ref: ../../schemas/prd/work-routing.schema.yaml#/mold_uuid
+            - $ref: ../../schemas/prd/work-routing.schema.yaml#/mold_cavity
+            - $ref: ../../schemas/prd/work-routing.schema.yaml#/qty
+            - $ref: ../../schemas/prd/work-routing.schema.yaml#/start_date
+            - $ref: ../../schemas/prd/work-routing.schema.yaml#/end_date
+            - $ref: ../../schemas/prd/work-routing.schema.yaml#/work_time
+            - $ref: ../../schemas/prd/work-routing.schema.yaml#/ongoing_fg
+            - $ref: ../../schemas/prd/work-routing.schema.yaml#/remark
+  responses:
+    201:
+      $ref: ../../responses/common/succeed-create.response.yaml
     500:
       $ref: ../../responses/common/general-error.response.yaml
 
@@ -93,9 +136,12 @@ put:
             - $ref: ../../schemas/prd/work-routing.schema.yaml#/uuid
             - $ref: ../../schemas/prd/work-routing.schema.yaml#/workings_uuid
             - $ref: ../../schemas/prd/work-routing.schema.yaml#/equip_uuid
+            - $ref: ../../schemas/prd/work-routing.schema.yaml#/mold_uuid
+            - $ref: ../../schemas/prd/work-routing.schema.yaml#/mold_cavity
             - $ref: ../../schemas/prd/work-routing.schema.yaml#/qty
             - $ref: ../../schemas/prd/work-routing.schema.yaml#/start_date
             - $ref: ../../schemas/prd/work-routing.schema.yaml#/end_date
+            - $ref: ../../schemas/prd/work-routing.schema.yaml#/ongoing_fg
             - $ref: ../../schemas/prd/work-routing.schema.yaml#/remark
   responses:
     201:
@@ -120,12 +166,36 @@ patch:
             - $ref: ../../schemas/prd/work-routing.schema.yaml#/uuid
             - $ref: ../../schemas/prd/work-routing.schema.yaml#/workings_uuid
             - $ref: ../../schemas/prd/work-routing.schema.yaml#/equip_uuid
+            - $ref: ../../schemas/prd/work-routing.schema.yaml#/mold_uuid
+            - $ref: ../../schemas/prd/work-routing.schema.yaml#/mold_cavity
             - $ref: ../../schemas/prd/work-routing.schema.yaml#/qty
             - $ref: ../../schemas/prd/work-routing.schema.yaml#/start_date
             - $ref: ../../schemas/prd/work-routing.schema.yaml#/end_date
+            - $ref: ../../schemas/prd/work-routing.schema.yaml#/ongoing_fg
             - $ref: ../../schemas/prd/work-routing.schema.yaml#/remark
   responses:
     201:
       $ref: ../../responses/common/succeed-update.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml
+
+delete:
+  description: |
+    실적-공정순서 데이터를 삭제합니다. <br/>
+    ❗ 실적이 이미 완료상태일 경우 삭제가 불가능합니다.
+  summary: 실적-공정순서 데이터 삭제
+  tags:
+    - 실적-공정순서(WorkRouting)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - uuid
+          allOf:
+            - $ref: ../../schemas/prd/order-routing.schema.yaml#/uuid
+  responses:
+    200:
+      $ref: ../../responses/common/succeed-delete.response.yaml
     500:
       $ref: ../../responses/common/general-error.response.yaml

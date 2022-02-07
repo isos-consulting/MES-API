@@ -82,10 +82,10 @@ export default class PrdOrderRouting extends Model<IPrdOrderRouting> {
   mold_id: number;
 
   @Column({
-    comment: 'Cavity',
+    comment: '금형Cavity',
     type: DataType.INTEGER,
   })
-  cavity: number;
+  mold_cavity: number;
 
   @Column({
     comment: '비고',

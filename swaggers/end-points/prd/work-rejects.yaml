@@ -115,6 +115,7 @@ post:
           required:
             - factory_uuid
             - work_uuid
+            - work_routing_uuid
             - reject_uuid
             - qty
             - to_store_uuid

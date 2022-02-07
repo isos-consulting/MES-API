@@ -10,6 +10,7 @@ import { getSequelize } from '../../utils/getSequelize';
 import ApiResult from '../../interfaces/common/api-result.interface';
 import PrdWorkRouting from '../../models/prd/work-routing.model';
 import IPrdWorkRouting from '../../interfaces/prd/work-routing.interface';
+import { readFinalQtyByWork } from '../../queries/prd/work-routing-qty-by-work.query';
 
 class PrdWorkRoutingRepo {
   repo: Repository<PrdWorkRouting>;
@@ -41,7 +42,7 @@ class PrdWorkRoutingRepo {
             workings_id: workRouting.workings_id,
             equip_id: workRouting.equip_id,
             mold_id: workRouting.mold_id,
-            cavity: workRouting.cavity,
+            mold_cavity: workRouting.mold_cavity,
             qty: workRouting.qty,
             start_date: workRouting.start_date,
             end_date: workRouting.end_date,
@@ -110,7 +111,7 @@ class PrdWorkRoutingRepo {
           [ Sequelize.col('mldMold.uuid'), 'mold_uuid' ],
           [ Sequelize.col('mldMold.mold_cd'), 'mold_cd' ],
           [ Sequelize.col('mldMold.mold_nm'), 'mold_nm' ],
-          'cavity',
+          'mold_cavity',
           'qty',
           'start_date',
           [ Sequelize.col('prdWorkRouting.start_date'), 'start_time' ],
@@ -169,7 +170,7 @@ class PrdWorkRoutingRepo {
           [ Sequelize.col('mldMold.uuid'), 'mold_uuid' ],
           [ Sequelize.col('mldMold.mold_cd'), 'mold_cd' ],
           [ Sequelize.col('mldMold.mold_nm'), 'mold_nm' ],
-          'cavity',
+          'mold_cavity',
           'qty',
           'start_date',
           [ Sequelize.col('prdWorkRouting.start_date'), 'start_time' ],
@@ -210,6 +211,21 @@ class PrdWorkRoutingRepo {
     return convertReadResult(result);
   };
 
+  // 📒 Fn[getFinalQtyByWork]: 생산실적 기준 마지막 공정순서 생산수량 조회
+  public getFinalQtyByWork = async(workId?: number) => {
+    try {
+      const result = await this.sequelize.query(readFinalQtyByWork(workId));
+
+      if (!result) { return result; }
+
+      const qty: number = (result as any).dataValues.qty;
+      return qty;
+
+    } catch (error) {
+      throw error;
+    }
+  };
+
   //#endregion
 
   //#region 🟡 Update Functions
@@ -225,7 +241,7 @@ class PrdWorkRoutingRepo {
             workings_id: workRouting.workings_id ?? null,
             equip_id: workRouting.equip_id ?? null,
             mold_id: workRouting.mold_id ?? null,
-            cavity: workRouting.cavity ?? null,
+            mold_cavity: workRouting.mold_cavity ?? null,
             qty: workRouting.qty ?? null,
             start_date: workRouting.start_date ?? null,
             end_date: workRouting.end_date ?? null,
@@ -267,7 +283,7 @@ class PrdWorkRoutingRepo {
             workings_id: workRouting.workings_id,
             equip_id: workRouting.equip_id,
             mold_id: workRouting.mold_id,
-            cavity: workRouting.cavity,
+            mold_cavity: workRouting.mold_cavity,
             qty: workRouting.qty,
             start_date: workRouting.start_date,
             end_date: workRouting.end_date,

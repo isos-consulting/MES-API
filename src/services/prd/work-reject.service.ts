@@ -9,7 +9,7 @@ import StdRejectRepo from '../../repositories/std/reject.repository';
 import StdStoreRepo from '../../repositories/std/store.repository';
 import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
 
-class prdWorkRejectService {
+class PrdWorkRejectService {
   tenant: string;
   stateTag: string;
   repo: PrdWorkRejectRepo;
@@ -111,6 +111,31 @@ class prdWorkRejectService {
     try { return await this.repo.deleteByWorkId(workId, uid, tran); }
     catch (error) { throw error; }
   }
+
+  /**
+   * @param datas 작업실적 데이터
+   * @param regDate 수불일시
+   * @returns 실적부적합 데이터
+   */
+   getWorkRejectBody = async (data: any, regDate: string) => {
+    const workRejectRead = await this.repo.readRawsByWorkId(data.work_id);
+    const result = await Promise.all(
+      workRejectRead.raws.map(async (workReject: any) => {
+        return {
+          work_reject_id: workReject.work_reject_id,
+          factory_id: workReject.factory_id,
+          prod_id: workReject.prod_id,
+          reg_date: regDate,
+          lot_no: workReject.lot_no,
+          qty: workReject.qty,
+          to_store_id: workReject.to_store_id,
+          to_location_id: workReject.to_location_id
+        }
+      })
+    );
+
+    return result;
+  }
 }
 
-export default prdWorkRejectService;
+export default PrdWorkRejectService;

@@ -7,7 +7,7 @@ export default interface IPrdWorkRouting { // 공정 순서(실적)
   workings_id?: number,
   equip_id?: number | null,
   mold_id?: number | null,
-  cavity?: number | null,
+  mold_cavity?: number | null,
   qty?: number | null,
   start_date?: string | null,
   end_date?: string | null,

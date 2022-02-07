@@ -1,12 +1,14 @@
 import { Transaction } from "sequelize/types";
 import IPrdOrderWorker from "../../interfaces/prd/order-worker.interface";
+import IPrdOrder from "../../interfaces/prd/order.interface";
 import PrdOrderWorkerRepo from '../../repositories/prd/order-worker.repository';
 import PrdOrderRepo from '../../repositories/prd/order.repository';
 import StdFactoryRepo from '../../repositories/std/factory.repository';
 import StdWorkerRepo from '../../repositories/std/worker.repository';
 import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
+import StdWorkerGroupWorkerService from "../std/worker-group-worker.service";
 
-class prdOrderWorkerService {
+class PrdOrderWorkerService {
   tenant: string;
   stateTag: string;
   repo: PrdOrderWorkerRepo;
@@ -49,6 +51,24 @@ class prdOrderWorkerService {
 		catch (error) { throw error; }
   };
 
+  public createByOrder = async (data: IPrdOrder, uid: number, tran: Transaction) => {
+    try {
+      const workerGroupWorkerService = new StdWorkerGroupWorkerService(this.tenant);
+      const workerRead = await workerGroupWorkerService.readWorkerInGroup(data.worker_group_id as number);
+      const workerBody: IPrdOrderWorker[] = workerRead.raws.map((raw: any) => {
+        return {
+          factory_id: raw.factory_id,
+          order_id: data.order_id,
+          worker_id: raw.worker_id
+        }
+      });
+
+      return await this.repo.create(workerBody, uid, tran);
+    } catch (error) {
+      throw error;
+    }
+  }
+
   public read = async (params: any) => {
     try { return await this.repo.read(params); }
 		catch (error) { throw error; }
@@ -74,10 +94,10 @@ class prdOrderWorkerService {
 		catch (error) { throw error; }
   };
 
-  public deleteByOrderIds = async (OrderId: number[], uid: number, tran: Transaction) => {
-    try { return await this.repo.deleteByOrderIds(OrderId, uid, tran); }
+  public deleteByOrderIds = async (orderId: number[], uid: number, tran: Transaction) => {
+    try { return await this.repo.deleteByOrderIds(orderId, uid, tran); }
     catch (error) { throw error; }
   }
 }
 
-export default prdOrderWorkerService;
+export default PrdOrderWorkerService;

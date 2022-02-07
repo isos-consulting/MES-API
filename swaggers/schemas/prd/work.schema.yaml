@@ -41,43 +41,11 @@ seq:
       type: number
       format: int4
 
-proc_id:
-  type: object
-  properties:
-    proc_id:
-      description: 공정ID
-      type: number
-      format: int4
-
 workings_id:
   type: object
   properties:
     workings_id:
       description: 작업장ID
-      type: number
-      format: int4
-
-equip_id:
-  type: object
-  properties:
-    equip_id:
-      description: 설비ID
-      type: number
-      format: int4
-
-mold_id:
-  type: object
-  properties:
-    mold_id:
-      description: 금형ID
-      type: number
-      format: int4
-
-mold_cavity:
-  type: object
-  properties:
-    mold_cavity:
-      description: 금형 Cavity
       type: number
       format: int4
 
@@ -112,30 +80,6 @@ reject_qty:
       description: 부적합 수량
       type: number
       format: numeric(19, 6)
-
-start_date:
-  type: object
-  properties:
-    start_date:
-      description: 생산시작 일시
-      type: string
-      format: date-time
-
-end_date:
-  type: object
-  properties:
-    end_date:
-      description: 생산종료 일시
-      type: string
-      format: date-time
-
-work_time:
-  type: object
-  properties:
-    work_time:
-      description: 작업시간
-      type: number
-      format: int4
 
 shift_id:
   type: object
@@ -210,35 +154,11 @@ order_uuid:
       type: string
       format: uuid
 
-proc_uuid:
-  type: object
-  properties:
-    proc_uuid:
-      description: 공정UUID
-      type: string
-      format: uuid
-
 workings_uuid:
   type: object
   properties:
     workings_uuid:
       description: 작업장UUID
-      type: string
-      format: uuid
-
-equip_uuid:
-  type: object
-  properties:
-    equip_uuid:
-      description: 설비UUID
-      type: string
-      format: uuid
-
-mold_uuid:
-  type: object
-  properties:
-    mold_uuid:
-      description: 금형UUID
       type: string
       format: uuid
 

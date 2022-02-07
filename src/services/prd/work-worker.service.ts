@@ -8,8 +8,10 @@ import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
 import getSubtractTwoDates from "../../utils/getSubtractTwoDates";
 import createApiError from "../../utils/createApiError";
 import { errorState } from "../../states/common.state";
+import IPrdWork from "../../interfaces/prd/work.interface";
+import PrdOrderWorkerRepo from "../../repositories/prd/order-worker.repository";
 
-class prdWorkWorkerService {
+class PrdWorkWorkerService {
   tenant: string;
   stateTag: string;
   repo: PrdWorkWorkerRepo;
@@ -50,6 +52,23 @@ class prdWorkWorkerService {
   public create = async (datas: IPrdWorkWorker[], uid: number, tran: Transaction) => {
     try { return await this.repo.create(datas, uid, tran); }
 		catch (error) { throw error; }
+  };
+
+  public createByOrderWorker = async (data: IPrdWork, uid: number, tran: Transaction) => {
+    try {
+      const orderWorkerRepo = new PrdOrderWorkerRepo(this.tenant);
+      const orderWorkerRead = await orderWorkerRepo.readRawsByOrderId(data.order_id as number, tran);
+      const workerBody: IPrdWorkWorker[] = orderWorkerRead.raws.map((orderWorker: any) => {
+        return {
+          factory_id: orderWorker.factory_id,
+          work_id: data.work_id,
+          worker_id: orderWorker.worker_id
+        };
+      });
+      return await this.repo.create(workerBody, uid, tran); }
+		catch (error) { 
+      throw error; 
+    }
   };
 
   public read = async (params: any) => {
@@ -107,4 +126,4 @@ class prdWorkWorkerService {
   }
 }
 
-export default prdWorkWorkerService;
+export default PrdWorkWorkerService;

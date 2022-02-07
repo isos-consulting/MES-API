@@ -76,6 +76,25 @@ class PrdWorkInputCtl {
     }
   }
 
+  // 📒 Fn[readByUuid] (✅ Inheritance): Default ReadByUuid Function
+  public readByUuid = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      let result: ApiResult<any> = { count:0, raws: [] };
+      const service = new prdWorkInputService(req.tenant.uuid);
+
+      result = await service.readByUuid(req.params.uuid);
+
+      return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
+    }
+  };
+
   // 📒 Fn[readOngoing]: 진행중인 생산실적의 자재 투입데이터 Read Function
   public readOngoing = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {

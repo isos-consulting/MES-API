@@ -8,7 +8,7 @@ import StdStore from '../std/store.model';
 import StdUnitConvert from '../std/unit-convert.model';
 import StdUnit from '../std/unit.model';
 import PrdWork from './work.model';
-// import AdmBomInputType from '../adm/bom-input-type.model';
+import AdmBomInputType from '../adm/bom-input-type.model';
 
 @Table({
   tableName: 'PRD_WORK_INPUT_TB',
@@ -81,13 +81,13 @@ export default class PrdWorkInput extends Model<IPrdWorkInput> {
   })
   unit_id: number;
 
-  // @ForeignKey(() => AdmBomInputType)
-  // @Column({
-  //   comment: '투입방법ID',
-  //   type: DataType.INTEGER,
-  //   allowNull: false,
-  // })
-  // bom_input_type_id: number;
+  @ForeignKey(() => AdmBomInputType)
+  @Column({
+    comment: '투입방법ID',
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  bom_input_type_id: number;
 
   @ForeignKey(() => StdStore)
   @Column({
@@ -170,8 +170,8 @@ export default class PrdWorkInput extends Model<IPrdWorkInput> {
   @BelongsTo(() => StdUnit, { foreignKey: 'unit_id', targetKey: 'unit_id', onDelete: 'restrict', onUpdate: 'cascade' })
   stdUnit: StdUnit;
 
-  // @BelongsTo(() => AdmBomInputType, { foreignKey: 'bom_input_type_id', targetKey: 'bom_input_type_id', onDelete: 'restrict', onUpdate: 'cascade' })
-  // admBomInputType: AdmBomInputType;
+  @BelongsTo(() => AdmBomInputType, { foreignKey: 'bom_input_type_id', targetKey: 'bom_input_type_id', onDelete: 'restrict', onUpdate: 'cascade' })
+  admBomInputType: AdmBomInputType;
 
   @BelongsTo(() => StdUnitConvert, { foreignKey: 'unit_id', targetKey: 'from_unit_id', onDelete: 'restrict', onUpdate: 'cascade' })
   stdUnitConvert: StdUnitConvert;

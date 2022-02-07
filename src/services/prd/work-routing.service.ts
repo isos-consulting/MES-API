@@ -10,8 +10,11 @@ import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
 import getSubtractTwoDates from "../../utils/getSubtractTwoDates";
 import createApiError from "../../utils/createApiError";
 import { errorState } from "../../states/common.state";
+import IPrdWork from "../../interfaces/prd/work.interface";
+import PrdOrderRoutingRepo from "../../repositories/prd/order-routing.repository";
+import MldMoldRepo from "../../repositories/mld/mold.repository";
 
-class prdWorkRoutingService {
+class PrdWorkRoutingService {
   tenant: string;
   stateTag: string;
   repo: PrdWorkRoutingRepo;
@@ -52,6 +55,12 @@ class prdWorkRoutingService {
         TRepo: StdEquipRepo,
         idName: 'equip_id',
         uuidName: 'equip_uuid'
+      },
+      {
+        key: 'mold',
+        TRepo: MldMoldRepo,
+        idName: 'mold_id',
+        uuidName: 'mold_uuid'
       }
     ];
   }
@@ -64,6 +73,28 @@ class prdWorkRoutingService {
   public create = async (datas: IPrdWorkRouting[], uid: number, tran: Transaction) => {
     try { return await this.repo.create(datas, uid, tran); }
 		catch (error) { throw error; }
+  };
+
+  public createByOrderRouting = async (data: IPrdWork, uid: number, tran: Transaction) => {
+    try { 
+      const orderRoutingRepo = new PrdOrderRoutingRepo(this.tenant);
+      const orderRoutingRead = await orderRoutingRepo.readRawsByOrderId(data.order_id as number, tran);
+      const routingBody: IPrdWorkRouting[] = orderRoutingRead.raws.map((orderRouting: any) => {
+        return {
+          factory_id: orderRouting.factory_id,
+          work_id: data.work_id,
+          proc_id: orderRouting.proc_id,
+          proc_no: orderRouting.proc_no,
+          workings_id: orderRouting.workings_id,
+          equip_id: orderRouting.equip_id
+        };
+      });
+
+      return await this.repo.create(routingBody, uid, tran); 
+    }
+		catch (error) { 
+      throw error; 
+    }
   };
 
   public read = async (params: any) => {
@@ -121,4 +152,4 @@ class prdWorkRoutingService {
   }
 }
 
-export default prdWorkRoutingService;
+export default PrdWorkRoutingService;

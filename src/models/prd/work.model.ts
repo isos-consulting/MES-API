@@ -83,6 +83,7 @@ export default class PrdWork extends Model<IPrdWork> {
     comment: '양품 수량',
     type: DataType.DECIMAL(19, 6),
     allowNull: false,
+    defaultValue: 0,
   })
   qty: number;
 
@@ -90,6 +91,7 @@ export default class PrdWork extends Model<IPrdWork> {
     comment: '부적합 수량',
     type: DataType.DECIMAL(19, 6),
     allowNull: false,
+    defaultValue: 0,
   })
   reject_qty: number;
 

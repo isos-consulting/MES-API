@@ -155,7 +155,7 @@ class PrdOrderWorkerRepo {
   };
 
   // 📒 Fn[readRawsByOrderId]: 작업지시의 Id를 이용하여 Raw Data Read Function
-  public readRawsByOrderId = async(orderId: string, tran?: Transaction) => {
+  public readRawsByOrderId = async(orderId: number, tran?: Transaction) => {
     const result = await this.repo.findAll({ where: { order_id: orderId }, transaction: tran });
     return convertReadResult(result);
   };

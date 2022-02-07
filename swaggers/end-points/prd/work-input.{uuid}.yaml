@@ -63,6 +63,9 @@ get:
                             - $ref: ../../schemas/std/prod.schema.yaml#/unit_uuid
                             - $ref: ../../schemas/std/unit.schema.yaml#/unit_cd
                             - $ref: ../../schemas/std/unit.schema.yaml#/unit_nm
+                            - $ref: ../../schemas/prd/work-input.schema.yaml#/bom_input_type_uuid
+                            - $ref: ../../schemas/adm/bom-input-type.schema.yaml#/bom_input_type_cd
+                            - $ref: ../../schemas/adm/bom-input-type.schema.yaml#/bom_input_type_nm
                             - $ref: ../../schemas/prd/work-input.schema.yaml#/lot_no
                             - $ref: ../../schemas/prd/work-input.schema.yaml#/qty
                             - $ref: ../../schemas/prd/work-input.schema.yaml#/c_usage

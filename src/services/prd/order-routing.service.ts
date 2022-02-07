@@ -7,8 +7,11 @@ import StdFactoryRepo from '../../repositories/std/factory.repository';
 import StdProcRepo from '../../repositories/std/proc.repository';
 import StdWorkingsRepo from '../../repositories/std/workings.repository';
 import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
+import StdRoutingService from "../std/routing.service";
+import IPrdOrder from "../../interfaces/prd/order.interface";
+import MldMoldRepo from "../../repositories/mld/mold.repository";
 
-class prdOrderRoutingService {
+class PrdOrderRoutingService {
   tenant: string;
   stateTag: string;
   repo: PrdOrderRoutingRepo;
@@ -49,6 +52,12 @@ class prdOrderRoutingService {
         TRepo: StdEquipRepo,
         idName: 'equip_id',
         uuidName: 'equip_uuid'
+      },
+      {
+        key: 'mold',
+        TRepo: MldMoldRepo,
+        idName: 'mold_id',
+        uuidName: 'mold_uuid'
       }
     ];
   }
@@ -61,6 +70,28 @@ class prdOrderRoutingService {
   public create = async (datas: IPrdOrderRouting[], uid: number, tran: Transaction) => {
     try { return await this.repo.create(datas, uid, tran); }
 		catch (error) { throw error; }
+  };
+
+  public createByOrder = async (data: IPrdOrder, uid: number, tran: Transaction) => {
+    try { 
+      const routingService = new StdRoutingService(this.tenant);
+      const routingParams = { factory_id : data.factory_id, prod_id: data.prod_id };
+      const routingRead = await routingService.readOptionallyMove(routingParams);
+      const routingBody: IPrdOrderRouting[] = routingRead.raws.map((raw: any) => {
+        return {
+          factory_id: raw.factory_id,
+          order_id: data.order_id,
+          proc_id: raw.proc_id,
+          proc_no: raw.proc_no,
+          workings_id: data.workings_id,
+          equip_id: raw.equip_id
+        }
+      });
+      return await this.repo.create(routingBody, uid, tran); 
+    }
+		catch (error) { 
+      throw error; 
+    }
   };
 
   public read = async (params: any) => {
@@ -88,10 +119,10 @@ class prdOrderRoutingService {
 		catch (error) { throw error; }
   };
 
-  public deleteByOrderIds = async (OrderId: number[], uid: number, tran: Transaction) => {
-    try { return await this.repo.deleteByOrderIds(OrderId, uid, tran); }
+  public deleteByOrderIds = async (orderId: number[], uid: number, tran: Transaction) => {
+    try { return await this.repo.deleteByOrderIds(orderId, uid, tran); }
     catch (error) { throw error; }
   }
 }
 
-export default prdOrderRoutingService;
+export default PrdOrderRoutingService;

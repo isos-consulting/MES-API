@@ -11,7 +11,7 @@ import StdProdRepo from '../../repositories/std/prod.repository';
 import StdStoreRepo from '../../repositories/std/store.repository';
 import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
 
-class prdDemandService {
+class PrdDemandService {
   tenant: string;
   stateTag: string;
   repo: PrdDemandRepo;
@@ -117,4 +117,4 @@ class prdDemandService {
   };
 }
 
-export default prdDemandService;
+export default PrdDemandService;

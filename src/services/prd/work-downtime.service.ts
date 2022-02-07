@@ -12,7 +12,7 @@ import createApiError from "../../utils/createApiError";
 import { errorState } from "../../states/common.state";
 import ApiResult from "../../interfaces/common/api-result.interface";
 
-class prdWorkDowntimeService {
+class PrdWorkDowntimeService {
   tenant: string;
   stateTag: string;
   repo: PrdWorkDowntimeRepo;
@@ -179,4 +179,4 @@ class prdWorkDowntimeService {
 
 }
 
-export default prdWorkDowntimeService;
+export default PrdWorkDowntimeService;

@@ -439,7 +439,7 @@ router.route('/worker-groups').delete(workerGroup.delete);
 
 //#region ✅ WorkerGroupWorker (작업조-작업자)
 const workerGroupWorker = new StdWorkerGroupWorkerCtl();
-router.route('/worker-group-workers/excel-upload').post(workerGroupWorker.upsertBulkDatasFromExcel);
+// router.route('/worker-group-workers/excel-upload').post(workerGroupWorker.upsertBulkDatasFromExcel);
 router.route('/worker-group-worker/:uuid').get(workerGroupWorker.read);
 router.route('/worker-group-workers').get(workerGroupWorker.read);
 router.route('/worker-group-workers').post(workerGroupWorker.create);

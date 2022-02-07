@@ -49,20 +49,20 @@ get:
                             - $ref: ../../schemas/prd/work.schema.yaml#/order_uuid
                             - $ref: ../../schemas/prd/order.schema.yaml#/order_no
                             - $ref: ../../schemas/prd/work.schema.yaml#/seq
-                            - $ref: ../../schemas/prd/work.schema.yaml#/proc_uuid
+                            - $ref: ../../schemas/std/proc.schema.yaml#/proc_uuid
                             - $ref: ../../schemas/std/proc.schema.yaml#/proc_cd
                             - $ref: ../../schemas/std/proc.schema.yaml#/proc_nm
                             - $ref: ../../schemas/prd/work.schema.yaml#/workings_uuid
                             - $ref: ../../schemas/std/workings.schema.yaml#/workings_cd
                             - $ref: ../../schemas/std/workings.schema.yaml#/workings_nm
-                            - $ref: ../../schemas/prd/work.schema.yaml#/equip_uuid
+                            - $ref: ../../schemas/std/equip.schema.yaml#/equip_uuid
                             - $ref: ../../schemas/std/equip.schema.yaml#/equip_cd
                             - $ref: ../../schemas/std/equip.schema.yaml#/equip_nm
-                            - $ref: ../../schemas/prd/work.schema.yaml#/mold_uuid
+                            - $ref: ../../schemas/mld/mold.schema.yaml#/mold_uuid
                             - $ref: ../../schemas/mld/mold.schema.yaml#/mold_cd
                             - $ref: ../../schemas/mld/mold.schema.yaml#/mold_nm
                             - $ref: ../../schemas/mld/mold.schema.yaml#/mold_no
-                            - $ref: ../../schemas/prd/work.schema.yaml#/mold_cavity
+                            - $ref: ../../schemas/mld/mold.schema.yaml#/mold_cavity
                             - $ref: ../../schemas/prd/work.schema.yaml#/prod_uuid
                             - $ref: ../../schemas/std/prod.schema.yaml#/prod_no
                             - $ref: ../../schemas/std/prod.schema.yaml#/prod_nm
@@ -85,9 +85,9 @@ get:
                             - $ref: ../../schemas/prd/work.schema.yaml#/total_qty
                             - $ref: ../../schemas/prd/work.schema.yaml#/qty
                             - $ref: ../../schemas/prd/work.schema.yaml#/reject_qty
-                            - $ref: ../../schemas/prd/work.schema.yaml#/start_date
-                            - $ref: ../../schemas/prd/work.schema.yaml#/end_date
-                            - $ref: ../../schemas/prd/work.schema.yaml#/work_time
+                            - $ref: ../../schemas/prd/work-routing.schema.yaml#/start_date
+                            - $ref: ../../schemas/prd/work-routing.schema.yaml#/end_date
+                            - $ref: ../../schemas/prd/work-routing.schema.yaml#/work_time
                             - $ref: ../../schemas/prd/work.schema.yaml#/shift_uuid
                             - $ref: ../../schemas/std/shift.schema.yaml#/shift_nm
                             - $ref: ../../schemas/prd/order.schema.yaml#/worker_group_uuid

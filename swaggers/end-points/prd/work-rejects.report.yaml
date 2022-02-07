@@ -82,7 +82,7 @@ get:
                             - $ref: ../../schemas/prd/work.schema.yaml#/workings_uuid
                             - $ref: ../../schemas/std/workings.schema.yaml#/workings_cd
                             - $ref: ../../schemas/std/workings.schema.yaml#/workings_nm
-                            - $ref: ../../schemas/prd/work.schema.yaml#/equip_uuid
+                            - $ref: ../../schemas/std/equip.schema.yaml#/equip_uuid
                             - $ref: ../../schemas/std/equip.schema.yaml#/equip_cd
                             - $ref: ../../schemas/std/equip.schema.yaml#/equip_nm
                             - $ref: ../../schemas/prd/work.schema.yaml#/prod_uuid
@@ -106,8 +106,8 @@ get:
                             - $ref: ../../schemas/prd/work.schema.yaml#/total_qty
                             - $ref: ../../schemas/prd/work.schema.yaml#/qty
                             - $ref: ../../schemas/prd/work.schema.yaml#/reject_qty
-                            - $ref: ../../schemas/prd/work.schema.yaml#/start_date
-                            - $ref: ../../schemas/prd/work.schema.yaml#/end_date
+                            - $ref: ../../schemas/prd/work-routing.schema.yaml#/start_date
+                            - $ref: ../../schemas/prd/work-routing.schema.yaml#/end_date
                             - $ref: ../../schemas/prd/work-reject.schema.yaml#/reject_proc_uuid
                             - $ref: ../../schemas/prd/work-reject.schema.yaml#/reject_proc_cd
                             - $ref: ../../schemas/prd/work-reject.schema.yaml#/reject_proc_nm

@@ -7,10 +7,12 @@ import StdLocationRepo from '../../repositories/std/location.repository';
 import StdProdRepo from '../../repositories/std/prod.repository';
 import StdStoreRepo from '../../repositories/std/store.repository';
 import StdUnitRepo from '../../repositories/std/unit.repository';
-// import AdmBomInputTypeRepo from '../../repositories/adm/bom-input-type.repository';
+import AdmBomInputTypeRepo from '../../repositories/adm/bom-input-type.repository';
 import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
+import IPrdOrder from "../../interfaces/prd/order.interface";
+import StdBomService from "../std/bom.service";
 
-class prdOrderInputService {
+class PrdOrderInputService {
   tenant: string;
   stateTag: string;
   repo: PrdOrderInputRepo;
@@ -46,12 +48,12 @@ class prdOrderInputService {
         idName: 'unit_id',
         uuidName: 'unit_uuid'
       },
-      // {
-      //   key: 'bomInputType',
-      //   TRepo: AdmBomInputTypeRepo,
-      //   idName: 'bom_input_type_id',
-      //   uuidName: 'bom_input_type_uuid'
-      // },
+      {
+        key: 'bomInputType',
+        TRepo: AdmBomInputTypeRepo,
+        idName: 'bom_input_type_id',
+        uuidName: 'bom_input_type_uuid'
+      },
       {
         key: 'store',
         TRepo: StdStoreRepo,
@@ -79,6 +81,29 @@ class prdOrderInputService {
 		catch (error) { throw error; }
   };
 
+  public createByOrder = async (data: IPrdOrder, uid: number, tran: Transaction) => {
+    try {
+      const bomService = new StdBomService(this.tenant);
+      const bomRead = await bomService.readByParent(data.factory_id as number, data.prod_id as number);
+      const inputBody: IPrdOrderInput[] = bomRead.raws.map((raw: any) => {
+        return {
+          factory_id: raw.factory_id,
+          order_id: data.order_id,
+          prod_id: raw.c_prod_id,
+          c_usage: raw.c_usage,
+          unit_id: raw.unit_id,
+          bom_input_type_id: raw.bom_input_type_id,
+          from_store_id: raw.from_store_id,
+          from_location_id: raw.from_location_id
+        }
+      });
+      console.log(inputBody);
+      return await this.repo.create(inputBody, uid, tran);
+    } catch (error) {
+      throw error;
+    }
+  }
+
   public read = async (params: any) => {
     try { return await this.repo.read(params); }
 		catch (error) { throw error; }
@@ -104,10 +129,20 @@ class prdOrderInputService {
 		catch (error) { throw error; }
   };
 
-  public deleteByOrderIds = async (OrderId: number[], uid: number, tran: Transaction) => {
-    try { return await this.repo.deleteByOrderIds(OrderId, uid, tran); }
+  public deleteByOrderIds = async (orderId: number[], uid: number, tran: Transaction) => {
+    try { return await this.repo.deleteByOrderIds(orderId, uid, tran); }
     catch (error) { throw error; }
+  }
+
+  public getVerifyInput = async (orderId: number, tran: Transaction) => {
+    let verifyInput: any = {};
+    const orderInputRead = await this.repo.readRawsByOrderId(orderId, tran);
+    orderInputRead.raws.forEach((orderInput: any) => {
+      verifyInput[orderInput.prod_id] = { usage: orderInput.c_usage, qty: 0, bom_input_type_id: null }
+    });
+
+    return verifyInput;
   }
 }
 
-export default prdOrderInputService;
+export default PrdOrderInputService;
