@@ -130,6 +130,7 @@ const readLotReverseReport = (
 	//#region 📌 임시테이블 Drop
 	// 📌 생성된 임시테이블(Temp Table) 삭제(Drop)
 	const dropTempTableQuery = `
+		DROP TABLE temp_work_routing;
 		DROP TABLE temp_lot;
 	`;
 	//#endregion
