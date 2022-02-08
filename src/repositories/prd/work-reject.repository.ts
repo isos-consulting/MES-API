@@ -84,7 +84,7 @@ class PrdWorkRejectRepo {
           { 
             model: this.sequelize.models.PrdWorkRouting, 
             attributes: [], 
-            required: false,
+            required: true,
             include: [
               { model: this.sequelize.models.StdProc, attributes: [], required: false },
               { model: this.sequelize.models.StdWorkings, attributes: [], required: false },
@@ -164,7 +164,7 @@ class PrdWorkRejectRepo {
           { 
             model: this.sequelize.models.PrdWorkRouting, 
             attributes: [], 
-            required: false,
+            required: true,
             include: [
               { model: this.sequelize.models.StdProc, attributes: [], required: false },
               { model: this.sequelize.models.StdWorkings, attributes: [], required: false },

@@ -60,11 +60,14 @@ get:
                             - $ref: ../../schemas/mld/mold.schema.yaml#/mold_cd
                             - $ref: ../../schemas/mld/mold.schema.yaml#/mold_nm
                             - $ref: ../../schemas/prd/work-routing.schema.yaml#/mold_cavity
+                            - $ref: ../../schemas/prd/work-routing.schema.yaml#/total_qty
                             - $ref: ../../schemas/prd/work-routing.schema.yaml#/qty
+                            - $ref: ../../schemas/prd/work-routing.schema.yaml#/reject_qty
                             - $ref: ../../schemas/prd/work-routing.schema.yaml#/start_date
                             - $ref: ../../schemas/prd/work-routing.schema.yaml#/end_date
                             - $ref: ../../schemas/prd/work-routing.schema.yaml#/work_time
                             - $ref: ../../schemas/prd/work-routing.schema.yaml#/ongoing_fg
+                            - $ref: ../../schemas/prd/work-routing.schema.yaml#/worker_nm
                             - $ref: ../../schemas/prd/work-routing.schema.yaml#/remark
                             - $ref: ../../schemas/common/timestamp.schema.yaml
     500:

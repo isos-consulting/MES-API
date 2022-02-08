@@ -11,6 +11,27 @@ const readLotReverseReport = (
 
 	//#region 📌 입하기준 lot 추적 품번, lot 기준 임시 테이블 생성
 	const createBaseTempTableQuery = `
+		/** 작업정보를 가져오기 위한 임시테이블 생성 */
+		CREATE TEMP TABLE temp_work_routing(work_id int, proc_id int, equip_id int, mold_id int, mold_cavity int, prod_id int, reg_date timestamp, lot_no varchar(25));
+		/** 임시테이블 인덱스 설정 */
+		CREATE INDEX ON temp_work_routing(work_id);
+
+		/** 작업완료 기준으로 마지막공정순서에 해당하는 데이터 불러옴 */
+		WITH complete AS
+		(
+			SELECT 
+				p_wr.work_id, p_wr.proc_id, p_wr.equip_id, p_wr.mold_id, p_wr.mold_cavity, p_w.prod_id,
+				p_w.reg_date, p_w.lot_no, rank() over(PARTITION BY p_wr.work_id ORDER BY p_wr.proc_no DESC) AS rn
+			FROM prd_work_routing_tb p_wr
+			JOIN prd_work_tb p_w ON p_w.work_id = p_wr.work_id 
+			WHERE p_w.complete_fg = TRUE 
+		)
+		INSERT INTO temp_work_routing
+		SELECT work_id, proc_id, equip_id, mold_id, mold_cavity, prod_id, reg_date, lot_no
+		FROM complete 
+		WHERE rn = 1;
+
+		/** Lot Trancking을 위한 쿼리 작성 */
 		CREATE TEMP TABLE temp_lot(
 			proc_id int,
 			equip_id int,
@@ -34,7 +55,7 @@ const readLotReverseReport = (
 						p_w.prod_id AS work_prod_id, p_w.lot_no AS work_lot_no, p_wi2.work_input_id,
 						p_wi.prod_id::text AS sortby,0 AS lv
 		FROM prd_work_input_tb p_wi 
-		JOIN prd_work_tb p_w ON p_w.work_id = p_wi.work_id 
+		JOIN temp_work_routing p_w ON p_w.work_id = p_wi.work_id 
 		LEFT JOIN prd_work_input_tb p_wi2	ON p_wi2.prod_id = p_w.prod_id 
 																			AND p_wi2.lot_no = p_w.lot_no 
 		LEFT JOIN std_factory_tb s_f ON s_f.factory_id = p_wi.factory_id
@@ -50,7 +71,7 @@ const readLotReverseReport = (
 						concat(l_t.sortby, ' > ', p_w.prod_id::text) AS concat, lv+1
 		FROM prd_work_input_tb p_wi 
 		JOIN lot_tracking l_t ON l_t.work_input_id = p_wi.work_input_id 
-		JOIN prd_work_tb p_w ON p_w.work_id = p_wi.work_id 
+		JOIN temp_work_routing p_w ON p_w.work_id = p_wi.work_id 
 		LEFT JOIN prd_work_input_tb p_wi2	ON p_wi2.prod_id = p_w.prod_id 
 																			AND p_wi2.lot_no = p_w.lot_no 
 		GROUP BY p_w.proc_id, p_w.equip_id, p_w.reg_date, p_wi.prod_id, p_wi.lot_no, p_w.prod_id, p_w.lot_no, p_wi2.work_input_id, l_t.sortby,lv
@@ -109,6 +130,7 @@ const readLotReverseReport = (
 	//#region 📌 임시테이블 Drop
 	// 📌 생성된 임시테이블(Temp Table) 삭제(Drop)
 	const dropTempTableQuery = `
+		DROP TABLE temp_work_routing;
 		DROP TABLE temp_lot;
 	`;
 	//#endregion

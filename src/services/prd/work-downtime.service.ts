@@ -71,7 +71,7 @@ class PrdWorkDowntimeService {
         this.validateDuplicatedTime(data, tran);
 
         const tempResult = await this.repo.create([data], uid, tran); 
-        result.raws = [...result.raws, ...tempResult.raws[0]];
+        result.raws = [...result.raws, ...tempResult.raws];
         result.count += tempResult.count;
       }
 
@@ -104,7 +104,7 @@ class PrdWorkDowntimeService {
         this.validateDuplicatedTime(data, tran);
 
         const tempResult = await this.repo.update([data], uid, tran); 
-        result.raws = [...result.raws, ...tempResult.raws[0]];
+        result.raws = [...result.raws, ...tempResult.raws];
         result.count += tempResult.count;
       }
 
@@ -122,7 +122,7 @@ class PrdWorkDowntimeService {
         this.validateDuplicatedTime(data, tran);
 
         const tempResult = await this.repo.patch([data], uid, tran); 
-        result.raws = [...result.raws, ...tempResult.raws[0]];
+        result.raws = [...result.raws, ...tempResult.raws];
         result.count += tempResult.count;
       }
 

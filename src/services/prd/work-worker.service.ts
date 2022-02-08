@@ -10,6 +10,7 @@ import createApiError from "../../utils/createApiError";
 import { errorState } from "../../states/common.state";
 import IPrdWork from "../../interfaces/prd/work.interface";
 import PrdOrderWorkerRepo from "../../repositories/prd/order-worker.repository";
+import PrdWorkRoutingRepo from "../../repositories/prd/work-routing.repository";
 
 class PrdWorkWorkerService {
   tenant: string;
@@ -34,6 +35,12 @@ class PrdWorkWorkerService {
         TRepo: PrdWorkRepo,
         idName: 'work_id',
         uuidName: 'work_uuid'
+      },
+      {
+        key: 'work_routing',
+        TRepo: PrdWorkRoutingRepo,
+        idName: 'work_routing_id',
+        uuidName: 'work_routing_uuid'
       },
       {
         key: 'worker',
