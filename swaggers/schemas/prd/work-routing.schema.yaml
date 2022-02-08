@@ -187,3 +187,26 @@ mold_uuid:
       format: uuid
 
 # Others
+total_qty:
+  type: object
+  properties:
+    total_qty:
+      description: 생산 수량
+      type: number
+      format: numeric(19, 6)
+
+reject_qty:
+  type: object
+  properties:
+    order_qty:
+      description: 부적합 수량
+      type: number
+      format: numeric(19, 6)
+
+worker_nm:
+  type: object
+  properties:
+    order_qty:
+      description: 작업자명
+      type: string
+      format: text
