@@ -31,7 +31,7 @@ const work = new PrdWorkCtl();
 router.route('/works/complete').put(prdWorkValidation.updateComplete, validationCallback, work.updateComplete);
 router.route('/works/cancel-complete').put(prdWorkValidation.updateCancelComplete, validationCallback, work.updateCancelComplete);
 router.route('/works/report').get(prdWorkValidation.readReport, validationCallback, work.readReport);
-router.route('/work/:uuid').get(prdWorkValidation.read, validationCallback, work.read);
+router.route('/work/:uuid').get(prdWorkValidation.readByUuid, validationCallback, work.readByUuid);
 router.route('/works').get(prdWorkValidation.read, validationCallback, work.read);
 router.route('/works').post(prdWorkValidation.create, validationCallback, work.create);
 router.route('/works').put(prdWorkValidation.update, validationCallback, work.update);
