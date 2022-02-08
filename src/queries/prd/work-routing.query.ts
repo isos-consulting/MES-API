@@ -42,7 +42,7 @@ const readWorkRoutings = (
   //#region 📒 Main Query
   const createQuery = `
     SELECT
-      p_wr.work_routing_id,
+      p_wr.uuid as work_routing_uuid,
       p_wr.work_id,
       s_f.uuid AS factory_uuid,
       s_f.factory_cd,

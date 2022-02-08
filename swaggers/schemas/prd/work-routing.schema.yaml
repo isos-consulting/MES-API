@@ -198,7 +198,7 @@ total_qty:
 reject_qty:
   type: object
   properties:
-    order_qty:
+    reject_qty:
       description: 부적합 수량
       type: number
       format: numeric(19, 6)
@@ -206,7 +206,7 @@ reject_qty:
 worker_nm:
   type: object
   properties:
-    order_qty:
+    worker_nm:
       description: 작업자명
       type: string
       format: text
