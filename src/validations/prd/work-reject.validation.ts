@@ -6,8 +6,12 @@ const stateTag = 'prdWorkReject';
 
 const prdWorkRejectValidation = {
   readByWork: [
-    param('uuid', '부적합UUID')
-      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'uuid', '부적합UUID'))
+    query('work_uuid', '실적UUID')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'work_uuid', '실적UUID'))
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'work_uuid', '실적UUID')),
+    query('work_routing_uuid', '공정순서UUID')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'work_routing_uuid', '공정순서UUID'))
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'work_routing_uuid', '공정순서UUID')),
   ],
   readReport: [
     query('factory_uuid', '공장UUID').optional({ nullable: true })
