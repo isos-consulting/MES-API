@@ -260,6 +260,7 @@ class PrdWorkCtl {
       const service = new PrdWorkService(req.tenant.uuid);
       const orderService = new PrdOrderService(req.tenant.uuid);
       const workInputService = new PrdWorkInputService(req.tenant.uuid);
+      const workRejectService = new PrdWorkRejectService(req.tenant.uuid);
       const inventoryService = new InvStoreService(req.tenant.uuid);
       const tenantOptService = new StdTenantOptService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
@@ -283,6 +284,14 @@ class PrdWorkCtl {
             req.user?.uid as number, tran
           );
 
+          // 📌 부적합 수량에 의한 창고 수불 내역 생성
+          const rejectBody = await workRejectService.getWorkRejectBody(workResult.raws[0], workResult.raws[0].reg_date);
+          const rejectStoreResult = await inventoryService.transactInventory(
+            rejectBody, 'DELETE', 
+            { inout: 'TO', tran_type: 'PRD_REJECT', reg_date: '', tran_id_alias: 'work_reject_id' },
+            req.user?.uid as number, tran
+          );
+
           // 📌 창고 수불이력 삭제(생산투입)
           const isPullOption = await tenantOptService.getTenantOptValue('OUT_AUTO_PULL', tran);
           const workInputBody = await workInputService.getWorkInputBody(workResult.raws[0], workResult.raws[0].reg_date, isPullOption);
@@ -295,7 +304,7 @@ class PrdWorkCtl {
           result.raws.push({
             work: workResult.raws,
             order: orderResult.raws,
-            toStore: toStoreResult.raws,
+            toStore: [...toStoreResult.raws, ...rejectStoreResult.raws],
             fromStore: fromStoreResult.raws,
           });
         }
