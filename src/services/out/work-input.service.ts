@@ -169,8 +169,7 @@ class OutWorkInputService {
     //    결과물: 투입데이터를 가지고 있는 배열
     let result: any[] = [];
     resultArray.forEach(data => { result = [...result, ...data]; });
-
-    // console.log(result);
+    
     return result;
   }
 

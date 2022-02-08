@@ -124,7 +124,6 @@ class InvStoreCtl extends BaseCtl {
           if (data.qty > currentQty) { data.inout_fg = true; }
           else { data.inout_fg = false; }
           data.qty = Math.abs(data.qty - currentQty);
-          console.log('data.qty', data.qty)
 
           if (data.qty == 0) { throw new Error('입력 재고의 실사수량이 0입니다.'); }
         }

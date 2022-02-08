@@ -16,6 +16,9 @@ import PrdWorkRejectRepo from "../../repositories/prd/work-reject.repository";
 import StdTenantOptService from "../std/tenant-opt.service";
 import { PRD_METHOD_REJECT_QTY } from "../../types/tenant-opt.type";
 import { BOM_INPUT_TYPE } from "../../types/bom-input-type.type";
+import PrdOrderInputService from "./order-input.service";
+import PrdWorkInputService from "./work-input.service";
+import StdStoreService from "../std/store.service";
 
 class PrdWorkService {
   tenant: string;
@@ -114,38 +117,8 @@ class PrdWorkService {
 		catch (error) { throw error; }
   };
 
-  public updateComplete = async (data: IPrdWork, uid: number, tran: Transaction) => {
-    try { 
-      // 📌 작업완료 일때 수량(양품,불량) 가져오도록 조회
-      if (data.complete_fg) {
-        const tenantOptService = new StdTenantOptService(this.tenant);
-        const workRoutingRepo = new PrdWorkRoutingRepo(this.tenant);
-        const workRejectRepo = new PrdWorkRejectRepo(this.tenant);
-
-        // 📌 부적합수량 처리방법이 합계인지 마지막공정 수량인지 옵션 값 조회
-        const isRejectQtyOption = await tenantOptService.getTenantOptValue('PRD_METHOD_REJECT_QTY', tran);
-
-        const qty: number = await workRoutingRepo.getFinalQtyByWork(data.work_id);
-        if (!qty) {
-          throw createApiError(
-            400, 
-            `실적번호 [${data.uuid}]는 양품수량이 등록되지 않아 저장이 불가능합니다.`, 
-            this.stateTag, 
-            errorState.FAILED_SAVE_TO_RELATED_DATA
-          );
-        }
-
-        let rejectQty: number;
-        if (Number(isRejectQtyOption) == PRD_METHOD_REJECT_QTY.SUM) {
-          rejectQty = await workRejectRepo.getTotalRejectQtyByWork(data.work_id as number, tran) as number;
-        } else { rejectQty = await workRejectRepo.getFinalRejectQtyByWork(data.work_id as number, tran) as number; }
-
-        data['qty'] = qty;
-        data['reject_qty'] = rejectQty;
-      }
-      
-      return await this.repo.updateComplete([data], uid, tran); 
-    } 
+  public updateComplete = async (data: {uuid: string, qty?: number, reject_qty?: number, complete_fg: boolean}, uid: number, tran: Transaction) => {
+    try { return await this.repo.updateComplete([data], uid, tran); } 
 		catch (error) { throw error; }
   };
 
@@ -193,6 +166,53 @@ class PrdWorkService {
         }
       }
     }); 
+  }
+
+  public validateUpdateComplete = async (data: any, tran: Transaction) => {
+    const orderInputService = new PrdOrderInputService(this.tenant);
+    const workInputService = new PrdWorkInputService(this.tenant);
+    const stdStoreService = new StdStoreService(this.tenant);
+    
+    const tenantOptService = new StdTenantOptService(this.tenant);
+    const workRoutingRepo = new PrdWorkRoutingRepo(this.tenant);
+    const workRejectRepo = new PrdWorkRejectRepo(this.tenant);
+
+    const workResult = (await this.repo.readRawsByUuids([data.uuid])).raws[0];
+
+    let verifyInput: any = {};
+    // ❗ 지시생성 시 등록했던 투입정보 가져오기
+    verifyInput = await orderInputService.getVerifyInput(workResult.order_id, tran);
+    // ❗ 지시기준 생산투입정보 검증 및 가져오기
+    verifyInput = await workInputService.getVerifyInput(workResult.work_id, tran);
+
+    const qty: number = await workRoutingRepo.getFinalQtyByWork(data.work_id);
+    // 📌 부적합수량 처리방법이 합계인지 마지막공정 수량인지 옵션 값 조회
+    const isRejectQtyOption = await tenantOptService.getTenantOptValue('PRD_METHOD_REJECT_QTY', tran);
+    let rejectQty: number;
+    if (Number(isRejectQtyOption) == PRD_METHOD_REJECT_QTY.SUM) {
+      rejectQty = await workRejectRepo.getTotalRejectQtyByWork(data.work_id as number, tran) as number;
+    } else { rejectQty = await workRejectRepo.getFinalRejectQtyByWork(data.work_id as number, tran) as number; }
+
+    workResult.qty = qty;
+    workResult.reject_qty = rejectQty;
+
+    if ((Number(qty) + Number(rejectQty)) == 0) {
+      throw createApiError(
+        400, 
+        `실적번호 [${data.uuid}]는 생산수량이 등록되지 않아 저장이 불가능합니다.`, 
+        this.stateTag, 
+        errorState.FAILED_SAVE_TO_RELATED_DATA
+      );
+    }
+
+    // ❗ 생산 수량과 투입 수량이 일치하지 않을 경우 Interlock (PUSH 기준)
+    const totalProducedQty = Number(workResult.qty) + Number(workResult.reject_qty);
+    await this.validateInputQty(verifyInput, totalProducedQty);
+
+    // ❗ 가용창고 Interlock
+    await stdStoreService.validateStoreTypeByIds(data.to_store_id, 'AVAILABLE', tran);
+
+    return workResult;
   }
 }
 

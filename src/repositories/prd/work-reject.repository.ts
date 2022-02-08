@@ -241,7 +241,20 @@ class PrdWorkRejectRepo {
 
   // 📒 Fn[readRawsByWorkId]: 생산실적의 Id를 이용하여 Raw Data Read Function
   public readRawsByWorkId = async(workId: number, transaction?: Transaction) => {
-    const result = await this.repo.findAll({ where: { work_id: workId }, transaction });
+    const result = await this.repo.findAll({ 
+      include: [
+        { model: this.sequelize.models.PrdWork, attributes: [], required: true },
+      ],
+      attributes: [
+        [ Sequelize.col('prdWorkReject.work_reject_id'), 'work_reject_id' ],
+        [ Sequelize.col('prdWorkReject.factory_id'), 'factory_id' ],
+        [ Sequelize.col('PrdWork.prod_id'), 'prod_id' ],
+        [ Sequelize.col('prdWork.lot_no'), 'lot_no' ],
+        [ Sequelize.col('prdWorkReject.qty'), 'qty' ],
+        [ Sequelize.col('PrdWork.to_store_id'), 'to_store_id' ],
+        [ Sequelize.col('PrdWork.to_location_id'), 'to_location_id' ],
+      ], 
+      where: { work_id: workId }, transaction });
     return convertReadResult(result);
   };
 

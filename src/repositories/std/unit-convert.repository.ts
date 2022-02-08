@@ -125,8 +125,6 @@ class StdUnitConvertRepo {
         order: [ 'from_unit_id', 'unit_convert_id' ],
       });
 
-      console.log(1);
-
       return convertReadResult(result);
     } catch (error) {
       throw error;

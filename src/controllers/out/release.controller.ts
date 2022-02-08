@@ -231,7 +231,6 @@ class OutReleaseCtl {
       const params = matchedData(req, { locations: [ 'query', 'params' ] });
       const service = new OutReleaseService(req.tenant.uuid);
 
-      console.log(params);
       const result = await service.readReport(params);
       
       return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);

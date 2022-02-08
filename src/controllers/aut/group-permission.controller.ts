@@ -75,7 +75,6 @@ class AutGroupPermissionCtl extends BaseCtl {
   public update = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       req.body = await this.getFkId(req.tenant.uuid, req.body, this.fkIdInfos);
-      console.log(req.body);
 
       const sequelize = getSequelize(req.tenant.uuid);
       const repo = new AutGroupPermissionRepo(req.tenant.uuid);

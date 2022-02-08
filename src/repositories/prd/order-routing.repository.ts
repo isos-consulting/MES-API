@@ -200,7 +200,6 @@ class PrdOrderRoutingRepo {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
       const promises = body.map((orderRouting: any) => {
-        console.log(orderRouting);
         return this.repo.update(
           {
             workings_id: orderRouting.workings_id ?? null,

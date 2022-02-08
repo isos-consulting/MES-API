@@ -16,11 +16,7 @@ const checkDuplication = async (table: string, column: string, body: object[]) =
         WHERE deleted_at IS NULL
         AND ${column} IN ('${values.join("','")}')`;
 
-    console.log(query);
-
     const result = convertFromProcedure(await sequelize.query(query));
-
-    console.log(result);
 
     if (result.length === 0) {
       return false;

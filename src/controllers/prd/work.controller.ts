@@ -18,10 +18,8 @@ import config from '../../configs/config';
 import { successState } from '../../states/common.state';
 import InvStoreService from '../../services/inv/store.service';
 import PrdWorkInputService from '../../services/prd/work-input.service';
-import PrdOrderInputService from '../../services/prd/order-input.service';
 import PrdWorkRejectService from '../../services/prd/work-reject.service';
 import PrdWorkDowntimeService from '../../services/prd/work-downtime.service';
-import StdStoreService from '../../services/std/store.service';
 import StdTenantOptService from '../../services/std/tenant-opt.service';
 
 class PrdWorkCtl {
@@ -195,8 +193,6 @@ class PrdWorkCtl {
       const orderService = new PrdOrderService(req.tenant.uuid);
       const workInputService = new PrdWorkInputService(req.tenant.uuid);
       const workRejectService = new PrdWorkRejectService(req.tenant.uuid);
-      const orderInputService = new PrdOrderInputService(req.tenant.uuid);
-      const stdStoreService = new StdStoreService(req.tenant.uuid);
       const inventoryService = new InvStoreService(req.tenant.uuid);
       const tenantOptService = new StdTenantOptService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
@@ -204,36 +200,27 @@ class PrdWorkCtl {
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
         for await (const data of datas) {
-          let verifyInput: any = {};
-          // ❗ 지시생성 시 등록했던 투입정보 가져오기
-          verifyInput = await orderInputService.getVerifyInput(data.order_id, tran);
-          // ❗ 지시기준 생산투입정보 검증 및 가져오기
-          verifyInput = await workInputService.getVerifyInput(data.work_id, tran);
+          // 📌 생산실적 완료 전 검증작업(투입수량, 생산수량, 가용창고 등)
+          const work = await service.validateUpdateComplete(data, tran);
 
-          // ❗ 생산 수량과 투입 수량이 일치하지 않을 경우 Interlock (PUSH 기준)
-          const totalProducedQty = Number(data.qty) + Number(data.reject_qty);
-          await service.validateInputQty(verifyInput, totalProducedQty);
-
-          // ❗ 가용창고 Interlock
-          await stdStoreService.validateStoreTypeByIds(data.to_store_id, 'AVAILABLE', tran);
           // 📌 생산실적 완료 처리
-          const workResult = await service.updateComplete({ uuid: data.uuid, work_id: data.work_id, complete_fg: true }, req.user?.uid as number, tran);
+          const workResult = await service.updateComplete({ uuid: data.uuid, qty: work.qty, reject_qty: work.reject_qty, complete_fg: true }, req.user?.uid as number, tran);
           
           // 📌 해당 실적의 작업지시에 진행중인 생산 실적이 없을 경우 작업지시의 생산진행여부(work_fg)를 False로 변경
-          const orderResult = await orderService.updateOrderCompleteByOrderId(data.order_id, req.user?.uid as number, tran);
+          const orderResult = await orderService.updateOrderCompleteByOrderId(workResult.raws[0].order_id, req.user?.uid as number, tran);
 
           // 📌 입고 창고 수불 내역 생성(생산입고)
           const toStoreResult = await inventoryService.transactInventory(
             workResult.raws, 'CREATE', 
-            { inout: 'TO', tran_type: 'PRD_OUTPUT', reg_date: data.reg_date, tran_id_alias: 'work_id' },
+            { inout: 'TO', tran_type: 'PRD_OUTPUT', reg_date: workResult.raws[0].reg_date, tran_id_alias: 'work_id' },
             req.user?.uid as number, tran
           );
-
+          
           // 📌 부적합 수량에 의한 창고 수불 내역 생성
-          const rejectBody = await workRejectService.getWorkRejectBody(data, data.reg_date);
+          const rejectBody = await workRejectService.getWorkRejectBody(workResult.raws[0], workResult.raws[0].reg_date);
           const rejectStoreResult = await inventoryService.transactInventory(
             rejectBody, 'CREATE', 
-            { inout: 'TO', tran_type: 'PRD_REJECT', reg_date: data.reg_date, tran_id_alias: 'work_reject_id' },
+            { inout: 'TO', tran_type: 'PRD_REJECT', reg_date: workResult.raws[0].reg_date, tran_id_alias: 'work_reject_id' },
             req.user?.uid as number, tran
           );
 
@@ -242,10 +229,10 @@ class PrdWorkCtl {
           const workInputBody = await workInputService.getWorkInputBody(workResult.raws[0], workResult.raws[0].reg_date, isPullOption);
           const inputStoreResult = await inventoryService.transactInventory(
             workInputBody, 'CREATE', 
-            { inout: 'FROM', tran_type: 'PRD_INPUT', reg_date: data.reg_date, tran_id_alias: 'work_input_id' },
+            { inout: 'FROM', tran_type: 'PRD_INPUT', reg_date: workResult.raws[0].reg_date, tran_id_alias: 'work_input_id' },
             req.user?.uid as number, tran
           );
-          
+
           result.raws.push({
             work: workResult.raws,
             order: orderResult.raws,
@@ -284,7 +271,7 @@ class PrdWorkCtl {
           await orderService.validateIsCompleted([data.order_uuid]);
 
           // 📌 생산실적 완료 취소 처리
-          const workResult = await service.updateComplete({ uuid: data.uuid, work_id: data.work_id, complete_fg: false }, req.user?.uid as number, tran);
+          const workResult = await service.updateComplete({ uuid: data.uuid, complete_fg: false }, req.user?.uid as number, tran);
 
           // 📌 해당 실적의 작업지시의 생산진행여부(work_fg)를 True로 변경
           const orderResult = await orderService.updateWorkFgById(workResult.raws[0].order_id, true, req.user?.uid as number, tran);

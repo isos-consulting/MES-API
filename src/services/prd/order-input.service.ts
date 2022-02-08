@@ -97,7 +97,7 @@ class PrdOrderInputService {
           from_location_id: raw.from_location_id
         }
       });
-      console.log(inputBody);
+      
       return await this.repo.create(inputBody, uid, tran);
     } catch (error) {
       throw error;

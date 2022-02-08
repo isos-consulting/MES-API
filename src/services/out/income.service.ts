@@ -109,8 +109,6 @@ class OutIncomeService {
   getIncomeBody = async (datas: any[], regDate: string) => {
     const unitConvertService = new StdUnitConvertService(this.tenant);
 
-    console.log(datas);
-
     const result = await Promise.all(
       datas.map(async (data: any) => {
         // 📌 품목의 단위와 입고의 단위가 다를 경우 단위변환 진행

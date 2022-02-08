@@ -114,7 +114,6 @@ class PrdOrderRoutingCtl {
       await workService.validateWorkStatus(datas.map((data: any) => data.work_id));
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
-        console.log(datas);
         result = await service.update(datas, req.user?.uid as number, tran)
       });
 

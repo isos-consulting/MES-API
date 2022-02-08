@@ -236,8 +236,8 @@ class PrdWorkRoutingRepo {
       const result = await this.sequelize.query(readFinalQtyByWork(workId));
 
       if (!result) { return result; }
-
-      const qty: number = (result as any).dataValues.qty;
+      
+      const qty: number = convertReadResult(result[0]).raws[0].qty;
       return qty;
 
     } catch (error) {
