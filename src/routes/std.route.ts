@@ -52,6 +52,7 @@ import stdEquipValidation from '../validations/std/equip.validation';
 import stdInspItemValidation from '../validations/std/insp-item.validation';
 import stdProcEquipValidation from '../validations/std/proc-equip.validation';
 import stdRoutingResourceValidation from '../validations/std/routing-resource.validation';
+import stdRoutingValidation from '../validations/std/routing.validation';
 import stdTenantOptValidation from '../validations/std/tenant-opt.validation';
 
 const router = express.Router();
@@ -255,13 +256,13 @@ router.route('/unit-converts').delete(unitConvert.delete);
 
 //#region ✅ Routing (라우팅)
 const routing = new StdRoutingCtl();
-router.route('/routings/actived-prod').get(routing.readActivedProd);
-router.route('/routing/:uuid').get(routing.read);
-router.route('/routings').get(routing.read);
-router.route('/routings').post(routing.create);
-router.route('/routings').put(routing.update);
-router.route('/routings').patch(routing.patch);
-router.route('/routings').delete(routing.delete);
+router.route('/routings/actived-prod').get(stdRoutingValidation.readActivedProd, validationCallback, routing.readActivedProd);
+router.route('/routing/:uuid').get(stdRoutingValidation.readByUuid, validationCallback, routing.readByUuid);
+router.route('/routings').get(stdRoutingValidation.read, validationCallback, routing.read);
+router.route('/routings').post(stdRoutingValidation.create, validationCallback, routing.create);
+router.route('/routings').put(stdRoutingValidation.update, validationCallback, routing.update);
+router.route('/routings').patch(stdRoutingValidation.patch, validationCallback, routing.patch);
+router.route('/routings').delete(stdRoutingValidation.delete, validationCallback, routing.delete);
 //#endregion
 
 //#region ✅ Model (모델)
