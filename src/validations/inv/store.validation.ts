@@ -1,7 +1,6 @@
 import { body, param, query } from 'express-validator';
 import { errorState } from '../../states/common.state';
 import createValidationError from '../../utils/createValidationError';
-import TTranType from '../../types/tran-type.type';
 
 const stateTag = 'invStore';
 
