@@ -23,6 +23,15 @@ get:
         type: string
         format: uuid
 
+    - name: prod_uuid
+      in: query
+      description: |
+        품목UUID를 입력하여 생산실적에 따라 실적별 자재투입 데이터를 조회합니다. <br/>
+        [전체 조회시 입력하지 않습니다.]
+      schema:
+        type: string
+        format: uuid
+
   responses:
     200:
       description: Read OK
