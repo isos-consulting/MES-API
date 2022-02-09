@@ -42,7 +42,6 @@ get:
                         type: array
                         items:
                           allOf:
-                            - $ref: ../../schemas/prd/work-input.schema.yaml#/work_input_uuid
                             - $ref: ../../schemas/prd/work-input.schema.yaml#/factory_uuid
                             - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
                             - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
