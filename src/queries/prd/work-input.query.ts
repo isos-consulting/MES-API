@@ -2,9 +2,16 @@ import TTenantOpt, { PRD_METHOD_REJECT_QTY } from "../../types/tenant-opt.type";
 
 const readWorkInputs = (
   params: {
-    work_uuid?: number,
+    work_uuid?: string,
     opt_reject_qty?: TTenantOpt,
+    prod_uuid?: string,
   }) => {
+  
+  //#region 📌 실적-자재 투입내역 조회조건(prod_uuid)
+  const getProdId = params.prod_uuid ? `SELECT s_p.prod_id INTO prodId FROM std_prod_tb s_p WHERE s_p.uuid = '${params.prod_uuid}';` : '';
+  const searchProd = params.prod_uuid ? `AND p_wi.prod_id = prodId` : '';
+  //#endregion
+
   //#region 📌 실적-자재 투입내역 임시테이블 생성
   const createInputTempTable = `
     -- 📌 마지막공정의 양품, 불량수량 가져 올 임시테이블 생성
@@ -70,7 +77,9 @@ const readWorkInputs = (
       p_wi.bom_input_type_id,
       p_wi.remark
     FROM prd_work_input_tb p_wi
-    WHERE p_wi.work_id = workId;
+    WHERE p_wi.work_id = workId
+    ${searchProd}
+    ;
   `;
   //#endregion
 
@@ -146,10 +155,12 @@ const readWorkInputs = (
   const query = `
     -- 생산실적UUID로 생산실적ID 추출
     DO $$
-    DECLARE workId int;
+      DECLARE workId int;
+      DECLARE prodId int;
 
     BEGIN
     SELECT p_w.work_id INTO workId FROM prd_work_tb p_w WHERE p_w.uuid = '${params.work_uuid}';
+    ${getProdId}
 
     -- 양품수량과 불량수량을 가져올 임시테이블 생성
     ${createInputTempTable}
