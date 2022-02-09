@@ -75,10 +75,8 @@ paths:
     $ref: ../end-points/prd/work-downtimes.yaml
 
   # ✅ WorkInput (실적-자재투입)
-  /prd/work-inputs/ongoing:
-    $ref: ../end-points/prd/work-inputs.ongoing.yaml
-  /prd/work-inputs/ongoing-group:
-    $ref: ../end-points/prd/work-inputs.ongoing-group.yaml
+  /prd/work-inputs/group:
+    $ref: ../end-points/prd/work-inputs.group.yaml
   /prd/work-input/{uuid}:
     $ref: ../end-points/prd/work-input.{uuid}.yaml
   /prd/work-inputs:

@@ -121,9 +121,6 @@ get:
                             - $ref: ../../schemas/std/unit.schema.yaml#/unit_cd
                             - $ref: ../../schemas/std/unit.schema.yaml#/unit_nm
                             - $ref: ../../schemas/prd/work.schema.yaml#/lot_no
-                            - $ref: ../../schemas/prd/work.schema.yaml#/total_qty
-                            - $ref: ../../schemas/prd/work.schema.yaml#/qty
-                            - $ref: ../../schemas/prd/work.schema.yaml#/reject_qty
                             - $ref: ../../schemas/prd/work-downtime.schema.yaml#/work_start_date
                             - $ref: ../../schemas/prd/work-downtime.schema.yaml#/work_end_date
                             - $ref: ../../schemas/std/downtime.schema.yaml#/downtime_type_uuid

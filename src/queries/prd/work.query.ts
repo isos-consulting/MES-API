@@ -1,3 +1,5 @@
+import TTenantOpt, { PRD_METHOD_REJECT_QTY } from "../../types/tenant-opt.type";
+
 const readWorks = (
   params: {
     start_date?: string,
@@ -6,7 +8,8 @@ const readWorks = (
     order_uuid?: string,
     factory_uuid?: string,
     prod_uuid?: string,
-    complete_fg?: boolean
+    complete_fg?: boolean,
+    opt_reject_qty?: TTenantOpt
   }) => {
   let searchQuery: string = '';
 
@@ -70,10 +73,8 @@ const readWorks = (
   const createTempTableReject = `
     CREATE TEMP TABLE temp_work_reject (factory_id int, work_id int, qty numeric);
     CREATE INDEX ON temp_work_reject(work_id);
-    
-    SELECT value INTO tenantOptValue FROM std_tenant_opt_tb WHERE tenant_opt_cd = 'PRD_METHOD_REJECT_QTY';
 
-    IF tenantOptValue = 0 THEN	-- 집계
+    IF ${params.opt_reject_qty} = ${PRD_METHOD_REJECT_QTY.SUM} THEN	-- 집계
       INSERT INTO temp_work_reject
       SELECT factory_id, work_id, sum(COALESCE(qty,0)) AS qty
       FROM prd_work_reject_tb 

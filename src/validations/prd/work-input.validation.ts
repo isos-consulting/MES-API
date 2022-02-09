@@ -5,12 +5,7 @@ import createValidationError from '../../utils/createValidationError';
 const stateTag = 'prdWorkInput';
 
 const prdWorkInputValidation = {
-  readOngoing: [
-    query('work_uuid', '실적UUID')
-      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'work_uuid', '실적UUID'))
-      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'work_uuid', '실적UUID')),
-  ],
-  readOngoingGroup: [
+  readWorkInputGroup: [
     query('work_uuid', '실적UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'work_uuid', '실적UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'work_uuid', '실적UUID')),

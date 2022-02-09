@@ -74,8 +74,7 @@ router.route('/work-downtimes').delete(prdWorkDowntimeValidation.delete, validat
 
 //#region ✅ WorkInput (실적-자재투입)
 const workInput = new PrdWorkInputCtl();
-router.route('/work-inputs/ongoing').get(prdWorkInputValidation.readOngoing, validationCallback, workInput.readOngoing);
-router.route('/work-inputs/ongoing-group').get(prdWorkInputValidation.readOngoingGroup, validationCallback, workInput.readOngoingGroup);
+router.route('/work-inputs/groups').get(prdWorkInputValidation.readWorkInputGroup, validationCallback, workInput.readWorkInputGroup);
 router.route('/work-input/:uuid').get(prdWorkInputValidation.readByUuid, validationCallback, workInput.readByUuid);
 router.route('/work-inputs').get(prdWorkInputValidation.read, validationCallback, workInput.read);
 router.route('/work-inputs').post(prdWorkInputValidation.create, validationCallback, workInput.create);

@@ -15,6 +15,7 @@ import { BOM_INPUT_TYPE } from "../../types/bom-input-type.type";
 import InvStoreRepo from "../../repositories/inv/store.repository";
 import StdBomRepo from "../../repositories/std/bom.repository";
 import InvStoreService from "../inv/store.service";
+import StdTenantOptService from "../std/tenant-opt.service";
 
 class PrdWorkInputService {
   tenant: string;
@@ -92,7 +93,13 @@ class PrdWorkInputService {
   };
 
   public read = async (params: any) => {
-    try { return await this.repo.read(params); }
+    try { 
+      const tenantOptService = new StdTenantOptService(this.tenant);
+      const isRejectQtyOption = await tenantOptService.getTenantOptValue('PRD_METHOD_REJECT_QTY');
+      params.opt_reject_qty = isRejectQtyOption;
+
+      return await this.repo.read(params); 
+    }
 		catch (error) { throw error; }
   };
   
@@ -101,15 +108,15 @@ class PrdWorkInputService {
 		catch (error) { throw error; }
   };
 
-  // 📒 Fn[readOngoing]: 진행중인 생산실적의 자재 투입데이터 Read Function
-  public readOngoing = async (params: any) => {
-    try { return await this.repo.readOngoing(params); }
-		catch (error) { throw error; }
-  };
+  // 📒 Fn[readWorkInputGroup]: 생산실적의 자재 투입 그룹 Read Function (비입력)
+  public readWorkInputGroup = async (params: any) => {
+    try { 
+      const tenantOptService = new StdTenantOptService(this.tenant);
+      const isRejectQtyOption = await tenantOptService.getTenantOptValue('PRD_METHOD_REJECT_QTY');
+      params.opt_reject_qty = isRejectQtyOption;
 
-  // 📒 Fn[readOngoingGroup]: 진행중인 생산실적의 자재 투입데이터 Read Function
-  public readOngoingGroup = async (params: any) => {
-    try { return await this.repo.readOngoing(params); }
+      return await this.repo.readWorkInputGroup(params); 
+    }
 		catch (error) { throw error; }
   };
 

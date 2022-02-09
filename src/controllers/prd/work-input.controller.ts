@@ -95,14 +95,14 @@ class PrdWorkInputCtl {
     }
   };
 
-  // 📒 Fn[readOngoing]: 진행중인 생산실적의 자재 투입데이터 Read Function
-  public readOngoing = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+  // 📒 Fn[readWorkInputGroup]: 생산실적의 자재 투입 그룹 Read Function (비입력)
+  public readWorkInputGroup = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       let result: ApiResult<any> = { count:0, raws: [] };
       const service = new prdWorkInputService(req.tenant.uuid);
       const params = matchedData(req, { locations: [ 'query', 'params' ] });
 
-      result = await service.readOngoing(params);
+      result = await service.readWorkInputGroup(params);
 
       return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
     } catch (error) {
@@ -114,27 +114,6 @@ class PrdWorkInputCtl {
       return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
     }
   };
-
-  // 📒 Fn[readOngoingGroup]: 진행중인 생산실적의 자재 투입데이터의 품목기준 총량 조회 Read Function
-  public readOngoingGroup = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    try {
-      let result: ApiResult<any> = { count:0, raws: [] };
-      const service = new prdWorkInputService(req.tenant.uuid);
-      const params = matchedData(req, { locations: [ 'query', 'params' ] });
-
-      result = await service.readOngoingGroup(params);
-
-      return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
-    } catch (error) {
-      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
-      
-      const dbError = createDatabaseError(error, this.stateTag);
-      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
-
-      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
-    }
-  };
-
   //#endregion
 
   //#region 🟡 Update Functions
