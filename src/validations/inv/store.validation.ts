@@ -6,9 +6,9 @@ const stateTag = 'invStore';
 
 const invStoreValidation = {
   readTotalHistory: [
-    query('sotck_type', '조회유형')
-      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'sotck_type', '조회유형'))
-      .isIn([ 'all', 'available', 'reject', 'return', 'outgo', 'finalInsp', 'outsourcing' ]).withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'sotck_type', '조회유형')),
+    query('stock_type', '조회유형')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'stock_type', '조회유형'))
+      .isIn([ 'all', 'available', 'reject', 'return', 'outgo', 'finalInsp', 'outsourcing' ]).withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'stock_type', '조회유형')),
     query('grouped_type', '분류유형')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'grouped_type', '분류유형'))
       .isIn([ 'all', 'factory', 'store', 'lotNo', 'location' ]).withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'grouped_type', '분류유형')),
@@ -101,9 +101,9 @@ const invStoreValidation = {
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'location_uuid', '위치UUID')),
   ],
   readStock: [
-    query('sotck_type', '조회유형')
-      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'sotck_type', '조회유형'))
-      .isIn([ 'all', 'available', 'reject', 'return', 'outgo', 'finalInsp', 'outsourcing' ]).withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'sotck_type', '조회유형')),
+    query('stock_type', '조회유형')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'stock_type', '조회유형'))
+      .isIn([ 'all', 'available', 'reject', 'return', 'outgo', 'finalInsp', 'outsourcing' ]).withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'stock_type', '조회유형')),
     query('grouped_type', '분류유형')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'grouped_type', '분류유형'))
       .isIn([ 'all', 'factory', 'store', 'lotNo', 'location' ]).withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'grouped_type', '분류유형')),
