@@ -6,23 +6,24 @@ import InvMoveCtl from '../controllers/inv/move.controller';
 import invMoveValidation from '../validations/inv/move.validation';
 import validationCallback from '../utils/validationCallback';
 import invStockRejectValidation from '../validations/inv/stock-reject.validation';
+import invStoreValidation from '../validations/inv/store.validation';
 
 const router = express.Router();
 
 //#region ✅ Store (재고관리/실사)
 const store = new InvStoreCtl();
-router.route('/stores/total-history').get(store.readTotalHistory);
-router.route('/stores/individual-history').get(store.readIndividualHistory);
-router.route('/stores/type-history').get(store.readTypeHistory);
-router.route('/stores/history-by-transaction').get(store.readStoreHistoryByTransaction);
-router.route('/stores/stocks/return').get(store.readReturnStock);
-router.route('/stores/stocks').get(store.readStock);
-router.route('/store/:uuid').get(store.read);
-router.route('/stores').get(store.read);
-router.route('/stores').post(store.create);
-router.route('/stores').put(store.update);
-router.route('/stores').patch(store.patch);
-router.route('/stores').delete(store.delete);
+router.route('/stores/total-history').get(invStoreValidation.readTotalHistory, validationCallback, store.readTotalHistory);
+router.route('/stores/individual-history').get(invStoreValidation.readIndividualHistory, validationCallback, store.readIndividualHistory);
+router.route('/stores/type-history').get(invStoreValidation.readTypeHistory, validationCallback, store.readTypeHistory);
+router.route('/stores/history-by-transaction').get(invStoreValidation.readStoreHistoryByTransaction, validationCallback, store.readStoreHistoryByTransaction);
+router.route('/stores/stocks/return').get(invStoreValidation.readReturnStock, validationCallback, store.readReturnStock);
+router.route('/stores/stocks').get(invStoreValidation.readStock, validationCallback, store.readStock);
+router.route('/store/:uuid').get(invStoreValidation.read, validationCallback, store.read);
+router.route('/stores').get(invStoreValidation.read, validationCallback, store.read);
+router.route('/stores').post(invStoreValidation.create, validationCallback, store.create);
+router.route('/stores').put(invStoreValidation.update, validationCallback, store.update);
+router.route('/stores').patch(invStoreValidation.patch, validationCallback, store.patch);
+router.route('/stores').delete(invStoreValidation.delete, validationCallback, store.delete);
 //#endregion
 
 //#region ✅ StockReject (재고부적합)

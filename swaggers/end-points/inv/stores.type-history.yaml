@@ -39,9 +39,8 @@ get:
 
     - name: reject_fg
       in: query
-      required: true
       description: |
-        수불부 조회시 True를 입력하면 0 부적합내용을 구분하여 조회합니다. <br/> 
+        수불부 조회시 True를 입력하면 부적합내용을 구분하여 조회합니다. <br/> 
         [전체 조회시 입력하지 않습니다.]
       schema:
         type: boolean

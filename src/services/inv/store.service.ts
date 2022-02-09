@@ -99,7 +99,7 @@ class InvStoreService {
   }
 
   // 📒 Fn[readTotalHistoryAccordingToType]: 유형에 따른 총괄수불부 조회
-  public readReadTotalHistoryAccrodingToType = async(params?: any) => {
+  public readTotalHistoryAccrodingToType = async(params?: any) => {
     try { return await this.repo.readTotalHistoryAccordingToType(params); }
     catch (error) { throw error; }
   }
@@ -305,12 +305,12 @@ class InvStoreService {
     const tranTypeId = await tranTypeService.getIdByCd('INVENTORY');
     let maxTranId = await this.repo.getMaxTranId(tranTypeId, tran);
 
-    for await (const data of datas) {
+    for (const data of datas) {
       data.tran_id = ++maxTranId;   
       data.tran_type_id = tranTypeId;
     };
 
-    const promises = datas.map((data: any) => {
+    const promises = datas.map(async (data: any) => {
       const params = {
         factory_uuid: data.factory_uuid,
         prod_uuid: data.prod_uuid,
@@ -325,7 +325,7 @@ class InvStoreService {
         price_type: 'all',
       };   
 
-      const currentStock = (this.repo.readStockAccordingToType(params)).raws[0];
+      const currentStock = (await this.repo.readStockAccordingToType(params)).raws[0];
       let currentQty = currentStock?.qty ?? 0;
 
       // 📌 기존 수량보다 실사 수량이 크면 입고 작으면 출고
@@ -348,6 +348,34 @@ class InvStoreService {
 
     const result = await Promise.all(promises);
     return result;
+  }
+
+  // 📒 수불유형별 수불부 조회 시 Object Key({tran_cd}_{inoutStr}_qty) 수정
+  public getTypeHistoryResult = (raws: any[]) => {
+    const tempResult: any[] = [];
+    raws.forEach((raw: any) => {
+      const equals = tempResult.find(data => 
+        data.factory_uuid == raw.factory_uuid &&
+        data.prod_uuid == raw.prod_uuid &&
+        data.reject_uuid == raw.reject_uuid &&
+        data.lot_no == raw.lot_no &&
+        data.store_uuid == raw.store_uuid &&
+        data.location_uuid == raw.location_uuid
+      );
+      
+      const inoutStr = raw.inout_fg ? 'in' : 'out';
+
+      if (equals) { equals[raw.tran_cd + '_' + inoutStr  + '_qty'] = raw.qty; }
+      else { 
+        raw[raw.tran_cd + '_' + inoutStr  + '_qty'] = raw.qty;
+        delete raw.inout_fg;
+        delete raw.tran_cd;
+        delete raw.qty;
+        tempResult.push(raw);
+      }
+    });
+
+    return tempResult;
   }
 }
 
