@@ -109,18 +109,17 @@ class PrdWorkService {
   };
 
   public readReport = async (params: any) => {
-    try { 
-      const tenantOptService = new StdTenantOptService(this.tenant);
-      const isRejectQtyOption = await tenantOptService.getTenantOptValue('PRD_METHOD_REJECT_QTY');
-      params.opt_reject_qty = isRejectQtyOption;
-      
-      return await this.repo.readReport(params); 
-    }
+    try { return await this.repo.readReport(params); }
 		catch (error) { throw error; }
   };
   
   public readByUuid = async (uuid: string) => {
-    try { return await this.repo.readByUuid(uuid); } 
+    try { 
+      const tenantOptService = new StdTenantOptService(this.tenant);
+      const isRejectQtyOption = await tenantOptService.getTenantOptValue('PRD_METHOD_REJECT_QTY');
+
+      return await this.repo.readByUuid(uuid, { opt_reject_qty: isRejectQtyOption }); 
+    } 
 		catch (error) { throw error; }
   };
 

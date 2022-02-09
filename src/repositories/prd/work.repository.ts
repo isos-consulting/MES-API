@@ -82,7 +82,7 @@ class PrdWorkRepo {
   // 📒 Fn[readByUuid]: Default Read With Uuid Function
   public readByUuid = async(uuid: string, params?: any) => {
     try {
-      const result = await this.sequelize.query(readWorks({ work_uuid: uuid }));
+      const result = await this.sequelize.query(readWorks({ work_uuid: uuid, opt_reject_qty: params.opt_reject_qty }));
 
       return convertReadResult(result[0]);
     } catch (error) {
