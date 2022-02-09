@@ -3,6 +3,9 @@ import * as express from 'express';
 import InvStoreCtl from '../controllers/inv/store.controller';
 import InvStockRejectCtl from '../controllers/inv/stock-reject.controller';
 import InvMoveCtl from '../controllers/inv/move.controller';
+import invMoveValidation from '../validations/inv/move.validation';
+import validationCallback from '../utils/validationCallback';
+import invStockRejectValidation from '../validations/inv/stock-reject.validation';
 
 const router = express.Router();
 
@@ -24,22 +27,22 @@ router.route('/stores').delete(store.delete);
 
 //#region ✅ StockReject (재고부적합)
 const stockReject = new InvStockRejectCtl();
-router.route('/stock-reject/:uuid').get(stockReject.read);
-router.route('/stock-rejects').get(stockReject.read);
-router.route('/stock-rejects').post(stockReject.create);
-router.route('/stock-rejects').put(stockReject.update);
-router.route('/stock-rejects').patch(stockReject.patch);
-router.route('/stock-rejects').delete(stockReject.delete);
+router.route('/stock-reject/:uuid').get(invStockRejectValidation.readByUuid, validationCallback, stockReject.readByUuid);
+router.route('/stock-rejects').get(invStockRejectValidation.read, validationCallback, stockReject.read);
+router.route('/stock-rejects').post(invStockRejectValidation.create, validationCallback, stockReject.create);
+router.route('/stock-rejects').put(invStockRejectValidation.update, validationCallback, stockReject.update);
+router.route('/stock-rejects').patch(invStockRejectValidation.patch, validationCallback, stockReject.patch);
+router.route('/stock-rejects').delete(invStockRejectValidation.delete, validationCallback, stockReject.delete);
 //#endregion
 
 //#region ✅ Move (재고이동)
 const move = new InvMoveCtl();
-router.route('/move/:uuid').get(move.read);
-router.route('/moves').get(move.read);
-router.route('/moves').post(move.create);
-router.route('/moves').put(move.update);
-router.route('/moves').patch(move.patch);
-router.route('/moves').delete(move.delete);
+router.route('/move/:uuid').get(invMoveValidation.readByUuid, validationCallback, move.readByUuid);
+router.route('/moves').get(invMoveValidation.read, validationCallback, move.read);
+router.route('/moves').post(invMoveValidation.create, validationCallback, move.create);
+router.route('/moves').put(invMoveValidation.update, validationCallback, move.update);
+router.route('/moves').patch(invMoveValidation.patch, validationCallback, move.patch);
+router.route('/moves').delete(invMoveValidation.delete, validationCallback, move.delete);
 //#endregion
 
 export default router;

@@ -1,4 +1,5 @@
 import { Transaction } from "sequelize/types";
+import IInvStore from "../../interfaces/inv/store.interface";
 import AdmTranTypeRepo from "../../repositories/adm/tran-type.repository";
 import InvStoreRepo from '../../repositories/inv/store.repository';
 import StdFactoryRepo from "../../repositories/std/factory.repository";
@@ -76,7 +77,7 @@ class InvStoreService {
     return await getFkIdByUuid(this.tenant, datas, this.fkIdInfos);
   }
 
-  public create = async (datas: any[], uid: number, tran: Transaction) => {
+  public create = async (datas: IInvStore[], uid: number, tran: Transaction) => {
     try { return await this.repo.create(datas, uid, tran); } 
 		catch (error) { throw error; }
   }
@@ -91,17 +92,53 @@ class InvStoreService {
 		catch (error) { throw error; }
   };
 
-  public update = async (datas: any[], uid: number, tran: Transaction) => {
+  // 📒 Fn[readStockAccordingToType]: 유형에 따라 재고 조회
+  public readStockAccordingToType = async(params?: any) => {
+    try { return await this.repo.readStockAccordingToType(params); }
+    catch (error) { throw error; }
+  }
+
+  // 📒 Fn[readTotalHistoryAccordingToType]: 유형에 따른 총괄수불부 조회
+  public readReadTotalHistoryAccrodingToType = async(params?: any) => {
+    try { return await this.repo.readTotalHistoryAccordingToType(params); }
+    catch (error) { throw error; }
+  }
+
+  // 📒 Fn[readIndividualHistoryAccordingToType]: 유형에 따른 개별수불부 조회
+  public readIndividualHistoryAccordingToType = async(params?: any) => {
+    try { return await this.repo.readIndividualHistoryAccordingToType(params); }
+    catch (error) { throw error; }
+  }
+
+  // 📒 Fn[readTypeHistoryAccordingToType]: 유형에 따른 수불유형별 수불부 조회
+  public readTypeHistoryAccordingToType = async(params?: any) => {
+    try { return await this.repo.readTypeHistoryAccordingToType(params); }
+    catch (error) { throw error; }
+  }
+
+  // 📒 Fn[readStoreHistoryByTransaction]: 수불유형에 따른 이력 조회
+  public readStoreHistoryByTransaction = async(params?: any) => {
+    try { return await this.repo.readStoreHistoryByTransaction(params); }
+    catch (error) { throw error; }
+  }
+
+  // 📒 Fn[readReturnStock]: 반출재고 조회
+  public readReturnStock = async(params?: any) => {
+    try { return await this.repo.readReturnStock(params); }
+    catch (error) { throw error; }
+  }
+
+  public update = async (datas: IInvStore[], uid: number, tran: Transaction) => {
     try { return await this.repo.update(datas, uid, tran); }
 		catch (error) { throw error; }
   }
 
-  public patch = async (datas: any[], uid: number, tran: Transaction) => {
+  public patch = async (datas: IInvStore[], uid: number, tran: Transaction) => {
     try { return await this.repo.patch(datas, uid, tran); }
 		catch (error) { throw error; }
   }
 
-  public delete = async (datas: any[], uid: number, tran: Transaction) => {
+  public delete = async (datas: IInvStore[], uid: number, tran: Transaction) => {
     try { return await this.repo.delete(datas, uid, tran); }
 		catch (error) { throw error; }
   }
@@ -259,6 +296,58 @@ class InvStoreService {
       const result = await this.repo.readStocks(params);
       return result.raws;
     } catch (error) { throw error; }
+  }
+
+
+  public getCreateBody = async (datas: any[], tran: Transaction) => {
+    // 📌 재고실사 관련 Max 전표번호 생성
+    const tranTypeService = new AdmTranTypeService(this.tenant);
+    const tranTypeId = await tranTypeService.getIdByCd('INVENTORY');
+    let maxTranId = await this.repo.getMaxTranId(tranTypeId, tran);
+
+    for await (const data of datas) {
+      data.tran_id = ++maxTranId;   
+      data.tran_type_id = tranTypeId;
+    };
+
+    const promises = datas.map((data: any) => {
+      const params = {
+        factory_uuid: data.factory_uuid,
+        prod_uuid: data.prod_uuid,
+        lot_no: data.lot_no,
+        store_uuid: data.store_uuid,
+        location_uuid: data.location_uuid,
+        reject_uuid: data.reject_uuid,
+        partner_uuid: data.partner_uuid,
+        reg_date: data.reg_date,
+        stock_type: 'all',
+        grouped_type: 'all',
+        price_type: 'all',
+      };   
+
+      const currentStock = (this.repo.readStockAccordingToType(params)).raws[0];
+      let currentQty = currentStock?.qty ?? 0;
+
+      // 📌 기존 수량보다 실사 수량이 크면 입고 작으면 출고
+      if (data.qty > currentQty) { data.inout_fg = true; }
+      else { data.inout_fg = false; }
+
+      // 📌 실사수량 설정 및 기존재고와 실사수량이 동일한 경우 Interlock
+      data.qty = Math.abs(data.qty - currentQty);
+      if (data.qty == 0) {
+        throw createApiError(
+          400, 
+          `기존재고와 실사하려는 수량이 동일합니다.`, 
+          this.stateTag, 
+          errorState.INVALID_DATA
+        );
+      }
+
+      return data;
+    });
+
+    const result = await Promise.all(promises);
+    return result;
   }
 }
 

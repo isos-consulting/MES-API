@@ -1,82 +1,24 @@
 import express = require('express');
-import InvStoreRepo from '../../repositories/inv/store.repository';
-import StdFactoryRepo from '../../repositories/std/factory.repository';
-import StdLocationRepo from '../../repositories/std/location.repository';
-import StdProdRepo from '../../repositories/std/prod.repository';
-import StdRejectRepo from '../../repositories/std/reject.repository';
-import StdPartnerRepo from '../../repositories/std/partner.repository';
-import StdStoreRepo from '../../repositories/std/store.repository';
 import isDateFormat from '../../utils/isDateFormat';
 import isUuid from '../../utils/isUuid';
 import response from '../../utils/response';
 import testErrorHandlingHelper from '../../utils/testErrorHandlingHelper';
-import BaseCtl from '../base.controller';
-import { getSequelize } from '../../utils/getSequelize';
+import { sequelizes } from '../../utils/getSequelize';
 import ApiResult from '../../interfaces/common/api-result.interface';
 import config from '../../configs/config';
-import AdmTranTypeService from '../../services/adm/tran-type.service';
+import InvStoreService from '../../services/inv/store.service';
+import { matchedData } from 'express-validator';
+import createApiResult from '../../utils/createApiResult_new';
+import isServiceResult from '../../utils/isServiceResult';
+import { successState } from '../../states/common.state';
+import createDatabaseError from '../../utils/createDatabaseError';
+import createUnknownError from '../../utils/createUnknownError';
 
-class InvStoreCtl extends BaseCtl {
-  // ✅ Inherited Functions Variable
-  // result: ApiResult<any>;
-
-  // ✅ 부모 Controller (BaseController) 의 repository 변수가 any 로 생성 되어있기 때문에 자식 Controller(this) 에서 Type 지정
-  TRepo: InvStoreRepo;
-
-  // ✅ 조회조건 Types
-  groupedTypes: string[];
-  stockTypes: string[];
-  priceTypes: string[];
-
+class InvStoreCtl {
+  stateTag: string;
   //#region ✅ Constructor
   constructor() {
-    // ✅ 부모 Controller (Base Controller) 의 CRUD Function 과 상속 받는 자식 Controller(this) 의 Repository 를 연결하기 위하여 생성자에서 Repository 생성
-    super(InvStoreRepo);
-
-    // ✅ CUD 연산이 실행되기 전 Fk Table 의 uuid 로 id 를 검색하여 request body 에 삽입하기 위하여 정보 Setting
-    this.fkIdInfos = [
-      {
-        key: 'factory',
-        TRepo: StdFactoryRepo,
-        idName: 'factory_id',
-        uuidName: 'factory_uuid'
-      },
-      {
-        key: 'location',
-        TRepo: StdLocationRepo,
-        idName: 'location_id',
-        uuidName: 'location_uuid'
-      },
-      {
-        key: 'prod',
-        TRepo: StdProdRepo,
-        idName: 'prod_id',
-        uuidName: 'prod_uuid'
-      },
-      {
-        key: 'store',
-        TRepo: StdStoreRepo,
-        idName: 'store_id',
-        uuidName: 'store_uuid'
-      },
-      {
-        key: 'reject',
-        TRepo: StdRejectRepo,
-        idName: 'reject_id',
-        uuidName: 'reject_uuid'
-      },
-			{
-        key: 'partner',
-        TRepo: StdPartnerRepo,
-        idName: 'partner_id',
-        uuidName: 'partner_uuid'
-      },
-    ];
-
-    // ✅ 조회조건 Types Setting
-    this.stockTypes = [ 'all', 'available', 'reject', 'return', 'outgo', 'finalInsp', 'outsourcing' ];
-    this.groupedTypes = [ 'all', 'factory', 'store', 'lotNo', 'location' ];   
-    this.priceTypes = [ 'all', 'purchase', 'sales' ];
+    this.stateTag = 'invStore';
   };
   //#endregion
 
@@ -87,54 +29,29 @@ class InvStoreCtl extends BaseCtl {
   // 📒 Fn[create] (✅ Inheritance): Default Create Function
   public create = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      req.body = await this.getFkId(req.tenant.uuid, req.body, this.fkIdInfos);
-      
-      const sequelize = getSequelize(req.tenant.uuid);
-      const repo = new InvStoreRepo(req.tenant.uuid);
-      const tranTypeService = new AdmTranTypeService(req.tenant.uuid);
-      let result: ApiResult<any> = { count: 0, raws: [] };
+      let result: ApiResult<any> = { count:0, raws: [] };
 
-      await sequelize.transaction(async(tran) => {
-        // 📌 재고실사 관련 Max 전표번호 생성
-        const tranTypeId = await tranTypeService.getIdByCd('INVENTORY');
-        let maxTranId = await repo.getMaxTranId(tranTypeId, tran);
+      const service = new InvStoreService(req.tenant.uuid);
 
-        for await (const data of req.body) {
-          data.tran_id = ++maxTranId;
-          data.tran_type_id = tranTypeId;
+      const matched = matchedData(req, { locations: [ 'body' ] });
+      let datas: any[] = await service.convertFk(Object.values(matched));
 
-          const params = {
-            factory_uuid: data.factory_uuid,
-            prod_uuid: data.prod_uuid,
-            lot_no: data.lot_no,
-            store_uuid: data.store_uuid,
-            location_uuid: data.location_uuid,
-            reject_uuid: data.reject_uuid,
-						partner_uuid: data.partner_uuid,
-            reg_date: data.reg_date,
-            stock_type: 'all',
-            grouped_type: 'all',
-            price_type: 'all',
-          };
-
-          const [ currentStock ] = (await repo.readStockAccordingToType(params)).raws;
-          let currentQty = currentStock?.qty ?? 0;
-
-          // 📌 기존 수량보다 실사 수량이 크면 입고 작으면 출고
-          if (data.qty > currentQty) { data.inout_fg = true; }
-          else { data.inout_fg = false; }
-          data.qty = Math.abs(data.qty - currentQty);
-
-          if (data.qty == 0) { throw new Error('입력 재고의 실사수량이 0입니다.'); }
-        }
+      await sequelizes[req.tenant.uuid].transaction(async(tran: any) => {
+        // 📌 실사등록 Body 생성
+        datas = await service.getCreateBody(datas, tran);
 
         // 📌 재고 실사 내역 생성
-        result = await repo.create(req.body, req.user?.uid as number, tran);
+        result = await service.create(datas, req.user?.uid as number, tran);
       });
       
-      return response(res, result.raws, { count: result.count }, '', 201);
-    } catch (e) {
-      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return createApiResult(res, result, 201, '데이터 생성 성공', this.stateTag, successState.CREATE);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
     }
   };
 
@@ -143,44 +60,81 @@ class InvStoreCtl extends BaseCtl {
   //#region 🔵 Read Functions
 
   // 📒 Fn[read] (✅ Inheritance): Default Read Function
-  // public read = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-  // }
+  public read = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      let result: ApiResult<any> = { count:0, raws: [] };
+      const service = new InvStoreService(req.tenant.uuid);
+      const params = matchedData(req, { locations: [ 'query', 'params' ] });
+
+      result = await service.read(params);
+
+      return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+      
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
+    }
+  };
+
+  // 📒 Fn[readByUuid] (✅ Inheritance): Default ReadByUuid Function
+  public readByUuid = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      let result: ApiResult<any> = { count:0, raws: [] };
+      const service = new InvStoreService(req.tenant.uuid);
+
+      result = await service.readByUuid(req.params.uuid);
+
+      return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
+    }
+  };
 
   // 📒 Fn[readStock]: 유형별 재고 조회
   public readStock = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      const repo = new InvStoreRepo(req.tenant.uuid);
+      let result: ApiResult<any> = { count:0, raws: [] };
+      const service = new InvStoreService(req.tenant.uuid);
+      const params = matchedData(req, { locations: [ 'query', 'params' ] });
 
-      const params = Object.assign(req.query, req.params);
-      if (!this.stockTypes.includes(params.stock_type)) { throw new Error('잘못된 stock_type(재고조회유형) 입력') }
-      if (!this.groupedTypes.includes(params.grouped_type)) { throw new Error('잘못된 grouped_type(재고분류유형) 입력') }
-      if (!this.priceTypes.includes(params.price_type)) { throw new Error('잘못된 price_type(단가유형) 입력') }
-      if (!isUuid(params.factory_uuid)) { throw new Error('잘못된 factory_uuid(공장UUID) 입력') };
-      if (!isDateFormat(params.reg_date)) { throw new Error('잘못된 reg_date(기준일자) 입력') };
+      result = await service.readStockAccordingToType(params);
 
-      const result = await repo.readStockAccordingToType(params);
+      return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+      
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
 
-      return response(res, result.raws, { count: result.count });
-    } catch (e) {
-      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
     }
   };
 
   // 📒 Fn[readReturnStock]: 반출 대기재고(단위 변환 적용) 조회
   public readReturnStock = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      const repo = new InvStoreRepo(req.tenant.uuid);
+      let result: ApiResult<any> = { count:0, raws: [] };
+      const service = new InvStoreService(req.tenant.uuid);
+      const params = matchedData(req, { locations: [ 'query', 'params' ] });
+
+      result = await service.readReturnStock(params);
+
+      return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
       
-      const params = Object.assign(req.query, req.params);
-      if (!isUuid(params.factory_uuid)) { throw new Error('잘못된 factory_uuid(공장UUID) 입력') };
-      if (!isUuid(params.partner_uuid)) { throw new Error('잘못된 partner_uuid(거래처UUID) 입력') };
-      if (!isDateFormat(params.reg_date)) { throw new Error('잘못된 reg_date(기준일자) 입력') };
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
 
-      const result = await repo.readReturnStock(params);
-
-      return response(res, result.raws, { count: result.count });
-    } catch (e) {
-      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
     }
   };
 
@@ -196,9 +150,14 @@ class InvStoreCtl extends BaseCtl {
 
       const result = await repo.readStoreHistoryByTransaction(params);
 
-      return response(res, result.raws, { count: result.count });
-    } catch (e) {
-      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+      
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
     }
   };
 
@@ -216,9 +175,14 @@ class InvStoreCtl extends BaseCtl {
 
       const result = await repo.readTotalHistoryAccordingToType(params);
 
-      return response(res, result.raws, { count: result.count });
-    } catch (e) {
-      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+      
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
     }
   };
 
@@ -235,9 +199,14 @@ class InvStoreCtl extends BaseCtl {
 
       const result = await repo.readIndividualHistoryAccordingToType(params);
 
-      return response(res, result.raws, { count: result.count });
-    } catch (e) {
-      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+      
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
     }
   };
 
@@ -278,9 +247,14 @@ class InvStoreCtl extends BaseCtl {
       });
 
       result.raws = tempResult;
-      return response(res, result.raws, { count: result.count });
-    } catch (e) {
-      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+      
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
     }
   };
 
