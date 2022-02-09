@@ -1,3 +1,4 @@
+import moment from "moment";
 import { Transaction } from "sequelize/types";
 import IInvStore from "../../interfaces/inv/store.interface";
 import AdmTranTypeRepo from "../../repositories/adm/tran-type.repository";
@@ -319,7 +320,7 @@ class InvStoreService {
         location_uuid: data.location_uuid,
         reject_uuid: data.reject_uuid,
         partner_uuid: data.partner_uuid,
-        reg_date: data.reg_date,
+        reg_date: moment(data.reg_date).format('yyyy-MM-DD'),
         stock_type: 'all',
         grouped_type: 'all',
         price_type: 'all',
@@ -350,7 +351,7 @@ class InvStoreService {
     return result;
   }
 
-  // 📒 수불유형별 수불부 조회 시 Object Key({tran_cd}_{inoutStr}_qty) 수정
+  // 📒 수불유형별 수불부 조회 시 Object Key({tran_type_cd}_{inoutStr}_qty) 수정
   public getTypeHistoryResult = (raws: any[]) => {
     const tempResult: any[] = [];
     raws.forEach((raw: any) => {
@@ -365,11 +366,11 @@ class InvStoreService {
       
       const inoutStr = raw.inout_fg ? 'in' : 'out';
 
-      if (equals) { equals[raw.tran_cd + '_' + inoutStr  + '_qty'] = raw.qty; }
+      if (equals) { equals[raw.tran_type_cd + '_' + inoutStr  + '_qty'] = raw.qty; }
       else { 
-        raw[raw.tran_cd + '_' + inoutStr  + '_qty'] = raw.qty;
+        raw[raw.tran_type_cd + '_' + inoutStr  + '_qty'] = raw.qty;
         delete raw.inout_fg;
-        delete raw.tran_cd;
+        delete raw.tran_type_cd;
         delete raw.qty;
         tempResult.push(raw);
       }

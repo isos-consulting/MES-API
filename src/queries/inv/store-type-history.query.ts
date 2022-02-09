@@ -25,7 +25,7 @@ const readStoreTypeInventory = (
       lot_no varchar(25),
       store_id int,
       location_id int,
-      tran_cd varchar(20),
+      tran_type_id int,
       inout_fg boolean,
       qty numeric(19,6)
     );
@@ -39,7 +39,7 @@ const readStoreTypeInventory = (
       i_s.lot_no,
       i_s.store_id,
       i_s.location_id,
-      i_s.tran_cd,
+      i_s.tran_type_id,
       i_s.inout_fg,
       sum(COALESCE(i_s.qty,0))
     FROM inv_store_tb i_s
@@ -48,7 +48,7 @@ const readStoreTypeInventory = (
     JOIN std_store_tb s_s ON s_s.store_id = i_s.store_id
     WHERE CAST(i_s.reg_date AS DATE) BETWEEN '${params.start_date}' AND '${params.end_date}'
     ${searchQuery}
-    GROUP BY i_s.factory_id, i_s.store_id, i_s.location_id, i_s.prod_id, i_s.reject_id, i_s.lot_no, i_s.tran_cd, i_s.inout_fg;
+    GROUP BY i_s.factory_id, i_s.store_id, i_s.location_id, i_s.prod_id, i_s.reject_id, i_s.lot_no, i_s.tran_type_id, i_s.inout_fg;
   `;
   //#endregion
 
@@ -58,52 +58,52 @@ const readStoreTypeInventory = (
   switch (params.grouped_type) {
     case 'all':
       insertToGroupedTempTable = `
-        INSERT INTO temp_store_group(factory_id, prod_id, reject_id, lot_no, store_id, location_id, tran_cd, inout_fg, qty)
+        INSERT INTO temp_store_group(factory_id, prod_id, reject_id, lot_no, store_id, location_id, tran_type_id, inout_fg, qty)
         SELECT 
           t_s.factory_id, t_s.prod_id, ${params.reject_fg ? 't_s.reject_id' : 'NULL'}, 
-          t_s.lot_no, t_s.store_id, t_s.location_id, t_s.tran_cd, t_s.inout_fg, SUM(COALESCE(t_s.qty, 0))
+          t_s.lot_no, t_s.store_id, t_s.location_id, t_s.tran_type_id, t_s.inout_fg, SUM(COALESCE(t_s.qty, 0))
         FROM temp_store t_s
-        GROUP BY t_s.factory_id, t_s.prod_id ${params.reject_fg ? ', t_s.reject_id' : ''}, t_s.lot_no, t_s.store_id, t_s.location_id, t_s.tran_cd, t_s.inout_fg;
+        GROUP BY t_s.factory_id, t_s.prod_id ${params.reject_fg ? ', t_s.reject_id' : ''}, t_s.lot_no, t_s.store_id, t_s.location_id, t_s.tran_type_id, t_s.inout_fg;
       `;
       break;
     case 'factory': 
       insertToGroupedTempTable = `
-        INSERT INTO temp_store_group(factory_id, prod_id, reject_id, lot_no, store_id, location_id, tran_cd, inout_fg, qty)
+        INSERT INTO temp_store_group(factory_id, prod_id, reject_id, lot_no, store_id, location_id, tran_type_id, inout_fg, qty)
         SELECT 
           t_s.factory_id, t_s.prod_id, ${params.reject_fg ? 't_s.reject_id' : 'NULL'}, 
-          NULL, NULL, NULL, t_s.tran_cd, t_s.inout_fg, SUM(COALESCE(t_s.qty, 0))
+          NULL, NULL, NULL, t_s.tran_type_id, t_s.inout_fg, SUM(COALESCE(t_s.qty, 0))
         FROM temp_store t_s
-        GROUP BY t_s.factory_id, t_s.prod_id ${params.reject_fg ? ', t_s.reject_id' : ''}, t_s.tran_cd, t_s.inout_fg;
+        GROUP BY t_s.factory_id, t_s.prod_id ${params.reject_fg ? ', t_s.reject_id' : ''}, t_s.tran_type_id, t_s.inout_fg;
       `;
       break;
     case 'store': 
       insertToGroupedTempTable = `
-        INSERT INTO temp_store_group(factory_id, prod_id, reject_id, lot_no, store_id, location_id, tran_cd, inout_fg, qty)
+        INSERT INTO temp_store_group(factory_id, prod_id, reject_id, lot_no, store_id, location_id, tran_type_id, inout_fg, qty)
         SELECT 
           t_s.factory_id, t_s.prod_id, ${params.reject_fg ? 't_s.reject_id' : 'NULL'}, 
-          NULL, t_s.store_id, NULL, t_s.tran_cd, t_s.inout_fg, SUM(COALESCE(t_s.qty, 0))
+          NULL, t_s.store_id, NULL, t_s.tran_type_id, t_s.inout_fg, SUM(COALESCE(t_s.qty, 0))
         FROM temp_store t_s
-        GROUP BY t_s.factory_id, t_s.prod_id ${params.reject_fg ? ', t_s.reject_id' : ''}, t_s.store_id, t_s.tran_cd, t_s.inout_fg;
+        GROUP BY t_s.factory_id, t_s.prod_id ${params.reject_fg ? ', t_s.reject_id' : ''}, t_s.store_id, t_s.tran_type_id, t_s.inout_fg;
       `;
       break;
     case 'lotNo': 
       insertToGroupedTempTable = `
-        INSERT INTO temp_store_group(factory_id, prod_id, reject_id, lot_no, store_id, location_id, tran_cd, inout_fg, qty)
+        INSERT INTO temp_store_group(factory_id, prod_id, reject_id, lot_no, store_id, location_id, tran_type_id, inout_fg, qty)
         SELECT 
           t_s.factory_id, t_s.prod_id, ${params.reject_fg ? 't_s.reject_id' : 'NULL'}, 
-          t_s.lot_no, t_s.store_id, NULL, t_s.tran_cd, t_s.inout_fg, SUM(COALESCE(t_s.qty, 0))
+          t_s.lot_no, t_s.store_id, NULL, t_s.tran_type_id, t_s.inout_fg, SUM(COALESCE(t_s.qty, 0))
         FROM temp_store t_s
-        GROUP BY t_s.factory_id, t_s.prod_id ${params.reject_fg ? ', t_s.reject_id' : ''}, t_s.lot_no, t_s.store_id, t_s.tran_cd, t_s.inout_fg;
+        GROUP BY t_s.factory_id, t_s.prod_id ${params.reject_fg ? ', t_s.reject_id' : ''}, t_s.lot_no, t_s.store_id, t_s.tran_type_id, t_s.inout_fg;
       `;
       break;
     case 'location': 
       insertToGroupedTempTable = `
-        INSERT INTO temp_store_group(factory_id, prod_id, reject_id, lot_no, store_id, location_id, tran_cd, inout_fg, qty)
+        INSERT INTO temp_store_group(factory_id, prod_id, reject_id, lot_no, store_id, location_id, tran_type_id, inout_fg, qty)
         SELECT 
           t_s.factory_id, t_s.prod_id, ${params.reject_fg ? 't_s.reject_id' : 'NULL'}, 
-          NULL, t_s.store_id, t_s.location_id, t_s.tran_cd, t_s.inout_fg, SUM(COALESCE(t_s.qty, 0))
+          NULL, t_s.store_id, t_s.location_id, t_s.tran_type_id, t_s.inout_fg, SUM(COALESCE(t_s.qty, 0))
         FROM temp_store t_s
-        GROUP BY t_s.factory_id, t_s.prod_id ${params.reject_fg ? ', t_s.reject_id' : ''}, t_s.store_id, t_s.location_id, t_s.tran_cd, t_s.inout_fg;
+        GROUP BY t_s.factory_id, t_s.prod_id ${params.reject_fg ? ', t_s.reject_id' : ''}, t_s.store_id, t_s.location_id, t_s.tran_type_id, t_s.inout_fg;
       `;
       break;
     default: break;
@@ -119,7 +119,7 @@ const readStoreTypeInventory = (
       lot_no varchar(25),
       store_id int,
       location_id int,
-      tran_cd varchar(20),
+      tran_type_id int,
       inout_fg boolean,
       qty numeric(19,6)
     );
@@ -169,7 +169,9 @@ const readStoreTypeInventory = (
       s_l.location_cd,
       s_l.location_nm,
       t_s.inout_fg,
-      t_s.tran_cd,
+      t_s.tran_type_id,
+      a_tt.tran_type_cd,
+      a_tt.tran_type_nm,
       t_s.qty
     FROM temp_store_group t_s
     JOIN std_factory_tb s_f ON s_f.factory_id = t_s.factory_id
@@ -181,7 +183,8 @@ const readStoreTypeInventory = (
     LEFT JOIN std_store_tb s_s ON s_s.store_id = t_s.store_id
     LEFT JOIN std_location_tb s_l ON s_l.location_id = t_s.location_id
     LEFT JOIN std_reject_tb s_r ON s_r.reject_id = t_s.reject_id
-    ORDER BY t_s.factory_id, t_s.store_id, t_s.prod_id, t_s.tran_cd, t_s.inout_fg;
+    JOIN adm_tran_type_tb a_tt ON a_tt.tran_type_id = t_s.tran_type_id
+    ORDER BY t_s.factory_id, t_s.store_id, t_s.prod_id, t_s.tran_type_id, t_s.inout_fg;
   `;
   //#endregion
 

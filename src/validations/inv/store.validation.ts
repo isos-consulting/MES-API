@@ -51,8 +51,7 @@ const invStoreValidation = {
     query('end_date', '기준 종료일자')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'end_date', '기준 종료일자'))
       .isDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'end_date', '기준 종료일자')),
-    query('reject_fg', '부적합 조회여부')
-      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'reject_fg', '부적합 조회여부'))
+    query('reject_fg', '부적합 조회여부').optional({ nullable: true })
       .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'reject_fg', '부적합 조회여부')),
     query('factory_uuid', '공장UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'factory_uuid', '공장UUID'))

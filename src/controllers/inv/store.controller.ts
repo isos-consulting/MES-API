@@ -35,8 +35,9 @@ class InvStoreCtl {
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => {
         // 📌 실사등록 Body 생성
+        console.log(1111);
         datas = await service.getCreateBody(datas, tran);
-
+        console.log(22222);
         // 📌 재고 실사 내역 생성
         result = await service.create(datas, req.user?.uid as number, tran);
       });
@@ -202,7 +203,7 @@ class InvStoreCtl {
       const service = new InvStoreService(req.tenant.uuid);
       const params = matchedData(req, { locations: [ 'query', 'params' ] });
 
-      result = await service.readIndividualHistoryAccordingToType(params);
+      result = await service.readTypeHistoryAccordingToType(params);
       result.raws = service.getTypeHistoryResult(result.raws);
 
       return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
