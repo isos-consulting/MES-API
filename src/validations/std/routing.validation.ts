@@ -34,9 +34,9 @@ const stdRoutingValidation = {
 		body('*.proc_no', '공정순서')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'proc_no', '공정순서'))
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'proc_no', '공정순서')),
-		body('*.auto_wokr_fg', '자동실적처리유무')
-      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'auto_wokr_fg', '자동실적처리유무'))
-      .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'auto_wokr_fg', '자동실적처리유무')),
+		body('*.auto_work_fg', '자동실적처리유무')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'auto_work_fg', '자동실적처리유무'))
+      .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'auto_work_fg', '자동실적처리유무')),
 		body('*.cycle_time', '소요시간').optional({ nullable: true })
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'cycle_time', '소요시간')),
 		body('*.uph', '시간당 생산량').optional({ nullable: true })
@@ -49,9 +49,9 @@ const stdRoutingValidation = {
 		body('*.proc_no', '공정순서')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'proc_no', '공정순서'))
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'proc_no', '공정순서')),
-		body('*.auto_wokr_fg', '자동실적처리유무')
-      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'auto_wokr_fg', '자동실적처리유무'))
-      .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'auto_wokr_fg', '자동실적처리유무')),
+		body('*.auto_work_fg', '자동실적처리유무')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'auto_work_fg', '자동실적처리유무'))
+      .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'auto_work_fg', '자동실적처리유무')),
 		body('*.cycle_time', '소요시간').optional({ nullable: true })
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'cycle_time', '소요시간')),
 		body('*.uph', '시간당 생산량').optional({ nullable: true })
@@ -63,8 +63,8 @@ const stdRoutingValidation = {
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '라우팅UUID')),
 		body('*.proc_no', '공정순서').optional({ nullable: true })
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'proc_no', '공정순서')),
-		body('*.auto_wokr_fg', '자동실적처리유무').optional({ nullable: true })
-      .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'auto_wokr_fg', '자동실적처리유무')),
+		body('*.auto_work_fg', '자동실적처리유무').optional({ nullable: true })
+      .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'auto_work_fg', '자동실적처리유무')),
 		body('*.cycle_time', '소요시간').optional({ nullable: true })
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'cycle_time', '소요시간')),
 		body('*.uph', '시간당 생산량').optional({ nullable: true })
