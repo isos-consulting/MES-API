@@ -53,9 +53,9 @@ const readStoreTotalInventory = (
       i_s.lot_no,
       i_s.store_id,
       i_s.location_id,
-      CASE WHEN i_s.tran_cd = 'INV' THEN 0 ELSE CASE WHEN i_s.inout_fg = TRUE THEN SUM(COALESCE(i_s.qty)) ELSE 0 END END,
-      CASE WHEN i_s.tran_cd = 'INV' THEN 0 ELSE CASE WHEN i_s.inout_fg = TRUE THEN 0 ELSE SUM(COALESCE(i_s.qty)) END END,
-      CASE WHEN i_s.tran_cd <> 'INV' THEN 0 ELSE CASE WHEN i_s.inout_fg = TRUE THEN SUM(COALESCE(i_s.qty)) ELSE (SUM(COALESCE(i_s.qty)) * -1) END END
+      CASE WHEN i_s.tran_type_id = tranTypeId THEN 0 ELSE CASE WHEN i_s.inout_fg = TRUE THEN SUM(COALESCE(i_s.qty)) ELSE 0 END END,
+      CASE WHEN i_s.tran_type_id = tranTypeId THEN 0 ELSE CASE WHEN i_s.inout_fg = TRUE THEN 0 ELSE SUM(COALESCE(i_s.qty)) END END,
+      CASE WHEN i_s.tran_type_id <> tranTypeId THEN 0 ELSE CASE WHEN i_s.inout_fg = TRUE THEN SUM(COALESCE(i_s.qty)) ELSE (SUM(COALESCE(i_s.qty)) * -1) END END
     FROM inv_store_tb i_s
     JOIN std_factory_tb s_f ON s_f.factory_id = i_s.factory_id
     JOIN std_prod_tb s_p ON s_p.prod_id = i_s.prod_id
@@ -64,7 +64,7 @@ const readStoreTotalInventory = (
     LEFT JOIN std_reject_tb s_r ON s_r.reject_id = i_s.reject_id
     WHERE CAST(i_s.reg_date AS DATE) BETWEEN '${params.start_date}' AND '${params.end_date}'
     ${searchQuery}
-    GROUP BY s_f.uuid, i_s.factory_id, i_s.prod_id, i_s.reject_id, i_s.lot_no, i_s.store_id, i_s.location_id, i_s.tran_cd, i_s.inout_fg;
+    GROUP BY s_f.uuid, i_s.factory_id, i_s.prod_id, i_s.reject_id, i_s.lot_no, i_s.store_id, i_s.location_id, i_s.tran_type_id, i_s.inout_fg;
   `;
   //#endregion
 
@@ -264,18 +264,27 @@ const readStoreTotalInventory = (
   const query = `
     -- 공장(Factory), 창고(Store), 위치(Location), 품목(Prod), 부적합(Reject), LotNo를 기준으로 재고를 가지고 있는 기준 임시 테이블 생성
     -- 재고 유형(stockType) [가용재고(Available), Reject(부적합재고), Return(반출대기재고), Outgo(출하대기재고)] 에 따라 Filtering
-    ${createTempTable}
+    DO $$
+    DECLARE 
+      tranTypeId int;
 
-    -- 분류 유형(groupedType) 에 따라서 분류(Group by)하여 조회
-    -- 분류 유형(groupedType) : 
-    -- Factory(공장, 품목, 부적합) 
-    -- Store(공장, 품목, 부적합, 창고)
-    -- LotNo(공장, 품목, 부적합, LotNo, 창고)
-    -- Location(공장, 품목, 부적합, 창고, 위치)]
-    ${createGroupedTempTable}
+    BEGIN
+      -- 수불유형이 재고실사인 수불유형 id값 가져오기
+      SELECT tran_type_id INTO tranTypeId FROM adm_tran_type_tb WHERE tran_type_cd = 'INVENTORY';
 
-    -- 기초재고 기말재고를 삽입한 테이블 생성
-    ${createMainTempTable}
+      ${createTempTable}
+
+      -- 분류 유형(groupedType) 에 따라서 분류(Group by)하여 조회
+      -- 분류 유형(groupedType) : 
+      -- Factory(공장, 품목, 부적합) 
+      -- Store(공장, 품목, 부적합, 창고)
+      -- LotNo(공장, 품목, 부적합, LotNo, 창고)
+      -- Location(공장, 품목, 부적합, 창고, 위치)]
+      ${createGroupedTempTable}
+
+      -- 기초재고 기말재고를 삽입한 테이블 생성
+      ${createMainTempTable}
+    END $$;
 
     -- Filtering 되어있는 재고 정보에 추가 테이블 Join 하여 조회
     ${readStockQuery}
