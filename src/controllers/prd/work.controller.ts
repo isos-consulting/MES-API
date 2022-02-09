@@ -21,6 +21,7 @@ import PrdWorkInputService from '../../services/prd/work-input.service';
 import PrdWorkRejectService from '../../services/prd/work-reject.service';
 import PrdWorkDowntimeService from '../../services/prd/work-downtime.service';
 import StdTenantOptService from '../../services/std/tenant-opt.service';
+import IPrdWorkInput from '../../interfaces/prd/work-input.interface';
 
 class PrdWorkCtl {
   stateTag: string;
@@ -201,14 +202,21 @@ class PrdWorkCtl {
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
         for await (const data of datas) {
           // 📌 생산실적 완료 전 검증작업(투입수량, 생산수량, 가용창고 등)
-          const work = await service.validateUpdateComplete(data, tran);
-
+          /**
+           * workValidateResult 반환 포멧 : { verifyInput: {}, pullProdIds: [], inputDatas: [], work: {}}
+           * verifyInput  : 투입품목들의 지시기준 및 투입수량합계에 대한 초기 셋팅 값들(LOT기준 없이 품목기준 그룹한 결과)
+           * pullProdIds  : pull방식으로 투입하는 품목 id값들
+           * inputDatas   : 투입품목 상세정보(LOT별로 세분화 된 결과)
+           * work         : 실적정보
+           */
+          const workValidateResult = await service.validateUpdateComplete(data, tran);
+          
           // 📌 생산실적 완료 처리
-          const workResult = await service.updateComplete({ uuid: data.uuid, qty: work.qty, reject_qty: work.reject_qty, complete_fg: true }, req.user?.uid as number, tran);
+          const workResult = await service.updateComplete({ uuid: data.uuid, qty: workValidateResult.work.qty, reject_qty: workValidateResult.work.reject_qty, complete_fg: true }, req.user?.uid as number, tran);
           
           // 📌 해당 실적의 작업지시에 진행중인 생산 실적이 없을 경우 작업지시의 생산진행여부(work_fg)를 False로 변경
           const orderResult = await orderService.updateOrderCompleteByOrderId(workResult.raws[0].order_id, req.user?.uid as number, tran);
-
+          
           // 📌 입고 창고 수불 내역 생성(생산입고)
           const toStoreResult = await inventoryService.transactInventory(
             workResult.raws, 'CREATE', 
@@ -223,16 +231,41 @@ class PrdWorkCtl {
             { inout: 'TO', tran_type: 'PRD_REJECT', reg_date: workResult.raws[0].reg_date, tran_id_alias: 'work_reject_id' },
             req.user?.uid as number, tran
           );
-
+          
           // 📌 창고 수불이력 생성(생산투입)
-          const isPullOption = await tenantOptService.getTenantOptValue('OUT_AUTO_PULL', tran);
-          const workInputBody = await workInputService.getWorkInputBody(workResult.raws[0], workResult.raws[0].reg_date, isPullOption);
+          const isMinusStockOption = await tenantOptService.getTenantOptValue('ALLOW_MINUS_STOCK', tran);
+          /**
+           * workInputBody 반환 포멧 : { pullBody: [], pushBody: [] }
+           * pullBody  : pull방식 투입 품목 Body
+           * pushBody  : push방식 투입 품목 Body
+           */
+          const workInputBody = await workInputService.getWorkInputBody(workValidateResult, workResult.raws[0].reg_date, isMinusStockOption);
+          
+          // pull방식 품목들 수불처리 전 create work_input 
+          workValidateResult.pullProdIds.forEach((prodId: number) => {
+            workInputBody.pullBody.forEach((body: IPrdWorkInput) => {
+              body.factory_id = workResult.raws[0].factory_id;
+              body.work_id = workResult.raws[0].work_id;
+              body.c_usage = workValidateResult.verifyInput[prodId].usage;
+              body.unit_id = workValidateResult.verifyInput[prodId].unit_id;
+              body.bom_input_type_id = workValidateResult.verifyInput[prodId].bom_input_type_id;
+            });
+          });
+          const createWorkInputResult = await workInputService.create(workInputBody.pullBody as IPrdWorkInput[], req.user?.uid as number, tran);
+
+          // Create 결과의 work_input_id 수불을 위한 object에 셋팅
+          createWorkInputResult.raws.forEach((input: any) => {
+            workInputBody.pullBody.forEach((body: IPrdWorkInput) => {
+              if(input.prod_id == body.prod_id && input.lot_no == body.lot_no) { body.work_input_id = input.work_input_id; }
+            });
+          });
+
           const inputStoreResult = await inventoryService.transactInventory(
-            workInputBody, 'CREATE', 
+            [...workInputBody.pushBody, ...workInputBody.pullBody ], 'CREATE', 
             { inout: 'FROM', tran_type: 'PRD_INPUT', reg_date: workResult.raws[0].reg_date, tran_id_alias: 'work_input_id' },
             req.user?.uid as number, tran
           );
-
+          
           result.raws.push({
             work: workResult.raws,
             order: orderResult.raws,

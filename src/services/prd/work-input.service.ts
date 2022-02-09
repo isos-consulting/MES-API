@@ -16,6 +16,7 @@ import InvStoreRepo from "../../repositories/inv/store.repository";
 import StdBomRepo from "../../repositories/std/bom.repository";
 import InvStoreService from "../inv/store.service";
 import StdTenantOptService from "../std/tenant-opt.service";
+import { cloneDeep } from "lodash";
 
 class PrdWorkInputService {
   tenant: string;
@@ -176,38 +177,39 @@ class PrdWorkInputService {
    * @param regDate 수불일시
    * @returns 작업실적 데이터
    */
-  getWorkInputBody = async (data: any, regDate: string, isPullOption: boolean) => {
-    const workInputRead = await this.repo.readRawsByWorkId(data.work_id);
-    const result = await Promise.all(
-      workInputRead.raws.map(async (workInput: IPrdWorkInput) => {
-        // PUSH(수동입력)
-        if (workInput.bom_input_type_id == BOM_INPUT_TYPE.PUSH) {
-          return {
-            work_input_id: workInput.work_input_id,
-            factory_id: workInput.factory_id,
-            prod_id: workInput.prod_id,
-            reg_date: regDate,
-            lot_no: workInput.lot_no,
-            qty: workInput.qty,
-            from_store_id: workInput.from_store_id,
-            from_location_id: workInput.from_location_id
-          }
+  getWorkInputBody = async (data: any, regDate: string, isMinusStockOption: boolean) => {
+    let result: any = { pushBody: [], pullBody: [] };
 
-        // PULL(선입선출)
-        } else if (workInput.bom_input_type_id == BOM_INPUT_TYPE.PULL) {
-          return await this.getPullInputBody(workInput, regDate, isPullOption);
-          
-        } else {
-          throw createApiError(
-            400, 
-            `투입품목[${workInput.uuid}}]의 투입방법이 잘못 되었습니다.`,
-            this.stateTag, 
-            errorState.FAILED_SAVE_TO_RELATED_DATA
-          );
+    const pushArray = data.inputDatas.filter((input: any) => input.bom_input_type_id == BOM_INPUT_TYPE.PUSH);
+    const pullArray = data.inputDatas.filter((input: any) => input.bom_input_type_id == BOM_INPUT_TYPE.PULL);
+
+    pushArray.forEach((typePush: any) => {
+      result.pushBody.push({
+        work_input_id: typePush.work_input_id,
+        factory_id: typePush.factory_id,
+        prod_id: typePush.prod_id,
+        reg_date: regDate,
+        lot_no: typePush.lot_no,
+        qty: typePush.qty,
+        from_store_id: typePush.from_store_id,
+        from_location_id: typePush.from_location_id
+      })
+    });
+
+    const pullResult = await Promise.all(
+      pullArray.map(async (typePull: any) => {
+        const params: IPrdWorkInput = {
+          factory_id: data.work.factory_id,
+          prod_id: typePull.prod_id,
+          from_store_id: typePull.from_store_id,
+          from_location_id: typePull.from_location_id,
+          qty: (Number(data.work.qty) + Number(data.work.reject_qty)) * Number(typePull.usage),
         }
+        return await this.getPullInputBody(params, regDate, isMinusStockOption);
       })
     );
 
+    result.pullBody = pullResult[0];
     return result;
   }
 
@@ -249,8 +251,14 @@ class PrdWorkInputService {
     return result;
   }
 
-  public getVerifyInput = async (workId: number, tran: Transaction) => {
-    let verifyInput: any = {};
+  public getVerifyInput = async (workId: number, verifyInput: any, tran: Transaction) => {
+    // 반환 결과 포멧
+    let result: any = { verifyInput: {}, pullProdIds: [], inputDatas: [] };
+    let inputProdArray: number[] = [];
+
+    // verifyInput 복제  
+    let workVerifyInput: any = cloneDeep(verifyInput);
+
     const inputRead = await this.repo.readRawsByWorkId(workId, tran);
     inputRead.raws.forEach((input: any) => {
       if (!verifyInput[input.prod_id]) { 
@@ -261,9 +269,13 @@ class PrdWorkInputService {
           errorState.FAILED_SAVE_TO_RELATED_DATA
         ); 
       }
+
       verifyInput[input.prod_id].usage = input.c_usage;
-      verifyInput[input.prod_id].qty = Number(input.qty);
+      verifyInput[input.prod_id].qty += Number(input.qty);
       verifyInput[input.prod_id].bom_input_type_id = input.bom_input_type_id
+      verifyInput[input.prod_id].from_store_id = input.from_store_id
+      verifyInput[input.prod_id].from_location_id = input.from_location_id
+      verifyInput[input.prod_id].unit_id = input.unit_id
 
       if (!Object.values(BOM_INPUT_TYPE).includes(input.bom_input_type_id)) {
         throw createApiError(
@@ -273,9 +285,28 @@ class PrdWorkInputService {
           errorState.FAILED_SAVE_TO_RELATED_DATA
         );
       }
+
+      // pull방식이 아닌 품목값을 제거하기 위한 Array
+      if(!inputProdArray.includes(input.prod_id)) { inputProdArray.push(input.prod_id); }
+
+      // 투입상세정보 셋팅
+      result.inputDatas.push(input);
     });
 
-    return verifyInput;
+    // pull방식이 아닌 품목값 제거
+    inputProdArray.forEach((prod: number) => { delete workVerifyInput[prod]; });
+
+    // pull방식으로 투입되는 품목정보 값 셋팅
+    result.pullProdIds = Object.keys(workVerifyInput);
+
+    // 투입상세정보 셋팅
+    Object.keys(workVerifyInput).forEach((key: any) => {
+      workVerifyInput[key].prod_id = key as number;
+      result.inputDatas.push(workVerifyInput[key]);
+    })
+
+    result.verifyInput = verifyInput;
+    return result;
   }
 }
 

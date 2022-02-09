@@ -138,7 +138,14 @@ class PrdOrderInputService {
     let verifyInput: any = {};
     const orderInputRead = await this.repo.readRawsByOrderId(orderId, tran);
     orderInputRead.raws.forEach((orderInput: any) => {
-      verifyInput[orderInput.prod_id] = { usage: orderInput.c_usage, qty: 0, bom_input_type_id: null }
+      verifyInput[orderInput.prod_id] = { 
+        usage: orderInput.c_usage, 
+        qty: 0, 
+        bom_input_type_id: orderInput.bom_input_type_id,
+        from_store_id: orderInput.from_store_id,
+        from_location_id: orderInput.from_location_uuid,
+        unit_id: orderInput.unit_id,
+      }
     });
 
     return verifyInput;

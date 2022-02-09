@@ -285,7 +285,7 @@ class PrdWorkRejectRepo {
 
       if (!result) { return result; }
 
-      const qty: number = (result as any).dataValues.qty;
+      const qty: number = convertReadResult(result[0]).raws[0].qty ?? 0;
       return qty;
 
     } catch (error) {
@@ -312,7 +312,7 @@ class PrdWorkRejectRepo {
 
       if (!result) { return result; }
 
-      const qty: number = (result as any).dataValues.qty;
+      const qty: number = (result as any).dataValues.qty ?? 0;
       return qty;
       
     } catch (error) {
