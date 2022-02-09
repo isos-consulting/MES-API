@@ -15,14 +15,16 @@ const readMoldReport = (
     
     INSERT INTO temp_work
     SELECT 
-      mold_id,
-      SUM((qty + reject_qty) / mold_cavity) AS work_cnt,
-      SUM((qty + reject_qty)) AS work_qty
+      p_wr.mold_id,
+      SUM((coalesce(p_wr.qty,0) + coalesce(p_wrt.qty,0)) / p_wr.mold_cavity) AS work_cnt,
+      SUM((coalesce(p_wr.qty,0) + coalesce(p_wrt.qty,0))) AS work_qty
     FROM prd_work_tb p_w
-    WHERE date(start_date) <= '${params.reg_date}'
-    AND COALESCE(mold_cavity, 0) <> 0
-    AND mold_id IS NOT NULL
-    GROUP BY mold_id;
+    JOIN prd_work_routing_tb p_wr on p_wr.work_id = p_w.work_id
+    LEFT JOIN prd_work_reject_tb p_wrt on p_wrt.work_routing_id = p_wr.work_routing_id
+    WHERE date(p_wr.start_date) <= '${params.reg_date}'
+    AND COALESCE(p_wr.mold_cavity, 0) <> 0
+    AND p_wr.mold_id IS NOT NULL
+    GROUP BY p_wr.mold_id;
   `;
   //#endregion
 
