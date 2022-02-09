@@ -33,7 +33,6 @@ const readWorkInputGroup = (
 
     -- 📌 work_input 임시테이블 생성
     CREATE TEMP TABLE temp_work_input (
-      work_input_id int,
       factory_id int,
       work_id int,
       prod_id int,
@@ -50,7 +49,6 @@ const readWorkInputGroup = (
     -- 📌 투입이력(실적기준) 저장
     INSERT INTO temp_work_input
     SELECT
-      p_wi.work_input_id,
       p_wi.factory_id,
       p_wi.work_id,
       p_wi.prod_id,
@@ -63,7 +61,7 @@ const readWorkInputGroup = (
       p_wi.remark
     FROM prd_work_input_tb p_wi
     WHERE p_wi.work_id = workId
-    GROUP BY p_wi.work_input_id, p_wi.factory_id, p_wi.work_id, p_wi.prod_id, p_wi.c_usage, p_wi.unit_id, p_wi.from_store_id, p_wi.from_location_id, p_wi.bom_input_type_id, p_wi.remark;
+    GROUP BY p_wi.factory_id, p_wi.work_id, p_wi.prod_id, p_wi.c_usage, p_wi.unit_id, p_wi.from_store_id, p_wi.from_location_id, p_wi.bom_input_type_id, p_wi.remark;
   `;
   //#endregion
 
@@ -71,7 +69,6 @@ const readWorkInputGroup = (
   const createMainTempTable = `
     -- 📌 work_input_main 임시테이블 생성
     CREATE TEMP TABLE temp_work_input_main (
-      work_input_id int,
       factory_id int,
       work_id int,
       prod_id int,
@@ -94,7 +91,6 @@ const readWorkInputGroup = (
     -- 📌 메인 데이터 저장
     INSERT INTO temp_work_input_main
     SELECT 
-      t_wi.work_input_id, 
       p_oi.factory_id, 
       t_wi.work_id, 
       p_oi.prod_id,
@@ -115,7 +111,6 @@ const readWorkInputGroup = (
   // 📌 투입내역을 조회 할 메인 임시테이블에 JOIN하여 조회
   const readInputs = `
     SELECT
-      p_wi.uuid as work_input_uuid,
       s_f.uuid as factory_uuid,
       s_f.factory_cd,
       s_f.factory_nm,
@@ -151,7 +146,6 @@ const readWorkInputGroup = (
       a_bit.bom_input_type_nm as bom_input_type_nm,
       t_wim.remark
     FROM temp_work_input_main t_wim
-    LEFT JOIN prd_work_input_tb p_wi ON p_wi.work_input_id = t_wim.work_input_id
     LEFT JOIN prd_work_tb p_w ON p_w.work_id = t_wim.work_id
     LEFT JOIN prd_order_tb p_o ON p_o.order_id = p_w.order_id
     LEFT JOIN temp_final_routing t_fr ON t_fr.work_id = p_w.work_id
