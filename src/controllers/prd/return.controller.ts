@@ -17,7 +17,7 @@ class PrdReturnCtl {
   stateTag: string;
   //#region ✅ Constructor
   constructor() {
-    this.stateTag = 'prdReturn'
+    this.stateTag = 'prdReturn';
   };
   //#endregion
   //
@@ -158,12 +158,12 @@ class PrdReturnCtl {
         // 📌 수불 데이터 생성
         const fromStoreResult = await inventoryService.transactInventory(
           releaseResult.raws, 'UPDATE', 
-          { inout: 'FROM', tran_type: 'MAT_RELEASE', tran_id_alias: 'release_id' },
+          { inout: 'FROM', tran_type: 'PRD_RETURN', tran_id_alias: 'return_id' },
           req.user?.uid as number, tran
         );
         const toStoreResult = await inventoryService.transactInventory(
           releaseResult.raws, 'UPDATE', 
-          { inout: 'TO', tran_type: 'MAT_RELEASE', tran_id_alias: 'release_id' },
+          { inout: 'TO', tran_type: 'PRD_RETURN', tran_id_alias: 'return_id' },
           req.user?.uid as number, tran
         );
 
@@ -207,12 +207,12 @@ class PrdReturnCtl {
         // 📌 수불 데이터 생성
         const fromStoreResult = await inventoryService.transactInventory(
           releaseResult.raws, 'UPDATE', 
-          { inout: 'FROM', tran_type: 'MAT_RELEASE', tran_id_alias: 'release_id' },
+          { inout: 'FROM', tran_type: 'PRD_RETURN', tran_id_alias: 'return_id' },
           req.user?.uid as number, tran
         );
         const toStoreResult = await inventoryService.transactInventory(
           releaseResult.raws, 'UPDATE', 
-          { inout: 'TO', tran_type: 'MAT_RELEASE', tran_id_alias: 'release_id' },
+          { inout: 'TO', tran_type: 'PRD_RETURN', tran_id_alias: 'return_id' },
           req.user?.uid as number, tran
         );
 
@@ -256,12 +256,12 @@ class PrdReturnCtl {
         // 📌 수불 데이터 삭제
         const fromStoreResult = await inventoryService.transactInventory(
           releaseResult.raws, 'DELETE', 
-          { inout: 'FROM', tran_type: 'MAT_RELEASE', tran_id_alias: 'release_id' },
+          { inout: 'FROM', tran_type: 'PRD_RETURN', tran_id_alias: 'return_id' },
           req.user?.uid as number, tran
         );
         const toStoreResult = await inventoryService.transactInventory(
           releaseResult.raws, 'DELETE', 
-          { inout: 'TO', tran_type: 'MAT_RELEASE', tran_id_alias: 'release_id' },
+          { inout: 'TO', tran_type: 'PRD_RETURN', tran_id_alias: 'return_id' },
           req.user?.uid as number, tran
         );
 
