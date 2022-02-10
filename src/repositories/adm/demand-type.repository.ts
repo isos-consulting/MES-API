@@ -62,7 +62,7 @@ public create = async(body: IAdmDemandType[], uid: number, transaction?: Transac
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
-					// [ Sequelize.col('admDemandType.uuid'), 'demand_type_uuid' ],
+					[ Sequelize.col('admDemandType.uuid'), 'demand_type_uuid' ],
           'demand_type_cd',
           'demand_type_nm',
 					'sortby',
@@ -71,6 +71,7 @@ public create = async(body: IAdmDemandType[], uid: number, transaction?: Transac
           'updated_at',
           [ Sequelize.col('updateUser.user_nm'), 'updated_nm' ]
         ],
+        where: { demand_type_cd: params.demand_type_cd ?? { [Op.ne]: null } },
         order: [ 'sortby' ],
       });
 
@@ -91,7 +92,7 @@ public create = async(body: IAdmDemandType[], uid: number, transaction?: Transac
 					{ model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
 				],
 				attributes: [
-					// [ Sequelize.col('admDemandType.uuid'), 'demand_type_uuid' ],
+					[ Sequelize.col('admDemandType.uuid'), 'demand_type_uuid' ],
 					'demand_type_cd',
           'demand_type_nm',
           'sortby',
@@ -139,7 +140,6 @@ public create = async(body: IAdmDemandType[], uid: number, transaction?: Transac
       const promises = body.map((demandType: any) => {
         return this.repo.update(
           {
-            demand_type_id: demandType.demand_type_id ?? null,
             demand_type_cd: demandType.demand_type_cd ?? null,
 						demand_type_nm: demandType.demand_type_nm ?? null,
 						sortby: demandType.sortby ?? null,
@@ -175,7 +175,6 @@ public create = async(body: IAdmDemandType[], uid: number, transaction?: Transac
       const promises = body.map((demandType: any) => {
         return this.repo.update(
           {
-            demand_type_id: demandType.demand_type_id,
 						demand_type_cd: demandType.demand_type_cd,
 						demand_type_nm: demandType.demand_type_nm,
 						sortby: demandType.sortby,

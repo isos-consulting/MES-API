@@ -25,6 +25,7 @@ import admFileMgmtValidation from '../validations/adm/file-mgmt.validation';
 import admTranTypeValidation from '../validations/adm/tran-type.validation';
 import AdmBomInputTypeCtl from '../controllers/adm/bom-input-type.controller';
 import admBomInputTypeValidation from '../validations/adm/bom-input-type.validation';
+import admDemandTypeValidation from '../validations/adm/demand-type.validation';
 
 const router = express.Router();
 
@@ -100,12 +101,12 @@ router.route('/tran-types').delete(admTranTypeValidation.delete, validationCallb
 
 //#region ✅ DemandType (요청 유형)
 const demandType = new AdmDemandTypeCtl();
-router.route('/demand-type/:uuid').get(demandType.read);
-router.route('/demand-types').get(demandType.read);
-router.route('/demand-types').post(demandType.create);
-router.route('/demand-types').put(demandType.update);
-router.route('/demand-types').patch(demandType.patch);
-router.route('/demand-types').delete(demandType.delete);
+router.route('/demand-type/:uuid').get(admDemandTypeValidation.readByUuid, validationCallback, demandType.readByUuid);
+router.route('/demand-types').get(admDemandTypeValidation.read, validationCallback, demandType.read);
+router.route('/demand-types').post(admDemandTypeValidation.create, validationCallback, demandType.create);
+router.route('/demand-types').put(admDemandTypeValidation.update, validationCallback, demandType.update);
+router.route('/demand-types').patch(admDemandTypeValidation.patch, validationCallback, demandType.patch);
+router.route('/demand-types').delete(admDemandTypeValidation.delete, validationCallback, demandType.delete);
 //#endregion
 
 //#region ✅ PatternOpt (자동번호발행 옵션)
