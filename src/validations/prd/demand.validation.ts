@@ -46,8 +46,7 @@ const prdDemandValidation = {
     body('*.qty', '수량')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'qty', '수량'))
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'qty', '수량')),
-    body('*.dept_uuid', '부서UUID')
-      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'dept_uuid', '부서UUID'))
+    body('*.dept_uuid', '부서UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'dept_uuid', '부서UUID')),
     body('*.due_date', '납기일시').optional({ nullable: true })
       .isISO8601().toDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'due_date', '납기일시')),
