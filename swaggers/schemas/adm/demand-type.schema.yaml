@@ -5,7 +5,7 @@ demand_type_id:
   type: object
   properties:
     demand_type_id:
-      description: 요청유형ID
+      description: 자재출고요청유형ID
       type: number
       format: int4
 
@@ -13,16 +13,16 @@ demand_type_cd:
   type: object
   properties:
     demand_type_cd:
-      description: 요청유형코드
+      description: 자재출고요청유형코드
       type: string
-      format: varchar(20)
+      format: varchar(50)
 
 demand_type_nm:
   type: object
   properties:
     demand_type_nm:
-      description: 요청유형명
-      type: string
+      description: 자재출고요청유형명
+      type: string1
       format: varchar(50)
 
 sortby:
@@ -37,8 +37,15 @@ uuid:
   type: object
   properties:
     uuid:
-      description: 요청유형UUID
+      description: 자재출고요청유형UUID
       type: string
       format: uuid
-# Uuids
 
+# Uuids
+demand_type_uuid:
+  type: object
+  properties:
+    demand_type_uuid:
+      description: 자재출고요청유형UUID
+      type: string
+      format: uuid

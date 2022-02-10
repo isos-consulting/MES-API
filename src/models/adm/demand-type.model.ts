@@ -3,10 +3,9 @@ import IAdmDemandType from '../../interfaces/adm/demand-type.interface';
 import AutUser from '../aut/user.model';
 
 @Table({
-  // tableName: 'ADM_DEMAND_TYPE_TB',
-  tableName: 'ADM_DEMAND_TYPE_VW',
+  tableName: 'ADM_DEMAND_TYPE_TB',
   modelName: 'AdmDemandType',
-  comment: '자재출고요청 유형 정보 뷰',
+  comment: '자재출고요청 유형 정보 테이블',
   timestamps: true,
   underscored: true,
 })
