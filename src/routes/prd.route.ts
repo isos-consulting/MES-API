@@ -23,6 +23,7 @@ import prdWorkDowntimeValidation from '../validations/prd/work-downtime.validati
 import prdWorkRoutingValidation from '../validations/prd/work-routing.validation';
 import prdWorkRejectValidation from '../validations/prd/work-reject.validation';
 import prdWorkValidation from '../validations/prd/work.validation';
+import prdReturnValidation from '../validations/prd/return.validation';
 
 const router = express.Router();
 
@@ -96,13 +97,13 @@ router.route('/work-workers').delete(prdWorkWorkerValidation.delete, validationC
 
 //#region ✅ Return (자재반납)
 const returnCtl = new PrdReturnCtl();
-router.route('/returns/report').get(returnCtl.readReport);
-router.route('/return/:uuid').get(returnCtl.read);
-router.route('/returns').get(returnCtl.read);
-router.route('/returns').post(returnCtl.create);
-router.route('/returns').put(returnCtl.update);
-router.route('/returns').patch(returnCtl.patch);
-router.route('/returns').delete(returnCtl.delete);
+router.route('/returns/report').get(prdReturnValidation.readReport, validationCallback, returnCtl.readReport);
+router.route('/return/:uuid').get(prdReturnValidation.readByUuid, validationCallback, returnCtl.readByUuid);
+router.route('/returns').get(prdReturnValidation.read, validationCallback, returnCtl.read);
+router.route('/returns').post(prdReturnValidation.create, validationCallback, returnCtl.create);
+router.route('/returns').put(prdReturnValidation.update, validationCallback, returnCtl.update);
+router.route('/returns').patch(prdReturnValidation.patch, validationCallback, returnCtl.patch);
+router.route('/returns').delete(prdReturnValidation.delete, validationCallback, returnCtl.delete);
 //#endregion
 
 //#region ✅ Demand (자재출고요청)
