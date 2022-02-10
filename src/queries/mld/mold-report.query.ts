@@ -39,7 +39,7 @@ const readMoldReport = (
       m_m.guarantee_cnt,																	                                              -- B (보증 타수)
       m_m.basic_cnt, 																			                                              -- C (기초 타수)
       p_w.work_cnt,																				                                              -- D (생산 타수)
-      m_m.basic_cnt * p_w.work_cnt AS accumulated_cnt,		                                              -- E (누적 생산타수) [C + D]
+      m_m.basic_cnt + p_w.work_cnt AS accumulated_cnt,		                                              -- E (누적 생산타수) [C + D]
       m_m.guarantee_cnt - (p_w.work_cnt + m_m.basic_cnt) AS remained_cnt,                               -- F (잔여 타수) [B - E]
       m_m.cavity * m_m.guarantee_cnt AS guarantee_qty,											                            -- G (보증 수량) [A * B]
       m_m.basic_cnt * m_m.cavity AS basic_qty, 												                                  -- H (기초 수량) [A * C]
