@@ -3,7 +3,7 @@ export default interface IPrdDemand {
   factory_id?: number,
   order_id?: number | null,
   reg_date?: string,
-  demand_type_cd?: string,
+  demand_type_id?: number,
   proc_id?: number | null,
   equip_id?: number | null,
   prod_id?: number,

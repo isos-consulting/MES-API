@@ -24,6 +24,7 @@ import prdWorkRoutingValidation from '../validations/prd/work-routing.validation
 import prdWorkRejectValidation from '../validations/prd/work-reject.validation';
 import prdWorkValidation from '../validations/prd/work.validation';
 import prdReturnValidation from '../validations/prd/return.validation';
+import prdDemandValidation from '../validations/prd/demand.validation';
 
 const router = express.Router();
 
@@ -108,13 +109,13 @@ router.route('/returns').delete(prdReturnValidation.delete, validationCallback, 
 
 //#region ✅ Demand (자재출고요청)
 const demand = new PrdDemandCtl();
-router.route('/demands/complete').put(demand.updateComplete);
-router.route('/demand/:uuid').get(demand.readByUuid);
-router.route('/demands').get(demand.read);
-router.route('/demands').post(demand.create);
-router.route('/demands').put(demand.update);
-router.route('/demands').patch(demand.patch);
-router.route('/demands').delete(demand.delete);
+router.route('/demands/complete').put(prdDemandValidation.updateComplete, validationCallback, demand.updateComplete);
+router.route('/demand/:uuid').get(prdDemandValidation.readByUuid, validationCallback, demand.readByUuid);
+router.route('/demands').get(prdDemandValidation.read, validationCallback, demand.read);
+router.route('/demands').post(prdDemandValidation.create, validationCallback, demand.create);
+router.route('/demands').put(prdDemandValidation.update, validationCallback, demand.update);
+router.route('/demands').patch(prdDemandValidation.patch, validationCallback, demand.patch);
+router.route('/demands').delete(prdDemandValidation.delete, validationCallback, demand.delete);
 //#endregion
 
 //#region ✅ Order (작업지시)

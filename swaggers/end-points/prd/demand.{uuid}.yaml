@@ -47,7 +47,8 @@ get:
                             - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
                             - $ref: ../../schemas/prd/demand.schema.yaml#/order_uuid
                             - $ref: ../../schemas/prd/demand.schema.yaml#/reg_date
-                            - $ref: ../../schemas/prd/demand.schema.yaml#/demand_type_cd
+                            - $ref: ../../schemas/prd/demand.schema.yaml#/demand_type_uuid
+                            - $ref: ../../schemas/adm/demand-type.schema.yaml#/demand_type_cd
                             - $ref: ../../schemas/adm/demand-type.schema.yaml#/demand_type_nm
                             - $ref: ../../schemas/prd/demand.schema.yaml#/proc_uuid
                             - $ref: ../../schemas/std/proc.schema.yaml#/proc_cd

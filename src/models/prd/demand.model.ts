@@ -51,12 +51,13 @@ export default class PrdDemand extends Model<IPrdDemand> {
   })
   reg_date: string;
 
+  @ForeignKey(() => AdmDemandType)
   @Column({
-    comment: '자재출고요청 유형코드',
-    type: DataType.STRING(20),
+    comment: '자재출고요청ID',
+    type: DataType.INTEGER,
     allowNull: false,
   })
-  demand_type_cd: Date;
+  demand_type_id: number;
 
   @ForeignKey(() => StdProc)
   @Column({
@@ -195,7 +196,7 @@ export default class PrdDemand extends Model<IPrdDemand> {
   @BelongsTo(() => StdDept, { foreignKey: 'dept_id', targetKey: 'dept_id', onDelete: 'restrict', onUpdate: 'cascade' })
   stdDept: StdDept;
 
-  @BelongsTo(() => AdmDemandType, { foreignKey: 'demand_type_cd', targetKey: 'demand_type_cd', constraints: false })
+  @BelongsTo(() => AdmDemandType, { foreignKey: 'demand_type_id', targetKey: 'demand_type_id', constraints: false })
   admDemandType: AdmDemandType;
 
   @BelongsTo(() => StdStore, { foreignKey: 'to_store_id', targetKey: 'store_id', onDelete: 'restrict', onUpdate: 'cascade' })

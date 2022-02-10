@@ -1,5 +1,6 @@
 import { Transaction } from "sequelize/types";
 import IPrdDemand from "../../interfaces/prd/demand.interface";
+import AdmDemandTypeRepo from "../../repositories/adm/demand-type.repository";
 import PrdDemandRepo from '../../repositories/prd/demand.repository';
 import PrdOrderRepo from '../../repositories/prd/order.repository';
 import StdDeptRepo from '../../repositories/std/dept.repository';
@@ -72,6 +73,12 @@ class PrdDemandService {
         idName: 'location_id',
         idAlias: 'to_location_id',
         uuidName: 'to_location_uuid'
+      },
+      {
+        key: 'demand_type',
+        TRepo: AdmDemandTypeRepo,
+        idName: 'demand_type_id',
+        uuidName: 'demand_type_uuid'
       },
     ];
   }
