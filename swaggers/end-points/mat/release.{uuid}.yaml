@@ -66,7 +66,8 @@ get:
                             - $ref: ../../schemas/mat/release.schema.yaml#/lot_no
                             - $ref: ../../schemas/mat/release.schema.yaml#/qty
                             - $ref: ../../schemas/mat/release.schema.yaml#/demand_id
-                            - $ref: ../../schemas/prd/demand.schema.yaml#/demand_type_cd
+                            - $ref: ../../schemas/prd/demand.schema.yaml#/demand_type_uuid
+                            - $ref: ../../schemas/adm/demand-type.schema.yaml#/demand_type_cd
                             - $ref: ../../schemas/adm/demand-type.schema.yaml#/demand_type_nm
                             - $ref: ../../schemas/mat/release.schema.yaml#/from_store_uuid
                             - $ref: ../../schemas/std/store.schema.yaml#/from_store_cd
