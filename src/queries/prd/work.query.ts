@@ -147,7 +147,9 @@ const readWorks = (
       CASE WHEN p_w.complete_fg = TRUE THEN p_w.reject_qty ELSE t_wrj.qty END as reject_qty,
       t_wr.start_date,
       t_wr.end_date,
-      p_w.work_time,
+      (DATE_PART('day', t_wr.end_date::timestamp - t_wr.start_date::timestamp) * 24 * 60 + 
+      DATE_PART('hour', t_wr.end_date::timestamp - t_wr.start_date::timestamp)) * 60 +
+      DATE_PART('minute', t_wr.end_date::timestamp - t_wr.start_date::timestamp) as work_time,
       s_sf.uuid as shift_uuid,
       s_sf.shift_nm,
       s_wg.uuid as worker_group_uuid,
