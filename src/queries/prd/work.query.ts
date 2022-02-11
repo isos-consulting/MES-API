@@ -32,7 +32,7 @@ const readWorks = (
     CREATE INDEX ON temp_work_routing(work_id);
 
     /** complete */
-    -- 마감된 지시 기준으로 라우팅정보를 가져올때는 공정순서가 마지막인 공정을 가져옴
+    -- 마감된 작업 기준으로 라우팅정보를 가져올때는 공정순서가 마지막인 공정을 가져옴
     WITH complete AS
     (
       SELECT 
