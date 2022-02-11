@@ -64,6 +64,20 @@ class StdProdCtl extends BaseCtl {
         idAlias: 'inv_to_location_id',
         uuidName: 'inv_to_location_uuid'
       },
+      {
+        key: 'admBomType',
+        TRepo: AdmBomTypeRepo,
+        idName: 'bom_type_id',
+        idAlias: 'bom_type_id',
+        uuidName: 'bom_type_uuid'
+      },
+      {
+        key: 'admPrdPlanType',
+        TRepo: AdmPrdPlanTypeRepo,
+        idName: 'prd_plan_type_id',
+        idAlias: 'prd_plan_type_id',
+        uuidName: 'prd_plan_type_uuid'
+      },
     ];
   };
   //#endregion
@@ -156,10 +170,10 @@ class StdProdCtl extends BaseCtl {
       raw.inv_to_location_id = unsealArray(location.raws).location_id;
 
       const bomType = await bomTypeRepo.read({ bom_type_cd: raw.bom_type_cd });
-      raw.bom_type_cd = unsealArray(bomType.raws).bom_type_cd;
+      raw.bom_type_id = unsealArray(bomType.raws).bom_type_id;
 
       const prdPlanType = await prdPlanTypeRepo.read({ prd_plan_type_cd: raw.prd_plan_type_cd });
-      raw.prd_plan_type_cd = unsealArray(prdPlanType.raws).prd_plan_type_cd;
+      raw.prd_plan_type_id = unsealArray(prdPlanType.raws).prd_plan_type_id;
     }
     return body;
   }

@@ -112,10 +112,10 @@ export default class StdProd extends Model<IStdProd> {
   active_fg: boolean;
 
   @Column({
-    comment: 'BOM 유형 코드',
-    type: DataType.STRING(20),
+    comment: 'BOM 유형ID',
+    type: DataType.INTEGER,
   })
-  bom_type_cd: string;
+  bom_type_id: number;
 
   @Column({
     comment: '폭',
@@ -253,10 +253,10 @@ export default class StdProd extends Model<IStdProd> {
   qms_final_insp_fg: boolean;
 
   @Column({
-    comment: '계획유형코드 (MPS/MRP)',
-    type: DataType.STRING(20),
+    comment: '계획유형ID (MPS/MRP)',
+    type: DataType.INTEGER,
   })
-  prd_plan_type_cd: string;
+  prd_plan_type_id: number;
 
   @Column({
     comment: '생산품유무',
@@ -347,10 +347,10 @@ export default class StdProd extends Model<IStdProd> {
   @BelongsTo(() => StdLocation, { foreignKey: 'inv_to_location_id', targetKey: 'location_id', onDelete: 'restrict', onUpdate: 'cascade' })
   stdLocation: StdLocation;
 
-  @BelongsTo(() => AdmBomType, { foreignKey: 'bom_type_cd', targetKey: 'bom_type_cd', constraints: false })
+  @BelongsTo(() => AdmBomType, { foreignKey: 'bom_type_id', targetKey: 'bom_type_id', constraints: false })
   admBomType: AdmBomType;
 
-  @BelongsTo(() => AdmPrdPlanType, { foreignKey: 'prd_plan_type_cd', targetKey: 'prd_plan_type_cd', constraints: false })
+  @BelongsTo(() => AdmPrdPlanType, { foreignKey: 'prd_plan_type_id', targetKey: 'prd_plan_type_id', constraints: false })
   admPrdPlanType: AdmPrdPlanType;
 
   // HasMany

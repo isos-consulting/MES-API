@@ -3,8 +3,7 @@ import IAdmPrdPlanType from '../../interfaces/adm/prd-plan-type.interface';
 import AutUser from '../aut/user.model';
 
 @Table({
-  // tableName: 'ADM_PRD_PLAN_TYPE_TB',
-  tableName: 'ADM_PRD_PLAN_TYPE_VW',
+  tableName: 'ADM_PRD_PLAN_TYPE_TB',
   modelName: 'AdmPrdPlanType',
   comment: '생산계획 유형 정보 뷰',
   timestamps: true,

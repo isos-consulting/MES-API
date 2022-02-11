@@ -38,7 +38,7 @@ class QmsReworkRepo {
             reg_date: rework.reg_date,
             prod_id: rework.prod_id,
             lot_no: rework.lot_no,
-            rework_type_cd: rework.rework_type_cd,
+            rework_type_id: rework.rework_type_id,
             reject_id: rework.reject_id,
             qty: rework.qty,
             from_store_id: rework.from_store_id,
@@ -92,7 +92,7 @@ class QmsReworkRepo {
             model: this.sequelize.models.AdmReworkType, 
             attributes: [], 
             required: true,
-            where: { rework_type_cd: params.rework_type_cd ? params.rework_type_cd : { [Op.ne]: null }} 
+            where: { uuid: params.rework_type_uuid ? params.rework_type_uuid : { [Op.ne]: null }} 
           },
           { 
             model: this.sequelize.models.StdReject, 
@@ -133,7 +133,8 @@ class QmsReworkRepo {
           [ Sequelize.col('stdProd.stdUnit.unit_cd'), 'unit_cd' ],
           [ Sequelize.col('stdProd.stdUnit.unit_nm'), 'unit_nm' ],
           'lot_no',
-          'rework_type_cd',
+          [ Sequelize.col('admReworkType.uuid'), 'rework_type_uuid' ],
+          [ Sequelize.col('admReworkType.rework_type_cd'), 'rework_type_cd' ],
           [ Sequelize.col('admReworkType.rework_type_nm'), 'rework_type_nm' ],
           [ Sequelize.col('stdReject.stdRejectType.uuid'), 'reject_type_uuid' ],
           [ Sequelize.col('stdReject.stdRejectType.reject_type_cd'), 'reject_type_cd' ],
@@ -232,7 +233,8 @@ class QmsReworkRepo {
           [ Sequelize.col('stdProd.stdUnit.unit_cd'), 'unit_cd' ],
           [ Sequelize.col('stdProd.stdUnit.unit_nm'), 'unit_nm' ],
           'lot_no',
-          'rework_type_cd',
+          [ Sequelize.col('admReworkType.uuid'), 'rework_type_uuid' ],
+          [ Sequelize.col('admReworkType.rework_type_cd'), 'rework_type_cd' ],
           [ Sequelize.col('admReworkType.rework_type_nm'), 'rework_type_nm' ],
           [ Sequelize.col('stdReject.stdRejectType.uuid'), 'reject_type_uuid' ],
           [ Sequelize.col('stdReject.stdRejectType.reject_type_cd'), 'reject_type_cd' ],

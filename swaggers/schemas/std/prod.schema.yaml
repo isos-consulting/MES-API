@@ -97,13 +97,13 @@ active_fg:
       type: boolean
       format: boolean
       
-bom_type_cd: 
+bom_type_id: 
   type: object
   properties: 
-    bom_type_cd:
-      description: BOM 유형 코드
-      type: string
-      format: varchar(20)
+    bom_type_id:
+      description: BOM 유형ID
+      type: number
+      format: int4
       
 width: 
   type: object
@@ -265,13 +265,13 @@ qms_final_insp_fg:
       type: boolean
       format: boolean
 
-prd_plan_type_cd: 
+prd_plan_type_id: 
   type: object
   properties: 
-    prd_plan_type_cd:
-      description: 계획유형코드 (MPS/MRP)
-      type: string
-      format: varchar(20)
+    prd_plan_type_id:
+      description: 계획유형ID (MPS/MRP)
+      type: number
+      format: int4
 
 prd_active_fg: 
   type: object
@@ -346,11 +346,27 @@ unit_uuid:
       type: string
       format: uuid
 
+bom_type_uuid:
+  type: object
+  properties: 
+    bom_type_uuid:
+      description: BOM 유형UUID
+      type: string
+      format: uuid
+
 mat_unit_uuid:
   type: object
   properties: 
     mat_unit_uuid:
       description: 구매단위UUID
+      type: string
+      format: uuid
+
+prd_plan_type_uuid: 
+  type: object
+  properties: 
+    prd_plan_type_uuid:
+      description: 계획유형UUID (MPS/MRP)
       type: string
       format: uuid
 

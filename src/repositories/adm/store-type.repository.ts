@@ -63,7 +63,7 @@ class AdmStoreTypeRepo {
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
-					// [ Sequelize.col('admStoreType.uuid'), 'store_type_uuid' ],
+					[ Sequelize.col('admStoreType.uuid'), 'store_type_uuid' ],
           'store_type_cd',
           'store_type_nm',
           'parameter_nm',
@@ -93,7 +93,7 @@ class AdmStoreTypeRepo {
 					{ model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
 				],
 				attributes: [
-					// [ Sequelize.col('admStoreType.uuid'), 'store_type_uuid' ],
+					[ Sequelize.col('admStoreType.uuid'), 'store_type_uuid' ],
 					'store_type_cd',
           'store_type_nm',
           'parameter_nm',
