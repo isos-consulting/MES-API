@@ -37,9 +37,11 @@ type TErrorState = {
 	EMPTY_FILE_IN_TEMP_STORAGE: '0014',         // 📌 Temp Storage에 파일이 존재 하지 않음 
 	EMPTY_FILE_IN_REAL_STORAGE: '0015',         // 📌 Real Storage에 파일이 존재 하지 않음 
 	FAILED_UPLOAD_FILE: '0016',                 // 📌 파일업로드 요청 중 문제가 발생되었음
-	FAILED_DELETE_FILE: '0017'                  // 📌 파일삭제 요청 중 문제가 발생되었음
-  INVALID_DATA: '0018',                       // 📌 잘못된 데이터가 입력되었음
-  NOT_ENOUGH_STOCK: '0019',                   // 📌 재고수량이 부족함
+	FAILED_DELETE_FILE: '0017',                 // 📌 파일삭제 요청 중 문제가 발생되었음
+  FAILED_SAVE_TO_RELATED_DATA: '0018',        // 📌 관련된 데이터로 인하여 데이터 저장 실패
+  INVALID_DUP_DATA: '0019',                   // 📌 중복된 데이터가 존재
+	INVALID_DATA: '0020',                       // 📌 잘못된 데이터가 입력되었음
+  NOT_ENOUGH_STOCK: '0021',                   // 📌 재고수량이 부족함
 }
 const errorState: TErrorState = { 
   NO_DATA: '0000',                            // 📌 영향받은 데이터가 없음
@@ -60,8 +62,10 @@ const errorState: TErrorState = {
 	EMPTY_FILE_IN_REAL_STORAGE: '0015',         // 📌 Real Storage에 파일이 존재 하지 않음 
 	FAILED_UPLOAD_FILE: '0016',                 // 📌 파일업로드 요청 중 문제가 발생되었음
 	FAILED_DELETE_FILE: '0017',                 // 📌 파일삭제 요청 중 문제가 발생되었음
-  INVALID_DATA: '0018',                       // 📌 잘못된 데이터가 입력되었음
-  NOT_ENOUGH_STOCK: '0019',                   // 📌 재고수량이 부족함
+  FAILED_SAVE_TO_RELATED_DATA: '0018',        // 📌 관련된 데이터로 인하여 데이터 저장 실패
+  INVALID_DUP_DATA: '0019',                   // 📌 중복된 데이터가 존재
+	INVALID_DATA: '0020',                       // 📌 잘못된 데이터가 입력되었음
+  NOT_ENOUGH_STOCK: '0021',                   // 📌 재고수량이 부족함
 }
 
 

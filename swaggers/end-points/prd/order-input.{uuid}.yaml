@@ -64,6 +64,9 @@ get:
                             - $ref: ../../schemas/std/prod.schema.yaml#/unit_uuid
                             - $ref: ../../schemas/std/unit.schema.yaml#/unit_cd
                             - $ref: ../../schemas/std/unit.schema.yaml#/unit_nm
+                            - $ref: ../../schemas/prd/order-input.schema.yaml#/bom_input_type_uuid
+                            - $ref: ../../schemas/adm/bom-input-type.schema.yaml#/bom_input_type_cd
+                            - $ref: ../../schemas/adm/bom-input-type.schema.yaml#/bom_input_type_nm
                             - $ref: ../../schemas/prd/order-input.schema.yaml#/c_usage
                             - $ref: ../../schemas/prd/order-input.schema.yaml#/from_store_uuid
                             - $ref: ../../schemas/std/store.schema.yaml#/from_store_cd

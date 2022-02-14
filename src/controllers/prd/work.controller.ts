@@ -1,118 +1,33 @@
 import express = require('express');
 import ApiResult from '../../interfaces/common/api-result.interface';
-import IInvStore from '../../interfaces/inv/store.interface';
-import IPrdWorkRouting from '../../interfaces/prd/work-routing.interface';
-import InvStoreRepo from '../../repositories/inv/store.repository';
-import PrdOrderInputRepo from '../../repositories/prd/order-input.repository';
-import PrdOrderRoutingRepo from '../../repositories/prd/order-routing.repository';
-import PrdOrderWorkerRepo from '../../repositories/prd/order-worker.repository';
-import PrdOrderRepo from '../../repositories/prd/order.repository';
-import PrdWorkDowntimeRepo from '../../repositories/prd/work-downtime.repository';
-import PrdWorkInputRepo from '../../repositories/prd/work-input.repository';
-import PrdWorkRejectRepo from '../../repositories/prd/work-reject.repository';
-import PrdWorkRoutingRepo from '../../repositories/prd/work-routing.repository';
-import PrdWorkWorkerRepo from '../../repositories/prd/work-worker.repository';
-import PrdWorkRepo from '../../repositories/prd/work.repository';
 import QmsInspResultDetailInfoRepo from '../../repositories/qms/insp-result-detail-info.repository';
 import QmsInspResultDetailValueRepo from '../../repositories/qms/insp-result-detail-value.repository';
 import QmsInspResultRepo from '../../repositories/qms/insp-result.repository';
-import StdEquipRepo from '../../repositories/std/equip.repository';
-import StdFactoryRepo from '../../repositories/std/factory.repository';
-import StdLocationRepo from '../../repositories/std/location.repository';
-import StdProcRepo from '../../repositories/std/proc.repository';
-import StdProdRepo from '../../repositories/std/prod.repository';
-import StdShiftRepo from '../../repositories/std/shift.repository';
-import StdStoreRepo from '../../repositories/std/store.repository';
-import StdWorkingsRepo from '../../repositories/std/workings.repository';
-import checkArray from '../../utils/checkArray';
-import { getSequelize } from '../../utils/getSequelize';
-import getStoreBody from '../../utils/getStoreBody';
-import getSubtractTwoDates from '../../utils/getSubtractTwoDates';
-import getTranTypeCd from '../../utils/getTranTypeCd';
-import response from '../../utils/response';
-import testErrorHandlingHelper from '../../utils/testErrorHandlingHelper';
-import unsealArray from '../../utils/unsealArray';
-import BaseCtl from '../base.controller';
+import { sequelizes } from '../../utils/getSequelize';
+import PrdWorkService from '../../services/prd/work.service';
+import { matchedData } from 'express-validator';
+import PrdOrderService from '../../services/prd/order.service';
+import PrdWorkWorkerService from '../../services/prd/work-worker.service';
+import PrdWorkRoutingService from '../../services/prd/work-routing.service';
+import createApiResult from '../../utils/createApiResult_new';
+import createDatabaseError from '../../utils/createDatabaseError';
+import createUnknownError from '../../utils/createUnknownError';
+import isServiceResult from '../../utils/isServiceResult';
+import response from '../../utils/response_new';
 import config from '../../configs/config';
-import MldMoldRepo from '../../repositories/mld/mold.repository';
+import { successState } from '../../states/common.state';
+import InvStoreService from '../../services/inv/store.service';
+import PrdWorkInputService from '../../services/prd/work-input.service';
+import PrdWorkRejectService from '../../services/prd/work-reject.service';
+import PrdWorkDowntimeService from '../../services/prd/work-downtime.service';
+import StdTenantOptService from '../../services/std/tenant-opt.service';
+import IPrdWorkInput from '../../interfaces/prd/work-input.interface';
 
-class PrdWorkCtl extends BaseCtl {
+class PrdWorkCtl {
+  stateTag: string;
   //#region ✅ Constructor
   constructor() {
-    // ✅ 부모 Controller (Base Controller) 의 CRUD Function 과 상속 받는 자식 Controller(this) 의 Repository 를 연결하기 위하여 생성자에서 Repository 생성
-    super(PrdWorkRepo);
-
-    // ✅ CUD 연산이 실행되기 전 Fk Table 의 uuid 로 id 를 검색하여 request body 에 삽입하기 위하여 정보 Setting
-    this.fkIdInfos = [
-      {
-        key: 'uuid',
-        TRepo: PrdWorkRepo,
-        idName: 'work_id',
-        uuidName: 'uuid'
-      },
-      {
-        key: 'factory',
-        TRepo: StdFactoryRepo,
-        idName: 'factory_id',
-        uuidName: 'factory_uuid'
-      },
-      {
-        key: 'order',
-        TRepo: PrdOrderRepo,
-        idName: 'order_id',
-        uuidName: 'order_uuid'
-      },
-      {
-        key: 'proc',
-        TRepo: StdProcRepo,
-        idName: 'proc_id',
-        uuidName: 'proc_uuid'
-      },
-      {
-        key: 'workings',
-        TRepo: StdWorkingsRepo,
-        idName: 'workings_id',
-        uuidName: 'workings_uuid'
-      },
-      {
-        key: 'equip',
-        TRepo: StdEquipRepo,
-        idName: 'equip_id',
-        uuidName: 'equip_uuid'
-      },
-      {
-        key: 'mold',
-        TRepo: MldMoldRepo,
-        idName: 'mold_id',
-        uuidName: 'mold_uuid'
-      },
-      {
-        key: 'prod',
-        TRepo: StdProdRepo,
-        idName: 'prod_id',
-        uuidName: 'prod_uuid'
-      },
-      {
-        key: 'shift',
-        TRepo: StdShiftRepo,
-        idName: 'shift_id',
-        uuidName: 'shift_uuid'
-      },
-      {
-        key: 'store',
-        TRepo: StdStoreRepo,
-        idAlias: 'to_store_id',
-        idName: 'store_id',
-        uuidName: 'to_store_uuid'
-      },
-      {
-        key: 'location',
-        TRepo: StdLocationRepo,
-        idAlias: 'to_location_id',
-        idName: 'location_id',
-        uuidName: 'to_location_uuid'
-      }
-    ];
+    this.stateTag = 'prdWork';
   };
   //#endregion
 
@@ -123,87 +38,57 @@ class PrdWorkCtl extends BaseCtl {
   // 📒 Fn[create] (✅ Inheritance): Default Create Function
   public create = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      req.body = await this.getFkId(req.tenant.uuid, req.body, this.fkIdInfos);
-
-      const sequelize = getSequelize(req.tenant.uuid);
-      const repo = new PrdWorkRepo(req.tenant.uuid);
-      const workerRepo = new PrdWorkWorkerRepo(req.tenant.uuid);
-      const routingRepo = new PrdWorkRoutingRepo(req.tenant.uuid);
-      const orderRepo = new PrdOrderRepo(req.tenant.uuid);
-      const orderWorkerRepo = new PrdOrderWorkerRepo(req.tenant.uuid);
-      const orderRoutingRepo = new PrdOrderRoutingRepo(req.tenant.uuid);
-      const moldRepo = new MldMoldRepo(req.tenant.uuid);
       let result: ApiResult<any> = { raws: [], count: 0 };
+      const service = new PrdWorkService(req.tenant.uuid);
+      const orderService = new PrdOrderService(req.tenant.uuid);
+      // const workWorkerService = new PrdWorkWorkerService(req.tenant.uuid);
+      const workRoutingService = new PrdWorkRoutingService(req.tenant.uuid);
+      const matched = matchedData(req, { locations: ['body'] });
+
+      let datas = await service.convertFk(Object.values(matched));
 
       // ❗ 작업지시가 마감되어 있는 경우 Interlock
-      const orderUuids = req.body.map((data: any) => { return data.order_uuid; });
-      const orderRead = await orderRepo.readRawsByUuids(orderUuids);
-      orderRead.raws.forEach((order: any) => {
-        if (order.complete_fg) { throw new Error(`지시번호 [${order.order_uuid}]가 이미 완료상태입니다.`); }
-      });
+      await orderService.validateIsCompleted(datas.map((data: any) => data.order_uuid));
 
-      await sequelize.transaction(async(tran) => { 
-        for await (const data of req.body) {
-          // 📌 작업지시에 등록되어있는 금형정보 초기 값 입력
-          const order = await orderRepo.readByUuid(data.order_uuid);
-          const moldUuid = order.raws[0].mold_uuid;
-          if (moldUuid) {
-            const mold = await moldRepo.readRawByUuid(moldUuid);
-            data.mold_id = mold.raws[0].mold_id;
-            data.mold_cavity = mold.raws[0].cavity;
-          }
-
+      await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
+        for await (const data of datas) {
           // 📌 작업지시 단위 최대 순번 조회
-          const maxSeq = await repo.getMaxSeq(data.order_id, tran);
+          const maxSeq = await service.getMaxSeq(data.order_id, tran);
           data.seq = maxSeq + 1;
 
           // 📌 생산실적 데이터 생성
-          const workResult = await repo.create(checkArray(data), req.user?.uid as number, tran);
+          const workResult = await service.create([data], req.user?.uid as number, tran);
           result.count += workResult.count;
-          const work = unsealArray(workResult.raws);
+          const work = workResult.raws[0];
 
           // 📌 작업지시 테이블 work_fg(생산진행여부) True로 변경
-          const orderResult = await orderRepo.updateWorkFgById(work.order_id, true, req.user?.uid as number, tran);
+          const orderResult = await orderService.updateWorkFgById(work.order_id, true, req.user?.uid as number, tran);
 
-          // 📌 작업지시의 작업자 투입정보 기준 초기 데이터 생성
-          const orderWorkerRead = await orderWorkerRepo.readRawsByOrderId(work.order_id, tran);
-          const workerBody = orderWorkerRead.raws.map((orderWorker: any) => {
-            return {
-              factory_id: orderWorker.factory_id,
-              work_id: work.work_id,
-              worker_id: orderWorker.worker_id
-            };
-          });
-          const workerResult = await workerRepo.create(workerBody, req.user?.uid as number, tran);
-          result.count += workerResult.count;
+          // // 📌 작업지시의 작업자 투입정보 기준 초기 데이터 생성
+          // const workerResult = await workWorkerService.createByOrderWorker(work, req.user?.uid as number, tran);
+          // result.count += workerResult.count;
 
           // 📌 작업지시의 공정순서 정보 기준 초기 데이터 생성
-          const orderRoutingRead = await orderRoutingRepo.readRawsByOrderId(work.order_id, tran);
-          const routingBody = orderRoutingRead.raws.map((orderRouting: any) => {
-            return {
-              factory_id: orderRouting.factory_id,
-              work_id: work.work_id,
-              proc_id: orderRouting.proc_id,
-              proc_no: orderRouting.proc_no,
-              workings_id: orderRouting.workings_id,
-              equip_id: orderRouting.equip_id
-            };
-          });
-          const routingResult = await routingRepo.create(routingBody, req.user?.uid as number, tran);
+          const routingResult = await workRoutingService.createByOrderRouting(work, req.user?.uid as number, tran);
           result.count += routingResult.count;
 
           result.raws.push({
             work: work,
             order: orderResult.raws,
-            worker: workerResult.raws,
+            // worker: workerResult.raws,
             routing: routingResult.raws
           });
         }
       });
 
-      return response(res, result.raws, { count: result.count }, '', 201);
-    } catch (e) {
-      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return createApiResult(res, result, 201, '데이터 생성 성공', this.stateTag , successState.CREATE);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
     }
   };
 
@@ -212,24 +97,61 @@ class PrdWorkCtl extends BaseCtl {
   //#region 🔵 Read Functions
 
   // 📒 Fn[read] (✅ Inheritance): Default Read Function
-  // public read = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-  // }
+  public read = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      let result: ApiResult<any> = { count:0, raws: [] };
+      const service = new PrdWorkService(req.tenant.uuid);
+      const params = matchedData(req, { locations: [ 'query', 'params' ] });
+
+      result = await service.read(params);
+
+      return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+      
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
+    }
+  }
+
+  // 📒 Fn[readByUuid] (✅ Inheritance): Default ReadByUuid Function
+  public readByUuid = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      let result: ApiResult<any> = { count:0, raws: [] };
+      const service = new PrdWorkService(req.tenant.uuid);
+
+      result = await service.readByUuid(req.params.uuid);
+
+      return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
+    }
+  };
 
   // 📒 Fn[readReport]: 실적현황 데이터 조회
   public readReport = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      const repo = new PrdWorkRepo(req.tenant.uuid);
+      let result: ApiResult<any> = { count:0, raws: [] };
+      const service = new PrdWorkService(req.tenant.uuid);
+      const params = matchedData(req, { locations: [ 'query', 'params' ] });
 
-      const params = Object.assign(req.query, req.params);
-      const sort_type = params.sort_type as string;
+      result = await service.readReport(params);
 
-      if (![ 'proc', 'prod', 'date' ].includes(sort_type)) { throw new Error('잘못된 sort_type(정렬) 입력') }
-
-      const result = await repo.readReport(params);
+      return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
       
-      return response(res, result.raws, { count: result.count });
-    } catch (e) {
-      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
     }
   };
 
@@ -240,182 +162,195 @@ class PrdWorkCtl extends BaseCtl {
   // 📒 Fn[update] (✅ Inheritance): Default Update Function
   public update = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      const sequelize = getSequelize(req.tenant.uuid);
-      const repo = new PrdWorkRepo(req.tenant.uuid);
-      const routingRepo = new PrdWorkRoutingRepo(req.tenant.uuid);
       let result: ApiResult<any> = { raws: [], count: 0 };
+      const service = new PrdWorkService(req.tenant.uuid);
+      const matched = matchedData(req, { locations: ['body'] });
 
-      req.body = await this.getFkId(req.tenant.uuid, req.body, this.fkIdInfos);
-      await this.beforeUpdate(req);
+      let datas = await service.convertFk(Object.values(matched));
 
-      result = { raws: [], count: 0 };
-      await sequelize.transaction(async(tran) => { 
-        for await (const data of req.body) {
-          const workResult = await repo.update([data], req.user?.uid as number, tran); 
+      // 📌 생산실적이 완료상태일 경우 데이터 저장 불가
+      await service.validateWorkStatus(datas.map((data: any) => data.work_id))
 
-          //📌 해당 작업의 라우팅 정보 가져오기
-          const routingParams = { factory_uuid : data.factory_uuid, work_uuid : data.uuid }
-          const workRouting = await routingRepo.read(routingParams);
-          
-          //📌 라우팅 정보 중 마지막 공정의 uuid 가져오기
-          let maxProcNo = 0;
-          let workRoutingUuid;
-          workRouting.raws.forEach(routing => {
-            if (maxProcNo < routing.proc_no) {
-              maxProcNo = routing.proc_no;
-              workRoutingUuid = routing.work_routing_uuid;
-            } 
-          });
-
-          //📌 가져온 routing_uuid 기준으로 prd_work_routing update params 셋팅
-          const workRoutingBody: IPrdWorkRouting = {
-            uuid : workRoutingUuid,
-            qty :  data.qty,
-            start_date : data.start_date,
-            end_date : data.end_date
-          };
-
-          //📌 prd_work_routing 업데이트
-          const workRoutingResult = await routingRepo.update([workRoutingBody], req.user?.uid as number, tran);
-          
-          result.raws.push({
-            work: workResult.raws,
-            work_routing: workRoutingResult.raws,
-          });
-        }
-        
+      await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
+        result = await service.update(datas, req.user?.uid as number, tran);
       });
 
-      return response(res, result.raws, { count: result.count }, '', 201);
-    } catch (e) {
-      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return createApiResult(res, result, 200, '데이터 수정 성공', this.stateTag, successState.UPDATE);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
     }
   }
 
   // 📒 Fn[updateComplete]: 생산실적 완료처리
   public updateComplete = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      req.body = checkArray(req.body);
-      
-      const sequelize = getSequelize(req.tenant.uuid);
-      const repo = new PrdWorkRepo(req.tenant.uuid);
-      const inputRepo = new PrdWorkInputRepo(req.tenant.uuid);
-      const rejectRepo = new PrdWorkRejectRepo(req.tenant.uuid);
-      const orderRepo = new PrdOrderRepo(req.tenant.uuid);
-      const orderInputRepo = new PrdOrderInputRepo(req.tenant.uuid);
-      const storeRepo = new InvStoreRepo(req.tenant.uuid);
-      let result: ApiResult<any> = { raws: [], count: 0 };
+      let result: ApiResult<any> = { count: 0, raws: [] };
+      const service = new PrdWorkService(req.tenant.uuid);
+      const orderService = new PrdOrderService(req.tenant.uuid);
+      const workInputService = new PrdWorkInputService(req.tenant.uuid);
+      const workRejectService = new PrdWorkRejectService(req.tenant.uuid);
+      const inventoryService = new InvStoreService(req.tenant.uuid);
+      const tenantOptService = new StdTenantOptService(req.tenant.uuid);
+      const matched = matchedData(req, { locations: [ 'body' ] });
+      let datas = await service.convertFk(Object.values(matched));
 
-      await sequelize.transaction(async(tran) => { 
-        for await (const data of req.body) {
-          const workRead = await repo.readRawByUuid(data.uuid);
-          const work = unsealArray(workRead.raws);
-
-          // ❗ 생산 수량과 투입 수량이 일치하지 않을 경우 Interlock
-          let verifyInput: any = {};
-          const orderInputRead = await orderInputRepo.readRawsByOrderId(work.order_id, tran);
-          orderInputRead.raws.forEach((orderInput: any) => {
-            verifyInput[orderInput.prod_id] = { usage: orderInput.c_usage, qty: 0 }
-          });
-
-          const inputRead = await inputRepo.readRawsByWorkId(work.work_id, tran);
-          inputRead.raws.forEach((input: any) => {
-            if (!verifyInput[input.prod_id]) { throw new Error(`작업지시대비 투입품목이 일치하지 않습니다.`); }
-
-            verifyInput[input.prod_id].usage = input.c_usage;
-            verifyInput[input.prod_id].qty = Number(input.qty);
-          });
-
-          const totalProducedQty = Number(work.qty) + Number(work.reject_qty);
-          Object.keys(verifyInput).forEach((prodId: string) => {
-            const totalConsumedQty = verifyInput[prodId].usage * verifyInput[prodId].qty;
-            if (totalProducedQty != totalConsumedQty) { throw new Error(`투입품목의 투입수량이 일치하지 않습니다.`); }
-          });
-
+      await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
+        for await (const data of datas) {
+          // 📌 생산실적 완료 전 검증작업(투입수량, 생산수량, 가용창고 등)
+          /**
+           * workValidateResult 반환 포멧 : { verifyInput: {}, pullProdIds: [], inputDatas: [], work: {}}
+           * verifyInput  : 투입품목들의 지시기준 및 투입수량합계에 대한 초기 셋팅 값들(LOT기준 없이 품목기준 그룹한 결과)
+           * pullProdIds  : pull방식으로 투입하는 품목 id값들
+           * inputDatas   : 투입품목 상세정보(LOT별로 세분화 된 결과)
+           * work         : 실적정보
+           */
+          const workValidateResult = await service.validateUpdateComplete(data, tran);
+          
           // 📌 생산실적 완료 처리
-          // 📌 완료일시를 입력하지 않았을 경우 현재일시로 입력
-          if (!data.end_date) { data.end_date = new Date(); }
-          const workTime = getSubtractTwoDates(data.start_date, data.end_date);
-          if (workTime <= 0) { throw new Error('잘못된 시작시간(start_date) 및 종료시간(end_date)이 입력되었습니다.'); }
-          const workResult = await repo.updateComplete([{ uuid: data.uuid, work_time: workTime, complete_fg: true, end_date: data.end_date }], req.user?.uid as number, tran);
-
+          const workResult = await service.updateComplete({ uuid: data.uuid, qty: workValidateResult.work.qty, reject_qty: workValidateResult.work.reject_qty, complete_fg: true }, req.user?.uid as number, tran);
+          
           // 📌 해당 실적의 작업지시에 진행중인 생산 실적이 없을 경우 작업지시의 생산진행여부(work_fg)를 False로 변경
-          const incompleteWorkCount = await repo.getIncompleteCount(work.order_id, tran);
-          let orderResult: ApiResult<any> = { raws: [], count: 0 };
-          if (incompleteWorkCount == 0) { orderResult = await orderRepo.updateWorkFgById(work.order_id, false, req.user?.uid as number, tran); }
-
-          // 📌 입고 창고 수불 내역 생성
-          const toStoreBody: IInvStore[] = getStoreBody(workResult.raws, 'TO', 'work_id', getTranTypeCd('PRD_OUTPUT'), work.reg_date);
-
+          const orderResult = await orderService.updateOrderCompleteByOrderId(workResult.raws[0].order_id, req.user?.uid as number, tran);
+          
+          // 📌 입고 창고 수불 내역 생성(생산입고)
+          const toStoreResult = await inventoryService.transactInventory(
+            workResult.raws, 'CREATE', 
+            { inout: 'TO', tran_type: 'PRD_OUTPUT', reg_date: workResult.raws[0].reg_date, tran_id_alias: 'work_id' },
+            req.user?.uid as number, tran
+          );
+          
           // 📌 부적합 수량에 의한 창고 수불 내역 생성
-          const rejectRead = await rejectRepo.readRawsByWorkId(work.work_id, tran);
-          const rejectStoreBody: IInvStore[] = getStoreBody(rejectRead.raws, 'TO', 'work_reject_id', getTranTypeCd('PRD_REJECT'), work.reg_date);
+          const rejectBody = await workRejectService.getWorkRejectBody(workResult.raws[0], workResult.raws[0].reg_date);
+          const rejectStoreResult = await inventoryService.transactInventory(
+            rejectBody, 'CREATE', 
+            { inout: 'TO', tran_type: 'PRD_REJECT', reg_date: workResult.raws[0].reg_date, tran_id_alias: 'work_reject_id' },
+            req.user?.uid as number, tran
+          );
+          
+          // 📌 창고 수불이력 생성(생산투입)
+          const isMinusStockOption = await tenantOptService.getTenantOptValue('ALLOW_MINUS_STOCK', tran);
+          /**
+           * workInputBody 반환 포멧 : { pullBody: [], pushBody: [] }
+           * pullBody  : pull방식 투입 품목 Body
+           * pushBody  : push방식 투입 품목 Body
+           */
+          const workInputBody = await workInputService.getWorkInputBody(workValidateResult, workResult.raws[0].reg_date, isMinusStockOption);
+          
+          // pull방식 품목들 수불처리 전 create work_input 
+          workValidateResult.pullProdIds.forEach((prodId: number) => {
+            workInputBody.pullBody.forEach((body: IPrdWorkInput) => {
+              body.factory_id = workResult.raws[0].factory_id;
+              body.work_id = workResult.raws[0].work_id;
+              body.c_usage = workValidateResult.verifyInput[prodId].usage;
+              body.unit_id = workValidateResult.verifyInput[prodId].unit_id;
+              body.bom_input_type_id = workValidateResult.verifyInput[prodId].bom_input_type_id;
+            });
+          });
+          const createWorkInputResult = await workInputService.create(workInputBody.pullBody as IPrdWorkInput[], req.user?.uid as number, tran);
 
-          // 📌 창고 수불
-          const storeBody = [...toStoreBody, ...rejectStoreBody];
-          const storeResult = await storeRepo.create(storeBody, req.user?.uid as number, tran);
+          // Create 결과의 work_input_id 수불을 위한 object에 셋팅
+          createWorkInputResult.raws.forEach((input: any) => {
+            workInputBody.pullBody.forEach((body: IPrdWorkInput) => {
+              if(input.prod_id == body.prod_id && input.lot_no == body.lot_no) { body.work_input_id = input.work_input_id; }
+            });
+          });
 
+          const inputStoreResult = await inventoryService.transactInventory(
+            [...workInputBody.pushBody, ...workInputBody.pullBody ], 'CREATE', 
+            { inout: 'FROM', tran_type: 'PRD_INPUT', reg_date: workResult.raws[0].reg_date, tran_id_alias: 'work_input_id' },
+            req.user?.uid as number, tran
+          );
+          
           result.raws.push({
             work: workResult.raws,
             order: orderResult.raws,
-            store: storeResult.raws,
+            toStore: [...toStoreResult.raws, ...rejectStoreResult.raws],
+            fromStore: inputStoreResult.raws,
           });
         }
       });
 
-      return response(res, result.raws, { count: result.count }, '', 201);
-    } catch (e) {
-      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return createApiResult(res, result, 200, '데이터 수정 성공', this.stateTag, successState.UPDATE);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
     }
   }
 
   // 📒 Fn[updateCancelComplete]: 완료된 생산실적 취소처리
   public updateCancelComplete = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      req.body = checkArray(req.body);
-      
-      const sequelize = getSequelize(req.tenant.uuid);
-      const repo = new PrdWorkRepo(req.tenant.uuid);
-      const rejectRepo = new PrdWorkRejectRepo(req.tenant.uuid);
-      const orderRepo = new PrdOrderRepo(req.tenant.uuid);
-      const storeRepo = new InvStoreRepo(req.tenant.uuid);
-      let result: ApiResult<any> = { raws: [], count: 0 };
+      let result: ApiResult<any> = { count: 0, raws: [] };
+      const service = new PrdWorkService(req.tenant.uuid);
+      const orderService = new PrdOrderService(req.tenant.uuid);
+      const workInputService = new PrdWorkInputService(req.tenant.uuid);
+      const workRejectService = new PrdWorkRejectService(req.tenant.uuid);
+      const inventoryService = new InvStoreService(req.tenant.uuid);
+      const tenantOptService = new StdTenantOptService(req.tenant.uuid);
+      const matched = matchedData(req, { locations: [ 'body' ] });
+      let datas = await service.convertFk(Object.values(matched));
 
-      await sequelize.transaction(async(tran) => { 
-        for await (const data of req.body) {
-          const workRead = await repo.readRawByUuid(data.uuid);
-          const work = unsealArray(workRead.raws);
-
+      await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
+        for await (const data of datas) {
           // ❗ 작업지시가 마감되어 있는 경우 Interlock
-          const orderRead = await orderRepo.readRawByPk(work.order_id);
-          const order = unsealArray(orderRead.raws);
-          if (order.complete_fg) { throw new Error(`지시번호 [${order.uuid}]가 완료되어 데이터를 수정할 수 없습니다.`); }
+          await orderService.validateIsCompleted([data.order_uuid]);
 
           // 📌 생산실적 완료 취소 처리
-          const workResult = await repo.updateComplete([{ uuid: work.uuid, work_time: null, complete_fg: false, end_date: null }], req.user?.uid as number, tran);
+          const workResult = await service.updateComplete({ uuid: data.uuid, complete_fg: false }, req.user?.uid as number, tran);
 
           // 📌 해당 실적의 작업지시의 생산진행여부(work_fg)를 True로 변경
-          const orderResult = await orderRepo.updateWorkFgById(work.order_id, true, req.user?.uid as number, tran);
+          const orderResult = await orderService.updateWorkFgById(workResult.raws[0].order_id, true, req.user?.uid as number, tran);
 
-          // 📌 창고 수불이력 삭제
-          const storeBody = [{ tran_id: work.work_id, inout_fg: true, tran_cd: getTranTypeCd('PRD_OUTPUT') }];
-          for await (const work of workResult.raws) {
-            const workRejects = await rejectRepo.readRawsByWorkId(work.work_id);
-            workRejects.raws.forEach((workReject: any) => { storeBody.push({ tran_id: workReject.work_reject_id, inout_fg: true, tran_cd: getTranTypeCd('PRD_REJECT') }); });
-          }
-          const storeResult = await storeRepo.deleteToTransaction(storeBody, req.user?.uid as number, tran);
+          // 📌 창고 수불이력 삭제(생산입고)
+          const toStoreResult = await inventoryService.transactInventory(
+            workResult.raws, 'DELETE', 
+            { inout: 'TO', tran_type: 'PRD_OUTPUT', reg_date: '', tran_id_alias: 'work_id' },
+            req.user?.uid as number, tran
+          );
+
+          // 📌 부적합 수량에 의한 창고 수불 내역 생성
+          const rejectBody = await workRejectService.getWorkRejectBody(workResult.raws[0], workResult.raws[0].reg_date);
+          const rejectStoreResult = await inventoryService.transactInventory(
+            rejectBody, 'DELETE', 
+            { inout: 'TO', tran_type: 'PRD_REJECT', reg_date: '', tran_id_alias: 'work_reject_id' },
+            req.user?.uid as number, tran
+          );
+
+          // 📌 창고 수불이력 삭제(생산투입)
+          const isPullOption = await tenantOptService.getTenantOptValue('OUT_AUTO_PULL', tran);
+          const workInputBody = await workInputService.getWorkInputBody(workResult.raws[0], workResult.raws[0].reg_date, isPullOption);
+          const fromStoreResult = await inventoryService.transactInventory(
+            workInputBody, 'DELETE', 
+            { inout: 'FROM', tran_type: 'PRD_INPUT', reg_date: '', tran_id_alias: 'work_input_id' },
+            req.user?.uid as number, tran
+          );
 
           result.raws.push({
             work: workResult.raws,
             order: orderResult.raws,
-            store: storeResult.raws,
+            toStore: [...toStoreResult.raws, ...rejectStoreResult.raws],
+            fromStore: fromStoreResult.raws,
           });
         }
       });
 
-      return response(res, result.raws, { count: result.count }, '', 201);
-    } catch (e) {
-      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return createApiResult(res, result, 200, '데이터 수정 성공', this.stateTag, successState.UPDATE);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
     }
   }
 
@@ -424,8 +359,30 @@ class PrdWorkCtl extends BaseCtl {
   //#region 🟠 Patch Functions
 
   // 📒 Fn[patch] (✅ Inheritance): Default Patch Function
-  // public patch = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-  // }
+  public patch = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      let result: ApiResult<any> = { count: 0, raws: [] };
+      const service = new PrdWorkService(req.tenant.uuid);
+      const matched = matchedData(req, { locations: [ 'body' ] });
+      let datas = await service.convertFk(Object.values(matched));
+
+      // 📌 실적이 저장된 경우 수정되면 안되는 데이터를 수정 할 때의 Interlock
+      await service.validateWorkStatus(datas.map((data: any) => data.work_id));
+      
+      await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
+        result = await service.patch(datas, req.user?.uid as number, tran); 
+      });
+
+      return createApiResult(res, result, 200, '데이터 수정 성공', this.stateTag, successState.UPDATE);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
+    }
+  }
 
   //#endregion
 
@@ -434,53 +391,69 @@ class PrdWorkCtl extends BaseCtl {
   // 📒 Fn[delete] (✅ Inheritance): Default Delete Function
   public delete = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      req.body = checkArray(req.body);
-      
-      const sequelize = getSequelize(req.tenant.uuid);
-      const repo = new PrdWorkRepo(req.tenant.uuid);
-      const inputRepo = new PrdWorkInputRepo(req.tenant.uuid);
-      const workerRepo = new PrdWorkWorkerRepo(req.tenant.uuid);
-      const rejectRepo = new PrdWorkRejectRepo(req.tenant.uuid);
-      const downtimeRepo = new PrdWorkDowntimeRepo(req.tenant.uuid);
-      const routingRepo = new PrdWorkRoutingRepo(req.tenant.uuid);
-      const orderRepo = new PrdOrderRepo(req.tenant.uuid);
-      const storeRepo = new InvStoreRepo(req.tenant.uuid);
       const inspResultRepo = new QmsInspResultRepo(req.tenant.uuid);
       const inspResultDetailInfoRepo = new QmsInspResultDetailInfoRepo(req.tenant.uuid);
       const inspResultDetailValueRepo = new QmsInspResultDetailValueRepo(req.tenant.uuid);
-      let result: ApiResult<any> = { raws: [], count: 0 };
 
-      await sequelize.transaction(async(tran) => { 
-        for await (const data of req.body) {
-          const workRead = await repo.readRawByUuid(data.uuid);
-          const work = unsealArray(workRead.raws);
+      let result: ApiResult<any> = { count: 0, raws: [] };
+      const service = new PrdWorkService(req.tenant.uuid);
+      const workRejectService = new PrdWorkRejectService(req.tenant.uuid);
+      const workInputService = new PrdWorkInputService(req.tenant.uuid);
+      const workWorkerService = new PrdWorkWorkerService(req.tenant.uuid);
+      const workRoutingService = new PrdWorkRoutingService(req.tenant.uuid);
+      const workDowntimeService = new PrdWorkDowntimeService(req.tenant.uuid);
+      const orderService = new PrdOrderService(req.tenant.uuid);
+      const inventoryService = new InvStoreService(req.tenant.uuid);
+      const tenantOptService = new StdTenantOptService(req.tenant.uuid);
+      const matched = matchedData(req, { locations: [ 'body' ] });
+      let datas = await service.convertFk(Object.values(matched));
+
+      await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
+        for await (const data of datas) {
+          const workRead = await service.readByUuid(data.uuid);
+          const work = workRead.raws[0];
 
           // ❗ 작업지시가 마감되어 있는 경우 Interlock
-          const orderRead = await orderRepo.readRawByPk(work.order_id);
-          const order = unsealArray(orderRead.raws);
-          if (order.complete_fg) { throw new Error(`지시번호 [${order.uuid}]가 완료되어 데이터를 삭제할 수 없습니다.`); }
+          await orderService.validateIsCompleted([work.order_uuid]);
 
-          // 📌 창고 수불이력 삭제
-          const storeBody = [{ tran_id: work.work_id, inout_fg: true, tran_cd: getTranTypeCd('PRD_OUTPUT') }];
-          const workRejects = await rejectRepo.readRawsByWorkId(work.work_id);
-          workRejects.raws.forEach((workReject: any) => { storeBody.push({ tran_id: workReject.work_reject_id, inout_fg: true, tran_cd: getTranTypeCd('PRD_REJECT') }); });
-          const workInputs = await inputRepo.readRawsByWorkId(work.work_id);
-          workInputs.raws.forEach((workInput: any) => { storeBody.push({ tran_id: workInput.work_input_id, inout_fg: false, tran_cd: getTranTypeCd('PRD_INPUT') }); });
-          const storeResult = await storeRepo.deleteToTransaction(storeBody, req.user?.uid as number, tran);
+          // 📌 입고 창고 수불 내역 생성(생산입고)
+          const storeResult = await inventoryService.transactInventory(
+            data, 'DELETE', 
+            { inout: 'TO', tran_type: 'PRD_OUTPUT', reg_date: '', tran_id_alias: 'work_id' },
+            req.user?.uid as number, tran
+          );
+
+          // 📌 부적합 수량에 의한 창고 수불 내역 생성
+          const rejectBody = await workRejectService.getWorkRejectBody(data, data.reg_date);
+          const rejectStoreResult = await inventoryService.transactInventory(
+            rejectBody, 'DELETE', 
+            { inout: 'TO', tran_type: 'PRD_REJECT', reg_date: '', tran_id_alias: 'work_reject_id' },
+            req.user?.uid as number, tran
+          );
+
+          // 📌 창고 수불이력 생성(생산투입)
+          const isPullOption = await tenantOptService.getTenantOptValue('OUT_AUTO_PULL', tran);
+          const workInputBody = await workInputService.getWorkInputBody(data, data.reg_date, isPullOption);
+          const inputStoreResult = await inventoryService.transactInventory(
+            workInputBody, 'DELETE', 
+            { inout: 'FROM', tran_type: 'PRD_INPUT', reg_date: '', tran_id_alias: 'work_input_id' },
+            req.user?.uid as number, tran
+          );
 
           // 📌 생산실적 관련 테이블 삭제
-          const inputResult = await inputRepo.deleteByWorkId(work.work_id, req.user?.uid as number, tran);
-          const workerResult = await workerRepo.deleteByWorkId(work.work_id, req.user?.uid as number, tran);
-          const routingResult = await routingRepo.deleteByWorkId(work.work_id, req.user?.uid as number, tran);
-          const rejectResult = await rejectRepo.deleteByWorkId(work.work_id, req.user?.uid as number, tran);
-          const downtimeResult = await downtimeRepo.deleteByWorkId(work.work_id, req.user?.uid as number, tran);
+          const inputResult = await workInputService.deleteByWorkId(data.work_id, req.user?.uid as number, tran);
+          const workerResult = await workWorkerService.deleteByWorkId(data.work_id, req.user?.uid as number, tran);
+          const routingResult = await workRoutingService.deleteByWorkId(data.work_id, req.user?.uid as number, tran);
+          const rejectResult = await workRejectService.deleteByWorkId(data.work_id, req.user?.uid as number, tran);
+          const downtimeResult = await workDowntimeService.deleteByWorkId(data.work_id, req.user?.uid as number, tran);
 
+          // ❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗ 공정검사 service로 바꿔야함
           // 📌 공정검사 이력 삭제
           let inspHeaderResult: ApiResult<any> = { raws: [], count: 0 };
           let detailInfosResult: ApiResult<any> = { raws: [], count: 0 };
           let detailValuesResult: ApiResult<any> = { raws: [], count: 0 };
 
-          const inspResultRead = await inspResultRepo.readProcByWorkId(work.work_id);
+          const inspResultRead = await inspResultRepo.readProcByWorkId(data.work_id);
           for await (const inspResult of inspResultRead.raws) {
             // 📌 검사 성적서 상세 값을 삭제하기 위하여 검사 성적서 상세정보 Id 조회
             const detailInfos = await inspResultDetailInfoRepo.readByResultId(inspResult.insp_result_id);
@@ -501,14 +474,13 @@ class PrdWorkCtl extends BaseCtl {
             inspHeaderResult.raws = [ ...inspHeaderResult.raws, ...tempHeaderResult.raws ];
             inspHeaderResult.count += tempHeaderResult.count;
           }
+          // ❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗ 공정검사 service로 바꿔야함
 
           // 📌 생산실적 이력 삭제
-          const workResult = await repo.delete([{ uuid: work.uuid }], req.user?.uid as number, tran);
+          const workResult = await service.delete([data], req.user?.uid as number, tran);
 
           // 📌 해당 실적의 작업지시에 진행중인 생산 실적이 없을 경우 작업지시의 생산진행여부(work_fg)를 False로 변경
-          const incompleteWorkCount = await repo.getIncompleteCount(work.order_id, tran);
-          let orderResult: ApiResult<any> = { raws: [], count: 0 };
-          if (incompleteWorkCount == 0) { orderResult = await orderRepo.updateWorkFgById(work.order_id, false, req.user?.uid as number, tran); }
+          let orderResult = await orderService.updateOrderCompleteByOrderUuid(work.order_uuid, req.user?.uid as number, tran);          
 
           result.raws.push({
             work: workResult.raws,
@@ -518,7 +490,7 @@ class PrdWorkCtl extends BaseCtl {
             routing: routingResult.raws,
             reject: rejectResult.raws,
             downtime: downtimeResult.raws,
-            store: storeResult.raws,
+            store: [...storeResult.raws, ...rejectStoreResult.raws, ...inputStoreResult.raws],
             inspResult: inspHeaderResult.raws,
             inspResultDetailInfo: detailInfosResult.raws,
             inspResultDetailValue: detailValuesResult.raws,
@@ -529,91 +501,16 @@ class PrdWorkCtl extends BaseCtl {
         }
       });
 
-      return response(res, result.raws, { count: result.count }, '', 200);
-    } catch (e) {
-      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return createApiResult(res, result, 200, '데이터 삭제 성공', this.stateTag, successState.DELETE);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
     }
   }
-
-  //#endregion
-
-  //#endregion
-
-  //#region ✅ Inherited Hooks
-
-  //#region 🔵 Read Hooks
-
-  // 📒 Fn[beforeRead] (✅ Inheritance): Read DB Tasking 이 실행되기 전 호출되는 Function
-  // beforeRead = async(req: express.Request) => {}
-
-  // 📒 Fn[afterRead] (✅ Inheritance): Read DB Tasking 이 실행된 후 호출되는 Function
-  // afterRead = async(req: express.Request, result: ApiResult<any>) => {}
-
-  //#endregion
-
-  //#region 🟡 Update Hooks
-
-  // 📒 Fn[beforeUpdate] (✅ Inheritance): Update Transaction 이 실행되기 전 호출되는 Function
-  beforeUpdate = async(req: express.Request) => {
-    const repo = new PrdWorkRepo(req.tenant.uuid);
-
-    // 📌 완료되어있는 실적이 있을경우 데이터 수정 불가
-    const uuids = req.body.map((data: any) => { return data.uuid });
-    const workRead = await repo.readRawsByUuids(uuids);
-    workRead.raws.forEach((work: any) => {
-      if (work.work_fg) { throw new Error(`실적번호 [${work.uuid}]가 완료되어 데이터를 수정할 수 없습니다.`); }
-    });
-  }
-
-  // 📒 Fn[beforeTranUpdate] (✅ Inheritance): Update Transaction 내부에서 DB Tasking 이 실행되기 전 호출되는 Function
-  // beforeTranUpdate = async(req: express.Request, tran: Transaction) => {}
-
-  // 📒 Fn[afterTranUpdate] (✅ Inheritance): Update Transaction 내부에서 DB Tasking 이 실행된 후 호출되는 Function
-  // afterTranUpdate = async(req: express.Request, result: ApiResult<any>, tran: Transaction) => {}
-
-  // 📒 Fn[afterUpdate] (✅ Inheritance): Update Transaction 이 실행된 후 호출되는 Function
-  // afterUpdate = async(req: express.Request, result: ApiResult<any>) => {}
-
-  //#endregion
-
-  //#region 🟠 Patch Hooks
-
-  // 📒 Fn[beforePatch] (✅ Inheritance): Patch Transaction 이 실행되기 전 호출되는 Function
-  beforePatch = async(req: express.Request) => {
-    const repo = new PrdWorkRepo(req.tenant.uuid);
-
-    // 📌 완료되어있는 실적이 있을경우 데이터 수정 불가
-    const uuids = req.body.map((data: any) => { return data.uuid });
-    const workRead = await repo.readRawsByUuids(uuids);
-    workRead.raws.forEach((work: any) => {
-      if (work.work_fg) { throw new Error(`실적번호 [${work.uuid}]가 완료되어 데이터를 수정할 수 없습니다.`); }
-    });
-  }
-
-  // 📒 Fn[beforeTranPatch] (✅ Inheritance): Patch Transaction 내부에서 DB Tasking 이 실행되기 전 호출되는 Function
-  // beforeTranPatch = async(req: express.Request, tran: Transaction) => {}
-
-  // 📒 Fn[afterTranPatch] (✅ Inheritance): Patch Transaction 내부에서 DB Tasking 이 실행된 후 호출되는 Function
-  // afterTranPatch = async(req: express.Request, result: ApiResult<any>, tran: Transaction) => {}
-
-  // 📒 Fn[afterPatch] (✅ Inheritance): Patch Transaction 이 실행된 후 호출되는 Function
-  // afterPatch = async(req: express.Request, result: ApiResult<any>) => {}
-
-  //#endregion
-
-  //#region 🔴 Delete Hooks
-
-  // 📒 Fn[beforeDelete] (✅ Inheritance): Delete Transaction 이 실행되기 전 호출되는 Function
-  // beforeDelete = async(req: express.Request) => {}
-
-  // 📒 Fn[beforeTranDelete] (✅ Inheritance): Delete Transaction 내부에서 DB Tasking 이 실행되기 전 호출되는 Function
-  // beforeTranDelete = async(req: express.Request, tran: Transaction) => {}
-
-  // 📒 Fn[afterTranDelete] (✅ Inheritance): Delete Transaction 내부에서 DB Tasking 이 실행된 후 호출되는 Function
-  // afterTranDelete = async(req: express.Request, result: ApiResult<any>, tran: Transaction) => {}
-
-  // 📒 Fn[afterDelete] (✅ Inheritance): Delete Transaction 이 실행된 후 호출되는 Function
-  // afterDelete = async(req: express.Request, result: ApiResult<any>) => {}
 
   //#endregion
 

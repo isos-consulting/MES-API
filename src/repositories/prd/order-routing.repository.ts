@@ -40,6 +40,8 @@ class PrdOrderRoutingRepo {
             proc_no: orderRouting.proc_no,
             workings_id: orderRouting.workings_id,
             equip_id: orderRouting.equip_id,
+            mold_id: orderRouting.mold_id,
+            mold_cavity: orderRouting.mold_cavity,
             remark: orderRouting.remark,
             created_uid: uid,
             updated_uid: uid,
@@ -80,6 +82,7 @@ class PrdOrderRoutingRepo {
           { model: this.sequelize.models.StdProc, attributes: [], required: true },
           { model: this.sequelize.models.StdWorkings, attributes: [], required: true },
           { model: this.sequelize.models.StdEquip, attributes: [], required: false },
+          { model: this.sequelize.models.MldMold, attributes: [], required: false },
           { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
@@ -100,6 +103,10 @@ class PrdOrderRoutingRepo {
           [ Sequelize.col('stdEquip.uuid'), 'equip_uuid' ],
           [ Sequelize.col('stdEquip.equip_cd'), 'equip_cd' ],
           [ Sequelize.col('stdEquip.equip_nm'), 'equip_nm' ],
+          [ Sequelize.col('mldMold.uuid'), 'mold_uuid' ],
+          [ Sequelize.col('mldMold.mold_cd'), 'mold_cd' ],
+          [ Sequelize.col('mldMold.mold_nm'), 'mold_nm' ],
+          'mold_cavity',
           'remark',
           'created_at',
           [ Sequelize.col('createUser.user_nm'), 'created_nm' ],
@@ -125,9 +132,7 @@ class PrdOrderRoutingRepo {
           { model: this.sequelize.models.StdProc, attributes: [], required: true },
           { model: this.sequelize.models.StdWorkings, attributes: [], required: true },
           { model: this.sequelize.models.StdEquip, attributes: [], required: false },
-          { model: this.sequelize.models.StdUnitConvert,attributes: [], required: false },
-          { model: this.sequelize.models.StdStore, attributes: [], required: false },
-          { model: this.sequelize.models.StdLocation, attributes: [], required: false },
+          { model: this.sequelize.models.MldMold, attributes: [], required: false },
           { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
@@ -148,6 +153,10 @@ class PrdOrderRoutingRepo {
           [ Sequelize.col('stdEquip.uuid'), 'equip_uuid' ],
           [ Sequelize.col('stdEquip.equip_cd'), 'equip_cd' ],
           [ Sequelize.col('stdEquip.equip_nm'), 'equip_nm' ],
+          [ Sequelize.col('mldMold.uuid'), 'mold_uuid' ],
+          [ Sequelize.col('mldMold.mold_cd'), 'mold_cd' ],
+          [ Sequelize.col('mldMold.mold_nm'), 'mold_nm' ],
+          'mold_cavity',
           'remark',
           'created_at',
           [ Sequelize.col('createUser.user_nm'), 'created_nm' ],
@@ -176,7 +185,7 @@ class PrdOrderRoutingRepo {
   };
 
   // 📒 Fn[readRawsByOrderId]: 작업지시의 Id를 이용하여 Raw Data Read Function
-  public readRawsByOrderId = async(orderId: string, transaction?: Transaction) => {
+  public readRawsByOrderId = async(orderId: number, transaction?: Transaction) => {
     const result = await this.repo.findAll({ where: { order_id: orderId }, transaction });
     return convertReadResult(result);
   };
@@ -195,6 +204,8 @@ class PrdOrderRoutingRepo {
           {
             workings_id: orderRouting.workings_id ?? null,
             equip_id: orderRouting.equip_id ?? null,
+            mold_id: orderRouting.mold_id ?? null,
+            mold_cavity: orderRouting.mold_cavity ?? null,
             remark: orderRouting.remark ?? null,
             updated_uid: uid,
           } as any,
@@ -230,6 +241,8 @@ class PrdOrderRoutingRepo {
           {
             workings_id: orderRouting.workings_id,
             equip_id: orderRouting.equip_id,
+            mold_id: orderRouting.mold_id,
+            mold_cavity: orderRouting.mold_cavity,
             remark: orderRouting.remark,
             updated_uid: uid,
           },

@@ -136,9 +136,9 @@ get:
                             - $ref: ../../schemas/std/prod.schema.yaml#/unit_uuid
                             - $ref: ../../schemas/std/unit.schema.yaml#/unit_cd
                             - $ref: ../../schemas/std/unit.schema.yaml#/unit_nm
-                            - $ref: ../../schemas/mat/return-detail.schema.yaml#/price_unit_uuid
-                            - $ref: ../../schemas/mat/return-detail.schema.yaml#/price_unit_cd
-                            - $ref: ../../schemas/mat/return-detail.schema.yaml#/price_unit_nm
+                            - $ref: ../../schemas/mat/return-detail.schema.yaml#/return_unit_uuid
+                            - $ref: ../../schemas/mat/return-detail.schema.yaml#/return_unit_cd
+                            - $ref: ../../schemas/mat/return-detail.schema.yaml#/return_unit_nm
                             - $ref: ../../schemas/mat/return-detail.schema.yaml#/convert_value
                             - $ref: ../../schemas/mat/return-detail.schema.yaml#/return_qty
     500:

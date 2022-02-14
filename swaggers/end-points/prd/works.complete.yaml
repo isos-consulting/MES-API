@@ -13,7 +13,6 @@ put:
             - uuid
           allOf:
             - $ref: ../../schemas/prd/work.schema.yaml#/uuid
-            - $ref: ../../schemas/prd/work.schema.yaml#/end_date
   responses:
     201:
       $ref: ../../responses/common/succeed-update.response.yaml

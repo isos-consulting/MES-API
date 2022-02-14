@@ -47,16 +47,20 @@ get:
                             - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
                             - $ref: ../../schemas/prd/order-routing.schema.yaml#/order_uuid
                             - $ref: ../../schemas/prd/order.schema.yaml#/order_no
-                            - $ref: ../../schemas/prd/order-routing.schema.yaml#/proc_id
+                            - $ref: ../../schemas/prd/order-routing.schema.yaml#/proc_uuid
                             - $ref: ../../schemas/std/proc.schema.yaml#/proc_cd
                             - $ref: ../../schemas/std/proc.schema.yaml#/proc_nm
                             - $ref: ../../schemas/prd/order-routing.schema.yaml#/proc_no
-                            - $ref: ../../schemas/prd/order-routing.schema.yaml#/workings_id
+                            - $ref: ../../schemas/prd/order-routing.schema.yaml#/workings_uuid
                             - $ref: ../../schemas/std/workings.schema.yaml#/workings_cd
                             - $ref: ../../schemas/std/workings.schema.yaml#/workings_nm
-                            - $ref: ../../schemas/prd/order-routing.schema.yaml#/equip_id
+                            - $ref: ../../schemas/prd/order-routing.schema.yaml#/equip_uuid
                             - $ref: ../../schemas/std/equip.schema.yaml#/equip_cd
                             - $ref: ../../schemas/std/equip.schema.yaml#/equip_nm
+                            - $ref: ../../schemas/prd/order-routing.schema.yaml#/mold_uuid
+                            - $ref: ../../schemas/mld/mold.schema.yaml#/mold_cd
+                            - $ref: ../../schemas/mld/mold.schema.yaml#/mold_nm
+                            - $ref: ../../schemas/prd/order-routing.schema.yaml#/mold_cavity
                             - $ref: ../../schemas/prd/order-routing.schema.yaml#/remark
                             - $ref: ../../schemas/common/timestamp.schema.yaml
     500:

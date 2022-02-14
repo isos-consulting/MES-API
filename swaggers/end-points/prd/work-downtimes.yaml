@@ -23,6 +23,15 @@ get:
         type: string
         format: uuid
 
+    - name: work_routing_uuid
+      in: query
+      description: |
+        실적-공정순서의 UUID를 입력하여 실적-공정순서에 따라 실적별 비가동 데이터를 조회합니다. <br/>
+        [전체 조회시 입력하지 않습니다.]
+      schema:
+        type: string
+        format: uuid
+
     - name: downtime_uuid
       in: query
       description: |
@@ -149,7 +158,6 @@ post:
           allOf:
             - $ref: ../../schemas/prd/work-downtime.schema.yaml#/factory_uuid
             - $ref: ../../schemas/prd/work-downtime.schema.yaml#/work_uuid
-            - $ref: ../../schemas/prd/work-downtime.schema.yaml#/work_downtime_uuid
             - $ref: ../../schemas/prd/work-downtime.schema.yaml#/work_routing_uuid
             - $ref: ../../schemas/prd/work-downtime.schema.yaml#/equip_uuid
             - $ref: ../../schemas/prd/work-downtime.schema.yaml#/downtime_uuid

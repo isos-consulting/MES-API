@@ -94,13 +94,13 @@ get:
                             - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
                             - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
                             - $ref: ../../schemas/prd/work.schema.yaml#/reg_date
-                            - $ref: ../../schemas/prd/work.schema.yaml#/proc_uuid
+                            - $ref: ../../schemas/std/proc.schema.yaml#/proc_uuid
                             - $ref: ../../schemas/std/proc.schema.yaml#/proc_cd
                             - $ref: ../../schemas/std/proc.schema.yaml#/proc_nm
                             - $ref: ../../schemas/prd/work.schema.yaml#/workings_uuid
                             - $ref: ../../schemas/std/workings.schema.yaml#/workings_cd
                             - $ref: ../../schemas/std/workings.schema.yaml#/workings_nm
-                            - $ref: ../../schemas/prd/work.schema.yaml#/equip_uuid
+                            - $ref: ../../schemas/std/equip.schema.yaml#/equip_uuid
                             - $ref: ../../schemas/std/equip.schema.yaml#/equip_cd
                             - $ref: ../../schemas/std/equip.schema.yaml#/equip_nm
                             - $ref: ../../schemas/prd/work.schema.yaml#/prod_uuid
@@ -121,9 +121,6 @@ get:
                             - $ref: ../../schemas/std/unit.schema.yaml#/unit_cd
                             - $ref: ../../schemas/std/unit.schema.yaml#/unit_nm
                             - $ref: ../../schemas/prd/work.schema.yaml#/lot_no
-                            - $ref: ../../schemas/prd/work.schema.yaml#/total_qty
-                            - $ref: ../../schemas/prd/work.schema.yaml#/qty
-                            - $ref: ../../schemas/prd/work.schema.yaml#/reject_qty
                             - $ref: ../../schemas/prd/work-downtime.schema.yaml#/work_start_date
                             - $ref: ../../schemas/prd/work-downtime.schema.yaml#/work_end_date
                             - $ref: ../../schemas/std/downtime.schema.yaml#/downtime_type_uuid

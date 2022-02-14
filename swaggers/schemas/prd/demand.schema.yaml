@@ -33,13 +33,13 @@ reg_date:
       type: string
       format: date-time
 
-demand_type_cd: 
+demand_type_id: 
   type: object
   properties: 
-    demand_type_cd:
-      description: 자재출고요청 유형 코드
-      type: string
-      format: varchar(20)
+    demand_type_id:
+      description: 자재출고요청ID
+      type: number
+      format: int4
 
 proc_id: 
   type: object
@@ -151,6 +151,14 @@ order_uuid:
   properties: 
     order_uuid:
       description: 작업지시UUID
+      type: string
+      format: uuid
+
+demand_type_uuid:
+  type: object
+  properties: 
+    demand_type_uuid:
+      description: 출고요청UUID
       type: string
       format: uuid
 

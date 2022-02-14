@@ -1,13 +1,13 @@
 get:
   description: |
-    하나의 자재공정출고 데이터를 조회합니다.
-  summary: 자재공정출고 데이터 단일 조회
+    하나의 자재출고 데이터를 조회합니다.
+  summary: 자재출고 데이터 단일 조회
   tags:
-    - 자재공정출고(Release)
+    - 자재출고(Release)
   parameters:
     - name: uuid
       in: path
-      description: 자재공정출고의 UUID 를 입력합니다.
+      description: 자재출고의 UUID 를 입력합니다.
       required: true
       schema:
         type: string
@@ -37,7 +37,7 @@ get:
                             format: int32
                             minimum: 0
                       raws:
-                        description: 자재공정출고 데이터 목록
+                        description: 자재출고 데이터 목록
                         type: array
                         items:
                           allOf:
@@ -66,7 +66,8 @@ get:
                             - $ref: ../../schemas/mat/release.schema.yaml#/lot_no
                             - $ref: ../../schemas/mat/release.schema.yaml#/qty
                             - $ref: ../../schemas/mat/release.schema.yaml#/demand_id
-                            - $ref: ../../schemas/prd/demand.schema.yaml#/demand_type_cd
+                            - $ref: ../../schemas/prd/demand.schema.yaml#/demand_type_uuid
+                            - $ref: ../../schemas/adm/demand-type.schema.yaml#/demand_type_cd
                             - $ref: ../../schemas/adm/demand-type.schema.yaml#/demand_type_nm
                             - $ref: ../../schemas/mat/release.schema.yaml#/from_store_uuid
                             - $ref: ../../schemas/std/store.schema.yaml#/from_store_cd

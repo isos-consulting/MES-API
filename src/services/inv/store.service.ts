@@ -1,4 +1,6 @@
+import moment from "moment";
 import { Transaction } from "sequelize/types";
+import IInvStore from "../../interfaces/inv/store.interface";
 import AdmTranTypeRepo from "../../repositories/adm/tran-type.repository";
 import InvStoreRepo from '../../repositories/inv/store.repository';
 import StdFactoryRepo from "../../repositories/std/factory.repository";
@@ -76,7 +78,7 @@ class InvStoreService {
     return await getFkIdByUuid(this.tenant, datas, this.fkIdInfos);
   }
 
-  public create = async (datas: any[], uid: number, tran: Transaction) => {
+  public create = async (datas: IInvStore[], uid: number, tran: Transaction) => {
     try { return await this.repo.create(datas, uid, tran); } 
 		catch (error) { throw error; }
   }
@@ -91,17 +93,53 @@ class InvStoreService {
 		catch (error) { throw error; }
   };
 
-  public update = async (datas: any[], uid: number, tran: Transaction) => {
+  // 📒 Fn[readStockAccordingToType]: 유형에 따라 재고 조회
+  public readStockAccordingToType = async(params?: any) => {
+    try { return await this.repo.readStockAccordingToType(params); }
+    catch (error) { throw error; }
+  }
+
+  // 📒 Fn[readTotalHistoryAccordingToType]: 유형에 따른 총괄수불부 조회
+  public readTotalHistoryAccrodingToType = async(params?: any) => {
+    try { return await this.repo.readTotalHistoryAccordingToType(params); }
+    catch (error) { throw error; }
+  }
+
+  // 📒 Fn[readIndividualHistoryAccordingToType]: 유형에 따른 개별수불부 조회
+  public readIndividualHistoryAccordingToType = async(params?: any) => {
+    try { return await this.repo.readIndividualHistoryAccordingToType(params); }
+    catch (error) { throw error; }
+  }
+
+  // 📒 Fn[readTypeHistoryAccordingToType]: 유형에 따른 수불유형별 수불부 조회
+  public readTypeHistoryAccordingToType = async(params?: any) => {
+    try { return await this.repo.readTypeHistoryAccordingToType(params); }
+    catch (error) { throw error; }
+  }
+
+  // 📒 Fn[readStoreHistoryByTransaction]: 수불유형에 따른 이력 조회
+  public readStoreHistoryByTransaction = async(params?: any) => {
+    try { return await this.repo.readStoreHistoryByTransaction(params); }
+    catch (error) { throw error; }
+  }
+
+  // 📒 Fn[readReturnStock]: 반출재고 조회
+  public readReturnStock = async(params?: any) => {
+    try { return await this.repo.readReturnStock(params); }
+    catch (error) { throw error; }
+  }
+
+  public update = async (datas: IInvStore[], uid: number, tran: Transaction) => {
     try { return await this.repo.update(datas, uid, tran); }
 		catch (error) { throw error; }
   }
 
-  public patch = async (datas: any[], uid: number, tran: Transaction) => {
+  public patch = async (datas: IInvStore[], uid: number, tran: Transaction) => {
     try { return await this.repo.patch(datas, uid, tran); }
 		catch (error) { throw error; }
   }
 
-  public delete = async (datas: any[], uid: number, tran: Transaction) => {
+  public delete = async (datas: IInvStore[], uid: number, tran: Transaction) => {
     try { return await this.repo.delete(datas, uid, tran); }
 		catch (error) { throw error; }
   }
@@ -121,11 +159,12 @@ class InvStoreService {
     tranOpt: {
       inout: 'FROM' | 'TO',         // FROM: 출고, TO: 입고
       tran_type: TTranType,         // 수불 유형
-      reg_date: string,             // 수불 기준일자
       tran_id_alias: string,        // 수불 데이터의 ID Column명
+      reg_date?: string,            // 수불 기준일자
       qty_alias?: string,           // 수불 데이터의 Qty Column명
       store_alias?: string,         // 수불 데이터의 Store(창고) Column명
-      location_alias?: string       // 수불 데이터의 Location(위치) Column명
+      location_alias?: string,      // 수불 데이터의 Location(위치) Column명
+      partner_id?: number,          // 거래처 ID (외주창고 한정)      -- partner_id는 Header에 있고 수불은 Detail 기준으로 들어오기 때문
     }, 
     uid: number, 
     tran: Transaction
@@ -158,7 +197,7 @@ class InvStoreService {
    * @returns 선입선출 수불 데이터 반환 / 마이너스 재고를 허용하지않고 재고수량이 부족하면 Error Throw
    */
   public getCalculatedFifoData = async (params: any, regDate: string, qty: number, allowMinus: boolean) => {
-    const stocks = await this.readStocks({
+    let stocks = await this.readStocks({
       factory_id: params.factory_id,
       prod_id: params.prod_id,
       store_id: params.store_id,
@@ -167,8 +206,11 @@ class InvStoreService {
       reject_id: params.reject_id,
       partner_id: params.partner_id,
       reg_date: regDate,
-      exclude_zero_lot_fg: false
+      exclude_zero_lot_fg: false,
     });
+
+    // 📌 재고 LOT NO에 대하여 내림차순 정렬 (array.pop()을 사용하여 배열의 마지막 인덱스부터 소모시키기 위함)
+    stocks = stocks.reverse();
 
     // 📌 마이너스 재고를 허용하지 않을경우 재고에 대한 Vaildation 진행
     if (!allowMinus) {
@@ -201,6 +243,9 @@ class InvStoreService {
    */
   public recursiveFifo = (params: any[], stocks: any[], regDate: string, currentQty: number, result: any[]) => {
     if (!result) { result = []; }
+
+    // 📌 필요 수량만큼 모두 투입되어 남은 투입수량이 0이하인 경우 Return한다.
+    if (currentQty <= 0) { return result; }
 
     // 📌 모든 재고를 투입 하였음에도 투입해야하는 재고수량이 남은경우 0 Lot로 나머지 수량을 채운다.
     if (stocks.length === 0 && currentQty) {
@@ -252,6 +297,86 @@ class InvStoreService {
       const result = await this.repo.readStocks(params);
       return result.raws;
     } catch (error) { throw error; }
+  }
+
+
+  public getCreateBody = async (datas: any[], tran: Transaction) => {
+    // 📌 재고실사 관련 Max 전표번호 생성
+    const tranTypeService = new AdmTranTypeService(this.tenant);
+    const tranTypeId = await tranTypeService.getIdByCd('INVENTORY');
+    let maxTranId = await this.repo.getMaxTranId(tranTypeId, tran);
+
+    for (const data of datas) {
+      data.tran_id = ++maxTranId;   
+      data.tran_type_id = tranTypeId;
+    };
+
+    const promises = datas.map(async (data: any) => {
+      const params = {
+        factory_uuid: data.factory_uuid,
+        prod_uuid: data.prod_uuid,
+        lot_no: data.lot_no,
+        store_uuid: data.store_uuid,
+        location_uuid: data.location_uuid,
+        reject_uuid: data.reject_uuid,
+        partner_uuid: data.partner_uuid,
+        reg_date: moment(data.reg_date).format('yyyy-MM-DD'),
+        stock_type: 'all',
+        grouped_type: 'all',
+        price_type: 'all',
+      };   
+
+      const currentStock = (await this.repo.readStockAccordingToType(params)).raws[0];
+      let currentQty = currentStock?.qty ?? 0;
+
+      // 📌 기존 수량보다 실사 수량이 크면 입고 작으면 출고
+      if (data.qty > currentQty) { data.inout_fg = true; }
+      else { data.inout_fg = false; }
+
+      // 📌 실사수량 설정 및 기존재고와 실사수량이 동일한 경우 Interlock
+      data.qty = Math.abs(data.qty - currentQty);
+      if (data.qty == 0) {
+        throw createApiError(
+          400, 
+          `기존재고와 실사하려는 수량이 동일합니다.`, 
+          this.stateTag, 
+          errorState.INVALID_DATA
+        );
+      }
+
+      return data;
+    });
+
+    const result = await Promise.all(promises);
+    return result;
+  }
+
+  // 📒 수불유형별 수불부 조회 시 Object Key({tran_type_cd}_{inoutStr}_qty) 수정
+  public getTypeHistoryResult = (raws: any[]) => {
+    const tempResult: any[] = [];
+    raws.forEach((raw: any) => {
+      const equals = tempResult.find(data => 
+        data.factory_uuid == raw.factory_uuid &&
+        data.prod_uuid == raw.prod_uuid &&
+        data.reject_uuid == raw.reject_uuid &&
+        data.lot_no == raw.lot_no &&
+        data.store_uuid == raw.store_uuid &&
+        data.location_uuid == raw.location_uuid
+      );
+      
+      const inoutStr = raw.inout_fg ? 'in' : 'out';
+
+      if (equals) { equals[raw.tran_type_cd + '_' + inoutStr  + '_qty'] = raw.qty; }
+      else { 
+        raw[raw.tran_type_cd + '_' + inoutStr  + '_qty'] = raw.qty;
+        delete raw.inout_fg;
+        delete raw.tran_type_cd;
+        delete raw.qty;
+        tempResult.push(raw);
+      }
+    });
+
+    return tempResult;
   }
 }
 

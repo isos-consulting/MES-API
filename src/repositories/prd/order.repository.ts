@@ -38,10 +38,7 @@ class PrdOrderRepo {
             factory_id: order.factory_id,
             reg_date: order.reg_date,
             order_no: order.order_no,
-            proc_id: order.proc_id,
             workings_id: order.workings_id,
-            equip_id: order.equip_id,
-            mold_id: order.mold_id,
             prod_id: order.prod_id,
             plan_qty: order.plan_qty,
             qty: order.qty,
@@ -146,8 +143,6 @@ class PrdOrderRepo {
           {
             order_no: order.order_no ?? null,
             workings_id: order.workings_id ?? null,
-            equip_id: order.equip_id ?? null,
-            mold_id: order.mold_id ?? null,
             qty: order.qty ?? null,
             seq: order.seq ?? null,
             shift_id: order.shift_id ?? null,
@@ -273,8 +268,6 @@ class PrdOrderRepo {
           {
             order_no: order.order_no,
             workings_id: order.workings_id,
-            equip_id: order.equip_id,
-            mold_id: order.mold_id,
             qty: order.qty,
             seq: order.seq,
             shift_id: order.shift_id,

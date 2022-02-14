@@ -40,17 +40,11 @@ class PrdWorkRepo {
             reg_date: work.reg_date,
             order_id: work.order_id,
             seq: work.seq,
-            proc_id: work.proc_id,
             workings_id: work.workings_id,
-            equip_id: work.equip_id,
-            mold_id: work.mold_id,
-            mold_cavity: work.mold_cavity,
             prod_id: work.prod_id, 
             lot_no: work.lot_no,
             qty: work.qty,
             reject_qty: work.reject_qty,
-            start_date: work.start_date,
-            end_date: work.end_date,
             shift_id: work.shift_id,
             to_store_id: work.to_store_id,
             to_location_id: work.to_location_id,
@@ -88,7 +82,7 @@ class PrdWorkRepo {
   // 📒 Fn[readByUuid]: Default Read With Uuid Function
   public readByUuid = async(uuid: string, params?: any) => {
     try {
-      const result = await this.sequelize.query(readWorks({ work_uuid: uuid }));
+      const result = await this.sequelize.query(readWorks({ work_uuid: uuid, opt_reject_qty: params.opt_reject_qty }));
 
       return convertReadResult(result[0]);
     } catch (error) {
@@ -344,9 +338,9 @@ class PrdWorkRepo {
       const promises = body.map((work: any) => {
         return this.repo.update(
           {
-            work_time: work.work_time,
+            qty: work.qty,
+            reject_qty: work.reject_qty,
             complete_fg: work.complete_fg,
-            end_date: work.end_date,
             updated_uid: uid,
           },
           { 
@@ -379,11 +373,7 @@ class PrdWorkRepo {
       const promises = body.map((work: any) => {
         return this.repo.update(
           {
-            mold_id: work.mold_id,
-            mold_cavity: work.mold_cavity,
             qty: work.qty,
-            start_date: work.start_date,
-            end_date: work.end_date,
             to_store_id: work.to_store_id,
             to_location_id: work.to_location_id,
             remark: work.remark,
@@ -460,7 +450,7 @@ class PrdWorkRepo {
 
       const count: number = (result as any).dataValues.count;
 
-      return count;
+      return Number(count);
     } catch (error) {
       throw error;
     }

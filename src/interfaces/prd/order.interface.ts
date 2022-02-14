@@ -3,10 +3,7 @@ export default interface IPrdOrder {
   factory_id?: number,
   reg_date?: string,
   order_no?: string,
-  proc_id?: number,
   workings_id?: number,
-  equip_id?: number | null,
-  mold_id?: number | null,
   prod_id?: number,
   plan_qty?: number | null,
   qty?: number,
@@ -25,5 +22,4 @@ export default interface IPrdOrder {
   updated_at?: Date,
   updated_uid?: number,
   uuid?: string,
-  tenant_uuid?: string
 }

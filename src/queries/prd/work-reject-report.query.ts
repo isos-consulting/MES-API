@@ -18,14 +18,10 @@ const readWorkRejectReport = (
       equip_id int,
       prod_id int,
       lot_no varchar(25),
-      total_qty numeric,
       qty numeric,
-      reject_qty numeric,
       start_date timestamp,
       end_date timestamp, 
       reject_id int,
-      reject_proc_id int,
-      reject_detail_qty numeric,
       remark varchar(250),
       created_at timestamptz, created_uid int, created_nm varchar(20),
       updated_at timestamptz, updated_uid int, updated_nm varchar(20)
@@ -45,14 +41,10 @@ const readWorkRejectReport = (
       p_wrt.equip_id,
       p_w.prod_id,
       p_w.lot_no,
-      COALESCE(p_w.qty, 0)+ COALESCE(p_w.reject_qty, 0),
-      COALESCE(p_w.qty, 0),
-      COALESCE(p_w.reject_qty, 0),
-      p_w.start_date,
-      p_w.end_date,
+      COALESCE(p_wr.qty, 0),
+      p_wrt.start_date,
+      p_wrt.end_date,
       p_wr.reject_id,
-      COALESCE(p_wrt.proc_id, 0),
-      p_wr.qty,
       p_wr.remark,
       p_wr.created_at, p_wr.created_uid, a_uc.user_nm,
       p_wr.updated_at, p_wr.updated_uid, a_uu.user_nm
@@ -69,7 +61,7 @@ const readWorkRejectReport = (
 
   let reportOrderBy: string;
   switch (params.sort_type) {
-    case 'proc': reportOrderBy = `ORDER BY t_r.reject_proc_id`; break;
+    case 'proc': reportOrderBy = `ORDER BY t_r.proc_id`; break;
     case 'prod': reportOrderBy = `ORDER BY t_r.prod_id`; break;
     case 'reject': reportOrderBy = `ORDER BY t_r.reg_date`; break;
     default: reportOrderBy = ''; break;
@@ -110,21 +102,15 @@ const readWorkRejectReport = (
       s_u.unit_cd,
       s_u.unit_nm,
       t_r.lot_no,
-      COALESCE(t_r.total_qty,0) as total_qty,
       COALESCE(t_r.qty,0) as qty,
-      COALESCE(t_r.reject_qty,0) as reject_qty,
       t_r.start_date,
       t_r.end_date,
-      s_pcr.uuid as reject_proc_uuid,
-      s_pcr.proc_cd as reject_proc_cd,
-      s_pcr.proc_nm as reject_proc_nm,
       s_rt.uuid as reject_type_uuid,
       s_rt.reject_type_cd,
       s_rt.reject_type_nm,
       s_r.uuid as reject_uuid,
       s_r.reject_cd,
       s_r.reject_nm,
-      COALESCE(t_r.reject_detail_qty,0) as reject_detail_qty,
       t_r.remark,
       t_r.created_at,
       t_r.created_uid,
@@ -146,7 +132,6 @@ const readWorkRejectReport = (
     LEFT JOIN std_unit_tb s_u ON s_u.unit_id = s_p.unit_id
     LEFT JOIN std_reject_tb s_r ON s_r.reject_id = t_r.reject_id
     LEFT JOIN std_reject_type_tb s_rt ON s_rt.reject_type_id = s_r.reject_type_id 
-    LEFT JOIN std_proc_tb s_pcr ON s_pcr.proc_id = t_r.reject_proc_id
     ${reportOrderBy};
   `;
 

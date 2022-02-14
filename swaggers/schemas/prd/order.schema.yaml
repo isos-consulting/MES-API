@@ -33,35 +33,11 @@ order_no:
       type: string
       format: varchar(50)
 
-proc_id: 
-  type: object
-  properties: 
-    proc_id:
-      description: 공정ID
-      type: number
-      format: int4
-
 workings_id: 
   type: object
   properties: 
     workings_id:
       description: 작업장ID
-      type: number
-      format: int4
-
-equip_id: 
-  type: object
-  properties: 
-    equip_id:
-      description: 설비ID
-      type: number
-      format: int4
-
-mold_id: 
-  type: object
-  properties: 
-    mold_id:
-      description: 금형ID
       type: number
       format: int4
 
@@ -194,35 +170,11 @@ factory_uuid:
       type: string
       format: uuid
 
-proc_uuid:
-  type: object
-  properties: 
-    proc_uuid:
-      description: 공정UUID
-      type: string
-      format: uuid
-
 workings_uuid:
   type: object
   properties: 
     workings_uuid:
       description: 작업장UUID
-      type: string
-      format: uuid
-
-equip_uuid:
-  type: object
-  properties: 
-    equip_uuid:
-      description: 설비UUID
-      type: string
-      format: uuid
-
-mold_uuid:
-  type: object
-  properties: 
-    mold_uuid:
-      description: 금형UUID
       type: string
       format: uuid
 

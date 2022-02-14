@@ -4,6 +4,7 @@ import AutUser from '../aut/user.model';
 import StdFactory from '../std/factory.model';
 import StdWorker from '../std/worker.model';
 import PrdWork from './work.model';
+import PrdWorkRouting from './work-routing.model'
 
 @Table({
   tableName: 'PRD_WORK_WORKER_TB',
@@ -23,7 +24,7 @@ export default class PrdWorkWorker extends Model<IPrdWorkWorker> {
   })
   work_worker_id: number;
 
-  @Unique('prd_work_worker_tb_factory_id_work_id_worker_id_un')
+  @Unique('prd_work_worker_tb_factory_id_work_id_work_routing_id_worker_id_un')
   @ForeignKey(() => StdFactory)
   @Column({
     comment: '공장ID',
@@ -32,7 +33,7 @@ export default class PrdWorkWorker extends Model<IPrdWorkWorker> {
   })
   factory_id: number;
 
-  @Unique('prd_work_worker_tb_factory_id_work_id_worker_id_un')
+  @Unique('prd_work_worker_tb_factory_id_work_id_work_routing_id_worker_id_un')
   @ForeignKey(() => PrdWork)
   @Column({
     comment: '실적ID',
@@ -41,7 +42,16 @@ export default class PrdWorkWorker extends Model<IPrdWorkWorker> {
   })
   work_id: number;
 
-  @Unique('prd_work_worker_tb_factory_id_work_id_worker_id_un')
+  @Unique('prd_work_worker_tb_factory_id_work_id_work_routing_id_worker_id_un')
+  @ForeignKey(() => PrdWorkRouting)
+  @Column({
+    comment: '실적ID',
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  work_routing_id: number;
+
+  @Unique('prd_work_worker_tb_factory_id_work_id_work_routing_id_worker_id_un')
   @ForeignKey(() => StdWorker)
   @Column({
     comment: '작업자ID',
@@ -121,6 +131,8 @@ export default class PrdWorkWorker extends Model<IPrdWorkWorker> {
 
   @BelongsTo(() => PrdWork, { foreignKey: 'work_id', targetKey: 'work_id', onDelete: 'restrict', onUpdate: 'cascade' })
   prdWork: PrdWork;
+  @BelongsTo(() => PrdWorkRouting, { foreignKey: 'work_routing_id', targetKey: 'work_routing_id', onDelete: 'restrict', onUpdate: 'cascade' })
+  prdWorkRouting: PrdWorkRouting;
 
   @BelongsTo(() => StdWorker, { foreignKey: 'worker_id', targetKey: 'worker_id', onDelete: 'restrict', onUpdate: 'cascade' })
   stdWorker: StdWorker;

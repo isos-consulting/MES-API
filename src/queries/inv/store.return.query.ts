@@ -23,7 +23,7 @@ const readReturnStocks = (
       money_unit_id int,
       price_type_id int,
       qty numeric(19,6),
-      price_unit_id int,
+      return_unit_id int,
       unit_id int
     );
     CREATE INDEX ON temp_store(prod_id, lot_no);
@@ -41,7 +41,7 @@ const readReturnStocks = (
       s_vp.money_unit_id,
       s_vp.price_type_id,
       sum(CASE WHEN i_s.inout_fg = FALSE THEN COALESCE(i_s.qty,0) * -1 ELSE COALESCE(i_s.qty,0) END) AS qty,
-      s_vp.unit_id AS price_unit_id,
+      s_vp.unit_id AS return_unit_id,
       s_p.unit_id AS unit_id
     FROM inv_store_tb i_s 
     JOIN std_factory_tb s_f ON s_f.factory_id = i_s.factory_id
@@ -125,11 +125,11 @@ const readReturnStocks = (
       s_u.uuid as unit_uuid,
       s_u.unit_cd,
       s_u.unit_nm,
-      s_u2.uuid as price_unit_uuid,
-      s_u2.unit_cd as price_unit_cd,
-      s_u2.unit_nm as price_unit_nm,
-      CASE WHEN t_s.unit_id = t_s.price_unit_id THEN 1 ELSE coalesce(t_uc.convert_value, t_uc2.convert_value) END as convert_value,
-      t_s.qty * CASE WHEN t_s.unit_id = t_s.price_unit_id THEN 1 ELSE coalesce(t_uc.convert_value, t_uc2.convert_value) END as return_qty
+      s_u2.uuid as return_unit_uuid,
+      s_u2.unit_cd as return_unit_cd,
+      s_u2.unit_nm as return_unit_nm,
+      CASE WHEN t_s.unit_id = t_s.return_unit_id THEN 1 ELSE coalesce(t_uc.convert_value, t_uc2.convert_value) END as convert_value,
+      t_s.qty * CASE WHEN t_s.unit_id = t_s.return_unit_id THEN 1 ELSE coalesce(t_uc.convert_value, t_uc2.convert_value) END as return_qty
     FROM temp_store t_s
     JOIN std_factory_tb s_f ON s_f.factory_id = t_s.factory_id
     JOIN std_prod_tb s_p ON s_p.prod_id = t_s.prod_id
@@ -139,11 +139,11 @@ const readReturnStocks = (
     LEFT JOIN std_store_tb s_s ON s_s.store_id = t_s.store_id
     LEFT JOIN std_location_tb s_l ON s_l.location_id = t_s.location_id
     LEFT JOIN std_unit_tb s_u ON s_u.unit_id = t_s.unit_id
-    LEFT JOIN std_unit_tb s_u2 ON s_u2.unit_id = t_s.price_unit_id
+    LEFT JOIN std_unit_tb s_u2 ON s_u2.unit_id = t_s.return_unit_id
     LEFT JOIN std_money_unit_tb s_mu ON s_mu.money_unit_id = t_s.money_unit_id
     LEFT JOIN std_price_type_tb s_pty ON s_pty.price_type_id = t_s.price_type_id
-    LEFT JOIN temp_unit_convert t_uc ON t_uc.prod_id = t_s.prod_id AND t_uc.from_unit_id = t_s.unit_id AND t_uc.to_unit_id = t_s.price_unit_id
-    LEFT JOIN temp_unit_convert t_uc2 ON t_uc2.from_unit_id = t_s.unit_id AND t_uc2.to_unit_id = t_s.price_unit_id
+    LEFT JOIN temp_unit_convert t_uc ON t_uc.prod_id = t_s.prod_id AND t_uc.from_unit_id = t_s.unit_id AND t_uc.to_unit_id = t_s.return_unit_id
+    LEFT JOIN temp_unit_convert t_uc2 ON t_uc2.from_unit_id = t_s.unit_id AND t_uc2.to_unit_id = t_s.return_unit_id
     ${searchQuery}
     ORDER BY t_s.prod_id, t_s.lot_no;
   `;

@@ -67,8 +67,45 @@ get:
                             - $ref: ../../schemas/prd/order-routing.schema.yaml#/equip_uuid
                             - $ref: ../../schemas/std/equip.schema.yaml#/equip_cd
                             - $ref: ../../schemas/std/equip.schema.yaml#/equip_nm
+                            - $ref: ../../schemas/prd/order-routing.schema.yaml#/mold_uuid
+                            - $ref: ../../schemas/mld/mold.schema.yaml#/mold_cd
+                            - $ref: ../../schemas/mld/mold.schema.yaml#/mold_nm
+                            - $ref: ../../schemas/prd/order-routing.schema.yaml#/mold_cavity
                             - $ref: ../../schemas/prd/order-routing.schema.yaml#/remark
                             - $ref: ../../schemas/common/timestamp.schema.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml
+
+post:
+  description: |
+    지시-공정순서 데이터를 생성합니다. <br/>
+    ❗ 실적이 이미 저장되어 있거나 지시가 마감상태인 경우 생성이 불가능합니다.
+  summary: 지시-공정순서 데이터 생성
+  tags:
+    - 지시-공정순서(OrderRouting)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - factory_uuid
+            - order_uuid
+            - proc_uuid
+            - proc_no
+            - workings_uuid
+          allOf:
+            - $ref: ../../schemas/prd/order-routing.schema.yaml#/factory_uuid
+            - $ref: ../../schemas/prd/order-routing.schema.yaml#/order_uuid
+            - $ref: ../../schemas/prd/order-routing.schema.yaml#/proc_uuid
+            - $ref: ../../schemas/prd/order-routing.schema.yaml#/proc_no
+            - $ref: ../../schemas/prd/order-routing.schema.yaml#/workings_uuid
+            - $ref: ../../schemas/prd/order-routing.schema.yaml#/equip_uuid
+            - $ref: ../../schemas/prd/order-routing.schema.yaml#/mold_uuid
+            - $ref: ../../schemas/prd/order-routing.schema.yaml#/mold_cavity
+            - $ref: ../../schemas/prd/order-routing.schema.yaml#/remark
+  responses:
+    201:
+      $ref: ../../responses/common/succeed-create.response.yaml
     500:
       $ref: ../../responses/common/general-error.response.yaml
 
@@ -90,6 +127,8 @@ put:
             - $ref: ../../schemas/prd/order-routing.schema.yaml#/uuid
             - $ref: ../../schemas/prd/order-routing.schema.yaml#/workings_uuid
             - $ref: ../../schemas/prd/order-routing.schema.yaml#/equip_uuid
+            - $ref: ../../schemas/prd/order-routing.schema.yaml#/mold_uuid
+            - $ref: ../../schemas/prd/order-routing.schema.yaml#/mold_cavity
             - $ref: ../../schemas/prd/order-routing.schema.yaml#/remark
   responses:
     201:
@@ -114,9 +153,32 @@ patch:
             - $ref: ../../schemas/prd/order-routing.schema.yaml#/uuid
             - $ref: ../../schemas/prd/order-routing.schema.yaml#/workings_uuid
             - $ref: ../../schemas/prd/order-routing.schema.yaml#/equip_uuid
+            - $ref: ../../schemas/prd/order-routing.schema.yaml#/mold_uuid
+            - $ref: ../../schemas/prd/order-routing.schema.yaml#/mold_cavity
             - $ref: ../../schemas/prd/order-routing.schema.yaml#/remark
   responses:
     201:
       $ref: ../../responses/common/succeed-update.response.yaml
+    500:
+      $ref: ../../responses/common/general-error.response.yaml
+
+delete:
+  description: |
+    지시-공정순서 데이터를 삭제합니다. <br/>
+    ❗ 실적이 이미 저장되어 있거나 지시가 마감상태인 경우 삭제가 불가능합니다.
+  summary: 지시-공정순서 데이터 삭제
+  tags:
+    - 지시-공정순서(OrderRouting)
+  requestBody:
+    content:
+      application/json:
+        schema:
+          required:
+            - uuid
+          allOf:
+            - $ref: ../../schemas/prd/order-routing.schema.yaml#/uuid
+  responses:
+    200:
+      $ref: ../../responses/common/succeed-delete.response.yaml
     500:
       $ref: ../../responses/common/general-error.response.yaml

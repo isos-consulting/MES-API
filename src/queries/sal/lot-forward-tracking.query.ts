@@ -11,6 +11,27 @@ const readLotForwardReport = (
 
 	//#region 📌 출하기준 lot 추적 품번, lot 기준 임시 테이블 생성
 	const createBaseTempTableQuery = `
+		/** 작업정보를 가져오기 위한 임시테이블 생성 */
+		CREATE TEMP TABLE temp_work_routing(work_id int, proc_id int, equip_id int, mold_id int, mold_cavity int, prod_id int, reg_date timestamp, lot_no varchar(25));
+		/** 임시테이블 인덱스 설정 */
+		CREATE INDEX ON temp_work_routing(work_id);
+
+		/** 작업완료 기준으로 마지막공정순서에 해당하는 데이터 불러옴 */
+		WITH complete AS
+		(
+			SELECT 
+				p_wr.work_id, p_wr.proc_id, p_wr.equip_id, p_wr.mold_id, p_wr.mold_cavity, p_w.prod_id,
+				p_w.reg_date, p_w.lot_no, rank() over(PARTITION BY p_wr.work_id ORDER BY p_wr.proc_no DESC) AS rn
+			FROM prd_work_routing_tb p_wr
+			JOIN prd_work_tb p_w ON p_w.work_id = p_wr.work_id 
+			WHERE p_w.complete_fg = TRUE 
+		)
+		INSERT INTO temp_work_routing
+		SELECT work_id, proc_id, equip_id, mold_id, mold_cavity, prod_id, reg_date, lot_no
+		FROM complete 
+		WHERE rn = 1;
+
+		/** 출하기준 lot 추적 품번, lot 기준 임시 테이블 생성 */
 		CREATE TEMP TABLE temp_lot(
 			proc_id int,
 			equip_id int,
@@ -29,41 +50,43 @@ const readLotForwardReport = (
 
 		INSERT INTO temp_lot
 		WITH RECURSIVE lot_tracking AS (
-		SELECT 	p_w.proc_id, p_w.equip_id, p_w.reg_date, p_w.prod_id, p_w.lot_no,
-				p_wi.prod_id AS input_prod_id, p_wi.lot_no AS input_lot_no, i_pw.work_id AS input_work_id,
-				p_w.prod_id::text AS sortby, 0 AS lv
-		FROM prd_work_tb p_w 
-		JOIN prd_work_input_tb p_wi ON p_wi.work_id = p_w.work_id
-		LEFT JOIN prd_work_tb i_pw 	ON i_pw.prod_id = p_wi.prod_id 
-									AND i_pw.lot_no = p_wi.lot_no
-		LEFT JOIN std_factory_tb s_f ON s_f.factory_id = p_w.factory_id
-		WHERE p_w.prod_id = prodId AND p_w.lot_no = '${params.lot_no}'
-		AND s_f.factory_id = factoryId
+			SELECT  t_wr.proc_id, t_wr.equip_id, p_w.reg_date, p_w.prod_id, p_w.lot_no,
+							p_wi.prod_id AS input_prod_id, p_wi.lot_no AS input_lot_no, i_pw.work_id AS input_work_id,
+							p_w.prod_id::text AS sortby, 0 AS lv
+			FROM prd_work_tb p_w
+			JOIN temp_work_routing t_wr ON t_wr.work_id = p_w.work_id
+			JOIN prd_work_input_tb p_wi ON p_wi.work_id = p_w.work_id
+			LEFT JOIN prd_work_tb i_pw 	ON i_pw.prod_id = p_wi.prod_id 
+										AND i_pw.lot_no = p_wi.lot_no
+			LEFT JOIN std_factory_tb s_f ON s_f.factory_id = p_w.factory_id
+			WHERE p_w.prod_id = prodId AND p_w.lot_no = '${params.lot_no}'
+			AND s_f.factory_id = factoryId
 		
-		UNION
+			UNION
 		
-		SELECT 	p_w.proc_id, p_w.equip_id, p_w.reg_date, p_w.prod_id, p_w.lot_no,
-				p_wi.prod_id AS input_prod_id, p_wi.lot_no AS input_lot_no, i_pw.work_id AS input_work_id,
-				concat(l_t.sortby, ' > ', p_w.prod_id::text) AS concat, lv+1
-		FROM prd_work_tb p_w 
-		JOIN lot_tracking l_t ON l_t.input_work_id = p_w.work_id
-		JOIN prd_work_input_tb p_wi ON p_wi.work_id = p_w.work_id
-		LEFT JOIN prd_work_tb i_pw 	ON i_pw.prod_id = p_wi.prod_id 
-									AND i_pw.lot_no = p_wi.lot_no
-	)
-	SELECT 
-		l_t.proc_id, l_t.equip_id, l_t.reg_date, 
-		l_t.prod_id, l_t.lot_no, l_t.input_prod_id, l_t.input_lot_no,
-		m_r.partner_id, m_r.reg_date, sum(m_rd.qty), l_t.sortby,l_t.lv
-	FROM lot_tracking l_t 
-	LEFT JOIN mat_receive_detail_tb m_rd ON m_rd.prod_id = l_t.input_prod_id
-										AND m_rd.lot_no = l_t.input_lot_no
-										AND l_t.input_work_id IS NULL
-	LEFT JOIN mat_receive_tb m_r ON m_r.receive_id = m_rd.receive_id 
-	GROUP BY l_t.proc_id, l_t.equip_id, l_t.reg_date, 
-		l_t.prod_id, l_t.lot_no, l_t.input_prod_id, l_t.input_lot_no, 
-		m_r.partner_id, m_r.reg_date, m_rd.qty, l_t.sortby,l_t.lv
-	ORDER BY l_t.sortby, l_t.reg_date;
+			SELECT 	t_wr.proc_id, t_wr.equip_id, p_w.reg_date, p_w.prod_id, p_w.lot_no,
+							p_wi.prod_id AS input_prod_id, p_wi.lot_no AS input_lot_no, i_pw.work_id AS input_work_id,
+							concat(l_t.sortby, ' > ', p_w.prod_id::text) AS concat, lv+1
+			FROM prd_work_tb p_w
+			JOIN temp_work_routing t_wr ON t_wr.work_id = p_w.work_id
+			JOIN lot_tracking l_t ON l_t.input_work_id = p_w.work_id
+			JOIN prd_work_input_tb p_wi ON p_wi.work_id = p_w.work_id
+			LEFT JOIN prd_work_tb i_pw 	ON i_pw.prod_id = p_wi.prod_id 
+																	AND i_pw.lot_no = p_wi.lot_no
+		)
+		SELECT 
+			l_t.proc_id, l_t.equip_id, l_t.reg_date, 
+			l_t.prod_id, l_t.lot_no, l_t.input_prod_id, l_t.input_lot_no,
+			m_r.partner_id, m_r.reg_date, sum(m_rd.qty), l_t.sortby,l_t.lv
+		FROM lot_tracking l_t 
+		LEFT JOIN mat_receive_detail_tb m_rd ON m_rd.prod_id = l_t.input_prod_id
+											AND m_rd.lot_no = l_t.input_lot_no
+											AND l_t.input_work_id IS NULL
+		LEFT JOIN mat_receive_tb m_r ON m_r.receive_id = m_rd.receive_id 
+		GROUP BY l_t.proc_id, l_t.equip_id, l_t.reg_date, 
+			l_t.prod_id, l_t.lot_no, l_t.input_prod_id, l_t.input_lot_no, 
+			m_r.partner_id, m_r.reg_date, m_rd.qty, l_t.sortby,l_t.lv
+		ORDER BY l_t.sortby, l_t.reg_date;
 	`;
 	//#endregion
 
@@ -121,7 +144,7 @@ const readLotForwardReport = (
 		factoryId INT;
 	BEGIN
 		${searchId}
-		--lot, 품번으로 입하기준 lot 추적
+		
 		${createBaseTempTableQuery} 
 	END $$;
 		-- Filtering 되어있는 정보에 추가 테이블 Join 하여 조회

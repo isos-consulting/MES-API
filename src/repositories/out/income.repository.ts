@@ -140,48 +140,6 @@ class OutIncomeRepo {
     return convertReadResult(result);
   };
 
-  // 📒 Fn[readIncomeIdsToReceiveDetailUuids]: 입하 상세의 Uuid를 통하여 Id 를 포함한 Raw Data Read Function
-  public readIncomeIdsToReceiveDetailUuids = async(uuids: string[]) => {
-    const result = await this.repo.findAll({ 
-      include: [
-        { 
-          model: this.sequelize.models.OutReceiveDetail, 
-          attributes: [], 
-          required: true,
-          where: { uuid: uuids }
-        },
-      ],
-      attributes: [ 'income_id' ],
-    });
-
-    const incomeIds = convertReadResult(result).raws.map((data: any) => {
-      return data.income_id;
-    })
-
-    return incomeIds;
-  };
-
-  // 📒 Fn[readIncomeIdsToReceiveDetailIds]: 입하 상세의 Id를 통하여 Id 를 포함한 Raw Data Read Function
-  public readIncomeIdsToReceiveDetailIds = async(ids: number[]) => {
-    const result = await this.repo.findAll({ 
-      include: [
-        { 
-          model: this.sequelize.models.OutReceiveDetail, 
-          attributes: [], 
-          required: true,
-          where: { receive_detail_id: ids }
-        },
-      ],
-      attributes: [ 'income_id' ],
-    });
-
-    const incomeIds = convertReadResult(result).raws.map((data: any) => {
-      return data.income_id;
-    })
-
-    return incomeIds;
-  };
-
   //#endregion
 
   //#region 🟡 Update Functions
@@ -301,7 +259,21 @@ class OutIncomeRepo {
     }
   };
 
-  // 📒 Fn[update]: Pk(income_id)를 통하여 입고 데이터 삭제
+  // 📒 Fn[deleteByReceiveDetailIds]: 외주입하상세 기준 외주입고 데이터 삭제
+  public deleteByReceiveDetailIds = async(ids: number[], uid: number, transaction?: Transaction) => {
+    try {      
+      const previousRaws = await this.repo.findAll({ where: { receive_detail_id: { [Op.in]: ids } }, transaction });
+
+      const count = await this.repo.destroy({ where: { receive_detail_id: { [Op.in]: ids }}, transaction });
+
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.OutIncome.getTableName() as string, previousRaws, uid, transaction);
+      return { count, raws: previousRaws };
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  // 📒 Fn[deleteToPk]: Pk(income_id)를 통하여 입고 데이터 삭제
   deleteToPk = async(body: IOutIncome[], uid: number, transaction?: Transaction) => {
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);

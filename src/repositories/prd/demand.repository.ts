@@ -38,7 +38,7 @@ class PrdDemandRepo {
             factory_id: demand.factory_id,
             order_id: demand.order_id,
             reg_date: demand.reg_date,
-            demand_type_cd: demand.demand_type_cd,
+            demand_type_id: demand.demand_type_id,
             proc_id: demand.proc_id,
             equip_id: demand.equip_id,
             prod_id: demand.prod_id,

@@ -4,6 +4,7 @@ import StdProdRepo from '../../repositories/std/prod.repository';
 import StdProcRepo from '../../repositories/std/proc.repository';
 import StdRoutingRepo from '../../repositories/std/routing.repository';
 import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
+import IStdRouting from "../../interfaces/std/routing.interface";
 
 class StdRoutingService {
   tenant: string;
@@ -13,11 +14,12 @@ class StdRoutingService {
 
   constructor(tenant: string) {
     this.tenant = tenant;
-    this.stateTag = 'stdRouting';
+    this.stateTag = 'StdRouting';
     this.repo = new StdRoutingRepo(tenant);
 
+    // ✅ CUD 연산이 실행되기 전 Fk Table 의 uuid 로 id 를 검색하여 request body 에 삽입하기 위하여 정보 Setting
     this.fkIdInfos = [
-			{
+      {
         key: 'factory',
         TRepo: StdFactoryRepo,
         idName: 'factory_id',
@@ -41,15 +43,15 @@ class StdRoutingService {
   public convertFk = async (datas: any) => {
     // ✅ CUD 연산이 실행되기 전 Fk Table 의 uuid 로 id 를 검색하여 request body 에 삽입하기 위하여 정보 Setting
     return await getFkIdByUuid(this.tenant, datas, this.fkIdInfos);
-  }
+  };
 
-  public create = async (datas: any[], uid: number, tran: Transaction) => {
-    try { return await this.repo.create(datas, uid, tran); } 
+  public create = async (datas: IStdRouting[], uid: number, tran: Transaction) => {
+    try { return await this.repo.create(datas, uid, tran); }
 		catch (error) { throw error; }
-  }
+  };
 
   public read = async (params: any) => {
-    try { return await this.repo.read(params); } 
+    try { return await this.repo.read(params); }
 		catch (error) { throw error; }
   };
   
@@ -58,20 +60,31 @@ class StdRoutingService {
 		catch (error) { throw error; }
   };
 
-  public update = async (datas: any[], uid: number, tran: Transaction) => {
-    try { return await this.repo.update(datas, uid, tran); }
+  // 📒 Fn[readActivedProd]: 생산가능 품목 조회
+  public readOptionallyPrdActive = async (params: any) => {
+    try { return await this.repo.readOptionallyPrdActive(params); }
 		catch (error) { throw error; }
-  }
+  };
 
-  public patch = async (datas: any[], uid: number, tran: Transaction) => {
-    try { return await this.repo.patch(datas, uid, tran); }
+  public readOptionallyMove = async (params: any) => {
+    try { return await this.repo.readOptionallyMove(params); }
 		catch (error) { throw error; }
-  }
+  };
 
-  public delete = async (datas: any[], uid: number, tran: Transaction) => {
+  public update = async (datas: IStdRouting[], uid: number, tran: Transaction) => {
+    try { return await this.repo.update(datas, uid, tran); } 
+		catch (error) { throw error; }
+  };
+
+  public patch = async (datas: IStdRouting[], uid: number, tran: Transaction) => {
+    try { return await this.repo.patch(datas, uid, tran) }
+		catch (error) { throw error; }
+  };
+
+  public delete = async (datas: IStdRouting[], uid: number, tran: Transaction) => {
     try { return await this.repo.delete(datas, uid, tran); }
 		catch (error) { throw error; }
-  }
+  };
 }
 
 export default StdRoutingService;

@@ -1,11 +1,8 @@
 import { Sequelize, Table, Column, Model, DataType, CreatedAt, UpdatedAt, BelongsTo, Unique, ForeignKey } from 'sequelize-typescript'
 import IPrdOrder from '../../interfaces/prd/order.interface';
 import AutUser from '../aut/user.model';
-import MldMold from '../mld/mold.model';
 import SalOrderDetail from '../sal/order-detail.model';
-import StdEquip from '../std/equip.model';
 import StdFactory from '../std/factory.model';
-import StdProc from '../std/proc.model';
 import StdProd from '../std/prod.model';
 import StdShift from '../std/shift.model';
 import StdWorkerGroup from '../std/worker-group.model';
@@ -53,14 +50,6 @@ export default class PrdOrder extends Model<IPrdOrder> {
   })
   order_no: number;
 
-  @ForeignKey(() => StdProc)
-  @Column({
-    comment: '공정ID',
-    type: DataType.INTEGER,
-    allowNull: false,
-  })
-  proc_id: number;
-
   @ForeignKey(() => StdWorkings)
   @Column({
     comment: '작업장ID',
@@ -68,20 +57,6 @@ export default class PrdOrder extends Model<IPrdOrder> {
     allowNull: false,
   })
   workings_id: number;
-
-  @ForeignKey(() => StdEquip)
-  @Column({
-    comment: '설비ID',
-    type: DataType.INTEGER,
-  })
-  equip_id: number;
-
-  @ForeignKey(() => MldMold)
-  @Column({
-    comment: '금형ID',
-    type: DataType.INTEGER,
-  })
-  mold_id: number;
 
   @ForeignKey(() => StdProd)
   @Column({
@@ -223,17 +198,8 @@ export default class PrdOrder extends Model<IPrdOrder> {
   @BelongsTo(() => StdFactory, { foreignKey: 'factory_id', targetKey: 'factory_id', onDelete: 'restrict', onUpdate: 'cascade' })
   stdFactory: StdFactory;
 
-  @BelongsTo(() => StdProc, { foreignKey: 'proc_id', targetKey: 'proc_id', onDelete: 'restrict', onUpdate: 'cascade' })
-  stdProc: StdProc;
-
   @BelongsTo(() => StdWorkings, { foreignKey: 'workings_id', targetKey: 'workings_id', onDelete: 'restrict', onUpdate: 'cascade' })
   stdWorkings: StdWorkings;
-
-  @BelongsTo(() => StdEquip, { foreignKey: 'equip_id', targetKey: 'equip_id', onDelete: 'restrict', onUpdate: 'cascade' })
-  stdEquip: StdEquip;
-
-  @BelongsTo(() => MldMold, { foreignKey: 'mold_id', targetKey: 'mold_id', onDelete: 'restrict', onUpdate: 'cascade' })
-  mldMold: MldMold;
 
   @BelongsTo(() => StdProd, { foreignKey: 'prod_id', targetKey: 'prod_id', onDelete: 'restrict', onUpdate: 'cascade' })
   stdProd: StdProd;

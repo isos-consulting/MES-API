@@ -10,6 +10,8 @@ import { getSequelize } from '../../utils/getSequelize';
 import ApiResult from '../../interfaces/common/api-result.interface';
 import PrdWorkRouting from '../../models/prd/work-routing.model';
 import IPrdWorkRouting from '../../interfaces/prd/work-routing.interface';
+import { readFinalQtyByWork } from '../../queries/prd/work-routing-qty-by-work.query';
+import { readWorkRoutings } from '../../queries/prd/work-routing.query';
 
 class PrdWorkRoutingRepo {
   repo: Repository<PrdWorkRouting>;
@@ -40,10 +42,13 @@ class PrdWorkRoutingRepo {
             proc_no: workRouting.proc_no,
             workings_id: workRouting.workings_id,
             equip_id: workRouting.equip_id,
+            mold_id: workRouting.mold_id,
+            mold_cavity: workRouting.mold_cavity,
             qty: workRouting.qty,
             start_date: workRouting.start_date,
             end_date: workRouting.end_date,
             work_time: workRouting.work_time,
+            ongoing_fg: workRouting.ongoing_fg,
             remark: workRouting.remark,
             created_uid: uid,
             updated_uid: uid,
@@ -63,62 +68,12 @@ class PrdWorkRoutingRepo {
   //#endregion
 
   //#region 🔵 Read Functions
-  
   // 📒 Fn[read]: Default Read Function
   public read = async(params?: any) => {
     try {
-      const result = await this.repo.findAll({ 
-        include: [
-          { 
-            model: this.sequelize.models.StdFactory, 
-            attributes: [], 
-            required: true,
-            where: params.factory_uuid ? { uuid: params.factory_uuid } : {}
-          },
-          { 
-            model: this.sequelize.models.PrdWork,
-            attributes: [], 
-            required: true,
-            where: params.work_uuid ? { uuid: params.work_uuid } : {}
-          },
-          { model: this.sequelize.models.StdProc, attributes: [], required: true },
-          { model: this.sequelize.models.StdWorkings, attributes: [], required: true },
-          { model: this.sequelize.models.StdEquip, attributes: [], required: false },
-          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
-        ],
-        attributes: [
-          [ Sequelize.col('prdWorkRouting.uuid'), 'work_routing_uuid' ],
-          [ Sequelize.col('stdFactory.uuid'), 'factory_uuid' ],
-          [ Sequelize.col('stdFactory.factory_cd'), 'factory_cd' ],
-          [ Sequelize.col('stdFactory.factory_nm'), 'factory_nm' ],
-          [ Sequelize.col('prdWork.uuid'), 'work_uuid' ],
-          [ Sequelize.col('stdProc.uuid'), 'proc_uuid' ],
-          [ Sequelize.col('stdProc.proc_cd'), 'proc_cd' ],
-          [ Sequelize.col('stdProc.proc_nm'), 'proc_nm' ],
-          'proc_no',
-          [ Sequelize.col('stdWorkings.uuid'), 'workings_uuid' ],
-          [ Sequelize.col('stdWorkings.workings_cd'), 'workings_cd' ],
-          [ Sequelize.col('stdWorkings.workings_nm'), 'workings_nm' ],
-          [ Sequelize.col('stdEquip.uuid'), 'equip_uuid' ],
-          [ Sequelize.col('stdEquip.equip_cd'), 'equip_cd' ],
-          [ Sequelize.col('stdEquip.equip_nm'), 'equip_nm' ],
-          'qty',
-          'start_date',
-          [ Sequelize.col('prdWorkRouting.start_date'), 'start_time' ],
-          'end_date',
-          [ Sequelize.col('prdWorkRouting.end_date'), 'end_time' ],
-          'work_time',
-          'remark',
-          'created_at',
-          [ Sequelize.col('createUser.user_nm'), 'created_nm' ],
-          'updated_at',
-          [ Sequelize.col('updateUser.user_nm'), 'updated_nm' ]
-        ],
-        order: [ 'factory_id', 'work_id', 'proc_no' ]
-      });
+      const result = await this.sequelize.query(readWorkRoutings(params));
 
-      return convertReadResult(result);
+      return convertReadResult(result[0]);
     } catch (error) {
       throw error;
     }
@@ -127,55 +82,135 @@ class PrdWorkRoutingRepo {
   // 📒 Fn[readByUuid]: Default Read With Uuid Function
   public readByUuid = async(uuid: string, params?: any) => {
     try {
-      const result = await this.repo.findOne({ 
-        include: [
-          { model: this.sequelize.models.StdFactory, attributes: [], required: true },
-          { model: this.sequelize.models.PrdWork,attributes: [], required: true },
-          { model: this.sequelize.models.StdProc, attributes: [], required: true },
-          { model: this.sequelize.models.StdWorkings, attributes: [], required: true },
-          { model: this.sequelize.models.StdEquip, attributes: [], required: false },
-          { model: this.sequelize.models.StdUnitConvert,attributes: [], required: false },
-          { model: this.sequelize.models.StdStore, attributes: [], required: false },
-          { model: this.sequelize.models.StdLocation, attributes: [], required: false },
-          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
-        ],
-        attributes: [
-          [ Sequelize.col('prdWorkRouting.uuid'), 'work_routing_uuid' ],
-          [ Sequelize.col('stdFactory.uuid'), 'factory_uuid' ],
-          [ Sequelize.col('stdFactory.factory_cd'), 'factory_cd' ],
-          [ Sequelize.col('stdFactory.factory_nm'), 'factory_nm' ],
-          [ Sequelize.col('prdWork.uuid'), 'work_uuid' ],
-          [ Sequelize.col('stdProc.uuid'), 'proc_uuid' ],
-          [ Sequelize.col('stdProc.proc_cd'), 'proc_cd' ],
-          [ Sequelize.col('stdProc.proc_nm'), 'proc_nm' ],
-          'proc_no',
-          [ Sequelize.col('stdWorkings.uuid'), 'workings_uuid' ],
-          [ Sequelize.col('stdWorkings.workings_cd'), 'workings_cd' ],
-          [ Sequelize.col('stdWorkings.workings_nm'), 'workings_nm' ],
-          [ Sequelize.col('stdEquip.uuid'), 'equip_uuid' ],
-          [ Sequelize.col('stdEquip.equip_cd'), 'equip_cd' ],
-          [ Sequelize.col('stdEquip.equip_nm'), 'equip_nm' ],
-          'qty',
-          'start_date',
-          [ Sequelize.col('prdWorkRouting.start_date'), 'start_time' ],
-          'end_date',
-          [ Sequelize.col('prdWorkRouting.end_date'), 'end_time' ],
-          'work_time',
-          'remark',
-          'created_at',
-          [ Sequelize.col('createUser.user_nm'), 'created_nm' ],
-          'updated_at',
-          [ Sequelize.col('updateUser.user_nm'), 'updated_nm' ]
-        ],
-        where: { uuid }
-      });
+      const result = await this.sequelize.query(readWorkRoutings({ uuid: uuid }));
 
-      return convertReadResult(result);
+      return convertReadResult(result[0]);
     } catch (error) {
       throw error;
     }
   };
+  
+  // // 📒 Fn[read]: Default Read Function
+  // public read = async(params?: any) => {
+  //   try {
+  //     const result = await this.repo.findAll({ 
+  //       include: [
+  //         { 
+  //           model: this.sequelize.models.StdFactory, 
+  //           attributes: [], 
+  //           required: true,
+  //           where: params.factory_uuid ? { uuid: params.factory_uuid } : {}
+  //         },
+  //         { 
+  //           model: this.sequelize.models.PrdWork,
+  //           attributes: [], 
+  //           required: true,
+  //           where: params.work_uuid ? { uuid: params.work_uuid } : {}
+  //         },
+  //         { model: this.sequelize.models.StdProc, attributes: [], required: true },
+  //         { model: this.sequelize.models.StdWorkings, attributes: [], required: true },
+  //         { model: this.sequelize.models.StdEquip, attributes: [], required: false },
+  //         { model: this.sequelize.models.MldMold, attributes: [], required: false },
+  //         { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+  //         { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+  //       ],
+  //       attributes: [
+  //         [ Sequelize.col('prdWorkRouting.uuid'), 'work_routing_uuid' ],
+  //         [ Sequelize.col('stdFactory.uuid'), 'factory_uuid' ],
+  //         [ Sequelize.col('stdFactory.factory_cd'), 'factory_cd' ],
+  //         [ Sequelize.col('stdFactory.factory_nm'), 'factory_nm' ],
+  //         [ Sequelize.col('prdWork.uuid'), 'work_uuid' ],
+  //         [ Sequelize.col('stdProc.uuid'), 'proc_uuid' ],
+  //         [ Sequelize.col('stdProc.proc_cd'), 'proc_cd' ],
+  //         [ Sequelize.col('stdProc.proc_nm'), 'proc_nm' ],
+  //         'proc_no',
+  //         [ Sequelize.col('stdWorkings.uuid'), 'workings_uuid' ],
+  //         [ Sequelize.col('stdWorkings.workings_cd'), 'workings_cd' ],
+  //         [ Sequelize.col('stdWorkings.workings_nm'), 'workings_nm' ],
+  //         [ Sequelize.col('stdEquip.uuid'), 'equip_uuid' ],
+  //         [ Sequelize.col('stdEquip.equip_cd'), 'equip_cd' ],
+  //         [ Sequelize.col('stdEquip.equip_nm'), 'equip_nm' ],
+  //         [ Sequelize.col('mldMold.uuid'), 'mold_uuid' ],
+  //         [ Sequelize.col('mldMold.mold_cd'), 'mold_cd' ],
+  //         [ Sequelize.col('mldMold.mold_nm'), 'mold_nm' ],
+  //         'mold_cavity',
+  //         'qty',
+  //         'start_date',
+  //         [ Sequelize.col('prdWorkRouting.start_date'), 'start_time' ],
+  //         'end_date',
+  //         [ Sequelize.col('prdWorkRouting.end_date'), 'end_time' ],
+  //         'work_time',
+  //         'ongoing_fg',
+  //         'remark',
+  //         'created_at',
+  //         [ Sequelize.col('createUser.user_nm'), 'created_nm' ],
+  //         'updated_at',
+  //         [ Sequelize.col('updateUser.user_nm'), 'updated_nm' ]
+  //       ],
+  //       order: [ 'factory_id', 'work_id', 'proc_no' ]
+  //     });
+
+  //     return convertReadResult(result);
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // };
+
+  // // 📒 Fn[readByUuid]: Default Read With Uuid Function
+  // public readByUuid = async(uuid: string, params?: any) => {
+  //   try {
+  //     const result = await this.repo.findOne({ 
+  //       include: [
+  //         { model: this.sequelize.models.StdFactory, attributes: [], required: true },
+  //         { model: this.sequelize.models.PrdWork,attributes: [], required: true },
+  //         { model: this.sequelize.models.StdProc, attributes: [], required: true },
+  //         { model: this.sequelize.models.StdWorkings, attributes: [], required: true },
+  //         { model: this.sequelize.models.StdEquip, attributes: [], required: false },
+  //         { model: this.sequelize.models.MldMold, attributes: [], required: false },
+  //         { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+  //         { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+  //       ],
+  //       attributes: [
+  //         [ Sequelize.col('prdWorkRouting.uuid'), 'work_routing_uuid' ],
+  //         [ Sequelize.col('stdFactory.uuid'), 'factory_uuid' ],
+  //         [ Sequelize.col('stdFactory.factory_cd'), 'factory_cd' ],
+  //         [ Sequelize.col('stdFactory.factory_nm'), 'factory_nm' ],
+  //         [ Sequelize.col('prdWork.uuid'), 'work_uuid' ],
+  //         [ Sequelize.col('stdProc.uuid'), 'proc_uuid' ],
+  //         [ Sequelize.col('stdProc.proc_cd'), 'proc_cd' ],
+  //         [ Sequelize.col('stdProc.proc_nm'), 'proc_nm' ],
+  //         'proc_no',
+  //         [ Sequelize.col('stdWorkings.uuid'), 'workings_uuid' ],
+  //         [ Sequelize.col('stdWorkings.workings_cd'), 'workings_cd' ],
+  //         [ Sequelize.col('stdWorkings.workings_nm'), 'workings_nm' ],
+  //         [ Sequelize.col('stdEquip.uuid'), 'equip_uuid' ],
+  //         [ Sequelize.col('stdEquip.equip_cd'), 'equip_cd' ],
+  //         [ Sequelize.col('stdEquip.equip_nm'), 'equip_nm' ],
+  //         [ Sequelize.col('mldMold.uuid'), 'mold_uuid' ],
+  //         [ Sequelize.col('mldMold.mold_cd'), 'mold_cd' ],
+  //         [ Sequelize.col('mldMold.mold_nm'), 'mold_nm' ],
+  //         'mold_cavity',
+  //         'qty',
+  //         'start_date',
+  //         [ Sequelize.col('prdWorkRouting.start_date'), 'start_time' ],
+  //         'end_date',
+  //         [ Sequelize.col('prdWorkRouting.end_date'), 'end_time' ],
+  //         'work_time',
+  //         'ongoing_fg',
+  //         'remark',
+  //         'created_at',
+  //         [ Sequelize.col('createUser.user_nm'), 'created_nm' ],
+  //         'updated_at',
+  //         [ Sequelize.col('updateUser.user_nm'), 'updated_nm' ]
+  //       ],
+  //       where: { uuid }
+  //     });
+
+  //     return convertReadResult(result);
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // };
 
   // 📒 Fn[readRawsByUuids]: Id 를 포함한 Raw Datas Read Function
   public readRawsByUuids = async(uuids: string[]) => {
@@ -195,6 +230,21 @@ class PrdWorkRoutingRepo {
     return convertReadResult(result);
   };
 
+  // 📒 Fn[getFinalQtyByWork]: 생산실적 기준 마지막 공정순서 생산수량 조회
+  public getFinalQtyByWork = async(workId?: number) => {
+    try {
+      const result = await this.sequelize.query(readFinalQtyByWork(workId));
+
+      if (!result) { return result; }
+      
+      const qty: number = convertReadResult(result[0]).raws[0].qty;
+      return qty;
+
+    } catch (error) {
+      throw error;
+    }
+  };
+
   //#endregion
 
   //#region 🟡 Update Functions
@@ -209,10 +259,13 @@ class PrdWorkRoutingRepo {
           {
             workings_id: workRouting.workings_id ?? null,
             equip_id: workRouting.equip_id ?? null,
+            mold_id: workRouting.mold_id ?? null,
+            mold_cavity: workRouting.mold_cavity ?? null,
             qty: workRouting.qty ?? null,
             start_date: workRouting.start_date ?? null,
             end_date: workRouting.end_date ?? null,
             work_time: workRouting.work_time ?? null,
+            ongoing_fg: workRouting.ongoing_fg ?? null,
             remark: workRouting.remark ?? null,
             updated_uid: uid,
           } as any,
@@ -248,10 +301,13 @@ class PrdWorkRoutingRepo {
           {
             workings_id: workRouting.workings_id,
             equip_id: workRouting.equip_id,
+            mold_id: workRouting.mold_id,
+            mold_cavity: workRouting.mold_cavity,
             qty: workRouting.qty,
             start_date: workRouting.start_date,
             end_date: workRouting.end_date,
             work_time: workRouting.work_time,
+            ongoing_fg: workRouting.ongoing_fg,
             remark: workRouting.remark,
             updated_uid: uid,
           },

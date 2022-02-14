@@ -23,7 +23,6 @@ const seedDatas: ISalOutgoDetail[] = [
 		"from_store_id" : 3,
 		"from_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "64b0d612-caef-43dd-9f13-629bba09113e"
@@ -47,7 +46,6 @@ const seedDatas: ISalOutgoDetail[] = [
 		"from_store_id" : 4,
 		"from_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "c9759582-27bd-4258-b8f2-feb60cdf9fe1"
@@ -71,7 +69,6 @@ const seedDatas: ISalOutgoDetail[] = [
 		"from_store_id" : 3,
 		"from_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "1583c12d-7ad0-4cde-bd4f-df1a2256dadc"
@@ -95,7 +92,6 @@ const seedDatas: ISalOutgoDetail[] = [
 		"from_store_id" : 3,
 		"from_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "783c39c5-0023-4b6b-b921-6911be624037"
@@ -119,7 +115,6 @@ const seedDatas: ISalOutgoDetail[] = [
 		"from_store_id" : 3,
 		"from_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "658096f0-c978-4c00-afcc-d4e26e1f1220"
@@ -143,7 +138,6 @@ const seedDatas: ISalOutgoDetail[] = [
 		"from_store_id" : 3,
 		"from_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "498a7e9f-6701-4d33-b79d-d8801a8e7cdc"
@@ -167,7 +161,6 @@ const seedDatas: ISalOutgoDetail[] = [
 		"from_store_id" : 4,
 		"from_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "22c44b4e-6e5a-4b9a-a1a3-a0b19f923efe"
@@ -191,7 +184,6 @@ const seedDatas: ISalOutgoDetail[] = [
 		"from_store_id" : 4,
 		"from_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "81f04e64-a28a-4b42-a84a-855ad111918d"
@@ -215,7 +207,6 @@ const seedDatas: ISalOutgoDetail[] = [
 		"from_store_id" : 4,
 		"from_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "f6cd67e5-e229-4226-9562-555c4ef55e72"
@@ -239,7 +230,6 @@ const seedDatas: ISalOutgoDetail[] = [
 		"from_store_id" : 4,
 		"from_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "108b297e-1e73-45bc-81fa-4b004472cc8f"
@@ -263,7 +253,6 @@ const seedDatas: ISalOutgoDetail[] = [
 		"from_store_id" : 4,
 		"from_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "c2456c2c-09ee-4a3f-9472-edf9c3cad0a2"
@@ -287,7 +276,6 @@ const seedDatas: ISalOutgoDetail[] = [
 		"from_store_id" : 3,
 		"from_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "6430d21d-93b3-4887-8607-c7e7ad75a07b"
@@ -311,7 +299,6 @@ const seedDatas: ISalOutgoDetail[] = [
 		"from_store_id" : 4,
 		"from_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "d80f4946-8591-43d6-903c-ced53d2e3d6f"
@@ -335,7 +322,6 @@ const seedDatas: ISalOutgoDetail[] = [
 		"from_store_id" : 3,
 		"from_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "77551b0b-010b-42b6-afc3-ba4cd52be00f"
@@ -359,7 +345,6 @@ const seedDatas: ISalOutgoDetail[] = [
 		"from_store_id" : 3,
 		"from_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "4fb81d32-2f43-4d3c-ac73-3f0639d79f58"
@@ -383,7 +368,6 @@ const seedDatas: ISalOutgoDetail[] = [
 		"from_store_id" : 4,
 		"from_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "c08c95ba-4adc-4feb-89d0-37c36545ab0d"
@@ -407,7 +391,6 @@ const seedDatas: ISalOutgoDetail[] = [
 		"from_store_id" : 4,
 		"from_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "f0a9c05d-d50c-45c6-8bb6-39b335445d29"
@@ -431,7 +414,6 @@ const seedDatas: ISalOutgoDetail[] = [
 		"from_store_id" : 3,
 		"from_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "82f67845-6950-4f81-a547-fb1186c6d1f5"
@@ -455,7 +437,6 @@ const seedDatas: ISalOutgoDetail[] = [
 		"from_store_id" : 3,
 		"from_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "c31dab39-3233-4b45-9723-06d8cf779516"
@@ -479,7 +460,6 @@ const seedDatas: ISalOutgoDetail[] = [
 		"from_store_id" : 3,
 		"from_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "458a9f96-1443-4866-a918-1f614d80b2ff"
@@ -503,7 +483,6 @@ const seedDatas: ISalOutgoDetail[] = [
 		"from_store_id" : 4,
 		"from_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "47e75f6b-c01f-426e-9054-538a579e52c8"
@@ -527,7 +506,6 @@ const seedDatas: ISalOutgoDetail[] = [
 		"from_store_id" : 4,
 		"from_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "f254c4e7-5849-4f83-9691-5f6d04c5a9b1"
@@ -551,7 +529,6 @@ const seedDatas: ISalOutgoDetail[] = [
 		"from_store_id" : 3,
 		"from_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "014f8dd1-553b-4e13-9bdc-ef79c48270dd"
@@ -575,7 +552,6 @@ const seedDatas: ISalOutgoDetail[] = [
 		"from_store_id" : 3,
 		"from_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "d0078691-d7d7-4ac0-b338-347bec4ee9a0"
@@ -599,7 +575,6 @@ const seedDatas: ISalOutgoDetail[] = [
 		"from_store_id" : 3,
 		"from_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "ff776ec8-e98b-4538-b4f5-8cd3147a3dba"
@@ -623,7 +598,6 @@ const seedDatas: ISalOutgoDetail[] = [
 		"from_store_id" : 3,
 		"from_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "f94177f8-1ea3-4037-919c-619059291218"
@@ -647,7 +621,6 @@ const seedDatas: ISalOutgoDetail[] = [
 		"from_store_id" : 3,
 		"from_location_id" : 4,
 		"remark" : "",
-		"barcode" : "",
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "aca94919-56be-44a7-a212-c2bc564bc0db"

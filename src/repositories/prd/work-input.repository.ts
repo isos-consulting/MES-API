@@ -10,8 +10,8 @@ import { getSequelize } from '../../utils/getSequelize';
 import ApiResult from '../../interfaces/common/api-result.interface';
 import PrdWorkInput from '../../models/prd/work-input.model';
 import IPrdWorkInput from '../../interfaces/prd/work-input.interface';
-import { readWorkInputs } from '../../queries/prd/work-input-ongoing.query';
-import { readWorkInputGroups } from '../../queries/prd/work-input-ongoing-group.query';
+import { readWorkInputGroup } from '../../queries/prd/work-input-group.query';
+import { readWorkInputs } from '../../queries/prd/work-input.query';
 
 class PrdWorkInputRepo {
   repo: Repository<PrdWorkInput>;
@@ -43,6 +43,7 @@ class PrdWorkInputRepo {
             qty: workInput.qty,
             c_usage: workInput.c_usage,
             unit_id: workInput.unit_id,
+            bom_input_type_id: workInput.bom_input_type_id,
             from_store_id: workInput.from_store_id,
             from_location_id: workInput.from_location_id,
             remark: workInput.remark,
@@ -64,93 +65,103 @@ class PrdWorkInputRepo {
   //#endregion
 
   //#region 🔵 Read Functions
-  
+
   // 📒 Fn[read]: Default Read Function
   public read = async(params?: any) => {
-    try {
-      const result = await this.repo.findAll({ 
-        include: [
-          { 
-            model: this.sequelize.models.StdFactory, 
-            attributes: [], 
-            required: true,
-            where: params.factory_uuid ? { uuid: params.factory_uuid } : {}
-          },
-          { 
-            model: this.sequelize.models.PrdWork,
-            attributes: [], 
-            required: true,
-            where: params.work_uuid ? { uuid: params.work_uuid } : {}
-          },
-          {
-            model: this.sequelize.models.StdProd, 
-            attributes: [], 
-            required: true,
-            include: [
-              { model: this.sequelize.models.StdItemType, attributes: [], required: false },
-              { model: this.sequelize.models.StdProdType, attributes: [], required: false },
-              { model: this.sequelize.models.StdModel, attributes: [], required: false },
-              { model: this.sequelize.models.StdUnit, as: 'stdUnit', attributes: [], required: false },
-            ]
-          },
-          { model: this.sequelize.models.StdUnit, attributes: [], required: true },
-          { 
-            model: this.sequelize.models.StdUnitConvert,
-            attributes: [], 
-            required: false,
-            where: Sequelize.where(Sequelize.col('stdUnitConvert.to_unit_id'), '=', Sequelize.col('stdUnit.unit_id'))
-          },
-          { model: this.sequelize.models.StdStore, attributes: [], required: false },
-          { model: this.sequelize.models.StdLocation, attributes: [], required: false },
-          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
-        ],
-        attributes: [
-          [ Sequelize.col('prdWorkInput.uuid'), 'work_input_uuid' ],
-          [ Sequelize.col('stdFactory.uuid'), 'factory_uuid' ],
-          [ Sequelize.col('stdFactory.factory_cd'), 'factory_cd' ],
-          [ Sequelize.col('stdFactory.factory_nm'), 'factory_nm' ],
-          [ Sequelize.col('prdWork.uuid'), 'work_uuid' ],
-          [ Sequelize.col('stdProd.uuid'), 'prod_uuid' ],
-          [ Sequelize.col('stdProd.prod_no'), 'prod_no' ],
-          [ Sequelize.col('stdProd.prod_nm'), 'prod_nm' ],
-          [ Sequelize.col('stdProd.stdItemType.uuid'), 'item_type_uuid' ],
-          [ Sequelize.col('stdProd.stdItemType.item_type_cd'), 'item_type_cd' ],
-          [ Sequelize.col('stdProd.stdItemType.item_type_nm'), 'item_type_nm' ],
-          [ Sequelize.col('stdProd.stdProdType.uuid'), 'prod_type_uuid' ],
-          [ Sequelize.col('stdProd.stdProdType.prod_type_cd'), 'prod_type_cd' ],
-          [ Sequelize.col('stdProd.stdProdType.prod_type_nm'), 'prod_type_nm' ],
-          [ Sequelize.col('stdProd.stdModel.uuid'), 'model_uuid' ],
-          [ Sequelize.col('stdProd.stdModel.model_cd'), 'model_cd' ],
-          [ Sequelize.col('stdProd.stdModel.model_nm'), 'model_nm' ],
-          [ Sequelize.col('stdProd.rev'), 'rev' ],
-          [ Sequelize.col('stdProd.prod_std'), 'prod_std' ],
-          [ Sequelize.col('stdUnit.uuid'), 'unit_uuid' ],
-          [ Sequelize.col('stdUnit.unit_cd'), 'unit_cd' ],
-          [ Sequelize.col('stdUnit.unit_nm'), 'unit_nm' ],
-          'lot_no',
-          'qty',
-          [ Sequelize.literal('prdWorkInput.c_usage * COALESCE(stdUnitConvert.convert_value, 1)'), 'c_usage' ],
-          [ Sequelize.col('stdStore.uuid'), 'from_store_uuid' ],
-          [ Sequelize.col('stdStore.store_cd'), 'from_store_cd' ],
-          [ Sequelize.col('stdStore.store_nm'), 'from_store_nm' ],
-          [ Sequelize.col('stdLocation.uuid'), 'from_location_uuid' ],
-          [ Sequelize.col('stdLocation.location_cd'), 'from_location_cd' ],
-          [ Sequelize.col('stdLocation.location_nm'), 'from_location_nm' ],
-          'remark',
-          'created_at',
-          [ Sequelize.col('createUser.user_nm'), 'created_nm' ],
-          'updated_at',
-          [ Sequelize.col('updateUser.user_nm'), 'updated_nm' ]
-        ],
-        order: [ 'factory_id', 'work_id' ]
-      });
-
-      return convertReadResult(result);
-    } catch (error) {
-      throw error;
-    }
+    const result = await this.sequelize.query(readWorkInputs(params));
+    return convertReadResult(result[0]);
   };
+  
+  // // 📒 Fn[read]: Default Read Function
+  // public read = async(params?: any) => {
+  //   try {
+  //     const result = await this.repo.findAll({ 
+  //       include: [
+  //         { 
+  //           model: this.sequelize.models.StdFactory, 
+  //           attributes: [], 
+  //           required: true,
+  //           where: params.factory_uuid ? { uuid: params.factory_uuid } : {}
+  //         },
+  //         { 
+  //           model: this.sequelize.models.PrdWork,
+  //           attributes: [], 
+  //           required: true,
+  //           where: params.work_uuid ? { uuid: params.work_uuid } : {}
+  //         },
+  //         {
+  //           model: this.sequelize.models.StdProd, 
+  //           attributes: [], 
+  //           required: true,
+  //           include: [
+  //             { model: this.sequelize.models.StdItemType, attributes: [], required: false },
+  //             { model: this.sequelize.models.StdProdType, attributes: [], required: false },
+  //             { model: this.sequelize.models.StdModel, attributes: [], required: false },
+  //             { model: this.sequelize.models.StdUnit, as: 'stdUnit', attributes: [], required: false },
+  //           ]
+  //         },
+  //         { model: this.sequelize.models.StdUnit, attributes: [], required: true },
+  //         { 
+  //           model: this.sequelize.models.StdUnitConvert,
+  //           attributes: [], 
+  //           required: false,
+  //           where: Sequelize.where(Sequelize.col('stdUnitConvert.to_unit_id'), '=', Sequelize.col('stdUnit.unit_id'))
+  //         },
+  //         { model: this.sequelize.models.AdmBomInputType, attributes: [], required: false },
+  //         { model: this.sequelize.models.StdStore, attributes: [], required: false },
+  //         { model: this.sequelize.models.StdLocation, attributes: [], required: false },
+  //         { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+  //         { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+  //       ],
+  //       attributes: [
+  //         [ Sequelize.col('prdWorkInput.uuid'), 'work_input_uuid' ],
+  //         [ Sequelize.col('stdFactory.uuid'), 'factory_uuid' ],
+  //         [ Sequelize.col('stdFactory.factory_cd'), 'factory_cd' ],
+  //         [ Sequelize.col('stdFactory.factory_nm'), 'factory_nm' ],
+  //         [ Sequelize.col('prdWork.uuid'), 'work_uuid' ],
+  //         [ Sequelize.col('stdProd.uuid'), 'prod_uuid' ],
+  //         [ Sequelize.col('stdProd.prod_no'), 'prod_no' ],
+  //         [ Sequelize.col('stdProd.prod_nm'), 'prod_nm' ],
+  //         [ Sequelize.col('stdProd.stdItemType.uuid'), 'item_type_uuid' ],
+  //         [ Sequelize.col('stdProd.stdItemType.item_type_cd'), 'item_type_cd' ],
+  //         [ Sequelize.col('stdProd.stdItemType.item_type_nm'), 'item_type_nm' ],
+  //         [ Sequelize.col('stdProd.stdProdType.uuid'), 'prod_type_uuid' ],
+  //         [ Sequelize.col('stdProd.stdProdType.prod_type_cd'), 'prod_type_cd' ],
+  //         [ Sequelize.col('stdProd.stdProdType.prod_type_nm'), 'prod_type_nm' ],
+  //         [ Sequelize.col('stdProd.stdModel.uuid'), 'model_uuid' ],
+  //         [ Sequelize.col('stdProd.stdModel.model_cd'), 'model_cd' ],
+  //         [ Sequelize.col('stdProd.stdModel.model_nm'), 'model_nm' ],
+  //         [ Sequelize.col('stdProd.rev'), 'rev' ],
+  //         [ Sequelize.col('stdProd.prod_std'), 'prod_std' ],
+  //         [ Sequelize.col('stdUnit.uuid'), 'unit_uuid' ],
+  //         [ Sequelize.col('stdUnit.unit_cd'), 'unit_cd' ],
+  //         [ Sequelize.col('stdUnit.unit_nm'), 'unit_nm' ],
+  //         'lot_no',
+  //         'qty',
+  //         [ Sequelize.literal('prdWorkInput.c_usage * COALESCE(stdUnitConvert.convert_value, 1)'), 'c_usage' ],
+  //         [ Sequelize.col('admBomInputType.uuid'), 'bom_input_type_uuid' ],
+  //         [ Sequelize.col('admBomInputType.bom_input_type_cd'), 'bom_input_type_cd' ],
+  //         [ Sequelize.col('admBomInputType.bom_input_type_nm'), 'bom_input_type_nm' ],
+  //         [ Sequelize.col('stdStore.uuid'), 'from_store_uuid' ],
+  //         [ Sequelize.col('stdStore.store_cd'), 'from_store_cd' ],
+  //         [ Sequelize.col('stdStore.store_nm'), 'from_store_nm' ],
+  //         [ Sequelize.col('stdLocation.uuid'), 'from_location_uuid' ],
+  //         [ Sequelize.col('stdLocation.location_cd'), 'from_location_cd' ],
+  //         [ Sequelize.col('stdLocation.location_nm'), 'from_location_nm' ],
+  //         'remark',
+  //         'created_at',
+  //         [ Sequelize.col('createUser.user_nm'), 'created_nm' ],
+  //         'updated_at',
+  //         [ Sequelize.col('updateUser.user_nm'), 'updated_nm' ]
+  //       ],
+  //       order: [ 'factory_id', 'work_id' ]
+  //     });
+
+  //     return convertReadResult(result);
+  //   } catch (error) {
+  //     throw error;
+  //   }
+  // };
 
   // 📒 Fn[readByUuid]: Default Read With Uuid Function
   public readByUuid = async(uuid: string, params?: any) => {
@@ -177,6 +188,7 @@ class PrdWorkInputRepo {
             required: false,
             where: Sequelize.where(Sequelize.col('stdUnitConvert.to_unit_id'), '=', Sequelize.col('stdUnit.unit_id'))
           },
+          { model: this.sequelize.models.AdmBomInputType, attributes: [], required: false },
           { model: this.sequelize.models.StdStore, attributes: [], required: false },
           { model: this.sequelize.models.StdLocation, attributes: [], required: false },
           { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
@@ -208,6 +220,9 @@ class PrdWorkInputRepo {
           'lot_no',
           'qty',
           [ Sequelize.literal('prdWorkInput.c_usage * COALESCE(stdUnitConvert.convert_value, 1)'), 'c_usage' ],
+          [ Sequelize.col('admBomInputType.uuid'), 'bom_input_type_uuid' ],
+          [ Sequelize.col('admBomInputType.bom_input_type_cd'), 'bom_input_type_cd' ],
+          [ Sequelize.col('admBomInputType.bom_input_type_nm'), 'bom_input_type_nm' ],
           [ Sequelize.col('stdStore.uuid'), 'from_store_uuid' ],
           [ Sequelize.col('stdStore.store_cd'), 'from_store_cd' ],
           [ Sequelize.col('stdStore.store_nm'), 'from_store_nm' ],
@@ -247,20 +262,10 @@ class PrdWorkInputRepo {
     return convertReadResult(result);
   };
 
-  // 📒 Fn[readOngoing]: 진행중인 생산실적의 자재 투입데이터 Read Function
-  public readOngoing = async(params?: any) => {
+  // 📒 Fn[readWorkInputGroup]: 생산실적의 자재 투입 그룹 Read Function (비입력)
+  public readWorkInputGroup = async(params?: any) => {
     try {
-      const result = await this.sequelize.query(readWorkInputs(params));
-      return convertReadResult(result[0]);
-    } catch (error) {
-      throw error;
-    }
-  };
-
-  // 📒 Fn[readOngoingGroup]: 진행중인 생산실적의 자재 투입데이터 Read Function
-  public readOngoingGroup = async(params?: any) => {
-    try {
-      const result = await this.sequelize.query(readWorkInputGroups(params));
+      const result = await this.sequelize.query(readWorkInputGroup(params));
       return convertReadResult(result[0]);
     } catch (error) {
       throw error;
@@ -295,6 +300,7 @@ class PrdWorkInputRepo {
           {
             lot_no: workInput.lot_no ?? null,
             qty: workInput.qty ?? null,
+            bom_input_type_id: workInput.bom_input_type_id ?? null,
             remark: workInput.remark ?? null,
             updated_uid: uid,
           } as any,
@@ -330,6 +336,7 @@ class PrdWorkInputRepo {
           {
             lot_no: workInput.lot_no,
             qty: workInput.qty,
+            bom_input_type_id: workInput.bom_input_type_id,
             remark: workInput.remark,
             updated_uid: uid,
           },

@@ -49,7 +49,6 @@ class SalReturnDetailRepo {
             to_store_id: returnDetail.to_store_id,
             to_location_id: returnDetail.to_location_id,
             remark: returnDetail.remark,
-            barcode: returnDetail.barcode,
             created_uid: uid,
             updated_uid: uid,
           },

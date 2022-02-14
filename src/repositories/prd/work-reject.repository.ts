@@ -12,6 +12,7 @@ import PrdWorkReject from '../../models/prd/work-reject.model';
 import IPrdWorkReject from '../../interfaces/prd/work-reject.interface';
 import { readWorkRejectReport } from '../../queries/prd/work-reject-report.query';
 import { readWorkRejectsByWork } from '../../queries/prd/work-reject-by-work.query';
+import { readFinalRejectQtyByWork } from '../../queries/prd/work-reject-qty-by-work.query';
 
 class PrdWorkRejectRepo {
   repo: Repository<PrdWorkReject>;
@@ -78,17 +79,18 @@ class PrdWorkRejectRepo {
             model: this.sequelize.models.PrdWork,
             attributes: [], 
             required: true,
-          where: params.work_uuid ? { uuid: params.work_uuid } : {}
+            where: params.work_uuid ? { uuid: params.work_uuid } : {}
           },
           { 
             model: this.sequelize.models.PrdWorkRouting, 
             attributes: [], 
-            required: false,
+            required: true,
             include: [
               { model: this.sequelize.models.StdProc, attributes: [], required: false },
               { model: this.sequelize.models.StdWorkings, attributes: [], required: false },
               { model: this.sequelize.models.StdEquip, attributes: [], required: false },
-            ]
+            ],
+            where: params.work_routing_uuid ? { uuid: params.work_routing_uuid } : {}
           },
           { 
             model: this.sequelize.models.StdReject,
@@ -162,7 +164,7 @@ class PrdWorkRejectRepo {
           { 
             model: this.sequelize.models.PrdWorkRouting, 
             attributes: [], 
-            required: false,
+            required: true,
             include: [
               { model: this.sequelize.models.StdProc, attributes: [], required: false },
               { model: this.sequelize.models.StdWorkings, attributes: [], required: false },
@@ -239,7 +241,20 @@ class PrdWorkRejectRepo {
 
   // 📒 Fn[readRawsByWorkId]: 생산실적의 Id를 이용하여 Raw Data Read Function
   public readRawsByWorkId = async(workId: number, transaction?: Transaction) => {
-    const result = await this.repo.findAll({ where: { work_id: workId }, transaction });
+    const result = await this.repo.findAll({ 
+      include: [
+        { model: this.sequelize.models.PrdWork, attributes: [], required: true },
+      ],
+      attributes: [
+        [ Sequelize.col('prdWorkReject.work_reject_id'), 'work_reject_id' ],
+        [ Sequelize.col('prdWorkReject.factory_id'), 'factory_id' ],
+        [ Sequelize.col('PrdWork.prod_id'), 'prod_id' ],
+        [ Sequelize.col('prdWork.lot_no'), 'lot_no' ],
+        [ Sequelize.col('prdWorkReject.qty'), 'qty' ],
+        [ Sequelize.col('PrdWork.to_store_id'), 'to_store_id' ],
+        [ Sequelize.col('PrdWork.to_location_id'), 'to_location_id' ],
+      ], 
+      where: { work_id: workId }, transaction });
     return convertReadResult(result);
   };
 
@@ -252,21 +267,6 @@ class PrdWorkRejectRepo {
       throw error;
     }
   };
-
-  // 📒 Fn[getWorkRejectIdsByWorkId]: 생산실적의 Id를 이용하여 PK Read Function
-  public getWorkRejectIdsByWorkId = async(workId: number, transaction?: Transaction) => {
-    const result = await this.repo.findAll({
-      attributes: [ 'work_reject_id' ],
-      where: { work_id: workId }, 
-      transaction 
-    });
-    const converted = convertReadResult(result);
-    const workRejectIds: number[] = []; 
-    converted.raws.forEach((raw: any) => { workRejectIds.push(raw.work_reject_id); });
-
-    return workRejectIds;
-  };
-
   // 📒 Fn[readByWork]: 생산실적 기준 공정별 부적합 List 및 현재 등록되어있는 부적합 조회
   public readByWork = async(params?: any) => {
     try {
@@ -277,6 +277,48 @@ class PrdWorkRejectRepo {
       throw error;
     }
   };
+
+  // 📒 Fn[getFinalRejectQtyByWork]: 생산실적 기준 마지막 공정 부적합수량 조회
+  public getFinalRejectQtyByWork = async(params?: any, transaction?: Transaction) => {
+    try {
+      const result = await this.sequelize.query(readFinalRejectQtyByWork(params));
+
+      if (!result) { return result; }
+
+      const qty: number = convertReadResult(result[0]).raws[0].qty ?? 0;
+      return qty;
+
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  // 📒 Fn[getTotalRejectQtyByWork]: 생산실적 기준 전체공정 부적합수량(합계) 조회
+  /**
+   * 전표단위의 상세전표 개수 조회
+   * @param returnId 전표 ID
+   * @param transaction Transaction
+   * @returns 전표단위의 상세전표 개수
+   */
+   getTotalRejectQtyByWork = async(workId: number, transaction?: Transaction) => {
+    try {
+      const result = await this.repo.findOne({ 
+        attributes: [
+          [ Sequelize.fn('sum', Sequelize.col('qty')), 'qty' ],
+        ],
+        where: { work_id: workId },
+        transaction
+      });
+
+      if (!result) { return result; }
+
+      const qty: number = (result as any).dataValues.qty ?? 0;
+      return qty;
+      
+    } catch (error) {
+      throw error;
+    }
+  }
 
   //#endregion
 

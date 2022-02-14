@@ -49,6 +49,14 @@ unit_id:
       type: number
       format: int4
 
+bom_input_type_id: 
+  type: object
+  properties: 
+    bom_input_type_id:
+      description: 투입방법ID
+      type: number
+      format: int4
+
 from_store_id: 
   type: object
   properties: 
@@ -119,6 +127,14 @@ unit_uuid:
   properties: 
     unit_uuid:
       description: 단위UUID
+      type: string
+      format: uuid
+
+bom_input_type_uuid:
+  type: object
+  properties: 
+    bom_input_type_uuid:
+      description: 투입방법UUID
       type: string
       format: uuid
 

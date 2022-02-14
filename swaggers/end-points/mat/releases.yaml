@@ -1,14 +1,14 @@
 get:
   description: |
-    자재공정출고 데이터 목록을 조회합니다.
-  summary: 자재공정출고 데이터 조회
+    자재출고 데이터 목록을 조회합니다.
+  summary: 자재출고 데이터 조회
   tags:
-    - 자재공정출고(Release)
+    - 자재출고(Release)
   parameters:
     - name: factory_uuid
       in: query
       description: |
-        공장의 UUID를 입력하여 공장에 따라 자재공정출고 데이터를 조회합니다. <br/>
+        공장의 UUID를 입력하여 공장에 따라 자재출고 데이터를 조회합니다. <br/>
         [전체 조회시 입력하지 않습니다.]
       schema:
         type: string
@@ -17,7 +17,7 @@ get:
     - name: start_date
       in: query
       required: true
-      description: 자재공정출고 이력을 조회할 기준 시작일자를 입력합니다.
+      description: 자재출고 이력을 조회할 기준 시작일자를 입력합니다.
       schema:
         type: string
         format: date
@@ -25,7 +25,7 @@ get:
     - name: end_date
       in: query
       required: true
-      description: 자재공정출고 이력을 조회할 기준 종료일자를 입력합니다.
+      description: 자재출고 이력을 조회할 기준 종료일자를 입력합니다.
       schema:
         type: string
         format: date
@@ -54,7 +54,7 @@ get:
                             format: int32
                             minimum: 0
                       raws:
-                        description: 자재공정출고 데이터 목록
+                        description: 자재출고 데이터 목록
                         type: array
                         items:
                           allOf:
@@ -83,7 +83,8 @@ get:
                             - $ref: ../../schemas/mat/release.schema.yaml#/lot_no
                             - $ref: ../../schemas/mat/release.schema.yaml#/qty
                             - $ref: ../../schemas/mat/release.schema.yaml#/demand_uuid
-                            - $ref: ../../schemas/prd/demand.schema.yaml#/demand_type_cd
+                            - $ref: ../../schemas/prd/demand.schema.yaml#/demand_type_uuid
+                            - $ref: ../../schemas/adm/demand-type.schema.yaml#/demand_type_cd
                             - $ref: ../../schemas/adm/demand-type.schema.yaml#/demand_type_nm
                             - $ref: ../../schemas/mat/release.schema.yaml#/from_store_uuid
                             - $ref: ../../schemas/std/store.schema.yaml#/from_store_cd
@@ -98,17 +99,16 @@ get:
                             - $ref: ../../schemas/std/location.schema.yaml#/to_location_cd
                             - $ref: ../../schemas/std/location.schema.yaml#/to_location_nm
                             - $ref: ../../schemas/mat/release.schema.yaml#/remark
-                            - $ref: ../../schemas/mat/release.schema.yaml#/barcode
                             - $ref: ../../schemas/common/timestamp.schema.yaml
     500:
       $ref: ../../responses/common/general-error.response.yaml
 
 post:
   description: |
-    자재공정출고 데이터를 생성합니다.
-  summary: 자재공정출고 데이터 생성
+    자재출고 데이터를 생성합니다.
+  summary: 자재출고 데이터 생성
   tags:
-    - 자재공정출고(Release)
+    - 자재출고(Release)
   requestBody:
     content:
       application/json:
@@ -133,7 +133,6 @@ post:
             - $ref: ../../schemas/mat/release.schema.yaml#/to_store_uuid
             - $ref: ../../schemas/mat/release.schema.yaml#/to_location_uuid
             - $ref: ../../schemas/mat/release.schema.yaml#/remark
-            - $ref: ../../schemas/mat/release.schema.yaml#/barcode
   responses:
     201:
       $ref: ../../responses/common/succeed-create.response.yaml
@@ -142,10 +141,10 @@ post:
 
 put:
   description: |
-    자재공정출고 데이터를 행(Row) 단위로 수정합니다.
-  summary: 자재공정출고 데이터 수정
+    자재출고 데이터를 행(Row) 단위로 수정합니다.
+  summary: 자재출고 데이터 수정
   tags:
-    - 자재공정출고(Release)
+    - 자재출고(Release)
   requestBody:
     content:
       application/json:
@@ -165,10 +164,10 @@ put:
 
 patch:
   description: |
-    자재공정출고 데이터를 개별 항목 단위로 수정합니다.
-  summary: 자재공정출고 데이터 수정
+    자재출고 데이터를 개별 항목 단위로 수정합니다.
+  summary: 자재출고 데이터 수정
   tags:
-    - 자재공정출고(Release)
+    - 자재출고(Release)
   requestBody:
     content:
       application/json:
@@ -187,10 +186,10 @@ patch:
 
 delete:
   description: |
-    자재공정출고 데이터를 삭제합니다.
-  summary: 자재공정출고 데이터 삭제
+    자재출고 데이터를 삭제합니다.
+  summary: 자재출고 데이터 삭제
   tags:
-    - 자재공정출고(Release)
+    - 자재출고(Release)
   requestBody:
     content:
       application/json:

@@ -39,6 +39,7 @@ class PrdOrderInputRepo {
             prod_id: orderInput.prod_id,
             c_usage: orderInput.c_usage,
             unit_id: orderInput.unit_id,
+            bom_input_type_id: orderInput.bom_input_type_id,
             from_store_id: orderInput.from_store_id,
             from_location_id: orderInput.from_location_id,
             remark: orderInput.remark,
@@ -96,6 +97,7 @@ class PrdOrderInputRepo {
             required: false,
             where: Sequelize.where(Sequelize.col('stdUnitConvert.to_unit_id'), '=', Sequelize.col('stdUnit.unit_id'))
           },
+          { model: this.sequelize.models.AdmBomInputType, attributes: [], required: false },
           { model: this.sequelize.models.StdStore, attributes: [], required: false },
           { model: this.sequelize.models.StdLocation, attributes: [], required: false },
           { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
@@ -126,6 +128,9 @@ class PrdOrderInputRepo {
           [ Sequelize.col('stdUnit.unit_cd'), 'unit_cd' ],
           [ Sequelize.col('stdUnit.unit_nm'), 'unit_nm' ],
           [ Sequelize.literal('prdOrderInput.c_usage * COALESCE(stdUnitConvert.convert_value, 1)'), 'c_usage' ],
+          [ Sequelize.col('admBomInputType.uuid'), 'bom_input_type_uuid' ],
+          [ Sequelize.col('admBomInputType.bom_input_type_cd'), 'bom_input_type_cd' ],
+          [ Sequelize.col('admBomInputType.bom_input_type_nm'), 'bom_input_type_nm' ],
           [ Sequelize.col('stdStore.uuid'), 'from_store_uuid' ],
           [ Sequelize.col('stdStore.store_cd'), 'from_store_cd' ],
           [ Sequelize.col('stdStore.store_nm'), 'from_store_nm' ],
@@ -167,6 +172,7 @@ class PrdOrderInputRepo {
           },
           { model: this.sequelize.models.StdUnit, attributes: [], required: true },
           { model: this.sequelize.models.StdUnitConvert,attributes: [], required: false },
+          { model: this.sequelize.models.AdmBomInputType, attributes: [], required: false },
           { model: this.sequelize.models.StdStore, attributes: [], required: false },
           { model: this.sequelize.models.StdLocation, attributes: [], required: false },
           { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
@@ -197,6 +203,9 @@ class PrdOrderInputRepo {
           [ Sequelize.col('stdUnit.unit_cd'), 'unit_cd' ],
           [ Sequelize.col('stdUnit.unit_nm'), 'unit_nm' ],
           [ Sequelize.literal('prdOrderInput.c_usage * COALESCE(stdUnitConvert.convert_value, 1)'), 'c_usage' ],
+          [ Sequelize.col('admBomInputType.uuid'), 'bom_input_type_uuid' ],
+          [ Sequelize.col('admBomInputType.bom_input_type_cd'), 'bom_input_type_cd' ],
+          [ Sequelize.col('admBomInputType.bom_input_type_nm'), 'bom_input_type_nm' ],
           [ Sequelize.col('stdStore.uuid'), 'from_store_uuid' ],
           [ Sequelize.col('stdStore.store_cd'), 'from_store_cd' ],
           [ Sequelize.col('stdStore.store_nm'), 'from_store_nm' ],
@@ -231,7 +240,7 @@ class PrdOrderInputRepo {
   };
 
   // 📒 Fn[readRawsByOrderId]: 작업지시의 Id를 이용하여 Raw Data Read Function
-  public readRawsByOrderId = async(orderId: string, transaction?: Transaction) => {
+  public readRawsByOrderId = async(orderId: number, transaction?: Transaction) => {
     const result = await this.repo.findAll({ where: { order_id: orderId }, transaction });
     return convertReadResult(result);
   };
@@ -250,6 +259,7 @@ class PrdOrderInputRepo {
           {
             c_usage: orderInput.c_usage ?? null,
             unit_id: orderInput.unit_id ?? null,
+            bom_input_type_id: orderInput.bom_input_type_id ?? null,
             from_store_id: orderInput.from_store_id ?? null,
             from_location_id: orderInput.from_location_id ?? null,
             remark: orderInput.remark ?? null,
@@ -287,6 +297,7 @@ class PrdOrderInputRepo {
           {
             c_usage: orderInput.c_usage,
             unit_id: orderInput.unit_id,
+            bom_input_type_id: orderInput.bom_input_type_id,
             from_store_id: orderInput.from_store_id,
             from_location_id: orderInput.from_location_id,
             remark: orderInput.remark,

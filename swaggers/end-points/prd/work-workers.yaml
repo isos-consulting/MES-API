@@ -23,6 +23,15 @@ get:
         type: string
         format: uuid
 
+    - name: work_routing_uuid
+      in: query
+      description: |
+        실적-공정순서의 UUID를 입력하여 실적-공정순서에 따라 실적별 작업자투입 데이터를 조회합니다. <br/>
+        [전체 조회시 입력하지 않습니다.]
+      schema:
+        type: string
+        format: uuid
+
   responses:
     200:
       description: Read OK
@@ -56,6 +65,7 @@ get:
                             - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
                             - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
                             - $ref: ../../schemas/prd/work-worker.schema.yaml#/work_uuid
+                            - $ref: ../../schemas/prd/work-worker.schema.yaml#/work_routing_uuid
                             - $ref: ../../schemas/prd/work-worker.schema.yaml#/worker_uuid
                             - $ref: ../../schemas/std/worker.schema.yaml#/worker_nm
                             - $ref: ../../schemas/prd/work-worker.schema.yaml#/start_date
@@ -79,10 +89,12 @@ post:
           required:
             - factory_uuid
             - work_uuid
+            - work_routing_uuid
             - worker_uuid
           allOf:
             - $ref: ../../schemas/prd/work-worker.schema.yaml#/factory_uuid
             - $ref: ../../schemas/prd/work-worker.schema.yaml#/work_uuid
+            - $ref: ../../schemas/prd/work-worker.schema.yaml#/work_routing_uuid
             - $ref: ../../schemas/prd/work-worker.schema.yaml#/worker_uuid
             - $ref: ../../schemas/prd/work-worker.schema.yaml#/start_date
             - $ref: ../../schemas/prd/work-worker.schema.yaml#/end_date

@@ -2,7 +2,6 @@ const readRoutingMove = (
   params: {
     factory_id : number,
     prod_id : number,
-    equip_id : number,
   }) => {
     let searchQuery: string = '';
     if (params.factory_id) { searchQuery += ` AND s_r.factory_id = '${params.factory_id}'`; }
@@ -15,8 +14,8 @@ const readRoutingMove = (
 
     /** 임시테이블 저장 쿼리 셋팅 */
     const querysToInsertingTempTable = `
-      INSERT INTO temp_routing(routing_id, factory_id, proc_id, proc_no, prod_id, equip_id, auto_work_fg)
-      SELECT s_r.routing_id, s_r.factory_id, s_r.proc_id, s_r.proc_no, s_r.prod_id, (case when s_r.proc_rank = 1 then ${params.equip_id} end)::int, s_r.auto_work_fg
+      INSERT INTO temp_routing(routing_id, factory_id, proc_id, proc_no, prod_id, auto_work_fg)
+      SELECT s_r.routing_id, s_r.factory_id, s_r.proc_id, s_r.proc_no, s_r.prod_id, s_r.auto_work_fg
       FROM (	SELECT *, RANK() OVER(PARTITION BY s_r.factory_id, s_r.prod_id ORDER BY s_r.proc_no DESC) AS proc_rank
           FROM std_routing_tb s_r) s_r
       LEFT JOIN std_factory_tb s_f ON s_f.factory_id = s_r.factory_id   
@@ -48,6 +47,8 @@ const readRoutingMove = (
         s_p.prod_no,
         s_p.prod_nm,
         t_r.equip_id,
+        s_e.equip_cd,
+        s_e.equip_nm,
         s_p.item_type_id,
         s_it.item_type_cd,
         s_it.item_type_nm,

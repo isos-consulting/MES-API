@@ -20,6 +20,66 @@ const readOrders = (
     searchQuery = 'WHERE' + searchQuery;
   }
 
+  const createTempTableRouting = `
+    /** 임시테이블 생성 */
+    CREATE TEMP TABLE temp_order_routing(factory_id int, order_id int, proc_id int, equip_id int, mold_id int, mold_cavity int);
+    /** 임시테이블 인덱스 설정 */
+    CREATE INDEX ON temp_order_routing(order_id);
+
+    /** wait */
+    -- 대기상태인 지시기준으로 라우팅정보를 가져올때는 공정순서가 가장 빠른 공정을 가져옴
+    WITH wait AS
+    (
+      SELECT 
+        p_or.factory_id, p_or.order_id, p_or.proc_id, p_or.equip_id, p_or.mold_id, p_or.mold_cavity, 
+        rank() over(PARTITION BY p_or.factory_id, p_or.order_id ORDER BY p_or.proc_no ASC) AS rn
+      FROM prd_order_routing_tb p_or
+      JOIN prd_order_tb p_o ON p_o.order_id = p_or.order_id 
+      WHERE p_o.complete_fg = FALSE AND p_o.work_fg = FALSE 
+    )
+    INSERT INTO temp_order_routing
+    SELECT factory_id, order_id, proc_id, equip_id, mold_id, mold_cavity 
+    FROM wait 
+    WHERE rn = 1;
+    
+    /** complete */
+    -- 마감된 지시 기준으로 라우팅정보를 가져올때는 공정순서가 마지막인 공정을 가져옴
+    WITH complete AS
+    (
+      SELECT 
+        p_or.factory_id, p_or.order_id, p_or.proc_id, p_or.equip_id, p_or.mold_id, p_or.mold_cavity, 
+        rank() over(PARTITION BY p_or.factory_id, p_or.order_id ORDER BY p_or.proc_no DESC) AS rn
+      FROM prd_order_routing_tb p_or
+      JOIN prd_order_tb p_o ON p_o.order_id = p_or.order_id 
+      WHERE p_o.complete_fg = TRUE 
+    )
+    INSERT INTO temp_order_routing
+    SELECT factory_id, order_id, proc_id, equip_id, mold_id, mold_cavity 
+    FROM complete 
+    WHERE rn = 1;
+    
+    /** ongoing */
+    -- 작업중인 실적 기준으로 현재 생산공정에 대한 데이터를 가져오기 위한 쿼리
+    -- 첫번째 기준 : ongoing_fg(현재 생산중인 공정에 대한 Flag)값이 True인 공정 중 마지막공정
+    -- 두번째 기준 : 양품수량이 등록 되어있는 공정 중 마지막 공정
+    -- 세번째 기준 : 위 두개 기준에 모두 값이 null 또는 false 인 경우 작업은 시작했지만 생산이 되지 않았다고 판단하여 첫번째 공정을 가져옴
+    WITH ongoing AS 
+    (
+      SELECT
+        p_wr.factory_id, p_w.order_id, p_wr.proc_id, p_wr.equip_id, p_wr.mold_id, p_wr.mold_cavity, 
+        max(COALESCE(p_wr.ongoing_fg,FALSE)::int * p_wr.proc_no), max((CASE WHEN COALESCE(p_wr.qty,0) > 0 THEN 1 ELSE 0 END) * p_wr.proc_no),
+        rank() over(PARTITION BY p_wr.factory_id, p_w.order_id ORDER BY max(COALESCE(p_wr.ongoing_fg,FALSE)::int * p_wr.proc_no) DESC, max((CASE WHEN COALESCE(p_wr.qty,0) > 0 THEN 1 ELSE 0 END) * p_wr.proc_no) DESC, p_wr.proc_no ASC) AS rn
+      FROM prd_work_routing_tb p_wr
+      JOIN prd_work_tb p_w ON p_w.work_id = p_wr.work_id
+      WHERE p_w.complete_fg = FALSE
+      GROUP BY p_wr.factory_id, p_w.order_id, p_wr.proc_id, p_wr.proc_no, p_wr.equip_id, p_wr.mold_id, p_wr.mold_cavity
+    )
+    INSERT INTO temp_order_routing
+    SELECT factory_id, order_id, proc_id, equip_id, mold_id, mold_cavity
+    FROM ongoing 
+    WHERE rn = 1;
+  `;
+
   const createTempTable = `
     CREATE TEMP TABLE temp_order AS
     SELECT
@@ -42,7 +102,7 @@ const readOrders = (
       m_m.mold_cd,
       m_m.mold_nm,
       m_m.mold_no,
-      m_m.cavity as mold_cavity,
+      t_or.mold_cavity,
       s_p.uuid as prod_uuid,
       s_p.prod_no,
       s_p.prod_nm,
@@ -96,10 +156,11 @@ const readOrders = (
       a_uu.user_nm AS updated_nm
     FROM prd_order_tb p_o
     JOIN std_factory_tb s_f ON s_f.factory_id = p_o.factory_id
-    JOIN std_proc_tb s_pc ON s_pc.proc_id = p_o.proc_id
     JOIN std_workings_tb s_ws ON s_ws.workings_id = p_o.workings_id
-    LEFT JOIN std_equip_tb s_e ON s_e.equip_id = p_o.equip_id
-    LEFT JOIN mld_mold_tb m_m ON m_m.mold_id = p_o.mold_id
+    LEFT JOIN temp_order_routing t_or ON t_or.order_id = p_o.order_id
+    LEFT JOIN std_proc_tb s_pc ON s_pc.proc_id = t_or.proc_id
+    LEFT JOIN std_equip_tb s_e ON s_e.equip_id = t_or.equip_id
+    LEFT JOIN mld_mold_tb m_m ON m_m.mold_id = t_or.mold_id
     JOIN std_prod_tb s_p ON s_p.prod_id = p_o.prod_id
     LEFT JOIN std_item_type_tb s_it ON s_it.item_type_id = s_p.item_type_id
     LEFT JOIN std_prod_type_tb s_pt ON s_pt.prod_type_id = s_p.prod_type_id
@@ -112,11 +173,11 @@ const readOrders = (
     LEFT JOIN sal_order_detail_tb s_od ON s_od.order_detail_id = p_o.sal_order_detail_id
     LEFT JOIN sal_order_tb s_o ON s_o.order_id = s_od.order_id
     LEFT JOIN (	SELECT p_w.order_id, sum(COALESCE(p_w.qty, 0)) AS qty, sum(COALESCE(p_w.reject_qty, 0)) AS reject_qty
-          FROM prd_work_tb p_w
-          GROUP BY p_w.order_id ) p_w ON p_w.order_id = p_o.order_id
+                FROM prd_work_tb p_w
+                GROUP BY p_w.order_id ) p_w ON p_w.order_id = p_o.order_id
     LEFT JOIN (	SELECT p_ow.order_id, count(p_ow.*) AS cnt 
-          FROM prd_order_worker_tb p_ow
-          GROUP BY p_ow.order_id ) p_ow ON p_ow.order_id = p_o.order_id
+                FROM prd_order_worker_tb p_ow
+                GROUP BY p_ow.order_id ) p_ow ON p_ow.order_id = p_o.order_id
     LEFT JOIN aut_user_tb a_uc ON a_uc.uid = p_o.created_uid
     LEFT JOIN aut_user_tb a_uu ON a_uu.uid = p_o.updated_uid
     ${searchQuery};
@@ -149,12 +210,16 @@ const readOrders = (
   //#region 📌 임시테이블 Drop
   // 📌 생성된 임시테이블(Temp Table) 삭제(Drop)
   const dropTempTable = `
+    DROP TABLE temp_order_routing;
     DROP TABLE temp_order;
   `;
   //#endregion
 
   //#region 📒 Main Query
   const query = `
+    -- 작업지시 정보를 가져오기 전 작업 별 공정, 설비, 금형에 대한 데이터 셋팅
+    ${createTempTableRouting}
+    
     -- 작업지시 정보를 가지고있는 임시테이블 생성 및 데이터 삽입
     ${createTempTable}
 

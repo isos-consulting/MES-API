@@ -19,9 +19,6 @@ const readWorkDowntimeReport = (
       equip_id int,
       prod_id int,
       lot_no varchar(25),
-      total_qty numeric,
-      qty numeric,
-      reject_qty numeric,
       work_start_date timestamp,
       work_end_date timestamp, 
       downtime_id int,
@@ -36,21 +33,18 @@ const readWorkDowntimeReport = (
 
   const insertDataToTempTable = `
     INSERT INTO temp_downtime
-    SELECT 
+    SELECT
       p_wd.work_downtime_id,
       p_wd.factory_id,
-      p_w.work_id,
+      p_wd.work_id,
       p_w.reg_date,
-      p_w.proc_id,
-      p_w.workings_id,
-      p_w.equip_id,
+      p_wr.proc_id,
+      p_wr.workings_id,
+      p_wr.equip_id,
       p_w.prod_id,
       p_w.lot_no,
-      COALESCE(p_w.qty, 0)+ COALESCE(p_w.reject_qty, 0),
-      COALESCE(p_w.qty, 0),
-      COALESCE(p_w.reject_qty, 0),
-      p_w.start_date,
-      p_w.end_date,
+      p_wr.start_date,
+      p_wr.end_date,
       p_wd.downtime_id,
       p_wd.start_date,
       p_wd.end_date,
@@ -60,7 +54,8 @@ const readWorkDowntimeReport = (
       p_wd.updated_at, p_wd.updated_uid, a_uu.user_nm
     FROM prd_work_downtime_tb p_wd
     JOIN std_factory_tb s_f ON s_f.factory_id = p_wd.factory_id
-    JOIN prd_work_tb p_w ON p_w.work_id = p_wd.work_id
+    JOIN prd_work_tb p_w ON p_w.work_id = p_wd.work_id 
+    JOIN prd_work_routing_tb p_wr ON p_wr.work_routing_id = p_wd.work_routing_id
     LEFT JOIN aut_user_tb a_uc ON a_uc.uid = p_wd.created_uid
     LEFT JOIN aut_user_tb a_uu ON a_uu.uid = p_wd.updated_uid
     WHERE p_w.complete_fg = TRUE
@@ -112,9 +107,6 @@ const readWorkDowntimeReport = (
       s_u.unit_cd,
       s_u.unit_nm,
       t_d.lot_no,
-      COALESCE(t_d.total_qty,0) as total_qty,
-      COALESCE(t_d.qty,0) as qty,
-      COALESCE(t_d.reject_qty,0) as reject_qty,
       t_d.work_start_date,
       t_d.work_end_date,
       s_dt.uuid as downtime_type_uuid,

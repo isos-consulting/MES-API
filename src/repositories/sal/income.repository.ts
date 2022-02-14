@@ -45,7 +45,6 @@ class SalIncomeRepo {
             to_store_id: income.to_store_id,
             to_location_id: income.to_location_id,
             remark: income.remark,
-            barcode: income.barcode,
             created_uid: uid,
             updated_uid: uid,
           },

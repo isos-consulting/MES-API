@@ -14,6 +14,5 @@ export default interface ISalOutgo {
   created_uid?: number,
   updated_at?: Date,
   updated_uid?: number,
-  uuid?: string,
-  tenant_uuid?: string
+  uuid?: string
 }

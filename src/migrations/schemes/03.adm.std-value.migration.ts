@@ -132,7 +132,7 @@ let seedDatas: IAdmStdValue[] = [
 	{
 		std_value_id: 15,
 		std_value_cd: 'MOPI',
-		value: '자재공정출고',
+		value: '자재출고',
 		std_id: 2,
 		sortby: 3,
 		created_uid: 1,

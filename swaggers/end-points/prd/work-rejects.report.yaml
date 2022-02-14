@@ -82,7 +82,7 @@ get:
                             - $ref: ../../schemas/prd/work.schema.yaml#/workings_uuid
                             - $ref: ../../schemas/std/workings.schema.yaml#/workings_cd
                             - $ref: ../../schemas/std/workings.schema.yaml#/workings_nm
-                            - $ref: ../../schemas/prd/work.schema.yaml#/equip_uuid
+                            - $ref: ../../schemas/std/equip.schema.yaml#/equip_uuid
                             - $ref: ../../schemas/std/equip.schema.yaml#/equip_cd
                             - $ref: ../../schemas/std/equip.schema.yaml#/equip_nm
                             - $ref: ../../schemas/prd/work.schema.yaml#/prod_uuid
@@ -103,21 +103,15 @@ get:
                             - $ref: ../../schemas/std/unit.schema.yaml#/unit_cd
                             - $ref: ../../schemas/std/unit.schema.yaml#/unit_nm
                             - $ref: ../../schemas/prd/work.schema.yaml#/lot_no
-                            - $ref: ../../schemas/prd/work.schema.yaml#/total_qty
-                            - $ref: ../../schemas/prd/work.schema.yaml#/qty
-                            - $ref: ../../schemas/prd/work.schema.yaml#/reject_qty
-                            - $ref: ../../schemas/prd/work.schema.yaml#/start_date
-                            - $ref: ../../schemas/prd/work.schema.yaml#/end_date
-                            - $ref: ../../schemas/prd/work-reject.schema.yaml#/reject_proc_uuid
-                            - $ref: ../../schemas/prd/work-reject.schema.yaml#/reject_proc_cd
-                            - $ref: ../../schemas/prd/work-reject.schema.yaml#/reject_proc_nm
+                            - $ref: ../../schemas/prd/work-reject.schema.yaml#/qty
+                            - $ref: ../../schemas/prd/work-routing.schema.yaml#/start_date
+                            - $ref: ../../schemas/prd/work-routing.schema.yaml#/end_date
                             - $ref: ../../schemas/std/reject.schema.yaml#/reject_type_uuid
                             - $ref: ../../schemas/std/reject-type.schema.yaml#/reject_type_cd
                             - $ref: ../../schemas/std/reject-type.schema.yaml#/reject_type_nm
                             - $ref: ../../schemas/prd/work-reject.schema.yaml#/reject_uuid
                             - $ref: ../../schemas/std/reject.schema.yaml#/reject_cd
                             - $ref: ../../schemas/std/reject.schema.yaml#/reject_nm
-                            - $ref: ../../schemas/prd/work-reject.schema.yaml#/reject_detail_qty
                             - $ref: ../../schemas/prd/work-reject.schema.yaml#/remark
                             - $ref: ../../schemas/common/timestamp.schema.yaml
   500:

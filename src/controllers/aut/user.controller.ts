@@ -199,7 +199,6 @@ class AutUserCtl extends BaseCtl {
 
   // 📒 Fn[afterDelete] (✅ Inheritance): Delete Transaction 이 실행된 후 호출되는 Function
   afterDelete = async(req: express.Request, result: ApiResult<any>) => {
-    console.log(result);
     const cache = new AutUserCache(req.tenant.uuid);
     
     let tempResult = [];

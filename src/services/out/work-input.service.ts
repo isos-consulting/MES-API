@@ -118,6 +118,7 @@ class OutWorkInputService {
       factory_id: number,
       prod_id: number,
       qty: number,
+      unit_id: number,
       receive_detail_id: number
     }, 
     regDate: string, 
@@ -138,9 +139,10 @@ class OutWorkInputService {
         const calculated = await inventoryService.getCalculatedFifoData(
           {
             factory_id: child.factory_id,
-            prod_id: child.prod_id,
+            prod_id: child.c_prod_id,
             store_id: storeId,
             partner_id: partnerId,
+            unit_id: child.unit_id,
           },
           regDate,
           params.qty * child.c_usage,
@@ -156,6 +158,7 @@ class OutWorkInputService {
             lot_no: cal.lot_no,
             qty: cal.qty,
             c_usage: child.c_usage,
+            unit_id: cal.unit_id,
             from_store_id: storeId
           }
         });
@@ -166,7 +169,7 @@ class OutWorkInputService {
     //    결과물: 투입데이터를 가지고 있는 배열
     let result: any[] = [];
     resultArray.forEach(data => { result = [...result, ...data]; });
-
+    
     return result;
   }
 

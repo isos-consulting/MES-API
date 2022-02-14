@@ -46,6 +46,7 @@ get:
                             - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
                             - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
                             - $ref: ../../schemas/prd/work-worker.schema.yaml#/work_uuid
+                            - $ref: ../../schemas/prd/work-worker.schema.yaml#/work_routing_uuid
                             - $ref: ../../schemas/prd/work-worker.schema.yaml#/worker_uuid
                             - $ref: ../../schemas/std/worker.schema.yaml#/worker_nm
                             - $ref: ../../schemas/prd/work-worker.schema.yaml#/start_date

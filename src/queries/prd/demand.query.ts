@@ -37,7 +37,8 @@ const readDemands = (
       s_f.factory_nm,
       p_o.uuid as order_uuid,
       p_d.reg_date,
-      p_d.demand_type_cd,
+      a_dt.uuid as demand_type_uuid,
+      a_dt.demand_type_cd,
       a_dt.demand_type_nm,
       s_pc.uuid as proc_uuid,
       s_pc.proc_cd,
@@ -94,7 +95,7 @@ const readDemands = (
     LEFT JOIN std_model_tb s_m ON s_m.model_id = s_p.model_id
     LEFT JOIN std_unit_tb s_u ON s_u.unit_id = s_p.unit_id
     LEFT JOIN std_dept_tb s_d ON s_d.dept_id = p_d.dept_id
-    LEFT JOIN adm_demand_type_vw a_dt ON a_dt.demand_type_cd = p_d.demand_type_cd
+    LEFT JOIN adm_demand_type_tb a_dt ON a_dt.demand_type_id = p_d.demand_type_id
     LEFT JOIN std_store_tb t_ss ON t_ss.store_id = p_d.to_store_id
     LEFT JOIN std_location_tb t_sl ON t_sl.location_id = p_d.to_location_id
     LEFT JOIN (
