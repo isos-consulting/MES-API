@@ -15,6 +15,9 @@ const stdFactoryValidation = {
 			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'factory_nm', '공장명'))
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'factory_nm', '공장명')),
 	],
+	read: [
+
+	],
   readByUuid: [ 
     param('uuid', '공장UUID')
 			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '공장UUID'))

@@ -15,6 +15,9 @@ const stdDeptValidation = {
 			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'dept_nm', '부서명'))
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'dept_nm', '부서명')),
 	],
+	read: [
+
+	],
   readByUuid: [ 
     param('uuid', '부서UUID')
 			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '부서UUID'))

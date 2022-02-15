@@ -15,6 +15,9 @@ const stdMoneyUnitValidation = {
 			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'money_unit_nm', '화폐 단위'))
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'money_unit_nm', '화폐 단위')),
 	],
+	read: [
+
+	],
   readByUuid: [ 
     param('uuid', '화폐 단위UUID')
 			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '화폐 단위UUID'))

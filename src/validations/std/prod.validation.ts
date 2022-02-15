@@ -101,15 +101,15 @@ const stdProdValidation = {
 
 	],
 	read: [
-		query('use_fg', '품목사용여부')
+		query('use_fg', '품목사용여부').optional({ nullable: true })
       .isIn([ 'true', 'false' ]).withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'use_fg', '품목사용여부')),
-		query('qms_receive_insp_fg', '수입검사여부')
+		query('qms_receive_insp_fg', '수입검사여부').optional({ nullable: true })
       .isIn([ 'true', 'false' ]).withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'qms_receive_insp_fg', '수입검사여부')),
-		query('qms_proc_insp_fg', '공정검사여부')
+		query('qms_proc_insp_fg', '공정검사여부').optional({ nullable: true })
       .isIn([ 'true', 'false' ]).withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'qms_proc_insp_fg', '공정검사여부')),
-		query('qms_final_insp_fg', '최종검사여부')
+		query('qms_final_insp_fg', '최종검사여부').optional({ nullable: true })
       .isIn([ 'true', 'false' ]).withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'qms_final_insp_fg', '최종검사여부')),
-		query('prd_active_fg', '생산품여부')
+		query('prd_active_fg', '생산품여부').optional({ nullable: true })
       .isIn([ 'true', 'false' ]).withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'prd_active_fg', '생산품여부')),
 	],	
   readByUuid: [ 

@@ -41,6 +41,11 @@ class StdFactoryService {
     try { return await this.repo.delete(datas, uid, tran); }
 		catch (error) { throw error; }
   }
+
+	public readForSignIn = async () => {
+		try { return await this.repo.readForSignIn(); }
+		catch (error) { throw error; }
+	}
 }
 
 export default StdFactoryService;

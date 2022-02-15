@@ -26,6 +26,9 @@ const stdCompanyValidation = {
 		query('addr_detail', '상세주소').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'addr_detail', '상세주소')),
 	],
+	read: [
+
+	],
   readByUuid: [ 
     param('uuid', '회사UUID')
 			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '회사UUID'))

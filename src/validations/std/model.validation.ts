@@ -15,6 +15,9 @@ const stdModelValidation = {
 			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'model_nm', '모델명'))
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'model_nm', '모델명')),
 	],
+	read:[
+
+	],
   readByUuid: [ 
     param('uuid', '모델UUID')
 			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '모델UUID'))

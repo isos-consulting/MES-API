@@ -15,6 +15,9 @@ const stdItemTypeValidation = {
 			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'item_type_nm', '품목 유형명'))
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'item_type_nm', '품목 유형명')),
 	],
+	read: [
+
+	],
   readByUuid: [ 
     param('uuid', '품목 유형UUID')
 			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '품목 유형UUID'))

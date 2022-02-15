@@ -15,6 +15,9 @@ const stdPartnerTypeValidation = {
 			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'partner_type_nm', '거래처유형명'))
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'partner_type_nm', '거래처유형명')),
 	],
+	read: [
+
+	],
   readByUuid: [ 
     param('uuid', '거래처유형UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'uuid', '거래처유형UUID'))

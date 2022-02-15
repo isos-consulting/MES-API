@@ -15,6 +15,9 @@ const stdGradeValidation = {
 			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'grade_nm', '직급명'))
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'grade_nm', '직급명')),
 	],
+	read: [
+
+	],
   readByUuid: [ 
     param('uuid', '직급UUID')
 			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '직급UUID'))
