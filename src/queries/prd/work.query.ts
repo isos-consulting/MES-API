@@ -32,7 +32,7 @@ const readWorks = (
     CREATE INDEX ON temp_work_routing(work_id);
 
     /** complete */
-    -- 마감된 지시 기준으로 라우팅정보를 가져올때는 공정순서가 마지막인 공정을 가져옴
+    -- 마감된 작업 기준으로 라우팅정보를 가져올때는 공정순서가 마지막인 공정을 가져옴
     WITH complete AS
     (
       SELECT 
@@ -147,7 +147,9 @@ const readWorks = (
       CASE WHEN p_w.complete_fg = TRUE THEN p_w.reject_qty ELSE t_wrj.qty END as reject_qty,
       t_wr.start_date,
       t_wr.end_date,
-      p_w.work_time,
+      (DATE_PART('day', t_wr.end_date::timestamp - t_wr.start_date::timestamp) * 24 * 60 + 
+      DATE_PART('hour', t_wr.end_date::timestamp - t_wr.start_date::timestamp)) * 60 +
+      DATE_PART('minute', t_wr.end_date::timestamp - t_wr.start_date::timestamp) as work_time,
       s_sf.uuid as shift_uuid,
       s_sf.shift_nm,
       s_wg.uuid as worker_group_uuid,

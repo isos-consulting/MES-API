@@ -12,6 +12,7 @@ import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
 import ApiResult from '../../interfaces/common/api-result.interface';
 import AutMenuTree from '../../models/aut/menu-tree.model';
+import { readUserPermission } from '../../queries/aut/user-permission.query';
 
 class AutUserPermissionRepo {
   repo: Repository<AutUserPermission>;
@@ -61,67 +62,15 @@ class AutUserPermissionRepo {
   //#region 🔵 Read Functions
   
   // 📒 Fn[read]: Default Read Function
-  public read = async(params?: any) => {
-    try {
-      const result = await this.menuTreeRepo.findAll({ 
-        include: [
-          { 
-            model: this.sequelize.models.AutMenu, 
-            as: 'autMenu', 
-            attributes: [], 
-            required: true,
-            include: [{ model: this.sequelize.models.AutMenuType, attributes: [], required: false }]
-          },
-          { 
-            model: this.sequelize.models.AutUserPermission, 
-            attributes: [], 
-            required: false,
-            include: [
-              { 
-                model: this.sequelize.models.AutUser, 
-                as: 'autUser',
-                attributes: [], 
-                required: true,
-                where: { uuid: params.user_uuid }
-              },
-              { model: this.sequelize.models.AutPermission, attributes: [], required: false },
-              { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-              { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true }
-            ]
-          },
-          { 
-            model: this.sequelize.models.AutGroupPermission, 
-            attributes: [], 
-            required: false,
-            include: [{ model: this.sequelize.models.AutPermission, attributes: [], required: false }],
-            where: Sequelize.where(Sequelize.col('autGroupPermission.group_id'), '=', Sequelize.col('autUserPermission.autUser.group_id'))
-          },
-          { model: this.sequelize.models.AutMenu, as: 'firstMenu', attributes: [], required: true },
-        ],
-        attributes: [
-          [ Sequelize.col('autMenu.uuid'), 'menu_uuid' ],
-          [ Sequelize.col('autMenu.menu_nm'), 'menu_nm' ],
-          [ Sequelize.col('firstMenu.menu_nm'), 'first_menu_nm' ],
-          'lv',
-          'sortby',
-          [ Sequelize.col('autMenu.autMenuType.uuid'), 'menu_type_uuid' ],
-          [ Sequelize.col('autMenu.autMenuType.menu_type_nm'), 'menu_type_nm' ],
-          [ Sequelize.col('autUserPermission.uuid'), 'user_permission_uuid' ],
-          [ Sequelize.fn('COALESCE', Sequelize.col('autUserPermission.autPermission.uuid'), Sequelize.col('autGroupPermission.autPermission.uuid')), 'permission_uuid'],
-          [ Sequelize.fn('COALESCE', Sequelize.col('autUserPermission.autPermission.permission_nm'), Sequelize.col('autGroupPermission.autPermission.permission_nm')), 'permission_nm'],
-          [ Sequelize.col('autUserPermission.createUser.created_at'), 'created_at' ],
-          [ Sequelize.col('autUserPermission.createUser.user_nm'), 'created_nm' ],
-          [ Sequelize.col('autUserPermission.updateUser.updated_at'), 'updated_at' ],
-          [ Sequelize.col('autUserPermission.updateUser.user_nm'), 'updated_nm' ]
-        ],
-        order: [ 'sortby' ]
-      });
+	public read = async(params?: any) => {
+		try {
+			const result = await this.sequelize.query(readUserPermission(params.user_uuid));
 
-      return convertReadResult(result);
-    } catch (error) {
-      throw error;
-    }
-  };
+			return convertReadResult(result[0]);
+		} catch (error) {
+			throw error;
+		}
+	};
 
   // 📒 Fn[readByUuid]: Default Read With Uuid Function
   public readByUuid = async(uuid: string, params?: any) => {

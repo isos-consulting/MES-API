@@ -7,6 +7,50 @@ const readWorkReport = (
   }
 ) => {
   const createWorkTempTable = `
+    /** 임시테이블 생성 */
+    CREATE TEMP TABLE temp_work_routing_end(factory_id int, work_id int, proc_id int, equip_id int, mold_id int, mold_cavity int, start_date timestamp, end_date timestamp, qty numeric, reject_qty numeric);
+    /** 임시테이블 인덱스 설정 */
+    CREATE INDEX ON temp_work_routing_end(work_id);
+
+    /** complete */
+    -- 마감된 작업 기준으로 라우팅정보를 가져올때는 공정순서가 마지막인 공정을 가져옴
+    WITH end_routing AS
+    (
+      SELECT 
+        p_wr.factory_id, p_wr.work_id, p_wr.proc_id, p_wr.equip_id, p_wr.mold_id, p_wr.mold_cavity, p_wr.start_date, p_wr.end_date, 0::numeric as qty,
+        rank() over(PARTITION BY p_wr.factory_id, p_wr.work_id ORDER BY p_wr.proc_no DESC) AS rn
+      FROM prd_work_routing_tb p_wr
+      JOIN prd_work_tb p_w ON p_w.work_id = p_wr.work_id 
+      WHERE p_w.complete_fg = TRUE 
+    )
+    INSERT INTO temp_work_routing_end
+    SELECT factory_id, work_id, proc_id, equip_id, mold_id, mold_cavity, start_date, end_date, qty
+    FROM end_routing 
+    WHERE rn = 1;
+  
+  
+  /** 임시테이블 생성 */
+    CREATE TEMP TABLE temp_work_routing_start(factory_id int, work_id int, proc_id int, equip_id int, mold_id int, mold_cavity int, start_date timestamp, end_date timestamp, qty numeric, reject_qty numeric);
+    /** 임시테이블 인덱스 설정 */
+    CREATE INDEX ON temp_work_routing_start(work_id);
+
+    /** complete */
+    -- 마감된 작업 기준으로 라우팅정보를 가져올때는 공정순서가 마지막인 공정을 가져옴
+    WITH start_routing AS
+    (
+      SELECT 
+        p_wr.factory_id, p_wr.work_id, p_wr.proc_id, p_wr.equip_id, p_wr.mold_id, p_wr.mold_cavity, p_wr.start_date, p_wr.end_date, 0::numeric as qty,
+        rank() over(PARTITION BY p_wr.factory_id, p_wr.work_id ORDER BY p_wr.proc_no ASC) AS rn
+      FROM prd_work_routing_tb p_wr
+      JOIN prd_work_tb p_w ON p_w.work_id = p_wr.work_id 
+      WHERE p_w.complete_fg = TRUE 
+    )
+    INSERT INTO temp_work_routing_start
+    SELECT factory_id, work_id, proc_id, equip_id, mold_id, mold_cavity, start_date, end_date, qty
+    FROM start_routing 
+    WHERE rn = 1;
+
+    -- 임시테이블 메인
     CREATE TEMP TABLE temp_work(
       work_id int,
       order_id int,
@@ -40,17 +84,17 @@ const readWorkReport = (
       p_w.factory_id,
       p_w.shift_id,
       p_w.reg_date,
-      p_w.proc_id,
+      t_wre.proc_id,
       p_w.workings_id,
-      p_w.equip_id,
+      t_wre.equip_id,
       p_w.prod_id,
       p_w.lot_no,
       COALESCE(p_o.qty, 0),
       COALESCE(p_w.qty, 0)+ COALESCE(p_w.reject_qty, 0),
       COALESCE(p_w.qty, 0),
       COALESCE(p_w.reject_qty, 0),
-      p_w.start_date,
-      p_w.end_date,
+      t_wrs.start_date,
+      t_wre.end_date,
       p_w.to_store_id,
       p_w.to_location_id,
       p_w.remark,
@@ -58,6 +102,8 @@ const readWorkReport = (
       p_w.updated_at, p_w.updated_uid, a_uu.user_nm
     FROM prd_work_tb p_w
     JOIN prd_order_tb p_o ON p_o.order_id = p_w.order_id
+    JOIN temp_work_routing_start t_wrs ON t_wrs.work_id = p_w.work_id
+    JOIN temp_work_routing_end t_wre ON t_wre.work_id = p_w.work_id
     JOIN std_factory_tb s_f ON s_f.factory_id = p_w.factory_id
     LEFT JOIN aut_user_tb a_uc ON a_uc.uid = p_w.created_uid
     LEFT JOIN aut_user_tb a_uu ON a_uu.uid = p_w.updated_uid
@@ -149,6 +195,8 @@ const readWorkReport = (
   `;
 
   const dropTempTable = `
+    DROP TABLE temp_work_routing_start;
+    DROP TABLE temp_work_routing_end;
     DROP TABLE temp_work;
   `;
 
