@@ -20,7 +20,7 @@ const readUserPermission = (uuid: string) => {
 		INNER JOIN AUT_MENU_TB AS autMenu ON AutMenuTree.menu_id = autMenu.menu_id
 		LEFT OUTER JOIN AUT_MENU_TYPE_TB AS A_UT ON autMenu.menu_type_id = A_UT.menu_type_id
 		LEFT OUTER JOIN ( AUT_USER_PERMISSION_TB AS autUserPermission
-			INNER JOIN AUT_USER_TB AS A_U ON autUserPermission.uid = A_U.uid AND A_U.uuid = '9c421d16-1e0e-4a95-9b32-ea9ad46bacf1'
+			INNER JOIN AUT_USER_TB AS A_U ON autUserPermission.uid = A_U.uid AND A_U.uuid = '${uuid}'
 			LEFT OUTER JOIN AUT_PERMISSION_TB AS A_UP ON autUserPermission.permission_id = A_UP.permission_id
 			INNER JOIN AUT_USER_TB AS A_UCREATE ON autUserPermission.created_uid = A_UCREATE.uid
 			INNER JOIN AUT_USER_TB AS A_UUPDATE ON autUserPermission.updated_uid = A_UUPDATE.uid ) ON AutMenuTree.menu_id = autUserPermission.menu_id
