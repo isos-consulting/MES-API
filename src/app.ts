@@ -3,12 +3,12 @@ import createError from 'http-errors';
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
-import jwtMiddleware from './middlewares/jwt.middleware';
+// import jwtMiddleware from './middlewares/jwt.middleware';
 import routers from './routes';
 import response from './utils/response';
 import morgan = require('morgan');
 import { stream } from './configs/winston';
-import { refreshToken } from './utils/refreshToken';
+// import { refreshToken } from './utils/refreshToken';
 import tenantMiddleware from './middlewares/tenant.middleware';
 import config from './configs/config';
 
@@ -56,8 +56,8 @@ app.use(morgan('combined', { stream }));
 app.use(morgan('dev'));
 
 app.use(tenantMiddleware);
-app.use('/refresh-token', refreshToken)
-app.use(jwtMiddleware);
+// app.use('/refresh-token', refreshToken)
+// app.use(jwtMiddleware);
 app.use('/', routers);
 
 // catch 404 and forward to error handler
