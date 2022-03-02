@@ -46,14 +46,52 @@ import StdWorkerGroupCtl from '../controllers/std/worker-group.controller';
 import StdWorkerCtl from '../controllers/std/worker.controller';
 import StdWorkingsCtl from '../controllers/std/workings.controller';
 import validationCallback from '../utils/validationCallback';
+
 import stdBomValidation from '../validations/std/bom.validation';
+import stdCompanyValidation from '../validations/std/company.validation';
+import stdCustomerPriceValidation from '../validations/std/customer-price.validation';
+import stdDeliveryValidation from '../validations/std/delivery.validation';
+import stdDeptValidation from '../validations/std/dept.validation';
+import stdDowntimeTypeValidation from '../validations/std/downtime-type.validation';
 import stdDowntimeValidation from '../validations/std/downtime.validation';
+import stdEmpValidation from '../validations/std/emp.validation';
+import stdEquipTypeValidation from '../validations/std/equip-type.validation';
 import stdEquipValidation from '../validations/std/equip.validation';
+import stdFactoryValidation from '../validations/std/factory.validation';
+import stdGradeValidation from '../validations/std/grade.validation';
+import stdInspItemTypeValidation from '../validations/std/insp-item-type.validation';
 import stdInspItemValidation from '../validations/std/insp-item.validation';
+import stdInspMethodValidation from '../validations/std/insp-method.validation';
+import stdInspToolValidation from '../validations/std/insp-tool.validation';
+import stdItemTypeValidation from '../validations/std/item-type.validation';
+import stdLocationValidation from '../validations/std/location.validation';
+import stdModelValidation from '../validations/std/model.validation';
+import stdMoneyUnitValidation from '../validations/std/money-unit.validation';
+import stdPartnerProdValidation from '../validations/std/partner-prod.validation';
+import stdPartnerTypeValidation from '../validations/std/partner-type.validation';
+import stdPartnerValidation from '../validations/std/partner.validation';
+import stdPriceTypeValidation from '../validations/std/price-type.validation';
 import stdProcEquipValidation from '../validations/std/proc-equip.validation';
+import stdProcRejectValidation from '../validations/std/proc-reject.validation';
+import stdProcValidation from '../validations/std/proc.validation';
+import stdProdTypeValidation from '../validations/std/prod-type.validation';
+import stdProdValidation from '../validations/std/prod.validation';
+import stdRejectTypeValidation from '../validations/std/reject-type.validation';
+import stdRejectValidation from '../validations/std/reject.validation';
 import stdRoutingResourceValidation from '../validations/std/routing-resource.validation';
+import stdRoutingWorkingsValidation from '../validations/std/routing-workings.validation';
 import stdRoutingValidation from '../validations/std/routing.validation';
+import stdShiftValidation from '../validations/std/shift.validation';
+import stdStoreValidation from '../validations/std/store.validation';
+import stdSupplierValidation from '../validations/std/supplier.validation';
 import stdTenantOptValidation from '../validations/std/tenant-opt.validation';
+import stdUnitConvertValidation from '../validations/std/unit-convert.validation';
+import stdUnitValidation from '../validations/std/unit.validation';
+import stdVendorPriceValidation from '../validations/std/vendor-price.validation';
+import stdWorkerGroupWorkerValidation from '../validations/std/worker-group-worker.validation';
+import stdWorkerGroupValidation from '../validations/std/worker-group.validation';
+import stdWorkerValidation from '../validations/std/worker.validation';
+import stdWorkingsValidation from '../validations/std/workings.validation';
 
 const router = express.Router();
 
@@ -70,68 +108,68 @@ router.route('/boms').delete(stdBomValidation.delete, validationCallback, bom.de
 
 //#region ✅ PartnerType (거래처 유형)
 const partnerType = new StdPartnerTypeCtl();
-router.route('/partner-types/excel-upload').post(partnerType.upsertBulkDatasFromExcel);
-router.route('/partner-type/:uuid').get(partnerType.read);
-router.route('/partner-types').get(partnerType.read);
-router.route('/partner-types').post(partnerType.create);
-router.route('/partner-types').put(partnerType.update);
-router.route('/partner-types').patch(partnerType.patch);
-router.route('/partner-types').delete(partnerType.delete);
+// router.route('/partner-types/excel-upload').post(partnerType.upsertBulkDatasFromExcel);
+router.route('/partner-type/:uuid').get(stdPartnerTypeValidation.readByUuid, validationCallback, partnerType.readByUuid);
+router.route('/partner-types').get(stdPartnerTypeValidation.read, validationCallback, partnerType.read);
+router.route('/partner-types').post(stdPartnerTypeValidation.create, validationCallback, partnerType.create);
+router.route('/partner-types').put(stdPartnerTypeValidation.update, validationCallback, partnerType.update);
+router.route('/partner-types').patch(stdPartnerTypeValidation.patch, validationCallback, partnerType.patch);
+router.route('/partner-types').delete(stdPartnerTypeValidation.delete, validationCallback, partnerType.delete);
 //#endregion
 
 //#region ✅ Partner (거래처)
 const partner = new StdPartnerCtl();
-router.route('/partners/excel-upload').post(partner.upsertBulkDatasFromExcel);
-router.route('/partner/:uuid').get(partner.read);
-router.route('/partners').get(partner.read);
-router.route('/partners').post(partner.create);
-router.route('/partners').put(partner.update);
-router.route('/partners').patch(partner.patch);
-router.route('/partners').delete(partner.delete);
+// router.route('/partners/excel-upload').post(partner.upsertBulkDatasFromExcel);
+router.route('/partner/:uuid').get(stdPartnerValidation.readByUuid, validationCallback, partner.readByUuid);
+router.route('/partners').get(stdPartnerValidation.read, validationCallback, partner.read);
+router.route('/partners').post(stdPartnerValidation.create, validationCallback, partner.create);
+router.route('/partners').put(stdPartnerValidation.update, validationCallback, partner.update);
+router.route('/partners').patch(stdPartnerValidation.patch, validationCallback, partner.patch);
+router.route('/partners').delete(stdPartnerValidation.delete, validationCallback, partner.delete);
 //#endregion
 
 //#region ✅ PartnerProd (거래처 품목)
 const partnerProd = new StdPartnerProdCtl();
-router.route('/partner-prods/excel-upload').post(partnerProd.upsertBulkDatasFromExcel);
-router.route('/partner-prod/:uuid').get(partnerProd.read);
-router.route('/partner-prods').get(partnerProd.read);
-router.route('/partner-prods').post(partnerProd.create);
-router.route('/partner-prods').put(partnerProd.update);
-router.route('/partner-prods').patch(partnerProd.patch);
-router.route('/partner-prods').delete(partnerProd.delete);
+// router.route('/partner-prods/excel-upload').post(partnerProd.upsertBulkDatasFromExcel);
+router.route('/partner-prod/:uuid').get(stdPartnerProdValidation.readByUuid, validationCallback, partnerProd.readByUuid);
+router.route('/partner-prods').get(stdPartnerProdValidation.read, validationCallback, partnerProd.read);
+router.route('/partner-prods').post(stdPartnerProdValidation.create, validationCallback, partnerProd.create);
+router.route('/partner-prods').put(stdPartnerProdValidation.update, validationCallback, partnerProd.update);
+router.route('/partner-prods').patch(stdPartnerProdValidation.patch, validationCallback, partnerProd.patch);
+router.route('/partner-prods').delete(stdPartnerProdValidation.delete, validationCallback, partnerProd.delete);
 //#endregion
 
 //#region ✅ InspTool (검사구)
 const inspTool = new StdInspToolCtl();
-router.route('/insp-tools/excel-upload').post(inspTool.upsertBulkDatasFromExcel);
-router.route('/insp-tool/:uuid').get(inspTool.read);
-router.route('/insp-tools').get(inspTool.read);
-router.route('/insp-tools').post(inspTool.create);
-router.route('/insp-tools').put(inspTool.update);
-router.route('/insp-tools').patch(inspTool.patch);
-router.route('/insp-tools').delete(inspTool.delete);
+// router.route('/insp-tools/excel-upload').post(inspTool.upsertBulkDatasFromExcel);
+router.route('/insp-tool/:uuid').get(stdInspToolValidation.readByUuid, validationCallback, inspTool.readByUuid);
+router.route('/insp-tools').get(stdInspToolValidation.read, validationCallback, inspTool.read);
+router.route('/insp-tools').post(stdInspToolValidation.create, validationCallback, inspTool.create);
+router.route('/insp-tools').put(stdInspToolValidation.update, validationCallback, inspTool.update);
+router.route('/insp-tools').patch(stdInspToolValidation.patch, validationCallback, inspTool.patch);
+router.route('/insp-tools').delete(stdInspToolValidation.delete, validationCallback, inspTool.delete);
 //#endregion
 
 //#region ✅ InspMethod (검사방법)
 const inspMethod = new StdInspMethodCtl();
-router.route('/insp-methods/excel-upload').post(inspMethod.upsertBulkDatasFromExcel);
-router.route('/insp-method/:uuid').get(inspMethod.read);
-router.route('/insp-methods').get(inspMethod.read);
-router.route('/insp-methods').post(inspMethod.create);
-router.route('/insp-methods').put(inspMethod.update);
-router.route('/insp-methods').patch(inspMethod.patch);
-router.route('/insp-methods').delete(inspMethod.delete);
+// router.route('/insp-methods/excel-upload').post(inspMethod.upsertBulkDatasFromExcel);
+router.route('/insp-method/:uuid').get(stdInspMethodValidation.readByUuid, validationCallback, inspMethod.readByUuid);
+router.route('/insp-methods').get(stdInspMethodValidation.read, validationCallback, inspMethod.read);
+router.route('/insp-methods').post(stdInspMethodValidation.create, validationCallback, inspMethod.create);
+router.route('/insp-methods').put(stdInspMethodValidation.update, validationCallback, inspMethod.update);
+router.route('/insp-methods').patch(stdInspMethodValidation.patch, validationCallback, inspMethod.patch);
+router.route('/insp-methods').delete(stdInspMethodValidation.delete, validationCallback, inspMethod.delete);
 //#endregion
 
 //#region ✅ InspItemType (검사항목 유형)
 const inspItemType = new StdInspItemTypeCtl();
-router.route('/insp-item-types/excel-upload').post(inspItemType.upsertBulkDatasFromExcel);
-router.route('/insp-item-type/:uuid').get(inspItemType.read);
-router.route('/insp-item-types').get(inspItemType.read);
-router.route('/insp-item-types').post(inspItemType.create);
-router.route('/insp-item-types').put(inspItemType.update);
-router.route('/insp-item-types').patch(inspItemType.patch);
-router.route('/insp-item-types').delete(inspItemType.delete);
+// router.route('/insp-item-types/excel-upload').post(inspItemType.upsertBulkDatasFromExcel);
+router.route('/insp-item-type/:uuid').get(stdInspItemTypeValidation.readByUuid, validationCallback, inspItemType.readByUuid);
+router.route('/insp-item-types').get(stdInspItemTypeValidation.read, validationCallback, inspItemType.read);
+router.route('/insp-item-types').post(stdInspItemTypeValidation.create, validationCallback, inspItemType.create);
+router.route('/insp-item-types').put(stdInspItemTypeValidation.update, validationCallback, inspItemType.update);
+router.route('/insp-item-types').patch(stdInspItemTypeValidation.patch, validationCallback, inspItemType.patch);
+router.route('/insp-item-types').delete(stdInspItemTypeValidation.delete, validationCallback, inspItemType.delete);
 //#endregion
 
 //#region ✅ InspItem (검사항목)
@@ -146,47 +184,47 @@ router.route('/insp-items').delete(stdInspItemValidation.delete, validationCallb
 
 //#region ✅ CustomerPrice (고객사 단가)
 const customerPrice = new StdCustomerPriceCtl();
-router.route('/customer-prices/excel-upload').post(customerPrice.upsertBulkDatasFromExcel);
-router.route('/customer-price/:uuid').get(customerPrice.read);
-router.route('/customer-prices').get(customerPrice.read);
-router.route('/customer-prices').post(customerPrice.create);
-router.route('/customer-prices').put(customerPrice.update);
-router.route('/customer-prices').patch(customerPrice.patch);
-router.route('/customer-prices').delete(customerPrice.delete);
+// router.route('/customer-prices/excel-upload').post(customerPrice.upsertBulkDatasFromExcel);
+router.route('/customer-price/:uuid').get(stdCustomerPriceValidation.readByUuid, validationCallback, customerPrice.readByUuid);
+router.route('/customer-prices').get(stdCustomerPriceValidation.read, validationCallback, customerPrice.read);
+router.route('/customer-prices').post(stdCustomerPriceValidation.create, validationCallback, customerPrice.create);
+router.route('/customer-prices').put(stdCustomerPriceValidation.update, validationCallback, customerPrice.update);
+router.route('/customer-prices').patch(stdCustomerPriceValidation.patch, validationCallback, customerPrice.patch);
+router.route('/customer-prices').delete(stdCustomerPriceValidation.delete, validationCallback, customerPrice.delete);
 //#endregion
 
 //#region ✅ Supplier (공급처)
 const supplier = new StdSupplierCtl();
-router.route('/suppliers/excel-upload').post(supplier.upsertBulkDatasFromExcel);
-router.route('/supplier/:uuid').get(supplier.read);
-router.route('/suppliers').get(supplier.read);
-router.route('/suppliers').post(supplier.create);
-router.route('/suppliers').put(supplier.update);
-router.route('/suppliers').patch(supplier.patch);
-router.route('/suppliers').delete(supplier.delete);
+// router.route('/suppliers/excel-upload').post(supplier.upsertBulkDatasFromExcel);
+router.route('/supplier/:uuid').get(stdSupplierValidation.readByUuid, validationCallback, supplier.readByUuid);
+router.route('/suppliers').get(stdSupplierValidation.read, validationCallback, supplier.read);
+router.route('/suppliers').post(stdSupplierValidation.create, validationCallback, supplier.create);
+router.route('/suppliers').put(stdSupplierValidation.update, validationCallback, supplier.update);
+router.route('/suppliers').patch(stdSupplierValidation.patch, validationCallback, supplier.patch);
+router.route('/suppliers').delete(stdSupplierValidation.delete, validationCallback, supplier.delete);
 //#endregion
 
 //#region ✅ Factory (공장)
 const factory = new StdFactoryCtl();
-router.route('/factories/excel-upload').post(factory.upsertBulkDatasFromExcel);
-router.route('/factory/:uuid').get(factory.read);
+// router.route('/factories/excel-upload').post(factory.upsertBulkDatasFromExcel);
+router.route('/factory/:uuid').get(stdFactoryValidation.readByUuid, validationCallback, factory.readByUuid);
 router.route('/factories/sign-in').get(factory.readForSignIn);
-router.route('/factories').get(factory.read);
-router.route('/factories').post(factory.create);
-router.route('/factories').put(factory.update);
-router.route('/factories').patch(factory.patch);
-router.route('/factories').delete(factory.delete);
+router.route('/factories').get(stdFactoryValidation.read, validationCallback, factory.read);
+router.route('/factories').post(stdFactoryValidation.create, validationCallback, factory.create);
+router.route('/factories').put(stdFactoryValidation.update, validationCallback, factory.update);
+router.route('/factories').patch(stdFactoryValidation.patch, validationCallback, factory.patch);
+router.route('/factories').delete(stdFactoryValidation.delete, validationCallback, factory.delete);
 //#endregion
 
 //#region ✅ Proc (공정)
 const proc = new StdProcCtl();
-router.route('/procs/excel-upload').post(proc.upsertBulkDatasFromExcel);
-router.route('/proc/:uuid').get(proc.read);
-router.route('/procs').get(proc.read);
-router.route('/procs').post(proc.create);
-router.route('/procs').put(proc.update);
-router.route('/procs').patch(proc.patch);
-router.route('/procs').delete(proc.delete);
+// router.route('/procs/excel-upload').post(proc.upsertBulkDatasFromExcel);
+router.route('/proc/:uuid').get(stdProcValidation.readByUuid, validationCallback, proc.readByUuid);
+router.route('/procs').get(stdProcValidation.read, validationCallback, proc.read);
+router.route('/procs').post(stdProcValidation.create, validationCallback, proc.create);
+router.route('/procs').put(stdProcValidation.update, validationCallback, proc.update);
+router.route('/procs').patch(stdProcValidation.patch, validationCallback, proc.patch);
+router.route('/procs').delete(stdProcValidation.delete, validationCallback, proc.delete);
 //#endregion
 
 //#region ✅ ProcEquip (공정별 설비정보)
@@ -201,57 +239,57 @@ router.route('/proc-equips').delete(stdProcEquipValidation.delete, validationCal
 
 //#region ✅ ProcReject (공정별 부적합)
 const procReject = new StdProcRejectCtl();
-router.route('/proc-rejects/excel-upload').post(procReject.upsertBulkDatasFromExcel);
-router.route('/proc-reject/:uuid').get(procReject.read);
-router.route('/proc-rejects').get(procReject.read);
-router.route('/proc-rejects').post(procReject.create);
-router.route('/proc-rejects').put(procReject.update);
-router.route('/proc-rejects').patch(procReject.patch);
-router.route('/proc-rejects').delete(procReject.delete);
+// router.route('/proc-rejects/excel-upload').post(procReject.upsertBulkDatasFromExcel);
+router.route('/proc-reject/:uuid').get(stdProcRejectValidation.readByUuid, validationCallback, procReject.readByUuid);
+router.route('/proc-rejects').get(stdProcRejectValidation.read, validationCallback, procReject.read);
+router.route('/proc-rejects').post(stdProcRejectValidation.create, validationCallback, procReject.create);
+router.route('/proc-rejects').put(stdProcRejectValidation.update, validationCallback, procReject.update);
+router.route('/proc-rejects').patch(stdProcRejectValidation.patch, validationCallback, procReject.patch);
+router.route('/proc-rejects').delete(stdProcRejectValidation.delete, validationCallback, procReject.delete);
 //#endregion
 
 //#region ✅ Delivery (납품처)
 const delivery = new StdDeliveryCtl();
-router.route('/deliveries/excel-upload').post(delivery.upsertBulkDatasFromExcel);
-router.route('/delivery/:uuid').get(delivery.read);
-router.route('/deliveries').get(delivery.read);
-router.route('/deliveries').post(delivery.create);
-router.route('/deliveries').put(delivery.update);
-router.route('/deliveries').patch(delivery.patch);
-router.route('/deliveries').delete(delivery.delete);
+// router.route('/deliveries/excel-upload').post(delivery.upsertBulkDatasFromExcel);
+router.route('/delivery/:uuid').get(stdDeliveryValidation.readByUuid, validationCallback, delivery.readByUuid);
+router.route('/deliveries').get(stdDeliveryValidation.read, validationCallback, delivery.read);
+router.route('/deliveries').post(stdDeliveryValidation.create, validationCallback, delivery.create);
+router.route('/deliveries').put(stdDeliveryValidation.update, validationCallback, delivery.update);
+router.route('/deliveries').patch(stdDeliveryValidation.patch, validationCallback, delivery.patch);
+router.route('/deliveries').delete(stdDeliveryValidation.delete, validationCallback, delivery.delete);
 //#endregion
 
 //#region ✅ PriceType (단가유형)
 const priceType = new StdPriceTypeCtl();
-router.route('/price-types/excel-upload').post(priceType.upsertBulkDatasFromExcel);
-router.route('/price-type/:uuid').get(priceType.read);
-router.route('/price-types').get(priceType.read);
-router.route('/price-types').post(priceType.create);
-router.route('/price-types').put(priceType.update);
-router.route('/price-types').patch(priceType.patch);
-router.route('/price-types').delete(priceType.delete);
+// router.route('/price-types/excel-upload').post(priceType.upsertBulkDatasFromExcel);
+router.route('/price-type/:uuid').get(stdPriceTypeValidation.readByUuid, validationCallback, priceType.readByUuid);
+router.route('/price-types').get(stdPriceTypeValidation.read, validationCallback, priceType.read);
+router.route('/price-types').post(stdPriceTypeValidation.create, validationCallback, priceType.create);
+router.route('/price-types').put(stdPriceTypeValidation.update, validationCallback, priceType.update);
+router.route('/price-types').patch(stdPriceTypeValidation.patch, validationCallback, priceType.patch);
+router.route('/price-types').delete(stdPriceTypeValidation.delete, validationCallback, priceType.delete);
 //#endregion
 
 //#region ✅ Unit (단위)
 const unit = new StdUnitCtl();
-router.route('/units/excel-upload').post(unit.upsertBulkDatasFromExcel);
-router.route('/unit/:uuid').get(unit.read);
-router.route('/units').get(unit.read);
-router.route('/units').post(unit.create);
-router.route('/units').put(unit.update);
-router.route('/units').patch(unit.patch);
-router.route('/units').delete(unit.delete);
+// router.route('/units/excel-upload').post(unit.upsertBulkDatasFromExcel);
+router.route('/unit/:uuid').get(stdUnitValidation.readByUuid, validationCallback, unit.readByUuid);
+router.route('/units').get(stdUnitValidation.read, validationCallback, unit.read);
+router.route('/units').post(stdUnitValidation.create, validationCallback, unit.create);
+router.route('/units').put(stdUnitValidation.update, validationCallback, unit.update);
+router.route('/units').patch(stdUnitValidation.patch, validationCallback, unit.patch);
+router.route('/units').delete(stdUnitValidation.delete, validationCallback, unit.delete);
 //#endregion
 
 //#region ✅ UnitConvert (단위변환)
 const unitConvert = new StdUnitConvertCtl();
-router.route('/unit-converts/excel-upload').post(unitConvert.upsertBulkDatasFromExcel);
-router.route('/unit-convert/:uuid').get(unitConvert.read);
-router.route('/unit-converts').get(unitConvert.read);
-router.route('/unit-converts').post(unitConvert.create);
-router.route('/unit-converts').put(unitConvert.update);
-router.route('/unit-converts').patch(unitConvert.patch);
-router.route('/unit-converts').delete(unitConvert.delete);
+// router.route('/unit-converts/excel-upload').post(unitConvert.upsertBulkDatasFromExcel);
+router.route('/unit-convert/:uuid').get(stdUnitConvertValidation.readByUuid, validationCallback, unitConvert.readByUuid);
+router.route('/unit-converts').get(stdUnitConvertValidation.read, validationCallback, unitConvert.read);
+router.route('/unit-converts').post(stdUnitConvertValidation.create, validationCallback, unitConvert.create);
+router.route('/unit-converts').put(stdUnitConvertValidation.update, validationCallback, unitConvert.update);
+router.route('/unit-converts').patch(stdUnitConvertValidation.patch, validationCallback, unitConvert.patch);
+router.route('/unit-converts').delete(stdUnitConvertValidation.delete, validationCallback, unitConvert.delete);
 //#endregion
 
 //#region ✅ Routing (라우팅)
@@ -267,57 +305,57 @@ router.route('/routings').delete(stdRoutingValidation.delete, validationCallback
 
 //#region ✅ Model (모델)
 const model = new StdModelCtl();
-router.route('/models/excel-upload').post(model.upsertBulkDatasFromExcel);
-router.route('/model/:uuid').get(model.read);
-router.route('/models').get(model.read);
-router.route('/models').post(model.create);
-router.route('/models').put(model.update);
-router.route('/models').patch(model.patch);
-router.route('/models').delete(model.delete);
+// router.route('/models/excel-upload').post(model.upsertBulkDatasFromExcel);
+router.route('/model/:uuid').get(stdModelValidation.readByUuid, validationCallback, model.readByUuid);
+router.route('/models').get(stdModelValidation.read, validationCallback, model.read);
+router.route('/models').post(stdModelValidation.create, validationCallback, model.create);
+router.route('/models').put(stdModelValidation.update, validationCallback, model.update);
+router.route('/models').patch(stdModelValidation.patch, validationCallback, model.patch);
+router.route('/models').delete(stdModelValidation.delete, validationCallback, model.delete);
 //#endregion
 
 //#region ✅ Dept (부서)
 const dept = new StdDeptCtl();
-router.route('/depts/excel-upload').post(dept.upsertBulkDatasFromExcel);
-router.route('/dept/:uuid').get(dept.read);
-router.route('/depts').get(dept.read);
-router.route('/depts').post(dept.create);
-router.route('/depts').put(dept.update);
-router.route('/depts').patch(dept.patch);
-router.route('/depts').delete(dept.delete);
+// router.route('/depts/excel-upload').post(dept.upsertBulkDatasFromExcel);
+router.route('/dept/:uuid').get(stdDeptValidation.readByUuid, validationCallback, dept.readByUuid);
+router.route('/depts').get(stdDeptValidation.read, validationCallback, dept.read);
+router.route('/depts').post(stdDeptValidation.create, validationCallback, dept.create);
+router.route('/depts').put(stdDeptValidation.update, validationCallback, dept.update);
+router.route('/depts').patch(stdDeptValidation.patch, validationCallback, dept.patch);
+router.route('/depts').delete(stdDeptValidation.delete, validationCallback, dept.delete);
 //#endregion
 
 //#region ✅ RejectType (부적합유형)
 const rejectType = new StdRejectTypeCtl();
-router.route('/reject-types/excel-upload').post(rejectType.upsertBulkDatasFromExcel);
-router.route('/reject-type/:uuid').get(rejectType.read);
-router.route('/reject-types').get(rejectType.read);
-router.route('/reject-types').post(rejectType.create);
-router.route('/reject-types').put(rejectType.update);
-router.route('/reject-types').patch(rejectType.patch);
-router.route('/reject-types').delete(rejectType.delete);
+// router.route('/reject-types/excel-upload').post(rejectType.upsertBulkDatasFromExcel);
+router.route('/reject-type/:uuid').get(stdRejectTypeValidation.readByUuid, validationCallback, rejectType.readByUuid);
+router.route('/reject-types').get(stdRejectTypeValidation.read, validationCallback, rejectType.read);
+router.route('/reject-types').post(stdRejectTypeValidation.create, validationCallback, rejectType.create);
+router.route('/reject-types').put(stdRejectTypeValidation.update, validationCallback, rejectType.update);
+router.route('/reject-types').patch(stdRejectTypeValidation.patch, validationCallback, rejectType.patch);
+router.route('/reject-types').delete(stdRejectTypeValidation.delete, validationCallback, rejectType.delete);
 //#endregion
 
 //#region ✅ Reject (부적합)
 const reject = new StdRejectCtl();
-router.route('/rejects/excel-upload').post(reject.upsertBulkDatasFromExcel);
-router.route('/reject/:uuid').get(reject.read);
-router.route('/rejects').get(reject.read);
-router.route('/rejects').post(reject.create);
-router.route('/rejects').put(reject.update);
-router.route('/rejects').patch(reject.patch);
-router.route('/rejects').delete(reject.delete);
+// router.route('/rejects/excel-upload').post(reject.upsertBulkDatasFromExcel);
+router.route('/reject/:uuid').get(stdRejectValidation.readByUuid, validationCallback, reject.readByUuid);
+router.route('/rejects').get(stdRejectValidation.read, validationCallback, reject.read);
+router.route('/rejects').post(stdRejectValidation.create, validationCallback, reject.create);
+router.route('/rejects').put(stdRejectValidation.update, validationCallback, reject.update);
+router.route('/rejects').patch(stdRejectValidation.patch, validationCallback, reject.patch);
+router.route('/rejects').delete(stdRejectValidation.delete, validationCallback, reject.delete);
 //#endregion
 
 //#region ✅ DowntimeType (비가동 유형)
 const downtimeType = new StdDowntimeTypeCtl();
-router.route('/downtime-types/excel-upload').post(downtimeType.upsertBulkDatasFromExcel);
-router.route('/downtime-type/:uuid').get(downtimeType.read);
-router.route('/downtime-types').get(downtimeType.read);
-router.route('/downtime-types').post(downtimeType.create);
-router.route('/downtime-types').put(downtimeType.update);
-router.route('/downtime-types').patch(downtimeType.patch);
-router.route('/downtime-types').delete(downtimeType.delete);
+// router.route('/downtime-types/excel-upload').post(downtimeType.upsertBulkDatasFromExcel);
+router.route('/downtime-type/:uuid').get(stdDowntimeTypeValidation.readByUuid, validationCallback, downtimeType.readByUuid);
+router.route('/downtime-types').get(stdDowntimeTypeValidation.read, validationCallback, downtimeType.read);
+router.route('/downtime-types').post(stdDowntimeTypeValidation.create, validationCallback, downtimeType.create);
+router.route('/downtime-types').put(stdDowntimeTypeValidation.update, validationCallback, downtimeType.update);
+router.route('/downtime-types').patch(stdDowntimeTypeValidation.patch, validationCallback, downtimeType.patch);
+router.route('/downtime-types').delete(stdDowntimeTypeValidation.delete, validationCallback, downtimeType.delete);
 //#endregion
 
 //#region ✅ Downtime (비가동)
@@ -342,13 +380,13 @@ router.route('/tenant-opts').delete(stdTenantOptValidation.delete, validationCal
 
 //#region ✅ Emp (사원)
 const emp = new StdEmpCtl();
-router.route('/emps/excel-upload').post(emp.upsertBulkDatasFromExcel);
-router.route('/emp/:uuid').get(emp.read);
-router.route('/emps').get(emp.read);
-router.route('/emps').post(emp.create);
-router.route('/emps').put(emp.update);
-router.route('/emps').patch(emp.patch);
-router.route('/emps').delete(emp.delete);
+// router.route('/emps/excel-upload').post(emp.upsertBulkDatasFromExcel);
+router.route('/emp/:uuid').get(stdEmpValidation.readByUuid, validationCallback, emp.readByUuid);
+router.route('/emps').get(stdEmpValidation.read, validationCallback, emp.read);
+router.route('/emps').post(stdEmpValidation.create, validationCallback, emp.create);
+router.route('/emps').put(stdEmpValidation.update, validationCallback, emp.update);
+router.route('/emps').patch(stdEmpValidation.patch, validationCallback, emp.patch);
+router.route('/emps').delete(stdEmpValidation.delete, validationCallback, emp.delete);
 //#endregion
 
 //#region ✅ RoutingResource (생산 자원)
@@ -363,13 +401,13 @@ router.route('/routing-resources').delete(stdRoutingResourceValidation.delete, v
 
 //#region ✅ EquipType (설비 유형)
 const equipType = new StdEquipTypeCtl();
-router.route('/equip-types/excel-upload').post(equipType.upsertBulkDatasFromExcel);
-router.route('/equip-type/:uuid').get(equipType.read);
-router.route('/equip-types').get(equipType.read);
-router.route('/equip-types').post(equipType.create);
-router.route('/equip-types').put(equipType.update);
-router.route('/equip-types').patch(equipType.patch);
-router.route('/equip-types').delete(equipType.delete);
+// router.route('/equip-types/excel-upload').post(equipType.upsertBulkDatasFromExcel);
+router.route('/equip-type/:uuid').get(stdEquipTypeValidation.readByUuid, validationCallback, equipType.readByUuid);
+router.route('/equip-types').get(stdEquipTypeValidation.read, validationCallback, equipType.read);
+router.route('/equip-types').post(stdEquipTypeValidation.create, validationCallback, equipType.create);
+router.route('/equip-types').put(stdEquipTypeValidation.update, validationCallback, equipType.update);
+router.route('/equip-types').patch(stdEquipTypeValidation.patch, validationCallback, equipType.patch);
+router.route('/equip-types').delete(stdEquipTypeValidation.delete, validationCallback, equipType.delete);
 //#endregion
 
 //#region ✅ Equip (설비)
@@ -385,166 +423,166 @@ router.route('/equips').delete(stdEquipValidation.delete, validationCallback, eq
 
 //#region ✅ Location (위치)
 const location = new StdLocationCtl();
-router.route('/locations/excel-upload').post(location.upsertBulkDatasFromExcel);
-router.route('/location/:uuid').get(location.read);
-router.route('/locations').get(location.read);
-router.route('/locations').post(location.create);
-router.route('/locations').put(location.update);
-router.route('/locations').patch(location.patch);
-router.route('/locations').delete(location.delete);
+// router.route('/locations/excel-upload').post(location.upsertBulkDatasFromExcel);
+router.route('/location/:uuid').get(stdLocationValidation.readByUuid, validationCallback, location.readByUuid);
+router.route('/locations').get(stdLocationValidation.read, validationCallback, location.read);
+router.route('/locations').post(stdLocationValidation.create, validationCallback, location.create);
+router.route('/locations').put(stdLocationValidation.update, validationCallback, location.update);
+router.route('/locations').patch(stdLocationValidation.patch, validationCallback, location.patch);
+router.route('/locations').delete(stdLocationValidation.delete, validationCallback, location.delete);
 //#endregion
 
 //#region ✅ Shift (작업교대)
 const shift = new StdShiftCtl();
-router.route('/shifts/excel-upload').post(shift.upsertBulkDatasFromExcel);
-router.route('/shift/:uuid').get(shift.read);
-router.route('/shifts').get(shift.read);
-router.route('/shifts').post(shift.create);
-router.route('/shifts').put(shift.update);
-router.route('/shifts').patch(shift.patch);
-router.route('/shifts').delete(shift.delete);
+// router.route('/shifts/excel-upload').post(shift.upsertBulkDatasFromExcel);
+router.route('/shift/:uuid').get(stdShiftValidation.readByUuid, validationCallback, shift.readByUuid);
+router.route('/shifts').get(stdShiftValidation.read, validationCallback, shift.read);
+router.route('/shifts').post(stdShiftValidation.create, validationCallback, shift.create);
+router.route('/shifts').put(stdShiftValidation.update, validationCallback, shift.update);
+router.route('/shifts').patch(stdShiftValidation.patch, validationCallback, shift.patch);
+router.route('/shifts').delete(stdShiftValidation.delete, validationCallback, shift.delete);
 //#endregion
 
 //#region ✅ Worker (작업자)
 const worker = new StdWorkerCtl();
-router.route('/workers/excel-upload').post(worker.upsertBulkDatasFromExcel);
-router.route('/worker/:uuid').get(worker.read);
-router.route('/workers').get(worker.read);
-router.route('/workers').post(worker.create);
-router.route('/workers').put(worker.update);
-router.route('/workers').patch(worker.patch);
-router.route('/workers').delete(worker.delete);
+// router.route('/workers/excel-upload').post(worker.upsertBulkDatasFromExcel);
+router.route('/worker/:uuid').get(stdWorkerValidation.readByUuid, validationCallback, worker.readByUuid);
+router.route('/workers').get(stdWorkerValidation.read, validationCallback, worker.read);
+router.route('/workers').post(stdWorkerValidation.create, validationCallback, worker.create);
+router.route('/workers').put(stdWorkerValidation.update, validationCallback, worker.update);
+router.route('/workers').patch(stdWorkerValidation.patch, validationCallback, worker.patch);
+router.route('/workers').delete(stdWorkerValidation.delete, validationCallback, worker.delete);
 //#endregion
 
 //#region ✅ Workings (작업장)
 const workings = new StdWorkingsCtl();
-router.route('/workingses/excel-upload').post(workings.upsertBulkDatasFromExcel);
-router.route('/workings/:uuid').get(workings.read);
-router.route('/workingses').get(workings.read);
-router.route('/workingses').post(workings.create);
-router.route('/workingses').put(workings.update);
-router.route('/workingses').patch(workings.patch);
-router.route('/workingses').delete(workings.delete);
+// router.route('/workingses/excel-upload').post(workings.upsertBulkDatasFromExcel);
+router.route('/workings/:uuid').get(stdWorkingsValidation.readByUuid, validationCallback, workings.readByUuid);
+router.route('/workingses').get(stdWorkingsValidation.read, validationCallback, workings.read);
+router.route('/workingses').post(stdWorkingsValidation.create, validationCallback, workings.create);
+router.route('/workingses').put(stdWorkingsValidation.update, validationCallback, workings.update);
+router.route('/workingses').patch(stdWorkingsValidation.patch, validationCallback, workings.patch);
+router.route('/workingses').delete(stdWorkingsValidation.delete, validationCallback, workings.delete);
 //#endregion
 
 //#region ✅ WorkerGroup (작업조)
 const workerGroup = new StdWorkerGroupCtl();
-router.route('/worker-groups/excel-upload').post(workerGroup.upsertBulkDatasFromExcel);
-router.route('/worker-group/:uuid').get(workerGroup.read);
-router.route('/worker-groups').get(workerGroup.read);
-router.route('/worker-groups').post(workerGroup.create);
-router.route('/worker-groups').put(workerGroup.update);
-router.route('/worker-groups').patch(workerGroup.patch);
-router.route('/worker-groups').delete(workerGroup.delete);
+// router.route('/worker-groups/excel-upload').post(workerGroup.upsertBulkDatasFromExcel);
+router.route('/worker-group/:uuid').get(stdWorkerGroupValidation.readByUuid, validationCallback, workerGroup.readByUuid);
+router.route('/worker-groups').get(stdWorkerGroupValidation.read, validationCallback, workerGroup.read);
+router.route('/worker-groups').post(stdWorkerGroupValidation.create, validationCallback, workerGroup.create);
+router.route('/worker-groups').put(stdWorkerGroupValidation.update, validationCallback, workerGroup.update);
+router.route('/worker-groups').patch(stdWorkerGroupValidation.patch, validationCallback, workerGroup.patch);
+router.route('/worker-groups').delete(stdWorkerGroupValidation.delete, validationCallback, workerGroup.delete);
 //#endregion
 
 //#region ✅ WorkerGroupWorker (작업조-작업자)
 const workerGroupWorker = new StdWorkerGroupWorkerCtl();
 // router.route('/worker-group-workers/excel-upload').post(workerGroupWorker.upsertBulkDatasFromExcel);
-router.route('/worker-group-worker/:uuid').get(workerGroupWorker.read);
-router.route('/worker-group-workers').get(workerGroupWorker.read);
-router.route('/worker-group-workers').post(workerGroupWorker.create);
-router.route('/worker-group-workers').put(workerGroupWorker.update);
-router.route('/worker-group-workers').patch(workerGroupWorker.patch);
-router.route('/worker-group-workers').delete(workerGroupWorker.delete);
+router.route('/worker-group-worker/:uuid').get(stdWorkerGroupWorkerValidation.readByUuid, validationCallback, workerGroupWorker.readByUuid);
+router.route('/worker-group-workers').get(stdWorkerGroupWorkerValidation.read, validationCallback, workerGroupWorker.read);
+router.route('/worker-group-workers').post(stdWorkerGroupWorkerValidation.create, validationCallback, workerGroupWorker.create);
+router.route('/worker-group-workers').put(stdWorkerGroupWorkerValidation.update, validationCallback, workerGroupWorker.update);
+router.route('/worker-group-workers').patch(stdWorkerGroupWorkerValidation.patch, validationCallback, workerGroupWorker.patch);
+router.route('/worker-group-workers').delete(stdWorkerGroupWorkerValidation.delete, validationCallback, workerGroupWorker.delete);
 //#endregion
 
 //#region ✅ ProdType (제품유형)
 const prodType = new StdProdTypeCtl();
-router.route('/prod-types/excel-upload').post(prodType.upsertBulkDatasFromExcel);
-router.route('/prod-type/:uuid').get(prodType.read);
-router.route('/prod-types').get(prodType.read);
-router.route('/prod-types').post(prodType.create);
-router.route('/prod-types').put(prodType.update);
-router.route('/prod-types').patch(prodType.patch);
-router.route('/prod-types').delete(prodType.delete);
+// router.route('/prod-types/excel-upload').post(prodType.upsertBulkDatasFromExcel);
+router.route('/prod-type/:uuid').get(stdProdTypeValidation.readByUuid, validationCallback, prodType.readByUuid);
+router.route('/prod-types').get(stdProdTypeValidation.read, validationCallback, prodType.read);
+router.route('/prod-types').post(stdProdTypeValidation.create, validationCallback, prodType.create);
+router.route('/prod-types').put(stdProdTypeValidation.update, validationCallback, prodType.update);
+router.route('/prod-types').patch(stdProdTypeValidation.patch, validationCallback, prodType.patch);
+router.route('/prod-types').delete(stdProdTypeValidation.delete, validationCallback, prodType.delete);
 //#endregion
 
 //#region ✅ Grade (직급)
 const grade = new StdGradeCtl();
-router.route('/grades/excel-upload').post(grade.upsertBulkDatasFromExcel);
-router.route('/grade/:uuid').get(grade.read);
-router.route('/grades').get(grade.read);
-router.route('/grades').post(grade.create);
-router.route('/grades').put(grade.update);
-router.route('/grades').patch(grade.patch);
-router.route('/grades').delete(grade.delete);
+// router.route('/grades/excel-upload').post(grade.upsertBulkDatasFromExcel);
+router.route('/grade/:uuid').get(stdGradeValidation.readByUuid, validationCallback, grade.readByUuid);
+router.route('/grades').get(stdGradeValidation.read, validationCallback, grade.read);
+router.route('/grades').post(stdGradeValidation.create, validationCallback, grade.create);
+router.route('/grades').put(stdGradeValidation.update, validationCallback, grade.update);
+router.route('/grades').patch(stdGradeValidation.patch, validationCallback, grade.patch);
+router.route('/grades').delete(stdGradeValidation.delete, validationCallback, grade.delete);
 //#endregion
 
 //#region ✅ Store (창고)
 const store = new StdStoreCtl();
-router.route('/stores/excel-upload').post(store.upsertBulkDatasFromExcel);
-router.route('/store/:uuid').get(store.read);
-router.route('/stores').get(store.read);
-router.route('/stores').post(store.create);
-router.route('/stores').put(store.update);
-router.route('/stores').patch(store.patch);
-router.route('/stores').delete(store.delete);
+// router.route('/stores/excel-upload').post(store.upsertBulkDatasFromExcel);
+router.route('/store/:uuid').get(stdStoreValidation.readByUuid, validationCallback, store.readByUuid);
+router.route('/stores').get(stdStoreValidation.read, validationCallback, store.read);
+router.route('/stores').post(stdStoreValidation.create, validationCallback, store.create);
+router.route('/stores').put(stdStoreValidation.update, validationCallback, store.update);
+router.route('/stores').patch(stdStoreValidation.patch, validationCallback, store.patch);
+router.route('/stores').delete(stdStoreValidation.delete, validationCallback, store.delete);
 //#endregion
 
 //#region ✅ RoutingWorkings (품목별 작업장)
 const routingWorkings = new StdRoutingWorkingsCtl();
-router.route('/routing-workings/:uuid').get(routingWorkings.read);
-router.route('/routing-workingses').get(routingWorkings.read);
-router.route('/routing-workingses').post(routingWorkings.create);
-router.route('/routing-workingses').put(routingWorkings.update);
-router.route('/routing-workingses').patch(routingWorkings.patch);
-router.route('/routing-workingses').delete(routingWorkings.delete);
+router.route('/routing-workings/:uuid').get(stdRoutingWorkingsValidation.readByUuid, validationCallback, routingWorkings.readByUuid);
+router.route('/routing-workingses').get(stdRoutingWorkingsValidation.read, validationCallback, routingWorkings.read);
+router.route('/routing-workingses').post(stdRoutingWorkingsValidation.create, validationCallback, routingWorkings.create);
+router.route('/routing-workingses').put(stdRoutingWorkingsValidation.update, validationCallback, routingWorkings.update);
+router.route('/routing-workingses').patch(stdRoutingWorkingsValidation.patch, validationCallback, routingWorkings.patch);
+router.route('/routing-workingses').delete(stdRoutingWorkingsValidation.delete, validationCallback, routingWorkings.delete);
 //#endregion
 
 //#region ✅ ItemType (품목유형)
 const itemType = new StdItemTypeCtl();
-router.route('/item-types/excel-upload').post(itemType.upsertBulkDatasFromExcel);
-router.route('/item-type/:uuid').get(itemType.read);
-router.route('/item-types').get(itemType.read);
-router.route('/item-types').post(itemType.create);
-router.route('/item-types').put(itemType.update);
-router.route('/item-types').patch(itemType.patch);
-router.route('/item-types').delete(itemType.delete);
+// router.route('/item-types/excel-upload').post(itemType.upsertBulkDatasFromExcel);
+router.route('/item-type/:uuid').get(stdItemTypeValidation.readByUuid, validationCallback, itemType.readByUuid);
+router.route('/item-types').get(stdItemTypeValidation.read, validationCallback, itemType.read);
+router.route('/item-types').post(stdItemTypeValidation.create, validationCallback, itemType.create);
+router.route('/item-types').put(stdItemTypeValidation.update, validationCallback, itemType.update);
+router.route('/item-types').patch(stdItemTypeValidation.patch, validationCallback, itemType.patch);
+router.route('/item-types').delete(stdItemTypeValidation.delete, validationCallback, itemType.delete);
 //#endregion
 
 //#region ✅ Prod (품목)
 const prod = new StdProdCtl();
-router.route('/prods/excel-upload').post(prod.upsertBulkDatasFromExcel);
-router.route('/prod/:uuid').get(prod.read);
-router.route('/prods').get(prod.read);
-router.route('/prods').post(prod.create);
-router.route('/prods').put(prod.update);
-router.route('/prods').patch(prod.patch);
-router.route('/prods').delete(prod.delete);
+// router.route('/prods/excel-upload').post(prod.upsertBulkDatasFromExcel);
+router.route('/prod/:uuid').get(stdProdValidation.readByUuid, validationCallback, prod.readByUuid);
+router.route('/prods').get(stdProdValidation.read, validationCallback, prod.read);
+router.route('/prods').post(stdProdValidation.create, validationCallback, prod.create);
+router.route('/prods').put(stdProdValidation.update, validationCallback, prod.update);
+router.route('/prods').patch(stdProdValidation.patch, validationCallback, prod.patch);
+router.route('/prods').delete(stdProdValidation.delete, validationCallback, prod.delete);
 //#endregion
 
 //#region ✅ VendorPrice (협력사 단가)
 const vendorPrice = new StdVendorPriceCtl();
-router.route('/vendor-prices/excel-upload').post(vendorPrice.upsertBulkDatasFromExcel);
-router.route('/vendor-price/:uuid').get(vendorPrice.read);
-router.route('/vendor-prices').get(vendorPrice.read);
-router.route('/vendor-prices').post(vendorPrice.create);
-router.route('/vendor-prices').put(vendorPrice.update);
-router.route('/vendor-prices').patch(vendorPrice.patch);
-router.route('/vendor-prices').delete(vendorPrice.delete);
+// router.route('/vendor-prices/excel-upload').post(vendorPrice.upsertBulkDatasFromExcel);
+router.route('/vendor-price/:uuid').get(stdVendorPriceValidation.readByUuid, validationCallback, vendorPrice.readByUuid);
+router.route('/vendor-prices').get(stdVendorPriceValidation.read, validationCallback, vendorPrice.read);
+router.route('/vendor-prices').post(stdVendorPriceValidation.create, validationCallback, vendorPrice.create);
+router.route('/vendor-prices').put(stdVendorPriceValidation.update, validationCallback, vendorPrice.update);
+router.route('/vendor-prices').patch(stdVendorPriceValidation.patch, validationCallback, vendorPrice.patch);
+router.route('/vendor-prices').delete(stdVendorPriceValidation.delete, validationCallback, vendorPrice.delete);
 //#endregion
 
 //#region ✅ MoneyUnit (화폐단위)
 const moneyUnit = new StdMoneyUnitCtl();
-router.route('/money-units/excel-upload').post(moneyUnit.upsertBulkDatasFromExcel);
-router.route('/money-unit/:uuid').get(moneyUnit.read);
-router.route('/money-units').get(moneyUnit.read);
-router.route('/money-units').post(moneyUnit.create);
-router.route('/money-units').put(moneyUnit.update);
-router.route('/money-units').patch(moneyUnit.patch);
-router.route('/money-units').delete(moneyUnit.delete);
+// router.route('/money-units/excel-upload').post(moneyUnit.upsertBulkDatasFromExcel);
+router.route('/money-unit/:uuid').get(stdMoneyUnitValidation.readByUuid, validationCallback, moneyUnit.readByUuid);
+router.route('/money-units').get(stdMoneyUnitValidation.read, validationCallback, moneyUnit.read);
+router.route('/money-units').post(stdMoneyUnitValidation.create, validationCallback, moneyUnit.create);
+router.route('/money-units').put(stdMoneyUnitValidation.update, validationCallback, moneyUnit.update);
+router.route('/money-units').patch(stdMoneyUnitValidation.patch, validationCallback, moneyUnit.patch);
+router.route('/money-units').delete(stdMoneyUnitValidation.delete, validationCallback, moneyUnit.delete);
 //#endregion
 
 //#region ✅ Company (회사)
 const company = new StdCompanyCtl();
-router.route('/companies/excel-upload').post(company.upsertBulkDatasFromExcel);
-router.route('/company/:uuid').get(company.read);
-router.route('/companies').get(company.read);
-router.route('/companies').post(company.create);
-router.route('/companies').put(company.update);
-router.route('/companies').patch(company.patch);
-router.route('/companies').delete(company.delete);
+// router.route('/companies/excel-upload').post(company.upsertBulkDatasFromExcel);
+router.route('/company/:uuid').get(stdCompanyValidation.readByUuid, validationCallback, company.readByUuid);
+router.route('/companies').get(stdCompanyValidation.read, validationCallback, company.read);
+router.route('/companies').post(stdCompanyValidation.create, validationCallback, company.create);
+router.route('/companies').put(stdCompanyValidation.update, validationCallback, company.update);
+router.route('/companies').patch(stdCompanyValidation.patch, validationCallback, company.patch);
+router.route('/companies').delete(stdCompanyValidation.delete, validationCallback, company.delete);
 //#endregion
 
 export default router;

@@ -56,7 +56,7 @@ app.use(morgan('combined', { stream }));
 app.use(morgan('dev'));
 
 app.use(tenantMiddleware);
-app.use('/refresh-token', refreshToken)
+app.use('/refresh-token', refreshToken);
 app.use(jwtMiddleware);
 app.use('/', routers);
 

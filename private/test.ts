@@ -1,4 +1,8 @@
 
-import { BOM_INPUT_TYPE } from "../src/types/bom-input-type.type";
+const a = '123';
 
-console.log(Object.values(BOM_INPUT_TYPE).includes(1));
+console.log(typeof(a));
+
+const b = a;
+console.log(typeof(b));
+console.log(b);

@@ -5,7 +5,7 @@ import AutUser from '../aut/user.model';
 @Table({
   tableName: 'ADM_PRD_PLAN_TYPE_TB',
   modelName: 'AdmPrdPlanType',
-  comment: '생산계획 유형 정보 뷰',
+  comment: '생산계획 유형 정보 테이블',
   timestamps: true,
   underscored: true,
 })

@@ -33,7 +33,7 @@ get:
                         type: array
                         items:
                           allOf:
-                            - $ref: ../../schemas/adm/company-opt.schema.yaml#/uuid
+                            - $ref: ../../schemas/adm/company-opt.schema.yaml#/company_opt_uuid
                             - $ref: ../../schemas/adm/company-opt.schema.yaml#/company_opt_cd
                             - $ref: ../../schemas/adm/company-opt.schema.yaml#/company_opt_nm
                             - $ref: ../../schemas/adm/company-opt.schema.yaml#/remark

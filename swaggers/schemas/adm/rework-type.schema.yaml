@@ -40,5 +40,13 @@ uuid:
       description: 재작업유형UUID
       type: string
       format: uuid
+
 # Uuids
+rework_type_uuid:
+  type: object
+  properties:
+    rework_type_uuid:
+      description: 재작업유형UUID
+      type: string
+      format: uuid
 

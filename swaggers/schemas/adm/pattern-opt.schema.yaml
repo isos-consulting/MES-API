@@ -72,5 +72,13 @@ uuid:
       description: 자동발행옵션UUID
       type: string
       format: uuid
+
 # Uuids
+pattern_opt_uuid:
+  type: object
+  properties:
+    pattern_opt_uuid:
+      description: 자동발행옵션UUID
+      type: string
+      format: uuid
 

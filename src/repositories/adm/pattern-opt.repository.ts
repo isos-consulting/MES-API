@@ -65,7 +65,7 @@ class AdmPatternOptRepo {
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
-					// [ Sequelize.col('admPatternOpt.uuid'), 'pattern_opt_uuid' ],
+					[ Sequelize.col('admPatternOpt.uuid'), 'pattern_opt_uuid' ],
           'pattern_opt_cd',
           'pattern_opt_nm',
           'table_nm',
@@ -119,7 +119,7 @@ class AdmPatternOptRepo {
 					{ model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
 				],
 				attributes: [
-					// [ Sequelize.col('admPatternOpt.uuid'), 'pattern_opt_uuid' ],
+					[ Sequelize.col('admPatternOpt.uuid'), 'pattern_opt_uuid' ],
 					'pattern_opt_cd',
           'pattern_opt_nm',
           'table_nm',

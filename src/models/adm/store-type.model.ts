@@ -5,7 +5,7 @@ import AutUser from '../aut/user.model';
 @Table({
   tableName: 'ADM_STORE_TYPE_TB',
   modelName: 'AdmStoreType',
-  comment: '창고 유형 정보 뷰',
+  comment: '창고 유형 정보 테이블',
   timestamps: true,
   underscored: true,
 })
