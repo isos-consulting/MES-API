@@ -178,7 +178,7 @@ class EqmInspCtl {
 
       result.raws = [{ 
         header: headerResult.raws[0] ?? {}, 
-        deatils: detailsResult.raws 
+        details: detailsResult.raws 
       }];
       result.count = headerResult.count + detailsResult.count;
       
@@ -215,7 +215,7 @@ class EqmInspCtl {
 
       result.raws = [{ 
         header: headerResult.raws[0] ?? {}, 
-        deatils: detailsResult.raws 
+        details: detailsResult.raws 
       }];
       result.count = headerResult.count + detailsResult.count;
       
