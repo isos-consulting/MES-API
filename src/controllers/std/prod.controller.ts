@@ -57,7 +57,7 @@ class StdProdCtl {
       let result: ApiResult<any> = { count:0, raws: [] };
       const service = new StdProdService(req.tenant.uuid);
       const params = matchedData(req, { locations: [ 'query', 'params' ] });
-			console.log(params);
+			
       result = await service.read(params);
 
       return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);

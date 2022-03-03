@@ -17,9 +17,11 @@ const admPatternOptValidation = {
     body('*.pattern_opt_nm', '번호자동발행 옵션명')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'pattern_opt_nm', '번호자동발행 옵션명'))
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'pattern_opt_nm', '번호자동발행 옵션명')),
-    body('*.table_nm', '테이블명').optional({ nullable: true })
+    body('*.table_nm', '테이블명')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'table_nm', '테이블명'))
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'table_nm', '테이블명')),
-    body('*.auto_fg', '자동발행여부').optional({ nullable: true })
+    body('*.auto_fg', '자동발행여부')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'auto_fg', '자동발행여부'))
       .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'auto_fg', '자동발행여부')),
     body('*.col_nm', '컬럼명').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'col_nm', '컬럼명')),
@@ -39,8 +41,10 @@ const admPatternOptValidation = {
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'pattern_opt_nm', '번호자동발행 옵션명'))
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'pattern_opt_nm', '번호자동발행 옵션명')),
     body('*.table_nm', '테이블명').optional({ nullable: true })
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'table_nm', '테이블명'))
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'table_nm', '테이블명')),
     body('*.auto_fg', '자동발행여부').optional({ nullable: true })
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'auto_fg', '자동발행여부'))  
       .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'auto_fg', '자동발행여부')),
     body('*.col_nm', '컬럼명').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'col_nm', '컬럼명')),

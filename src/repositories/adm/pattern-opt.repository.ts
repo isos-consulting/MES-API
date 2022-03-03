@@ -32,6 +32,7 @@ class AdmPatternOptRepo {
       const promises = body.map((patternOpt: any) => {
         return this.repo.create(
           {
+            pattern_opt_cd: patternOpt.pattern_opt_cd,
             pattern_opt_nm: patternOpt.pattern_opt_nm,
             table_nm: patternOpt.table_nm,
             auto_fg: patternOpt.auto_fg,
