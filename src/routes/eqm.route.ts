@@ -31,6 +31,7 @@ router.route('/insp/cancel-apply').put(eqmInspValidation.updateCancelApply, vali
 router.route('/insp/:uuid').get(eqmInspValidation.readByUuid, validationCallback, insp.readByUuid);
 router.route('/insp/:uuid/include-details').get(eqmInspValidation.readIncludeDetails, validationCallback, insp.readIncludeDetails);
 router.route('/insp/:uuid/details').get(eqmInspValidation.readDetails, validationCallback, insp.readDetails);
+router.route('/insps/include-details-by-equip').get(eqmInspValidation.readIncludeDetailsByEquip, validationCallback, insp.readIncludeDetailsByEquip);
 router.route('/insps').get(eqmInspValidation.read, validationCallback, insp.read);
 router.route('/insps').post(eqmInspValidation.create, validationCallback, insp.create);
 router.route('/insps').put(eqmInspValidation.update, validationCallback, insp.update);

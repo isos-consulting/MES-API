@@ -12,8 +12,8 @@ const eqmInspResultValidation = {
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'equip_uuid', '설비UUID')),
     query('insp_uuid', '설비검사기준서UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'insp_uuid', '설비검사기준서UUID')),
-    query('insp_deatil_uuid', '설비검사기준서상세UUID').optional({ nullable: true })
-      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'insp_deatil_uuid', '설비검사기준서상세UUID')),
+    query('insp_detail_uuid', '설비검사기준서상세UUID').optional({ nullable: true })
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'insp_detail_uuid', '설비검사기준서상세UUID')),
     query('insp_type', '기준서유형')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'insp_type', '기준서유형'))
       .isIn([ 'all', 'daily', 'periodicity' ]).withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'insp_type', '기준서유형')),
