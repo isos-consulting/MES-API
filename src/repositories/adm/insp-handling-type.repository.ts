@@ -62,7 +62,7 @@ class AdmInspHandlingTypeRepo {
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
-					// [ Sequelize.col('admInspHandlingType.uuid'), 'insp_handling_type_uuid' ],
+					[ Sequelize.col('admInspHandlingType.uuid'), 'insp_handling_type_uuid' ],
           'insp_handling_type_cd',
           'insp_handling_type_nm',
 					'sortby',
@@ -91,7 +91,7 @@ class AdmInspHandlingTypeRepo {
 					{ model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
 				],
 				attributes: [
-					// [ Sequelize.col('admInspHandlingType.uuid'), 'insp_handling_type_uuid' ],
+					[ Sequelize.col('admInspHandlingType.uuid'), 'insp_handling_type_uuid' ],
 					'insp_handling_type_cd',
           'insp_handling_type_nm',
           'sortby',

@@ -8,7 +8,7 @@ const seedDatas: IQmsInsp[] = [
   {
 		"insp_id" : 1,
 		"factory_id" : 1,
-		"insp_type_cd" : "FINAL_INSP",
+		"insp_type_id" : 3,
 		"insp_no" : "202110070001",
 		"prod_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
@@ -23,7 +23,7 @@ const seedDatas: IQmsInsp[] = [
 	{
 		"insp_id" : 2,
 		"factory_id" : 1,
-		"insp_type_cd" : "FINAL_INSP",
+		"insp_type_id" : 3,
 		"insp_no" : "202110070002",
 		"prod_id" : 1,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
@@ -38,7 +38,7 @@ const seedDatas: IQmsInsp[] = [
 	{
 		"insp_id" : 3,
 		"factory_id" : 1,
-		"insp_type_cd" : "FINAL_INSP",
+		"insp_type_id" : 3,
 		"insp_no" : "202110070003",
 		"prod_id" : 2,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
@@ -53,7 +53,7 @@ const seedDatas: IQmsInsp[] = [
 	{
 		"insp_id" : 4,
 		"factory_id" : 1,
-		"insp_type_cd" : "FINAL_INSP",
+		"insp_type_id" : 3,
 		"insp_no" : "202110070004",
 		"prod_id" : 3,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
@@ -68,7 +68,7 @@ const seedDatas: IQmsInsp[] = [
 	{
 		"insp_id" : 5,
 		"factory_id" : 1,
-		"insp_type_cd" : "RECEIVE_INSP",
+		"insp_type_id" : 1,
 		"insp_no" : "202110070005",
 		"prod_id" : 27,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
@@ -83,7 +83,7 @@ const seedDatas: IQmsInsp[] = [
 	{
 		"insp_id" : 6,
 		"factory_id" : 1,
-		"insp_type_cd" : "RECEIVE_INSP",
+		"insp_type_id" : 1,
 		"insp_no" : "202110070006",
 		"prod_id" : 26,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
@@ -98,7 +98,7 @@ const seedDatas: IQmsInsp[] = [
 	{
 		"insp_id" : 7,
 		"factory_id" : 1,
-		"insp_type_cd" : "RECEIVE_INSP",
+		"insp_type_id" : 1,
 		"insp_no" : "202110070007",
 		"prod_id" : 25,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
@@ -113,7 +113,7 @@ const seedDatas: IQmsInsp[] = [
 	{
 		"insp_id" : 8,
 		"factory_id" : 1,
-		"insp_type_cd" : "RECEIVE_INSP",
+		"insp_type_id" : 1,
 		"insp_no" : "202110070008",
 		"prod_id" : 27,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
@@ -128,7 +128,7 @@ const seedDatas: IQmsInsp[] = [
 	{
 		"insp_id" : 9,
 		"factory_id" : 1,
-		"insp_type_cd" : "RECEIVE_INSP",
+		"insp_type_id" : 1,
 		"insp_no" : "202110070009",
 		"prod_id" : 24,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
@@ -143,7 +143,7 @@ const seedDatas: IQmsInsp[] = [
 	{
 		"insp_id" : 10,
 		"factory_id" : 1,
-		"insp_type_cd" : "RECEIVE_INSP",
+		"insp_type_id" : 1,
 		"insp_no" : "202110070010",
 		"prod_id" : 23,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
@@ -158,7 +158,7 @@ const seedDatas: IQmsInsp[] = [
 	{
 		"insp_id" : 11,
 		"factory_id" : 1,
-		"insp_type_cd" : "RECEIVE_INSP",
+		"insp_type_id" : 1,
 		"insp_no" : "202110070011",
 		"prod_id" : 22,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
@@ -173,7 +173,7 @@ const seedDatas: IQmsInsp[] = [
 	{
 		"insp_id" : 12,
 		"factory_id" : 1,
-		"insp_type_cd" : "RECEIVE_INSP",
+		"insp_type_id" : 1,
 		"insp_no" : "202110070012",
 		"prod_id" : 21,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
@@ -188,7 +188,7 @@ const seedDatas: IQmsInsp[] = [
 	{
 		"insp_id" : 13,
 		"factory_id" : 1,
-		"insp_type_cd" : "RECEIVE_INSP",
+		"insp_type_id" : 1,
 		"insp_no" : "202110070013",
 		"prod_id" : 20,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
@@ -203,7 +203,7 @@ const seedDatas: IQmsInsp[] = [
 	{
 		"insp_id" : 14,
 		"factory_id" : 1,
-		"insp_type_cd" : "RECEIVE_INSP",
+		"insp_type_id" : 1,
 		"insp_no" : "202110070014",
 		"prod_id" : 19,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
@@ -218,7 +218,7 @@ const seedDatas: IQmsInsp[] = [
 	{
 		"insp_id" : 15,
 		"factory_id" : 1,
-		"insp_type_cd" : "RECEIVE_INSP",
+		"insp_type_id" : 1,
 		"insp_no" : "202110070015",
 		"prod_id" : 18,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
@@ -233,7 +233,7 @@ const seedDatas: IQmsInsp[] = [
 	{
 		"insp_id" : 16,
 		"factory_id" : 1,
-		"insp_type_cd" : "RECEIVE_INSP",
+		"insp_type_id" : 1,
 		"insp_no" : "202110070016",
 		"prod_id" : 17,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
@@ -248,7 +248,7 @@ const seedDatas: IQmsInsp[] = [
 	{
 		"insp_id" : 17,
 		"factory_id" : 1,
-		"insp_type_cd" : "RECEIVE_INSP",
+		"insp_type_id" : 1,
 		"insp_no" : "202110070017",
 		"prod_id" : 16,
 		"reg_date" : moment("2021-10-06T15:00:00.000Z").toString(),
@@ -263,7 +263,7 @@ const seedDatas: IQmsInsp[] = [
 	{
 		"insp_id" : 18,
 		"factory_id" : 1,
-		"insp_type_cd" : "RECEIVE_INSP",
+		"insp_type_id" : 1,
 		"insp_no" : "202110140001",
 		"prod_id" : 7,
 		"reg_date" : moment("2021-10-13T15:00:00.000Z").toString(),
@@ -278,7 +278,7 @@ const seedDatas: IQmsInsp[] = [
 	{
 		"insp_id" : 19,
 		"factory_id" : 1,
-		"insp_type_cd" : "RECEIVE_INSP",
+		"insp_type_id" : 1,
 		"insp_no" : "202110140002",
 		"prod_id" : 14,
 		"reg_date" : moment("2021-10-13T15:00:00.000Z").toString(),
@@ -293,7 +293,7 @@ const seedDatas: IQmsInsp[] = [
 	{
 		"insp_id" : 20,
 		"factory_id" : 1,
-		"insp_type_cd" : "RECEIVE_INSP",
+		"insp_type_id" : 1,
 		"insp_no" : "202110140003",
 		"prod_id" : 11,
 		"reg_date" : moment("2021-10-13T15:00:00.000Z").toString(),
@@ -308,7 +308,7 @@ const seedDatas: IQmsInsp[] = [
 	{
 		"insp_id" : 22,
 		"factory_id" : 1,
-		"insp_type_cd" : "RECEIVE_INSP",
+		"insp_type_id" : 1,
 		"insp_no" : "202110150001",
 		"prod_id" : 13,
 		"reg_date" : moment("2021-10-14T15:00:00.000Z").toString(),
@@ -323,7 +323,7 @@ const seedDatas: IQmsInsp[] = [
 	{
 		"insp_id" : 24,
 		"factory_id" : 1,
-		"insp_type_cd" : "PROC_INSP",
+		"insp_type_id" : 2,
 		"insp_no" : "202110250001",
 		"prod_id" : 1,
 		"reg_date" : moment("2021-10-24T15:00:00.000Z").toString(),
@@ -338,7 +338,7 @@ const seedDatas: IQmsInsp[] = [
 	{
 		"insp_id" : 25,
 		"factory_id" : 1,
-		"insp_type_cd" : "PROC_INSP",
+		"insp_type_id" : 2,
 		"insp_no" : "202110250002",
 		"prod_id" : 5,
 		"reg_date" : moment("2021-10-24T15:00:00.000Z").toString(),
@@ -353,7 +353,7 @@ const seedDatas: IQmsInsp[] = [
 	{
 		"insp_id" : 26,
 		"factory_id" : 1,
-		"insp_type_cd" : "PROC_INSP",
+		"insp_type_id" : 2,
 		"insp_no" : "202112170001",
 		"prod_id" : 3,
 		"reg_date" : moment("2021-12-16T15:00:00.000Z").toString(),
@@ -368,7 +368,7 @@ const seedDatas: IQmsInsp[] = [
 	{
 		"insp_id" : 27,
 		"factory_id" : 1,
-		"insp_type_cd" : "PROC_INSP",
+		"insp_type_id" : 2,
 		"insp_no" : "202112170002",
 		"prod_id" : 4,
 		"reg_date" : moment("2021-12-16T15:00:00.000Z").toString(),

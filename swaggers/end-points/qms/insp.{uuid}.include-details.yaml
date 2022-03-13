@@ -13,16 +13,11 @@ get:
         type: string
         format: uuid
 
-    - name: insp_detail_type
+    - name: insp_detail_type_uuid
       in: query
       required: true
       description: |
-        기준서 조회시 세부검사유형을 입력합니다. <br/> 
-        [selfProc]: 자주검사 성적서 조회 <br/>
-        [patrolProc]: 순회검사 성적서 조회 <br/>
-        [matReceive]: 자재수입검사 성적서 조회 <br/>
-        [outReceive]: 외주수입검사 성적서 조회 <br/>
-        [finalInsp]: 최종검사 성적서 조회 <br/>
+        기준서 조회시 세부검사유형의 UUID 를 입력합니다.
       schema:
         type: string
         format: string
@@ -64,7 +59,8 @@ get:
                                 - $ref: ../../schemas/qms/insp.schema.yaml#/factory_uuid
                                 - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
                                 - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
-                                - $ref: ../../schemas/qms/insp.schema.yaml#/insp_type_cd
+                                - $ref: ../../schemas/qms/insp.schema.yaml#/insp_type_uuid
+                                - $ref: ../../schemas/adm/insp-type.schema.yaml#/insp_type_cd
                                 - $ref: ../../schemas/adm/insp-type.schema.yaml#/insp_type_nm
                                 - $ref: ../../schemas/qms/insp.schema.yaml#/insp_no
                                 - $ref: ../../schemas/qms/insp.schema.yaml#/prod_uuid

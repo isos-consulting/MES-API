@@ -14,8 +14,8 @@ const readWaitingReceive = (
       m_r.stmt_no,
       concat(m_r.stmt_no, '-', m_rd.seq) as stmt_no_sub,
       m_r.reg_date as reg_date,
-      'MAT_RECEIVE' as insp_detail_type_cd,
-      '자재수입검사' as insp_detail_type_nm,
+      --'MAT_RECEIVE' as insp_detail_type_cd,
+      --'자재수입검사' as insp_detail_type_nm,
       s_f.uuid as factory_uuid,
       s_f.factory_cd,
       s_f.factory_nm,
@@ -84,10 +84,12 @@ const readWaitingReceive = (
     LEFT JOIN std_store_tb s_s ON s_s.store_id = m_rd.to_store_id
     LEFT JOIN std_location_tb s_l ON s_l.location_id = m_rd.to_location_id
     LEFT JOIN mat_income_tb m_i ON m_i.receive_detail_id = m_rd.receive_detail_id
-    LEFT JOIN (	SELECT insp_reference_id, count(*) AS cnt 
-      FROM qms_insp_result_tb
-      WHERE insp_type_cd = 'RECEIVE_INSP'
-      GROUP BY insp_reference_id) q_ir 	ON q_ir.insp_reference_id = m_rd.receive_detail_id
+    LEFT JOIN (	
+      SELECT q_ir.insp_reference_id, q_ir.count(*) AS cnt 
+      FROM qms_insp_result_tb q_ir
+      JOIN adm_insp_detail_type_tb a_idt on a_idt.insp_detail_type_id = q_ir.insp_detail_type_id
+      WHERE a_idt.insp_detail_type_cd = 'MAT_RECEIVE'
+      GROUP BY q_ir.insp_reference_id) q_ir 	ON q_ir.insp_reference_id = m_rd.receive_detail_id
     LEFT JOIN aut_user_tb a_uc ON a_uc.uid = m_rd.created_uid
     LEFT JOIN aut_user_tb a_uu ON a_uu.uid = m_rd.updated_uid
     WHERE (m_rd.insp_fg = TRUE AND COALESCE(q_ir.cnt, 0) = 0)
@@ -103,8 +105,8 @@ const readWaitingReceive = (
       o_r.stmt_no,
       concat(o_r.stmt_no, '-', o_rd.seq) as stmt_no_sub,
       o_r.reg_date as reg_date,
-      'OUT_RECEIVE' as insp_detail_type_cd,
-      '외주수입검사' as insp_detail_type_nm,
+      --'OUT_RECEIVE' as insp_detail_type_cd,
+      --'외주수입검사' as insp_detail_type_nm,
       s_f.uuid as factory_uuid,
       s_f.factory_cd,
       s_f.factory_nm,
@@ -173,10 +175,12 @@ const readWaitingReceive = (
     LEFT JOIN std_store_tb s_s ON s_s.store_id = o_rd.to_store_id
     LEFT JOIN std_location_tb s_l ON s_l.location_id = o_rd.to_location_id
     LEFT JOIN mat_income_tb m_i ON m_i.receive_detail_id = o_rd.receive_detail_id
-    LEFT JOIN (	SELECT insp_reference_id, count(*) AS cnt 
-      FROM qms_insp_result_tb
-      WHERE insp_type_cd = 'RECEIVE_INSP'
-      GROUP BY insp_reference_id) q_ir 	ON q_ir.insp_reference_id = o_rd.receive_detail_id
+    LEFT JOIN (	
+      SELECT q_ir.insp_reference_id, q_ir.count(*) AS cnt 
+      FROM qms_insp_result_tb q_ir
+      JOIN adm_insp_detail_type_tb a_idt on a_idt.insp_detail_type_id = q_ir.insp_detail_type_id
+      WHERE a_idt.insp_detail_type_cd = 'OUT_RECEIVE'
+      GROUP BY q_ir.insp_reference_id) q_ir 	ON q_ir.insp_reference_id = o_rd.receive_detail_id      
     LEFT JOIN aut_user_tb a_uc ON a_uc.uid = o_rd.created_uid
     LEFT JOIN aut_user_tb a_uu ON a_uu.uid = o_rd.updated_uid
     WHERE (o_rd.insp_fg = TRUE AND COALESCE(q_ir.cnt, 0) = 0)

@@ -1,9 +1,9 @@
 export default interface IQmsInspResult {
   insp_result_id?: number,
   factory_id?: number,
-  insp_type_cd?: string,
-  insp_detail_type_cd?: string,
-  insp_handling_type_cd?: string | null,
+  insp_type_id?: number,
+  insp_detail_type_id?: number,
+  insp_handling_type_id?: number | null,
   insp_reference_id?: number | null,
   seq?: number,
   insp_id?: number,

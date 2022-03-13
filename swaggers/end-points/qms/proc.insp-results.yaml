@@ -5,14 +5,11 @@ get:
   tags:
     - 공정검사 성적서(ProcInsp)
   parameters:
-    - name: insp_detail_type
+    - name: insp_detail_type_uuid
       in: query
-      required: true
       description: |
-        공정검사 성적서 조회시 공정검사 유형을 입력합니다. <br/> 
-        [all]: 전체 조회 <br/>
-        [selfProc]: 자주검사 성적서 조회 <br/>
-        [patrolProc]: 순회검사 성적서 조회 <br/>
+        공정검사 성적서 조회시 공정검사 유형 UUID를 입력합니다. <br/> 
+        [전체 조회시 입력하지 않습니다.]
       schema:
         type: string
         format: string
@@ -87,9 +84,11 @@ get:
                             - $ref: ../../schemas/qms/insp-result.schema.yaml#/factory_uuid
                             - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
                             - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
-                            - $ref: ../../schemas/qms/insp-result.schema.yaml#/insp_type_cd
+                            - $ref: ../../schemas/qms/insp-result.schema.yaml#/insp_type_uuid
+                            - $ref: ../../schemas/adm/insp-type.schema.yaml#/insp_type_cd
                             - $ref: ../../schemas/adm/insp-type.schema.yaml#/insp_type_nm
-                            - $ref: ../../schemas/qms/insp-result.schema.yaml#/insp_detail_type_cd
+                            - $ref: ../../schemas/qms/insp-result.schema.yaml#/insp_detail_type_uuid
+                            - $ref: ../../schemas/adm/insp-detail-type.schema.yaml#/insp_detail_type_cd
                             - $ref: ../../schemas/adm/insp-detail-type.schema.yaml#/insp_detail_type_nm
                             - $ref: ../../schemas/qms/insp-result.schema.yaml#/work_uuid
                             - $ref: ../../schemas/qms/insp-result.schema.yaml#/seq
@@ -148,7 +147,7 @@ post:
               required:
                 - factory_uuid
                 - work_uuid
-                - insp_detail_type_cd
+                - insp_detail_type_uuid
                 - insp_uuid
                 - prod_uuid
                 - lot_no
@@ -161,7 +160,7 @@ post:
                 - $ref: ../../schemas/qms/insp-result.schema.yaml#/uuid
                 - $ref: ../../schemas/qms/insp-result.schema.yaml#/factory_uuid
                 - $ref: ../../schemas/qms/insp-result.schema.yaml#/work_uuid
-                - $ref: ../../schemas/qms/insp-result.schema.yaml#/insp_detail_type_cd
+                - $ref: ../../schemas/qms/insp-result.schema.yaml#/insp_detail_type_uuid
                 - $ref: ../../schemas/qms/insp-result.schema.yaml#/insp_uuid
                 - $ref: ../../schemas/qms/insp-result.schema.yaml#/prod_uuid
                 - $ref: ../../schemas/qms/insp-result.schema.yaml#/lot_no

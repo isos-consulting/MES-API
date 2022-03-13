@@ -1,50 +1,33 @@
-import * as express from 'express';
-import checkArray from '../../utils/checkArray';
-import BaseCtl from '../base.controller';
-import response from '../../utils/response';
-import testErrorHandlingHelper from '../../utils/testErrorHandlingHelper';
-import QmsInspRepo from '../../repositories/qms/insp.repository';
-import QmsInspDetailRepo from '../../repositories/qms/insp-detail.repository';
-import StdFactoryRepo from '../../repositories/std/factory.repository';
-import StdProdRepo from '../../repositories/std/prod.repository';
-import StdInspItemRepo from '../../repositories/std/insp-item.repository';
-import StdInspMethodRepo from '../../repositories/std/insp-method.repository';
-import StdInspToolRepo from '../../repositories/std/insp-tool.repository';
-import moment = require('moment');
-import QmsInspResultRepo from '../../repositories/qms/insp-result.repository';
-import MatReceiveDetailRepo from '../../repositories/mat/receive-detail.repository';
-import OutReceiveDetailRepo from '../../repositories/out/receive-detail.repository';
-import PrdWorkRepo from '../../repositories/prd/work.repository';
-import getInspTypeCd from '../../utils/getInspTypeCd';
-import ApiResult from '../../interfaces/common/api-result.interface';
-import unsealArray from '../../utils/unsealArray';
-import AdmPatternHistoryCtl from '../adm/pattern-history.controller';
-import AdmInspDetailTypeRepo from '../../repositories/adm/insp-detail-type.repository';
-import getInspDetailTypeCd from '../../utils/getInspDetailTypeCd';
-import { getSequelize } from '../../utils/getSequelize';
+import express from 'express';
+import { matchedData } from 'express-validator';
 import config from '../../configs/config';
+import QmsInspService from '../../services/qms/insp.service';
+import QmsInspDetailService from '../../services/qms/insp-detail.service';
+import createDatabaseError from '../../utils/createDatabaseError';
+import createUnknownError from '../../utils/createUnknownError';
+import { sequelizes } from '../../utils/getSequelize';
+import isServiceResult from '../../utils/isServiceResult';
+import response from '../../utils/response_new';
+import createApiResult from '../../utils/createApiResult_new';
+import { errorState, successState } from '../../states/common.state';
+import ApiResult from '../../interfaces/common/api-result.interface';
+import AdmPatternHistoryService from '../../services/adm/pattern-history.service';
+import AdmPatternOptService from '../../services/adm/pattern-opt.service';
+import moment from 'moment';
+import AdmInspDetailTypeService from '../../services/adm/insp-detail-type.service';
+import createApiError from '../../utils/createApiError';
+import QmsInspResultService from '../../services/qms/insp-result.service';
+import MatReceiveDetailService from '../../services/mat/receive-detail.service';
+import OutReceiveDetailService from '../../services/out/receive-detail.service';
+import AdmInspTypeService from '../../services/adm/insp-type.service';
+import StdFactoryService from '../../services/std/factory.service';
+import PrdWorkService from '../../services/prd/work.service';
 
-class QmsInspCtl extends BaseCtl {
+class QmsInspCtl {
+  stateTag: string;
   //#region ✅ Constructor
   constructor() {
-    // ✅ 부모 Controller (Base Controller) 의 CRUD Function 과 상속 받는 자식 Controller(this) 의 Repository 를 연결하기 위하여 생성자에서 Repository 생성
-    super(QmsInspRepo);
-
-    // ✅ CUD 연산이 실행되기 전 Fk Table 의 uuid 로 id 를 검색하여 request body 에 삽입하기 위하여 정보 Setting
-    this.fkIdInfos = [
-      {
-        key: 'factory',
-        TRepo: StdFactoryRepo,
-        idName: 'factory_id',
-        uuidName: 'factory_uuid'
-      },
-      {
-        key: 'insp',
-        TRepo: QmsInspRepo,
-        idName: 'insp_id',
-        uuidName: 'insp_uuid'
-      },
-    ];
+    this.stateTag = 'qmsInsp';
   };
   //#endregion
 
@@ -55,78 +38,82 @@ class QmsInspCtl extends BaseCtl {
   // 📒 Fn[create] (✅ Inheritance): Default Create Function
   public create = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      req.body = await this.getBodyIncludedId(req.tenant.uuid, req.body);
+      let result: ApiResult<any> = { count:0, raws: [] };
+      const service = new QmsInspService(req.tenant.uuid);
+      const detailService = new QmsInspDetailService(req.tenant.uuid);
+      const patternOptService = new AdmPatternOptService(req.tenant.uuid);
+      const patternService = new AdmPatternHistoryService(req.tenant.uuid);
 
-      const sequelize = getSequelize(req.tenant.uuid);
-      const repo = new QmsInspRepo(req.tenant.uuid);
-      const detailRepo = new QmsInspDetailRepo(req.tenant.uuid);
-      const workRepo = new PrdWorkRepo(req.tenant.uuid);
-      let result: ApiResult<any> = { raws: [], count: 0 };
+      const matched = matchedData(req, { locations: [ 'body' ] });
+      const data = {
+        header: (await service.convertFk(matched.header))[0],
+        details: await detailService.convertFk(matched.details),
+      }
 
-      await sequelize.transaction(async(tran) => { 
-        for await (const data of req.body) {
-          let inspUuid: string;
-          let inspId: number;
-          let maxSeq: number;
-          let headerResult: ApiResult<any> = { count: 0, raws: [] };
-          const header = unsealArray(data.header);
+      await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
+        let inspId: number;
+        let maxSeq: number;
+        let headerResult: ApiResult<any> = { count: 0, raws: [] };
 
-          inspUuid = header.uuid;
-
-          // 📌 공정검사 기준서 등록시 해당 품목의 생산이 진행중일 경우 기준서 생성 후 즉시 적용 불가
-          if (header.apply_fg && header.insp_type_cd == getInspTypeCd('PROC_INSP')) {
-            const workRead = await workRepo.read({ factory_uuid: header.factory_uuid, prod_uuid: header.prod_uuid, complete_fg: false });
-            if (workRead.raws.length > 0) { throw new Error('등록하려고 하는 기준서의 품번이 현재 생산 진행중입니다. 적용을 해제한 후 등록하여 주십시오.'); }
-            header.apply_date = header.apply_date ? header.apply_date : moment(moment.now()).toString();
-          }
-
-          if (!inspUuid) {
-            // 📌 기준서번호가 수기 입력되지 않고 자동발행 Option일 경우 번호 자동발행
-            if (!header.insp_no) { 
-              header.insp_no = await new AdmPatternHistoryCtl().getPattern({
-                tenant: req.tenant.uuid,
-                factory_id: header.factory_id,
-                table_nm: 'QMS_INSP_TB',
-                col_nm: 'insp_no',
-                reg_date: header.reg_date,
-                uid: req.user?.uid as number,
-                tran: tran
-              });
-            }
-
-            headerResult = await repo.create(data.header, req.user?.uid as number, tran);
-            inspId = headerResult.raws[0].insp_id;
-            inspUuid = headerResult.raws[0].uuid;
-
-            maxSeq = 0;
-          } else {
-            inspId = header.insp_id;
-
-            // 📌 Max Seq 계산
-            maxSeq = await detailRepo.getMaxSeq(inspId, tran) as number;
-          }
-
-          data.details = data.details.map((detail: any) => {
-            detail.insp_id = inspId;
-            detail.seq = ++maxSeq;
-            return detail;
-          });
-
-          // 📌 세부 기준서 등록
-          const detailResult = await detailRepo.create(data.details, req.user?.uid as number, tran);
-
-          result.raws.push({
-            header: headerResult.raws,
-            details: detailResult.raws,
-          });
-
-          result.count += headerResult.count + detailResult.count;
+        // 📌 공정검사 기준서 등록시 해당 품목의 생산이 진행중일 경우 기준서 생성 후 즉시 적용 불가
+        if(data.header.apply_fg) {
+          await service.validateWorkingByProd(data.header);
+          data.header.apply_date = data.header.apply_date ? data.header.apply_date : moment(moment.now()).toString();
         }
+
+        // 📌 자재입하의 UUID가 입력되지 않은 경우 자재입하 신규 발행
+        if (!data.header.uuid) {
+          // 📌 전표자동발행 옵션 여부 확인
+          const hasAutoOption = await patternOptService.hasAutoOption({ table_nm: 'QMS_INSP_TB', col_nm: 'insp_no', tran });
+
+          // 📌 전표의 자동발행옵션이 On인 경우
+          if (hasAutoOption) {
+            data.header.insp_no = await patternService.getPattern({
+              factory_id: data.header.factory_id,
+              table_nm: 'QMS_INSP_TB',
+              col_nm: 'insp_no',
+              reg_date: data.header.reg_date,
+              uid: req.user?.uid as number,
+              tran: tran
+            });
+          }
+
+          // 📌 전표 생성
+          headerResult = await service.create([data.header], req.user?.uid as number, tran);
+          inspId = headerResult.raws[0].insp_id;
+          maxSeq = 0;
+        } else {
+          inspId = data.header.insp_id;
+
+          // 📌 Max Seq 계산
+          maxSeq = await detailService.getMaxSeq(inspId, tran) as number;
+        }
+
+        // 📌 생성된 기준서ID 입력 및 Max Seq 기준 Seq 발행
+        data.details = data.details.map((detail: any) => {
+          detail.insp_id = inspId;
+          detail.seq = ++maxSeq;
+          return detail;
+        });
+
+        // 📌 자재입하상세 등록 및 합계금액 계산
+        const detailResult = await detailService.create(data.details, req.user?.uid as number, tran);
+        result.raws = [{
+          header: headerResult.raws[0],
+          details: detailResult.raws,
+        }];
+
+        result.count += headerResult.count + detailResult.count;
       });
 
-      return response(res, result.raws, { count: result.count }, '', 201);
-    } catch (e) {
-      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return createApiResult(res, result, 201, '데이터 생성 성공', this.stateTag, successState.CREATE);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
     }
   };
   //#endregion
@@ -134,32 +121,72 @@ class QmsInspCtl extends BaseCtl {
   //#region 🔵 Read Functions
 
   // 📒 Fn[read] (✅ Inheritance): Default Read Function
-  // public read = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-  // }
+  public read = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      let result: ApiResult<any> = { count:0, raws: [] };
+      const service = new QmsInspService(req.tenant.uuid);
+      const params = matchedData(req, { locations: [ 'query', 'params' ] });
+
+      result = await service.read(params);
+
+      return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+      
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
+    }
+  }
+
+  // 📒 Fn[readByUuid] (✅ Inheritance): Default ReadByUuid Function
+  public readByUuid = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      let result: ApiResult<any> = { count:0, raws: [] };
+      const service = new QmsInspService(req.tenant.uuid);
+
+      result = await service.readByUuid(req.params.uuid);
+
+      return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
+    }
+  };
 
   // 📒 Fn[readIncludeDetails]: 기준서 데이터의 Header + Detail 함께 조회
   public readIncludeDetails = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      const repo = new QmsInspRepo(req.tenant.uuid);
-      const detailRepo = new QmsInspDetailRepo(req.tenant.uuid);
-      const inspDetailTypeRepo = new AdmInspDetailTypeRepo(req.tenant.uuid);
-      let result: ApiResult<any> = { raws: [], count: 0 };
-
-      const params = Object.assign(req.query, req.params);
-      params.insp_uuid = params.uuid;
-
-      const headerResult = await repo.readByUuid(params.insp_uuid);
+      let result: ApiResult<any> = { count: 0, raws: [] };
+      const params = matchedData(req, { locations: [ 'query', 'params' ] });
+      const service = new QmsInspService(req.tenant.uuid);
+      const detailService = new QmsInspDetailService(req.tenant.uuid);
+      const inspDetailTypeService = new AdmInspDetailTypeService(req.tenant.uuid);
+      
+      const headerResult = await service.readByUuid(params.uuid);
 
       // ❗ 등록되어있는 기준서가 없을 경우 Error Throw
-      if (!headerResult.raws[0]) { throw new Error('기준서 조회결과가 없습니다.'); }
+      if (!headerResult.raws[0]) { 
+        throw createApiError(
+          400, 
+          '기준서 조회결과가 없습니다.', 
+          this.stateTag, 
+          errorState.NO_DATA
+        );
+      }
 
       // 📌 insp_detail_type(세부검사유형)에 따라 작업자 검사 혹은 QC 검사 항목만 조회
-      const inspDetailTypeRead = await inspDetailTypeRepo.read({ insp_detail_type_cd: getInspDetailTypeCd(params.insp_detail_type as any) });
-      const inspDetailType = unsealArray(inspDetailTypeRead.raws);
-      if (inspDetailType.worker_fg === '1') { (params as any).worker_fg = true; }
-      if (inspDetailType.inspector_fg === '1') { (params as any).inspector_fg = true; }
+      const inspDetailTypeRead = await inspDetailTypeService.read(params);
+      const inspDetailType = inspDetailTypeRead.raws[0];
+      if (inspDetailType.worker_fg === '1') { params.worker_fg = true; }
+      if (inspDetailType.inspector_fg === '1') { params.inspector_fg = true; }
 
-      const detailsResult = await detailRepo.read(params);
+      const detailsResult = await detailService.read(params);
       let maxSampleCnt: number = 0;
 
       // 📌 작업자, 검사원별 Max 시료수 계산
@@ -178,29 +205,42 @@ class QmsInspCtl extends BaseCtl {
       });
       headerResult.raws[0].max_sample_cnt = maxSampleCnt;
 
-      result.raws = [{ header: headerResult.raws[0], details: detailsResult.raws }];
+      result.raws = [{ 
+        header: headerResult.raws[0], 
+        details: detailsResult.raws 
+      }];
       result.count = headerResult.count + detailsResult.count;
       
-      return response(res, result.raws, { count: result.count });
-    } catch (e) {
-      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
     }
   };
 
   // 📒 Fn[readDetails]: 기준서 데이터의 Detail 조회
   public readDetails = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      const detailRepo = new QmsInspDetailRepo(req.tenant.uuid);
       let result: ApiResult<any> = { raws: [], count: 0 };
-
-      const params = Object.assign(req.query, req.params);
+      const params = matchedData(req, { locations: [ 'query', 'params' ] });
       params.insp_uuid = params.uuid;
 
-      result = await detailRepo.read(params);
+      const detailService = new QmsInspDetailService(req.tenant.uuid);
+
+      result = await detailService.read(params);
       
-      return response(res, result.raws, { count: result.count });
-    } catch (e) {
-      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
     }
   };
 
@@ -208,82 +248,92 @@ class QmsInspCtl extends BaseCtl {
   // 📒 Fn[readIncludeDetailsByReceive]: 자재 또는 외주 입하상세내역을 통하여 수입검사 기준서 및 상세내역 조회
   public readIncludeDetailsByReceive = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      const repo = new QmsInspRepo(req.tenant.uuid);
-      const detailRepo = new QmsInspDetailRepo(req.tenant.uuid);
-      const resultRepo = new QmsInspResultRepo(req.tenant.uuid);
-      const matReceiveDetailRepo = new MatReceiveDetailRepo(req.tenant.uuid);
-      const outReceiveDetailRepo = new OutReceiveDetailRepo(req.tenant.uuid);
-      const inspDetailTypeRepo = new AdmInspDetailTypeRepo(req.tenant.uuid);
-      let result: ApiResult<any> = { raws: [], count: 0 };
-
-      const params = Object.assign(req.query, req.params);
+      let result: ApiResult<any> = { count: 0, raws: [] };
+      const params = matchedData(req, { locations: [ 'query', 'params' ] });
+      const service = new QmsInspService(req.tenant.uuid);
+      const detailService = new QmsInspDetailService(req.tenant.uuid);
+      const resultService = new QmsInspResultService(req.tenant.uuid);
+      const factoryService = new StdFactoryService(req.tenant.uuid);
+      const inspTypeService = new AdmInspTypeService(req.tenant.uuid);
+      const inspDetailTypeService = new AdmInspDetailTypeService(req.tenant.uuid);
+      const matReceiveDetailService = new MatReceiveDetailService(req.tenant.uuid);
+      const outReceiveDetailService = new OutReceiveDetailService(req.tenant.uuid);
+      
       let inspResultRead: ApiResult<any> = { raws: [], count: 0 };
-      let inspUuid: string | undefined = undefined;
       let prodUuid: string | undefined = undefined;
+      let inspUuid: string | undefined = undefined;
 
       // 📌 세부검사유형(자재, 외주)에 따라서 입하상세내역에 등록된 성적서 검색
-      switch (params.insp_detail_type) {
-        case 'matReceive':
-          if (!params.receive_detail_uuid) { throw new Error('잘못된 receive_detail_uuid(자재입하UUID) 입력'); }
-          inspResultRead = await resultRepo.readMatReceive({ receive_detail_uuid: params.receive_detail_uuid });
+      const inspDetailTypeRead = await inspDetailTypeService.readByUuid(params.insp_detail_type_uuid);
+
+      const factoryRead = await factoryService.readRawById(inspDetailTypeRead.raws[0].factory_id);
+      const inspTypeRead = await inspTypeService.readRawById(inspDetailTypeRead.raws[0].insp_type_id);
+
+      const inspDetailTypeCd = inspDetailTypeRead.raws[0].insp_detail_type_cd;
+      switch (inspDetailTypeCd) {
+        case 'MAT_RECEIVE':
+          inspResultRead = await resultService.readMatReceive({ receive_detail_uuid: params.receive_detail_uuid });
           break;
-        case 'outReceive':
-          if (!params.receive_detail_uuid) { throw new Error('잘못된 receive_detail_uuid(외주입하UUID) 입력'); }
-          inspResultRead = await resultRepo.readOutReceive({ receive_detail_uuid: params.receive_detail_uuid });
+        case 'OUT_RECEIVE':
+          inspResultRead = await resultService.readOutReceive({ receive_detail_uuid: params.receive_detail_uuid });
           break;
-        default: throw new Error('잘못된 insp_detail_type(세부검사유형) 입력');
+        default: break;
       }
 
       let headerResult: ApiResult<any> = { raws: [], count: 0 };
       if (inspResultRead.raws[0]) { 
         // 📌 등록된 성적서가 있을 경우 기준서의 UUID를 통하여 기준서 조회
         inspUuid = inspResultRead.raws[0].insp_uuid as string; 
-        headerResult = await repo.readByUuid(inspUuid);
+        headerResult = await service.readByUuid(inspUuid);
       } else { 
         // 📌 등록된 성적서가 없을 경우 품목 UUID 저장
-        switch (params.insp_detail_type) {
-          case 'matReceive': 
-            const matReceiveDetailRead = await matReceiveDetailRepo.readByUuid(params.receive_detail_uuid);
-            prodUuid = unsealArray(matReceiveDetailRead.raws).prod_uuid;
+        switch (inspDetailTypeCd) {
+          case 'MAT_RECEIVE': 
+            const matReceiveDetailRead = await matReceiveDetailService.readByUuid(params.receive_detail_uuid);
+            prodUuid = matReceiveDetailRead.raws[0].prod_uuid;
             break;
-          case 'outReceive': 
-            const outReceiveDetailRead = await outReceiveDetailRepo.readByUuid(params.receive_detail_uuid);
-            prodUuid = unsealArray(outReceiveDetailRead.raws).prod_uuid;
+          case 'OUT_RECEIVE': 
+            const outReceiveDetailRead = await outReceiveDetailService.readByUuid(params.receive_detail_uuid);
+            prodUuid = outReceiveDetailRead.raws[0].prod_uuid;
             break;
           default: break;
         } 
 
         // 📌 조회 조건에 따라 현재 적용중인 기준서 조회
-        headerResult = await repo.read({
-          factory_uuid: params.factory_uuid,
+        headerResult = await service.read({
+          factory_uuid: factoryRead.raws[0].uuid,
           prod_uuid: prodUuid,
-          insp_type_cd: 'RECEIVE_INSP',
+          insp_type_uuid: inspTypeRead.raws[0].uuid,
           apply_fg: true
         });
       }
 
       // ❗ 등록되어있는 기준서가 없을 경우 Error Throw
-      if (!headerResult.raws[0]) { throw new Error('기준서 조회결과가 없습니다.'); }
+      if (!headerResult.raws[0]) { 
+        throw createApiError(
+          400, 
+          '기준서 조회결과가 없습니다.', 
+          this.stateTag, 
+          errorState.NO_DATA
+        );
+      }
 
       // 📌 insp_detail_type(세부검사유형)에 따라 작업자 검사 혹은 QC 검사 항목만 조회
-      const inspDetailTypeRead = await inspDetailTypeRepo.read({ insp_detail_type_cd: getInspDetailTypeCd(params.insp_detail_type as any) });
-      const inspDetailType = unsealArray(inspDetailTypeRead.raws);
-      
-      if (inspDetailType.worker_fg === '1') { (params as any).worker_fg = true; }
-      if (inspDetailType.inspector_fg === '1') { (params as any).inspector_fg = true; }
+      if (inspDetailTypeRead.raws[0].worker_fg === '1') { (params as any).worker_fg = true; }
+      if (inspDetailTypeRead.raws[0].inspector_fg === '1') { (params as any).inspector_fg = true; }
       params.insp_uuid = headerResult.raws[0].insp_uuid;
 
-      const detailsResult = await detailRepo.read(params);
+      const detailsResult = await detailService.read(params);
       let maxSampleCnt: number = 0;
 
       // 📌 작업자, 검사원별 Max 시료수 계산
       detailsResult.raws.forEach((raw: any) => {
         // 📌 insp_detail_type(세부검사유형)이 작업자 검사인지 QC 검사인지 구분
-        if (inspDetailType.worker_fg) { 
+        if (inspDetailTypeRead.raws[0].worker_fg) { 
           raw.sample_cnt = raw.worker_sample_cnt; delete raw.worker_sample_cnt;
           raw.insp_cycle = raw.worker_insp_cycle; delete raw.worker_insp_cycle;
         }
-        if (inspDetailType.inspector_fg) { 
+        if (inspDetailTypeRead.raws[0].inspector_fg) { 
           raw.sample_cnt = raw.inspector_sample_cnt; delete raw.inspector_sample_cnt;
           raw.insp_cycle = raw.inspector_insp_cycle; delete raw.inspector_insp_cycle;
         }
@@ -292,83 +342,92 @@ class QmsInspCtl extends BaseCtl {
       });
       headerResult.raws[0].max_sample_cnt = maxSampleCnt;
 
-      result.raws = [{ header: headerResult.raws[0], details: detailsResult.raws }];
+      result.raws = [{ 
+        header: headerResult.raws[0], 
+        details: detailsResult.raws 
+      }];
       result.count = headerResult.count + detailsResult.count;
       
-      return response(res, result.raws, { count: result.count });
-    } catch (e) {
-      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+      
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
     }
   };
 
   // 📒 Fn[readIncludeDetailsByWork]: 생산실적내역을 통하여 공정검사 기준서 및 상세내역 조회
   public readIncludeDetailsByWork = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      const repo = new QmsInspRepo(req.tenant.uuid);
-      const detailRepo = new QmsInspDetailRepo(req.tenant.uuid);
-      const resultRepo = new QmsInspResultRepo(req.tenant.uuid);
-      const workRepo = new PrdWorkRepo(req.tenant.uuid);
-      const inspDetailTypeRepo = new AdmInspDetailTypeRepo(req.tenant.uuid);
-      let result: ApiResult<any> = { raws: [], count: 0 };
+      let result: ApiResult<any> = { count: 0, raws: [] };
+      const params = matchedData(req, { locations: [ 'query', 'params' ] });
+      const service = new QmsInspService(req.tenant.uuid);
+      const detailService = new QmsInspDetailService(req.tenant.uuid);
+      const resultService = new QmsInspResultService(req.tenant.uuid);
+      const workService = new PrdWorkService(req.tenant.uuid);
+      const factoryService = new StdFactoryService(req.tenant.uuid);
+      const inspTypeService = new AdmInspTypeService(req.tenant.uuid);
+      const inspDetailTypeService = new AdmInspDetailTypeService(req.tenant.uuid);
 
-      const params = Object.assign(req.query, req.params);
       let inspResultRead: ApiResult<any> = { raws: [], count: 0 };
       let inspUuid: string | undefined = undefined;
       let prodUuid: string | undefined = undefined;
 
-      if (!params.work_uuid) { throw new Error('잘못된 work_uuid(생산실적UUID) 입력'); }
-
-      let inspDetailTypeCd: string = '';
-      switch (params.insp_detail_type) {
-        case 'selfProc': inspDetailTypeCd = 'SELF_PROC'; break;
-        case 'patrolProc': inspDetailTypeCd = 'PATROL_PROC'; break;
-        default: throw new Error('잘못된 insp_detail_type(세부검사유형) 입력');
-      }
+      const inspDetailTypeRead = await inspDetailTypeService.readByUuid(params.insp_detail_type_uuid);
+      const factoryRead = await factoryService.readRawById(inspDetailTypeRead.raws[0].factory_id);
+      const inspTypeRead = await inspTypeService.readRawById(inspDetailTypeRead.raws[0].insp_type_id);
 
       // 📌 생산실적내역에 등록된 성적서 검색
-      inspResultRead = await resultRepo.readProc({ work_uuid: params.work_uuid, insp_detail_type_cd: inspDetailTypeCd });
+      inspResultRead = await resultService.readProc(params);
 
       let headerResult: ApiResult<any> = { raws: [], count: 0 };
       if (inspResultRead.raws[0]) { 
         // 📌 등록된 성적서가 있을 경우 기준서의 UUID를 통하여 기준서 조회
         inspUuid = inspResultRead.raws[0].insp_uuid as string; 
-        headerResult = await repo.readByUuid(inspUuid);
+        headerResult = await service.readByUuid(inspUuid);
       } else { 
         // 📌 등록된 성적서가 없을 경우 품목 UUID 저장
-        const workRead = await workRepo.readByUuid(params.work_uuid);
-        prodUuid = unsealArray(workRead.raws).prod_uuid; 
+        const workRead = await workService.readByUuid(params.work_uuid);
+        prodUuid = workRead.raws[0].prod_uuid; 
 
         // 📌 조회 조건에 따라 현재 적용중인 기준서 조회
-        headerResult = await repo.read({
-          factory_uuid: params.factory_uuid,
+        headerResult = await service.read({
+          factory_uuid: factoryRead.raws[0].uuid,
           prod_uuid: prodUuid,
-          insp_type_cd: 'PROC_INSP',
+          insp_type_uuid: inspTypeRead.raws[0].uuid,
           apply_fg: true
         });
       }
 
       // ❗ 등록되어있는 기준서가 없을 경우 Error Throw
-      if (!headerResult.raws[0]) { throw new Error('기준서 조회결과가 없습니다.'); }
+      if (!headerResult.raws[0]) { 
+        throw createApiError(
+          400, 
+          '기준서 조회결과가 없습니다.', 
+          this.stateTag, 
+          errorState.NO_DATA
+        );
+      }
 
       // 📌 insp_detail_type(세부검사유형)에 따라 작업자 검사 혹은 QC 검사 항목만 조회
-      const inspDetailTypeRead = await inspDetailTypeRepo.read({ insp_detail_type_cd: getInspDetailTypeCd(params.insp_detail_type as any) });
-      const inspDetailType = unsealArray(inspDetailTypeRead.raws);
-
-      if (inspDetailType.worker_fg === '1') { (params as any).worker_fg = true; }
-      if (inspDetailType.inspector_fg === '1') { (params as any).inspector_fg = true; }
+      if (inspDetailTypeRead.raws[0].worker_fg === '1') { (params as any).worker_fg = true; }
+      if (inspDetailTypeRead.raws[0].inspector_fg === '1') { (params as any).inspector_fg = true; }
       params.insp_uuid = headerResult.raws[0].insp_uuid;
 
-      const detailsResult = await detailRepo.read(params);
+      const detailsResult = await detailService.read(params);
       let maxSampleCnt: number = 0;
 
       // 📌 작업자, 검사원별 Max 시료수 계산
       detailsResult.raws.forEach((raw: any) => {
         // 📌 insp_detail_type(세부검사유형)이 작업자 검사인지 QC 검사인지 구분
-        if (inspDetailType.worker_fg) { 
+        if (inspDetailTypeRead.raws[0].worker_fg) { 
           raw.sample_cnt = raw.worker_sample_cnt; delete raw.worker_sample_cnt;
           raw.insp_cycle = raw.worker_insp_cycle; delete raw.worker_insp_cycle;
         }
-        if (inspDetailType.inspector_fg) { 
+        if (inspDetailTypeRead.raws[0].inspector_fg) { 
           raw.sample_cnt = raw.inspector_sample_cnt; delete raw.inspector_sample_cnt;
           raw.insp_cycle = raw.inspector_insp_cycle; delete raw.inspector_insp_cycle;
         }
@@ -377,12 +436,20 @@ class QmsInspCtl extends BaseCtl {
       });
       headerResult.raws[0].max_sample_cnt = maxSampleCnt;
 
-      result.raws = [{ header: headerResult.raws[0], details: detailsResult.raws }];
+      result.raws = [{ 
+        header: headerResult.raws[0], 
+        details: detailsResult.raws 
+      }];
       result.count = headerResult.count + detailsResult.count;
       
-      return response(res, result.raws, { count: result.count });
-    } catch (e) {
-      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+      
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
     }
   };
 
@@ -393,89 +460,87 @@ class QmsInspCtl extends BaseCtl {
   // 📒 Fn[update] (✅ Inheritance): Default Update Function
   public update = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      req.body = await this.getBodyIncludedId(req.tenant.uuid, req.body);
-      
-      const sequelize = getSequelize(req.tenant.uuid);
-      const repo = new QmsInspRepo(req.tenant.uuid);
-      const detailRepo = new QmsInspDetailRepo(req.tenant.uuid);
-      const workRepo = new PrdWorkRepo(req.tenant.uuid);
-      let result: ApiResult<any> = { raws: [], count: 0 };
+      let result: ApiResult<any> = { count:0, raws: [] };
+      const service = new QmsInspService(req.tenant.uuid);
+      const detailService = new QmsInspDetailService(req.tenant.uuid);
 
-      await sequelize.transaction(async(tran) => { 
-        for await (const data of req.body) {
-          // 📌 공정검사 기준서 등록시 해당 품목의 생산이 진행중일 경우 기준서 생성 후 즉시 적용 불가
-          if (data.apply_fg) {
-            const inspRead = await repo.readByUuid(data.uuid);
-            const insp = unsealArray(inspRead.raws);
+      const matched = matchedData(req, { locations: [ 'body' ] });
+      const data = {
+        header: (await service.convertFk(matched.header))[0],
+        details: await detailService.convertFk(matched.details),
+      }
 
-            if (insp.insp_type_cd == getInspTypeCd('PROC_INSP')) {
-              const workRead = await workRepo.read({ factory_uuid: insp.factory_uuid, prod_uuid: insp.prod_uuid, complete_fg: false });
-              if (workRead.raws.length > 0) { throw new Error('등록하려고 하는 기준서의 품번이 현재 생산 진행중입니다.'); }
-              data.apply_date = data.apply_date ? data.apply_date : moment(moment.now()).toString();
-            }
+      await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
+        // 📌 공정검사 기준서 등록시 해당 품목의 생산이 진행중일 경우 기준서 생성 후 즉시 적용 불가
+        if(data.header.apply_fg) {
+          const inspRead = await service.readByUuid(data.header.uuid);
+          const insp = inspRead.raws[0];
 
-            // 📌 해당 품목의 모든 기준서를 비 활성화 상태로 만들기 위한 Body 생성
-            const read = await repo.read({ 
-              factory_uuid: insp.factory_uuid,
-              prod_uuid: insp.prod_uuid,
-              insp_type_cd: insp.insp_type_cd
-            });
-            const wholeInspBody = read.raws.map((raw: any) => {
-              return {
-                uuid: raw.dataValues.insp_uuid,
-                apply_fg: false,
-                apply_date: null
-              };
-            });
-          
-            // 📌 수정할 품목의 모든 기준서를 미적용 상태로 수정
-            await repo.updateApply(wholeInspBody, req.user?.uid as number, tran);
-          }
+          await service.validateWorkingByProd(insp);
+          data.header.apply_date = data.header.apply_date ? data.header.apply_date : moment(moment.now()).toString();
 
-          // 📌 기준서 데이터 수정
-          const headerResult = await repo.update(data.header, req.user?.uid as number, tran);
-          const detailResult = await detailRepo.update(data.details, req.user?.uid as number, tran);
-
-          result.raws.push({
-            header: headerResult.raws,
-            details: detailResult.raws,
+          // 📌 해당 품목의 모든 기준서를 비 활성화 상태로 만들기 위한 Body 생성
+          const read = await service.read({ 
+            factory_uuid:  insp.factory_uuid,
+            prod_uuid:  insp.prod_uuid,
+            insp_type_id:  insp.insp_type_uuid
           });
 
-          result.count += headerResult.count + detailResult.count;
+          const wholeInspBody = read.raws.map((raw: any) => {
+            return {
+              uuid: raw.dataValues.insp_uuid,
+              apply_fg: false,
+              apply_date: null
+            };
+          });
+
+          // 📌 수정할 품목의 모든 기준서를 미적용 상태로 수정
+          await service.updateApply(wholeInspBody, req.user?.uid as number, tran);
         }
+
+        // 📌 기준서 데이터 수정
+        const headerResult = await service.update(data.header, req.user?.uid as number, tran);
+        const detailResult = await detailService.update(data.details, req.user?.uid as number, tran);
+
+        result.raws.push({
+          header: headerResult.raws[0],
+          details: detailResult.raws,
+        });
+        result.count += headerResult.count + detailResult.count;
       });
       
-      return response(res, result.raws, { count: result.count }, '', 201);
-    } catch (e) {
-      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return createApiResult(res, result, 200, '데이터 수정 성공', this.stateTag, successState.UPDATE);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
     }
   };
   
   // 📒 Fn[updateApply]: 품목별 기준서 적용여부 수정 / 폼목별로 1개의 기준서만 적용되어야 함
   public updateApply = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      req.body = checkArray(req.body);
-      
-      const sequelize = getSequelize(req.tenant.uuid);
-      const repo = new QmsInspRepo(req.tenant.uuid);
-      const workRepo = new PrdWorkRepo(req.tenant.uuid);
       let result: ApiResult<any> = { raws: [], count: 0 };
+      const service = new QmsInspService(req.tenant.uuid);
+
+      const matched = matchedData(req, { locations: [ 'body' ] });
+      let datas = await service.convertFk(Object.values(matched));
 
       let wholeInspBody: any[] = [];
       let applyInspBody: any[] = [];
 
       // 📌 품목, 기준서 유형별 전체 기준서 조회 및 적용해야 할 기준서의 uuid를 가지고 있는 Body 생성
-      for await (const data of req.body) {
-        const inspRead = await repo.readByUuid(data.uuid);
-        const insp = unsealArray(inspRead.raws);
+      for await (const data of datas) {
+        const inspRead = await service.readByUuid(data.uuid);
+        const insp = inspRead.raws[0];
 
         // 📌 공정검사 기준서 등록시 해당 품목의 생산이 진행중일 경우 기준서 생성 후 즉시 적용 불가
-        if (insp.insp_type_cd == getInspTypeCd('PROC_INSP')) {
-          const workRead = await workRepo.read({ factory_uuid: insp.factory_uuid, prod_uuid: insp.prod_uuid, complete_fg: false });
-          if (workRead.raws.length > 0) { throw new Error('등록하려고 하는 기준서의 품번이 현재 생산 진행중입니다. 적용을 해제한 후 등록하여 주십시오.'); }
-        }
+        await service.validateWorkingByProd(insp);
 
-        const read = await repo.read({ 
+        const read = await service.read({ 
           factory_uuid: insp.factory_uuid,
           prod_uuid: insp.prod_uuid,
           insp_type_cd: insp.insp_type_cd
@@ -497,12 +562,12 @@ class QmsInspCtl extends BaseCtl {
         }];
       }
 
-      await sequelize.transaction(async(tran) => { 
+      await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
         // 📌 수정할 품목의 모든 기준서를 미적용 상태로 수정
-        const wholeInspResult = await repo.updateApply(wholeInspBody, req.user?.uid as number, tran);
+        const wholeInspResult = await service.updateApply(wholeInspBody, req.user?.uid as number, tran);
 
         // 📌 선택된 기준서만 적용 상태로 변경
-        const ApplyInspResult = await repo.updateApply(applyInspBody, req.user?.uid as number, tran);
+        const ApplyInspResult = await service.updateApply(applyInspBody, req.user?.uid as number, tran);
 
         result.raws.push({
           wholeInsp: wholeInspResult.raws,
@@ -512,23 +577,28 @@ class QmsInspCtl extends BaseCtl {
         result.count += wholeInspResult.count + ApplyInspResult.count;
       });
       
-      return response(res, result.raws, { count: result.count }, '', 201);
-    } catch (e) {
-      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return createApiResult(res, result, 200, '데이터 수정 성공', this.stateTag, successState.UPDATE);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
     }
   };
   
   // 📒 Fn[updateCancelApply]: 기준서 적용 해제
   public updateCancelApply = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      req.body = checkArray(req.body);
-      
-      const sequelize = getSequelize(req.tenant.uuid);
-      const repo = new QmsInspRepo(req.tenant.uuid);
       let result: ApiResult<any> = { raws: [], count: 0 };
+      const service = new QmsInspService(req.tenant.uuid);
+
+      const matched = matchedData(req, { locations: [ 'body' ] });
+      let datas = await service.convertFk(Object.values(matched));
 
       // 📌 기준서를 비활성화 상태로 만들기 위한 Body 생성
-      const inspBody = req.body.map((data: any) => {
+      const inspBody = datas.map((data: any) => {
         return {
           uuid: data.uuid,
           apply_fg: false,
@@ -536,13 +606,18 @@ class QmsInspCtl extends BaseCtl {
         }
       });
 
-      await sequelize.transaction(async(tran) => { 
-        result = await repo.updateApply(inspBody, req.user?.uid as number, tran);
+      await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
+        result = await service.updateApply(inspBody, req.user?.uid as number, tran);
       });
       
-      return response(res, result.raws, { count: result.count }, '', 201);
-    } catch (e) {
-      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return createApiResult(res, result, 200, '데이터 수정 성공', this.stateTag, successState.UPDATE);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
     }
   };
 
@@ -553,61 +628,63 @@ class QmsInspCtl extends BaseCtl {
   // 📒 Fn[patch] (✅ Inheritance): Default Patch Function
   public patch = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      req.body = await this.getBodyIncludedId(req.tenant.uuid, req.body);
-      
-      const sequelize = getSequelize(req.tenant.uuid);
-      const repo = new QmsInspRepo(req.tenant.uuid);
-      const detailRepo = new QmsInspDetailRepo(req.tenant.uuid);
-      const workRepo = new PrdWorkRepo(req.tenant.uuid);
-      let result: ApiResult<any> = { raws: [], count: 0 };
+      let result: ApiResult<any> = { count:0, raws: [] };
+      const service = new QmsInspService(req.tenant.uuid);
+      const detailService = new QmsInspDetailService(req.tenant.uuid);
 
-      await sequelize.transaction(async(tran) => { 
-        for await (const data of req.body) {
-          // 📌 공정검사 기준서 등록시 해당 품목의 생산이 진행중일 경우 기준서 생성 후 즉시 적용 불가
-          if (data.apply_fg) {
-            const inspRead = await repo.readByUuid(data.uuid);
-            const insp = unsealArray(inspRead.raws);
-            
-            if (insp.insp_type_cd == getInspTypeCd('PROC_INSP')) {
-              const workRead = await workRepo.read({ factory_uuid: insp.factory_uuid, prod_uuid: insp.prod_uuid, complete_fg: false });
-              if (workRead.raws.length > 0) { throw new Error('등록하려고 하는 기준서의 품번이 현재 생산 진행중입니다. 적용을 해제한 후 등록하여 주십시오.'); }
-              data.apply_date = data.apply_date ? data.apply_date : moment(moment.now()).toString();
-            }
+      const matched = matchedData(req, { locations: [ 'body' ] });
+      const data = {
+        header: (await service.convertFk(matched.header))[0],
+        details: await detailService.convertFk(matched.details),
+      }
 
-            // 📌 해당 품목의 모든 기준서를 비 활성화 상태로 만들기 위한 Body 생성
-            const read = await repo.read({ 
-              factory_uuid: insp.factory_uuid,
-              prod_uuid: insp.prod_uuid,
-              insp_type_cd: insp.insp_type_cd
-            });
-            const wholeInspBody = read.raws.map((raw: any) => {
-              return {
-                uuid: raw.dataValues.insp_uuid,
-                apply_fg: false,
-                apply_date: null
-              };
-            });
-          
-            // 📌 수정할 품목의 모든 기준서를 미적용 상태로 수정
-            await repo.updateApply(wholeInspBody, req.user?.uid as number, tran);
-          }
+      await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
+        // 📌 공정검사 기준서 등록시 해당 품목의 생산이 진행중일 경우 기준서 생성 후 즉시 적용 불가
+        if(data.header.apply_fg) {
+          const inspRead = await service.readByUuid(data.header.uuid);
+          const insp = inspRead.raws[0];
 
-          // 📌 기준서 데이터 수정
-          const headerResult = await repo.patch(data.header, req.user?.uid as number, tran);
-          const detailResult = await detailRepo.patch(data.details, req.user?.uid as number, tran);
+          await service.validateWorkingByProd(insp);
+          data.header.apply_date = data.header.apply_date ? data.header.apply_date : moment(moment.now()).toString();
 
-          result.raws.push({
-            header: headerResult.raws,
-            details: detailResult.raws,
+          // 📌 해당 품목의 모든 기준서를 비 활성화 상태로 만들기 위한 Body 생성
+          const read = await service.read({ 
+            factory_uuid:  insp.factory_uuid,
+            prod_uuid:  insp.prod_uuid,
+            insp_type_id:  insp.insp_type_uuid
           });
 
-          result.count += headerResult.count + detailResult.count;
-        }
-      });
+          const wholeInspBody = read.raws.map((raw: any) => {
+            return {
+              uuid: raw.dataValues.insp_uuid,
+              apply_fg: false,
+              apply_date: null
+            };
+          });
 
-      return response(res, result.raws, { count: result.count }, '', 201);
-    } catch (e) {
-      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+          // 📌 수정할 품목의 모든 기준서를 미적용 상태로 수정
+          await service.updateApply(wholeInspBody, req.user?.uid as number, tran);
+        }
+
+        // 📌 기준서 데이터 수정
+        const headerResult = await service.patch(data.header, req.user?.uid as number, tran);
+        const detailResult = await detailService.patch(data.details, req.user?.uid as number, tran);
+
+        result.raws.push({
+          header: headerResult.raws[0],
+          details: detailResult.raws,
+        });
+        result.count += headerResult.count + detailResult.count;
+      });
+      
+      return createApiResult(res, result, 200, '데이터 수정 성공', this.stateTag, successState.UPDATE);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
     }
   };
 
@@ -618,126 +695,49 @@ class QmsInspCtl extends BaseCtl {
   // 📒 Fn[delete] (✅ Inheritance): Delete Create Function
   public delete = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      req.body = await this.getBodyIncludedId(req.tenant.uuid, req.body);
-      
-      const sequelize = getSequelize(req.tenant.uuid);
-      const repo = new QmsInspRepo(req.tenant.uuid);
-      const detailRepo = new QmsInspDetailRepo(req.tenant.uuid);
-      let result: ApiResult<any> = { raws: [], count: 0 };
+      let result: ApiResult<any> = { count:0, raws: [] };
+      const service = new QmsInspService(req.tenant.uuid);
+      const detailService = new QmsInspDetailService(req.tenant.uuid);
 
-      await sequelize.transaction(async(tran) => { 
-        for await (const data of req.body) {
-          // 📌 입하 내역 삭제
-          const detailResult = await detailRepo.delete(data.details, req.user?.uid as number, tran);
-          const count = await detailRepo.getCount(data.header[0].insp_id, tran);
+      const matched = matchedData(req, { locations: [ 'body' ] });
+      const data = {
+        header: (await service.convertFk(matched.header))[0],
+        details: await detailService.convertFk(matched.details),
+      }
 
-          let headerResult: ApiResult<any> = { count: 0, raws: [] };
-          if (count == 0) {
-            headerResult = await repo.delete(data.header, req.user?.uid as number, tran);
-          }
+      await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
+        // 📌 기준서 상세 삭제
+        const detailResult = await detailService.delete(data.details, req.user?.uid as number, tran);
+        const count = await detailService.getCount(data.header.insp_id, tran);
 
-          result.raws.push({
-            header: headerResult.raws,
-            details: detailResult.raws,
-          });
-
-          result.count += headerResult.count + detailResult.count;
+        // 📌 기준서 삭제
+        let headerResult: ApiResult<any> = { count: 0, raws: [] };
+        if (count == 0) {
+          headerResult = await service.delete(data.header, req.user?.uid as number, tran);
         }
+
+        result.raws.push({
+          header: headerResult.raws[0],
+          details: detailResult.raws,
+        });
+
+        result.count += headerResult.count + detailResult.count;
       });
   
-      return response(res, result.raws, { count: result.count }, '', 200);
-    } catch (e) {
-      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return createApiResult(res, result, 200, '데이터 삭제 성공', this.stateTag, successState.DELETE);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
     }
   };
 
   //#endregion
 
   //#endregion
-
-  //#region ✅ Inherited Hooks 
-
-  //#region 🔵 Read Hooks
-
-  // 📒 Fn[beforeRead]: Read DB Tasking 이 실행되기 전 호출되는 Function
-  beforeRead = async(req: express.Request) => {
-    if (req.params.uuid) { return; }
-  }
-
-  // 📒 Fn[afterRead]: Read DB Tasking 이 실행된 후 호출되는 Function
-  // afterRead = async(req: express.Request, result: ApiResult<any>) => {}
-
-  //#endregion
-
-  //#endregion
-
-  //#region ✅ Optional Functions
-
-  // 📒 Fn[getBodyIncludedId]: Body 내의 Uuid => Id Conversion
-  /**
-   * Body 내 Uuid => Id Conversion
-   * @param _body Request Body
-   * @returns Uuid => Id 로 Conversion 되어있는 Body
-   */
-  getBodyIncludedId = async (tenant: string, _body: any) => {
-    const resultBody: any[] = [];
-    _body = checkArray(_body);
-
-    for await (const data of _body) {
-      if (data.header) { 
-        data.header = checkArray(data.header); 
-        data.header = await this.getFkId(tenant, data.header, 
-          [...this.fkIdInfos, 
-            {
-              key: 'uuid',
-              TRepo: QmsInspRepo,
-              idName: 'insp_id',
-              uuidName: 'uuid'
-            },
-            {
-              key: 'prod',
-              TRepo: StdProdRepo,
-              idName: 'prod_id',
-              uuidName: 'prod_uuid'
-            },
-          ]);
-      }
-    if (data.details) { 
-      data.details = checkArray(data.details); 
-      data.details = await this.getFkId(tenant, data.details, 
-        [...this.fkIdInfos, 
-          {
-            key: 'uuid',
-            TRepo: QmsInspDetailRepo,
-            idName: 'insp_detail_id',
-            uuidName: 'uuid'
-          },
-          {
-            key: 'inspItem',
-            TRepo: StdInspItemRepo,
-            idName: 'insp_item_id',
-            uuidName: 'insp_item_uuid'
-          },
-          {
-            key: 'inspMethod',
-            TRepo: StdInspMethodRepo,
-            idName: 'insp_method_id',
-            uuidName: 'insp_method_uuid'
-          },
-          {
-            key: 'inspTool',
-            TRepo: StdInspToolRepo,
-            idName: 'insp_tool_id',
-            uuidName: 'insp_tool_uuid'
-          },
-        ]);
-      }
-
-      resultBody.push({ header: data.header, details: data.details });
-    }
-
-    return resultBody;
-  }
 }
 
 export default QmsInspCtl;

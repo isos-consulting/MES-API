@@ -136,6 +136,12 @@ class StdFactoryRepo {
     return convertReadResult(result);
   };
 
+  // 📒 Fn[readRawById]: Id 기준 Raw Data Read Function
+  public readRawById = async(id: number) => {
+    const result = await this.repo.findOne({ where: { factory_id: id } });
+    return convertReadResult(result);
+  };
+
   // 📒 Fn[readRawByUnique]: Unique Key를 통하여 Raw Data Read Function
   public readRawByUnique = async(params: { factory_cd: string }) => {
     const result = await this.repo.findOne({ where: { factory_cd: params.factory_cd } });

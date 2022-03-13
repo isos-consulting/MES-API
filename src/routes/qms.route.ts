@@ -5,56 +5,60 @@ import QmsInspDetailCtl from '../controllers/qms/insp-detail.controller';
 import QmsReworkCtl from '../controllers/qms/rework.controller';
 import QmsReworkDisassembleCtl from '../controllers/qms/rework-disassemble.controller';
 import QmsInspResultCtl from '../controllers/qms/insp-result.controller';
+import qmsInspValidation from '../validations/qms/insp.validation';
+import validationCallback from '../utils/validationCallback';
+import qmsInspDetailValidation from '../validations/qms/insp-detail.validation';
+import qmsInspResultValidation from '../validations/qms/insp-result.validation';
 
 const router = express.Router();
 
 //#region ✅ Insp (검사기준서)
 const insp = new QmsInspCtl();
-router.route('/insps/apply').put(insp.updateApply);
-router.route('/insps/cancel-apply').put(insp.updateCancelApply);
-router.route('/insp/:uuid').get(insp.read);
-router.route('/insp/:uuid/include-details').get(insp.readIncludeDetails);
-router.route('/insp/:uuid/details').get(insp.readDetails);
-router.route('/receive/insp/include-details').get(insp.readIncludeDetailsByReceive);
-router.route('/proc/insp/include-details').get(insp.readIncludeDetailsByWork);
-router.route('/insps').get(insp.read);
-router.route('/insps').post(insp.create);
-router.route('/insps').put(insp.update);
-router.route('/insps').patch(insp.patch);
-router.route('/insps').delete(insp.delete);
+router.route('/insps/apply').put(qmsInspValidation.updateApply, validationCallback, insp.updateApply);
+router.route('/insps/cancel-apply').put(qmsInspValidation.updateCancelApply, validationCallback, insp.updateCancelApply);
+router.route('/insp/:uuid').get(qmsInspValidation.readByUuid, validationCallback, insp.readByUuid);
+router.route('/insp/:uuid/include-details').get(qmsInspValidation.readIncludeDetails, validationCallback, insp.readIncludeDetails);
+router.route('/insp/:uuid/details').get(qmsInspValidation.readDetails, validationCallback, insp.readDetails);
+router.route('/receive/insp/include-details').get(qmsInspValidation.readIncludeDetailsByReceive, validationCallback, insp.readIncludeDetailsByReceive);
+router.route('/proc/insp/include-details').get(qmsInspValidation.readIncludeDetailsByWork, validationCallback, insp.readIncludeDetailsByWork);
+router.route('/insps').get(qmsInspValidation.read, validationCallback, insp.read);
+router.route('/insps').post(qmsInspValidation.create, validationCallback, insp.create);
+router.route('/insps').put(qmsInspValidation.update, validationCallback, insp.update);
+router.route('/insps').patch(qmsInspValidation.patch, validationCallback, insp.patch);
+router.route('/insps').delete(qmsInspValidation.delete, validationCallback, insp.delete);
 //#endregion
 
 //#region ✅ InspDetail (검사기준서상세)
 const inspDetail = new QmsInspDetailCtl();
-router.route('/insp-detail/:uuid').get(inspDetail.read);
-router.route('/insp-details').get(inspDetail.read);
+router.route('/insp-detail/:uuid').get(qmsInspDetailValidation.readByUuid, validationCallback, inspDetail.readByUuid);
+router.route('/insp-details').get(qmsInspDetailValidation.read, validationCallback, inspDetail.read);
 //#endregion
 
 //#region ✅ receiveInspResult (검사성적서)
 const inspResult = new QmsInspResultCtl();
 // 📌 공정검사
-router.route('/proc/insp-result/max-seq').get(inspResult.readMaxSeqInProcInsp);
-router.route('/proc/insp-results/report').get(inspResult.readProcDetailsByWork);
-router.route('/proc/insp-results').get(inspResult.readProc);
-router.route('/proc/insp-result/:uuid/include-details').get(inspResult.readProcIncludeDetails);
-router.route('/proc/insp-results').post(inspResult.createProcInsp);
-router.route('/proc/insp-results').put(inspResult.updateProcInsp);
-router.route('/proc/insp-results').delete(inspResult.deleteProcInsp);
+router.route('/proc/insp-result/max-seq').get(qmsInspResultValidation.readMaxSeqInProcInsp, validationCallback, inspResult.readMaxSeqInProcInsp);
+router.route('/proc/insp-results/report').get(qmsInspResultValidation.readProcDetailsByWork, validationCallback, inspResult.readProcDetailsByWork);
+router.route('/proc/insp-results').get(qmsInspResultValidation.readProc, validationCallback, inspResult.readProc);
+router.route('/proc/insp-result/:uuid/include-details').get(qmsInspResultValidation.readProcIncludeDetails, validationCallback, inspResult.readProcIncludeDetails);
+router.route('/proc/insp-results').post(qmsInspResultValidation.createProcInsp, validationCallback, inspResult.createProcInsp);
+router.route('/proc/insp-results').put(qmsInspResultValidation.updateProcInsp, validationCallback, inspResult.updateProcInsp);
+router.route('/proc/insp-results').delete(qmsInspResultValidation.deleteProcInsp, validationCallback, inspResult.deleteProcInsp);
 
 // 📌 수입검사
-router.route('/receive/insp-results/waiting').get(inspResult.readWaitingReceive);
-router.route('/receive/insp-results').get(inspResult.readReceive);
-router.route('/receive/insp-result/:uuid/include-details').get(inspResult.readReceiveIncludeDetails);
-router.route('/receive/insp-results').post(inspResult.createReceiveInsp);
-router.route('/receive/insp-results').put(inspResult.updateReceiveInsp);
-router.route('/receive/insp-results').delete(inspResult.deleteReceiveInsp);
+router.route('/receive/insp-results/waiting').get(qmsInspResultValidation.readWaitingReceive, validationCallback, inspResult.readWaitingReceive);
+router.route('/receive/insp-results').get(qmsInspResultValidation.readReceive, validationCallback, inspResult.readReceive);
+router.route('/receive/insp-result/:uuid/include-details').get(qmsInspResultValidation.readReceiveIncludeDetails, validationCallback, inspResult.readReceiveIncludeDetails);
+router.route('/receive/insp-results').post(qmsInspResultValidation.createReceiveInsp, validationCallback, inspResult.createReceiveInsp);
+router.route('/receive/insp-results').put(qmsInspResultValidation.updateReceiveInsp, validationCallback, inspResult.updateReceiveInsp);
+router.route('/receive/insp-results').delete(qmsInspResultValidation.deleteReceiveInsp, validationCallback, inspResult.deleteReceiveInsp);
 
 // 📌 최종검사
-router.route('/final/insp-results').get(inspResult.readFinal);
-router.route('/final/insp-result/:uuid/include-details').get(inspResult.readFinalIncludeDetails);
-router.route('/final/insp-results').post(inspResult.createFinalInsp);
-router.route('/final/insp-results').put(inspResult.updateFinalInsp);
-router.route('/final/insp-results').delete(inspResult.deleteFinalInsp);
+router.route('/final/insp-results').get(qmsInspResultValidation.readFinal, validationCallback, inspResult.readFinal);
+router.route('/final/insp-result/:uuid/include-details').get(qmsInspResultValidation.readFinalIncludeDetails, validationCallback, inspResult.readFinalIncludeDetails);
+router.route('/final/insp-results').post(qmsInspResultValidation.createFinalInsp, validationCallback, inspResult.createFinalInsp);
+router.route('/final/insp-results').put(qmsInspResultValidation.updateFinalInsp, validationCallback, inspResult.updateFinalInsp);
+router.route('/final/insp-results').delete(qmsInspResultValidation.deleteFinalInsp, validationCallback, inspResult.deleteFinalInsp);
 //#endregion
 
 //#region ✅ Rework (부적합품판정)

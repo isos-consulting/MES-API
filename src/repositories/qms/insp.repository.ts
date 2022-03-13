@@ -35,7 +35,7 @@ class QmsInspRepo {
         return this.repo.create(
           {
             factory_id: insp.factory_id,
-            insp_type_cd: insp.insp_type_cd,
+            insp_type_id: insp.insp_type_id,
             insp_no: insp.insp_no,
             prod_id: insp.prod_id,
             reg_date: insp.reg_date,
@@ -73,7 +73,12 @@ class QmsInspRepo {
             required: true, 
             where: { uuid: params.factory_uuid ? params.factory_uuid : { [Op.ne]: null } }
           },
-          { model: this.sequelize.models.AdmInspType, attributes: [], required: true },
+          { 
+            model: this.sequelize.models.AdmInspType, 
+            attributes: [], 
+            required: true, 
+            where: { uuid: params.insp_type_uuid ? params.insp_type_uuid : { [Op.ne]: null } }
+          },
           { 
             model: this.sequelize.models.StdProd, 
             attributes: [], 
@@ -94,7 +99,8 @@ class QmsInspRepo {
           [ Sequelize.col('stdFactory.uuid'), 'factory_uuid' ],
           [ Sequelize.col('stdFactory.factory_cd'), 'factory_cd' ],
           [ Sequelize.col('stdFactory.factory_nm'), 'factory_nm' ],
-          'insp_type_cd',
+          [ Sequelize.col('admInspType.uuid'), 'insp_type_uuid' ],
+          [ Sequelize.col('admInspType.insp_type_cd'), 'insp_type_cd' ],
           [ Sequelize.col('admInspType.insp_type_nm'), 'insp_type_nm' ],
           'insp_no',
           [ Sequelize.col('stdProd.uuid'), 'prod_uuid' ],
@@ -127,7 +133,6 @@ class QmsInspRepo {
         ],
         where: {
           [Op.and]: [
-            { insp_type_cd: params.insp_type_cd ? params.insp_type_cd : { [Op.ne]: null } },
             { apply_fg: params.apply_fg != null ? params.apply_fg : { [Op.ne]: null } }
           ]
         },
@@ -166,7 +171,8 @@ class QmsInspRepo {
           [ Sequelize.col('stdFactory.uuid'), 'factory_uuid' ],
           [ Sequelize.col('stdFactory.factory_cd'), 'factory_cd' ],
           [ Sequelize.col('stdFactory.factory_nm'), 'factory_nm' ],
-          'insp_type_cd',
+          [ Sequelize.col('admInspType.uuid'), 'insp_type_uuid' ],
+          [ Sequelize.col('admInspType.insp_type_cd'), 'insp_type_cd' ],
           [ Sequelize.col('admInspType.insp_type_nm'), 'insp_type_nm' ],
           'insp_no',
           [ Sequelize.col('stdProd.uuid'), 'prod_uuid' ],

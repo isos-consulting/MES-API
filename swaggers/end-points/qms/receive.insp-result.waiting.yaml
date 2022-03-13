@@ -5,14 +5,11 @@ get:
   tags:
     - 수입검사 성적서(ReceiveInsp)
   parameters:
-    - name: insp_detail_type
+    - name: insp_detail_type_uuid
       in: query
-      required: true
       description: |
-        수입검사 성적서 대기목록 조회시 수입검사 유형을 입력합니다. <br/> 
-        [all]: 전체 조회 <br/>
-        [matReceive]: 자재입하 수입검사 성적서 조회 <br/>
-        [outReceive]: 외주입하 수입검사 성적서 조회 <br/>
+        수입검사 성적서 대기목록 조회시 수입검사 유형의 UUID를 입력합니다. <br/> 
+        [전체 조회시 입력하지 않습니다.]
       schema:
         type: string
         format: string
@@ -83,8 +80,9 @@ get:
                             - $ref: ../../schemas/mat/receive.schema.yaml#/stmt_no
                             - $ref: ../../schemas/mat/receive-detail.schema.yaml#/stmt_no_sub
                             - $ref: ../../schemas/mat/receive.schema.yaml#/reg_date
-                            - $ref: ../../schemas/qms/insp-result.schema.yaml#/insp_detail_type_cd
-                            - $ref: ../../schemas/adm/insp-detail-type.schema.yaml#/insp_detail_type_nm
+                            # - $ref: ../../schemas/qms/insp-result.schema.yaml#/insp_detail_type_uuid
+                            # - $ref: ../../schemas/adm/insp-detail-type.schema.yaml#/insp_detail_type_cd
+                            # - $ref: ../../schemas/adm/insp-detail-type.schema.yaml#/insp_detail_type_nm
                             - $ref: ../../schemas/mat/receive-detail.schema.yaml#/factory_uuid
                             - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
                             - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm

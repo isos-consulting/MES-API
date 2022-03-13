@@ -113,9 +113,6 @@ export default class AdmInspDetailType extends Model<IAdmInspDetailType> {
 	@BelongsTo(() => AdmInspType, { foreignKey: 'insp_type_id', targetKey: 'insp_type_id', onDelete: 'restrict', onUpdate: 'cascade' })
   AdmInspType: AdmInspType;
 
-	// @BelongsTo(() => AdmInspType, { foreignKey: 'insp_type_cd', targetKey: 'insp_type_cd', constraints: false })
-  // AdmInspType: AdmInspType;
-
   // HasMany
   //#endregion
 }

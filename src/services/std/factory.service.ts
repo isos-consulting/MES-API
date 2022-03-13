@@ -27,6 +27,11 @@ class StdFactoryService {
 		catch (error) { throw error; }
   };
 
+  public readRawById = async (id: number) => {
+    try { return await this.repo.readRawById(id); } 
+		catch (error) { throw error; }
+  };
+
   public update = async (datas: any[], uid: number, tran: Transaction) => {
     try { return await this.repo.update(datas, uid, tran); } 
 		catch (error) { throw error; }

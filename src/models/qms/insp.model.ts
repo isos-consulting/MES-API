@@ -142,7 +142,7 @@ export default class QmsInsp extends Model<IQmsInsp> {
   @BelongsTo(() => StdProd, { foreignKey: 'prod_id', targetKey: 'prod_id', onDelete: 'restrict', onUpdate: 'cascade' })
   stdProd: StdProd;
 
-  @BelongsTo(() => AdmInspType, { foreignKey: 'insp_type_cd', targetKey: 'insp_type_cd', constraints: false })
+  @BelongsTo(() => AdmInspType, { foreignKey: 'insp_type_id', targetKey: 'insp_type_id', onDelete: 'restrict', onUpdate: 'cascade' })
   admInspType: AdmInspType;
 
   // HasMany

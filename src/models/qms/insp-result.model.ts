@@ -2,6 +2,7 @@ import { Sequelize, Table, Column, Model, DataType, CreatedAt, UpdatedAt, Belong
 import IQmsInspResult from '../../interfaces/qms/insp-result.interface';
 import AdmInspType from '../adm/insp-type.model';
 import AdmInspDetailType from '../adm/insp-detail-type.model';
+import AdmInspHandlingType from '../adm/insp-handling-type.model';
 import AutUser from '../aut/user.model';
 import MatReceiveDetail from '../mat/receive-detail.model';
 import OutReceiveDetail from '../out/receive-detail.model';
@@ -12,7 +13,6 @@ import StdLocation from '../std/location.model';
 import StdProd from '../std/prod.model';
 import StdStore from '../std/store.model';
 import QmsInsp from './insp.model';
-import AdmInspHandlingType from '../adm/insp-handling-type.model';
 import StdReject from '../std/reject.model';
 
 @Table({
@@ -33,7 +33,7 @@ export default class QmsInspResult extends Model<IQmsInspResult> {
   })
   insp_result_id: number;
 
-  @Unique('qms_insp_result_tb_factory_id_insp_type_cd_insp_detail_type_cd_insp_reference_id_seq_un')
+  @Unique('qms_insp_result_tb_factory_id_insp_type_id_insp_detail_type_id_insp_reference_id_seq_un')
   @ForeignKey(() => StdFactory)
   @Column({
     comment: '공장ID',
@@ -42,35 +42,35 @@ export default class QmsInspResult extends Model<IQmsInspResult> {
   })
   factory_id: number;
 
-  @Unique('qms_insp_result_tb_factory_id_insp_type_cd_insp_detail_type_cd_insp_reference_id_seq_un')
+  @Unique('qms_insp_result_tb_factory_id_insp_type_id_insp_detail_type_id_insp_reference_id_seq_un')
   @Column({
-    comment: '검사유형 코드',
-    type: DataType.STRING(20),
+    comment: '검사유형ID',
+    type: DataType.INTEGER,
     allowNull: false,
   })
-  insp_type_cd: string;
+  insp_type_id: number;
 
-  @Unique('qms_insp_result_tb_factory_id_insp_type_cd_insp_detail_type_cd_insp_reference_id_seq_un')
+  @Unique('qms_insp_result_tb_factory_id_insp_type_id_insp_detail_type_id_insp_reference_id_seq_un')
   @Column({
-    comment: '세부검사유형 코드',
-    type: DataType.STRING(20),
+    comment: '세부검사유형ID',
+    type: DataType.INTEGER,
   })
-  insp_detail_type_cd: string;
+  insp_detail_type_id: number;
 
   @Column({
-    comment: '검사처리유형 코드',
-    type: DataType.STRING(20),
+    comment: '검사처리유형ID',
+    type: DataType.INTEGER,
   })
-  insp_handling_type_cd: string;
+  insp_handling_type_id: number;
 
-  @Unique('qms_insp_result_tb_factory_id_insp_type_cd_insp_detail_type_cd_insp_reference_id_seq_un')
+  @Unique('qms_insp_result_tb_factory_id_insp_type_id_insp_detail_type_id_insp_reference_id_seq_un')
   @Column({
     comment: '검사 관련 정보ID (수입검사: 입하ID, 공정검사: 실적ID 등)',
     type: DataType.INTEGER,
   })
   insp_reference_id: number;
 
-  @Unique('qms_insp_result_tb_factory_id_insp_type_cd_insp_detail_type_cd_insp_reference_id_seq_un')
+  @Unique('qms_insp_result_tb_factory_id_insp_type_id_insp_detail_type_id_insp_reference_id_seq_un')
   @Column({
     comment: '검사 차수',
     type: DataType.INTEGER,
@@ -245,13 +245,13 @@ export default class QmsInspResult extends Model<IQmsInspResult> {
   @BelongsTo(() => StdFactory, { foreignKey: 'factory_id', targetKey: 'factory_id', onDelete: 'restrict', onUpdate: 'cascade' })
   stdFactory: StdFactory;
 
-  @BelongsTo(() => AdmInspType, { foreignKey: 'insp_type_cd', targetKey: 'insp_type_cd', constraints: false })
+  @BelongsTo(() => AdmInspType, { foreignKey: 'insp_type_id', targetKey: 'insp_type_id', onDelete: 'restrict', onUpdate: 'cascade' })
   admInspType: AdmInspType;
 
-  @BelongsTo(() => AdmInspDetailType, { foreignKey: 'insp_detail_type_cd', targetKey: 'insp_detail_type_cd', constraints: false })
+  @BelongsTo(() => AdmInspDetailType, { foreignKey: 'insp_detail_type_id', targetKey: 'insp_detail_type_id', onDelete: 'restrict', onUpdate: 'cascade' })
   admInspDetailType: AdmInspDetailType;
 
-  @BelongsTo(() => AdmInspHandlingType, { foreignKey: 'insp_handling_type_cd', targetKey: 'insp_handling_type_cd', constraints: false })
+  @BelongsTo(() => AdmInspHandlingType, { foreignKey: 'insp_handling_type_id', targetKey: 'insp_handling_type_id', onDelete: 'restrict', onUpdate: 'cascade' })
   admInspHandlingType: AdmInspHandlingType;
 
   @BelongsTo(() => MatReceiveDetail, { foreignKey: 'insp_reference_id', targetKey: 'receive_detail_id', constraints: false })
