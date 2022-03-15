@@ -59,8 +59,8 @@ class StdInspItemService {
     try {
       switch (params.type) {
         case 'all': break;
-        case 'eqm': params.eqm_fg = true; params.qms_fg = false; break;
-        case 'qms': params.eqm_fg = false; params.qms_fg = true; break;
+        case 'eqm': params.eqm_fg = true; break;
+        case 'qms': params.qms_fg = true; break;
         default: break;
       }
 
