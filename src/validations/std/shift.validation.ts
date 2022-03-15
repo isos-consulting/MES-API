@@ -6,15 +6,15 @@ const stateTag = 'stdShift';
 
 const stdShiftValidation = {
 	upsertBulkDatasFromExcel: [
-		query('uuid', '작업교대UUID').optional({ nullable: true })
+		body('*.uuid', '작업교대UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'uuid', '작업교대UUID')),
-		query('factory_cd', '공장코드')
+		body('*.factory_cd', '공장코드')
 			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'factory_cd', '공장코드'))
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'factory_cd', '공장코드')),
-		query('shift_cd', '작업교대코드')
+		body('*.shift_cd', '작업교대코드')
 			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'shift_cd', '작업교대코드'))
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'shift_cd', '작업교대코드')),
-		query('shift_nm', '작업교대명')
+		body('*.shift_nm', '작업교대명')
 			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'shift_nm', '작업교대명'))
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'shift_nm', '작업교대명')),
 	],
@@ -28,19 +28,19 @@ const stdShiftValidation = {
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'uuid', '작업교대UUID'))
   ],
   create: [
-		body('*.factory_uuid', '공장UUID')
+   body('*.factory_uuid', '공장UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'factory_uuid', '공장UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'factory_uuid', '공장UUID')),
-    body('*.shift_cd', '작업교대코드')
+   body('*.shift_cd', '작업교대코드')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'shift_cd', '작업교대코드'))
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'shift_cd', '작업교대코드')),
-		body('*.shift_nm', '작업교대명')
+   body('*.shift_nm', '작업교대명')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'shift_nm', '작업교대명'))
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'shift_nm', '작업교대명')),
-		body('*.start_time', '시작시간')
+   body('*.start_time', '시작시간')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'start_time', '시작시간'))
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'start_time', '시작시간')),
-		body('*.end_time', '종료시간')
+   body('*.end_time', '종료시간')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'end_time', '종료시간'))
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'end_time', '종료시간')),
 	],

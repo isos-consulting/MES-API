@@ -27,7 +27,7 @@ class QmsInspResultDetailValueCtl {
       let result: ApiResult<any> = { count:0, raws: [] };
       const service = new QmsIsnpResultDetailValueService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
-      const datas = Object.values(matched);
+      const datas = await service.convertFk(Object.values(matched));
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
         result = await service.create(datas, req.user?.uid as number, tran)
@@ -97,7 +97,7 @@ class QmsInspResultDetailValueCtl {
       let result: ApiResult<any> = { count:0, raws: [] };
       const service = new QmsIsnpResultDetailValueService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
-      const datas = Object.values(matched);
+      const datas = await service.convertFk(Object.values(matched));
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
         result = await service.update(datas, req.user?.uid as number, tran)
@@ -124,7 +124,7 @@ class QmsInspResultDetailValueCtl {
       let result: ApiResult<any> = { count:0, raws: [] };
       const service = new QmsIsnpResultDetailValueService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
-      const datas = Object.values(matched);
+      const datas = await service.convertFk(Object.values(matched));
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
         result = await service.patch(datas, req.user?.uid as number, tran)
@@ -151,7 +151,7 @@ class QmsInspResultDetailValueCtl {
       let result: ApiResult<any> = { count:0, raws: [] };
       const service = new QmsIsnpResultDetailValueService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
-      const datas = Object.values(matched);
+      const datas = await service.convertFk(Object.values(matched));
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
         result = await service.delete(datas, req.user?.uid as number, tran)
