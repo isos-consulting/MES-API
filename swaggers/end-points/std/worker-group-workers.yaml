@@ -82,7 +82,6 @@ post:
             - factory_uuid
             - worker_group_uuid
             - worker_uuid
-            - remark
           allOf:
             - $ref: ../../schemas/std/worker-group-worker.schema.yaml#/factory_uuid
             - $ref: ../../schemas/std/worker-group-worker.schema.yaml#/worker_group_uuid
@@ -106,7 +105,6 @@ put:
         schema:
           required:
             - uuid
-            - remark
           allOf:
             - $ref: ../../schemas/std/worker-group-worker.schema.yaml#/uuid
             - $ref: ../../schemas/std/worker-group-worker.schema.yaml#/remark
@@ -128,7 +126,6 @@ patch:
         schema:
           required:
             - uuid
-            - remark
           allOf:
             - $ref: ../../schemas/std/worker-group-worker.schema.yaml#/uuid
             - $ref: ../../schemas/std/worker-group-worker.schema.yaml#/remark
