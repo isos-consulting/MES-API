@@ -73,7 +73,8 @@ const readReceiveReport = (
     JOIN mat_receive_tb m_r ON m_r.receive_id = m_rd.receive_id
     LEFT JOIN mat_order_detail_tb m_od ON m_od.order_detail_id = m_rd.order_detail_id
     LEFT JOIN mat_income_tb m_i ON m_i.receive_detail_id = m_rd.receive_detail_id
-    LEFT JOIN qms_insp_result_tb q_ir ON q_ir.insp_reference_id = m_rd.receive_detail_id AND q_ir.insp_detail_type_cd = 'MAT_RECEIVE'
+    LEFT JOIN qms_insp_result_tb q_ir ON q_ir.insp_reference_id = m_rd.receive_detail_id
+    LEFT JOIN adm_insp_detail_type_tb a_idt ON a_idt.insp_detail_type_id = q_ir.insp_detail_type_id AND a_idt.insp_detail_type_cd = 'MAT_RECEIVE'
     LEFT JOIN aut_user_tb a_uc ON a_uc.uid = m_rd.created_uid
     LEFT JOIN aut_user_tb a_uu ON a_uu.uid = m_rd.updated_uid
     ${searchQuery};
