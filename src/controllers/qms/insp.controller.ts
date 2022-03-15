@@ -58,7 +58,7 @@ class QmsInspCtl {
         // 📌 공정검사 기준서 등록시 해당 품목의 생산이 진행중일 경우 기준서 생성 후 즉시 적용 불가
         if(data.header.apply_fg) {
           await service.validateWorkingByProd(data.header);
-          data.header.apply_date = data.header.apply_date ? data.header.apply_date : moment(moment.now()).toString();
+          data.header.apply_date = data.header.apply_date ? data.header.apply_date : moment(moment.now()).format().toString();
         }
 
         // 📌 자재입하의 UUID가 입력되지 않은 경우 자재입하 신규 발행
@@ -78,6 +78,7 @@ class QmsInspCtl {
             });
           }
 
+          console.log(data.header);
           // 📌 전표 생성
           headerResult = await service.create([data.header], req.user?.uid as number, tran);
           inspId = headerResult.raws[0].insp_id;
@@ -477,7 +478,7 @@ class QmsInspCtl {
           const insp = inspRead.raws[0];
 
           await service.validateWorkingByProd(insp);
-          data.header.apply_date = data.header.apply_date ? data.header.apply_date : moment(moment.now()).toString();
+          data.header.apply_date = data.header.apply_date ? data.header.apply_date : moment(moment.now()).format().toString();
 
           // 📌 해당 품목의 모든 기준서를 비 활성화 상태로 만들기 위한 Body 생성
           const read = await service.read({ 
@@ -558,7 +559,7 @@ class QmsInspCtl {
         applyInspBody = [{
           uuid: data.uuid,
           apply_fg: true,
-          apply_date: data.apply_date ? data.apply_date : moment(moment.now()).toString()
+          apply_date: data.apply_date ? data.apply_date : moment(moment.now()).format().toString()
         }];
       }
 
@@ -645,7 +646,7 @@ class QmsInspCtl {
           const insp = inspRead.raws[0];
 
           await service.validateWorkingByProd(insp);
-          data.header.apply_date = data.header.apply_date ? data.header.apply_date : moment(moment.now()).toString();
+          data.header.apply_date = data.header.apply_date ? data.header.apply_date : moment(moment.now()).format().toString();
 
           // 📌 해당 품목의 모든 기준서를 비 활성화 상태로 만들기 위한 Body 생성
           const read = await service.read({ 
@@ -709,11 +710,10 @@ class QmsInspCtl {
         // 📌 기준서 상세 삭제
         const detailResult = await detailService.delete(data.details, req.user?.uid as number, tran);
         const count = await detailService.getCount(data.header.insp_id, tran);
-
         // 📌 기준서 삭제
         let headerResult: ApiResult<any> = { count: 0, raws: [] };
         if (count == 0) {
-          headerResult = await service.delete(data.header, req.user?.uid as number, tran);
+          headerResult = await service.delete([data.header], req.user?.uid as number, tran);
         }
 
         result.raws.push({

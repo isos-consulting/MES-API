@@ -1,8 +1,3 @@
+const moment = require('moment');
 
-const a = '123';
-
-console.log(typeof(a));
-
-const b = a;
-console.log(typeof(b));
-console.log(b);
+console.log(moment(moment.now()).format('YYYY-MM-DD').toString());
