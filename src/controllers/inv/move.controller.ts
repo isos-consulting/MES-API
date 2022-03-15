@@ -225,7 +225,7 @@ class InvMoveCtl {
   public delete = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       let result: ApiResult<any> = { count:0, raws: [] };
-      const service = new InvStoreService(req.tenant.uuid);
+      const service = new InvMoveService(req.tenant.uuid);
       const inventoryService = new InvStoreService(req.tenant.uuid);
 
       const matched = matchedData(req, { locations: [ 'body' ] });
