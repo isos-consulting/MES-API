@@ -63,6 +63,8 @@ paths:
     $ref: ../end-points/eqm/insp.{uuid}.details.yaml
   /eqm/insp/{uuid}/include-details:
     $ref: ../end-points/eqm/insp.{uuid}.include-details.yaml
+  /eqm/insps/include-details-by-equip:
+    $ref: ../end-points/eqm/insps.include-details-by-equip.yaml
   /eqm/insps:
     $ref: ../end-points/eqm/insps.yaml
 
