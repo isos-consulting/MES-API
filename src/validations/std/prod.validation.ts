@@ -149,28 +149,28 @@ const stdProdValidation = {
       .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'active_fg', '품목 활성 상태')),
 		body('*.bom_type_cd', 'BOM유형 코드')
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'bom_type_cd', 'BOM유형 코드')),
-		body('*.width', '폭')
+		body('*.width', '폭').optional({ nullable: true })
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'width', '폭')),
-		body('*.length', '길이')
+		body('*.length', '길이').optional({ nullable: true })
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'length', '길이')),
-		body('*.height', '높이')
+		body('*.height', '높이').optional({ nullable: true })
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'height', '높이')),
-		body('*.material', '재질')
+		body('*.material', '재질').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'material', '재질')),
-		body('*.color', '색상')
+		body('*.color', '색상').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'color', '색상')),
-		body('*.weight', '중량')
+		body('*.weight', '중량').optional({ nullable: true })
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'weight', '중량')),
-		body('*.thickness', '두께')
+		body('*.thickness', '두께').optional({ nullable: true })
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'thickness', '두께')),
 		body('*.mat_order_fg', '발주 사용유무')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'mat_order_fg', '발주 사용유무'))
       .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'mat_order_fg', '발주 사용유무')),
-		body('*.mat_unit_uuid', '구매단위UUID')
+		body('*.mat_unit_uuid', '구매단위UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'mat_unit_uuid', '구매단위UUID')),
-		body('*.mat_order_min_qty', '발주 최소 단위수량')
+		body('*.mat_order_min_qty', '발주 최소 단위수량').optional({ nullable: true })
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'mat_order_min_qty', '발주 최소 단위수량')),
-		body('*.mat_supply_days', '발주 소요일')
+		body('*.mat_supply_days', '발주 소요일').optional({ nullable: true })
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'mat_supply_days', '발주 소요일')),
 		body('*.sal_order_fg', '수주사용유무')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'sal_order_fg', '수주사용유무'))
@@ -178,13 +178,13 @@ const stdProdValidation = {
 		body('*.inv_use_fg', '창고 사용유무')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'inv_use_fg', '창고 사용유무'))
       .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'inv_use_fg', '창고 사용유무')),
-		body('*.inv_unit_qty', '단위수량')
+		body('*.inv_unit_qty', '단위수량').optional({ nullable: true })
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'inv_unit_qty', '단위수량')),
-		body('*.inv_safe_qty', '안전 재고수량')
+		body('*.inv_safe_qty', '안전 재고수량').optional({ nullable: true })
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'inv_safe_qty', '안전 재고수량')),
-		body('*.inv_to_store_uuid', '입고창고UUID')
+		body('*.inv_to_store_uuid', '입고창고UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'inv_to_store_uuid', '입고창고UUID')),
-		body('*.inv_to_location_uuid', '입고 위치UUID')
+		body('*.inv_to_location_uuid', '입고 위치UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'inv_to_location_uuid', '입고 위치UUID')),
 		body('*.qms_receive_insp_fg', '수입검사유무')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'qms_receive_insp_fg', '수입검사유무'))
@@ -198,11 +198,11 @@ const stdProdValidation = {
 		body('*.prd_active_fg', '생산품유무')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'prd_active_fg', '생산품유무'))
       .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'prd_active_fg', '생산품유무')),
-		body('*.prd_plan_type_cd', '계획유형코드')
+		body('*.prd_plan_type_cd', '계획유형코드').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'prd_plan_type_cd', '계획유형코드')),
-		body('*.prd_min', '최소값')
+		body('*.prd_min', '최소값').optional({ nullable: true })
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'prd_min', '최소값')),
-		body('*.prd_max', '최대값')
+		body('*.prd_max', '최대값').optional({ nullable: true })
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'prd_max', '최대값')),
 	],
   update: [
