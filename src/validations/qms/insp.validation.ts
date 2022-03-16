@@ -111,12 +111,12 @@ const qmsInspValidation = {
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'remark', '비고'))
   ],
   updateApply: [
-    body('uuid', '검사기준서UUID')
+    body('*.uuid', '검사기준서UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '검사기준서UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '검사기준서UUID'))
   ],
   updateCancelApply: [
-    body('uuid', '검사기준서UUID')
+    body('*.uuid', '검사기준서UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '검사기준서UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '검사기준서UUID'))
   ],

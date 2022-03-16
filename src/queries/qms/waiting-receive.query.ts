@@ -85,7 +85,7 @@ const readWaitingReceive = (
     LEFT JOIN std_location_tb s_l ON s_l.location_id = m_rd.to_location_id
     LEFT JOIN mat_income_tb m_i ON m_i.receive_detail_id = m_rd.receive_detail_id
     LEFT JOIN (	
-      SELECT q_ir.insp_reference_id, q_ir.count(*) AS cnt 
+      SELECT q_ir.insp_reference_id, count(q_ir.*) AS cnt 
       FROM qms_insp_result_tb q_ir
       JOIN adm_insp_detail_type_tb a_idt on a_idt.insp_detail_type_id = q_ir.insp_detail_type_id
       WHERE a_idt.insp_detail_type_cd = 'MAT_RECEIVE'
@@ -176,7 +176,7 @@ const readWaitingReceive = (
     LEFT JOIN std_location_tb s_l ON s_l.location_id = o_rd.to_location_id
     LEFT JOIN mat_income_tb m_i ON m_i.receive_detail_id = o_rd.receive_detail_id
     LEFT JOIN (	
-      SELECT q_ir.insp_reference_id, q_ir.count(*) AS cnt 
+      SELECT q_ir.insp_reference_id, count(q_ir.*) AS cnt 
       FROM qms_insp_result_tb q_ir
       JOIN adm_insp_detail_type_tb a_idt on a_idt.insp_detail_type_id = q_ir.insp_detail_type_id
       WHERE a_idt.insp_detail_type_cd = 'OUT_RECEIVE'

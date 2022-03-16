@@ -26,8 +26,7 @@ const qmsInspResultValidation = {
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'uuid', '검사성적서UUID'))    
   ],
   readProc: [
-    query('insp_detail_type_uuid', '기준서상세 유형UUID')
-      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'insp_detail_type_uuid', '기준서상세 유형UUID'))
+    query('insp_detail_type_uuid', '기준서상세 유형UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'insp_detail_type_uuid', '기준서상세 유형UUID')),
     query('factory_uuid', '공장UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'factory_uuid', '공장UUID')),
