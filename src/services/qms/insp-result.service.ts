@@ -179,7 +179,18 @@ class QmsInspResultService {
 
   // 📒 Fn[readWaitingReceive]: 수입검사 성적서 대기 List Read Function
   public readWaitingReceive = async (params: any) => {
-    try { return await this.repo.readWaitingReceive(params); }
+    try { 
+      const admInspDetailType = new AdmInspDetailTypeService(this.tenant);
+
+      if (!params.insp_detail_type_uuid) {
+        params.insp_detail_type = undefined;
+      } else {
+        const inspDetailTypeRead = await admInspDetailType.readByUuid(params.insp_detail_type_uuid);
+        params.insp_detail_type = inspDetailTypeRead.raws[0].insp_detail_type_cd;
+      }
+
+      return await this.repo.readWaitingReceive(params); 
+    }
 		catch (error) { throw error; }
   };
 

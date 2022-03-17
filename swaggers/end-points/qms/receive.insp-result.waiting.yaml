@@ -80,9 +80,9 @@ get:
                             - $ref: ../../schemas/mat/receive.schema.yaml#/stmt_no
                             - $ref: ../../schemas/mat/receive-detail.schema.yaml#/stmt_no_sub
                             - $ref: ../../schemas/mat/receive.schema.yaml#/reg_date
-                            # - $ref: ../../schemas/qms/insp-result.schema.yaml#/insp_detail_type_uuid
-                            # - $ref: ../../schemas/adm/insp-detail-type.schema.yaml#/insp_detail_type_cd
-                            # - $ref: ../../schemas/adm/insp-detail-type.schema.yaml#/insp_detail_type_nm
+                            - $ref: ../../schemas/qms/insp-result.schema.yaml#/insp_detail_type_uuid
+                            - $ref: ../../schemas/adm/insp-detail-type.schema.yaml#/insp_detail_type_cd
+                            - $ref: ../../schemas/adm/insp-detail-type.schema.yaml#/insp_detail_type_nm
                             - $ref: ../../schemas/mat/receive-detail.schema.yaml#/factory_uuid
                             - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
                             - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm

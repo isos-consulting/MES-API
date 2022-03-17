@@ -81,6 +81,7 @@ class QmsInspResultRepo {
   // 📒 Fn[readWaitingReceive]: 수입검사 성적서 대기 List Read Function
   public readWaitingReceive = async(params?: any) => {
     try {
+      console.log('abc');
       const result = await this.sequelize.query(readWaitingReceive(params));
       return convertReadResult(result[0]);
     } catch (error) {

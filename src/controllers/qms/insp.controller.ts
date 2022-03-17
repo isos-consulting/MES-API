@@ -706,10 +706,14 @@ class QmsInspCtl {
         details: await detailService.convertFk(matched.details),
       }
 
+      console.log(data.header);
+      console.log(data.details);
+
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
         // 📌 기준서 상세 삭제
         const detailResult = await detailService.delete(data.details, req.user?.uid as number, tran);
         const count = await detailService.getCount(data.header.insp_id, tran);
+        
         // 📌 기준서 삭제
         let headerResult: ApiResult<any> = { count: 0, raws: [] };
         if (count == 0) {

@@ -420,10 +420,12 @@ class QmsInspResultCtl {
   // 📒 Fn[readWaitingReceive]: 수입검사 성적서 대기 List Read Function
   public readWaitingReceive = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
+      console.log('aaaa');
       let result: ApiResult<any> = { count:0, raws: [] };
       const service = new QmsInspResultService(req.tenant.uuid);
       const params = matchedData(req, { locations: [ 'query', 'params' ] });
 
+      console.log(params);
       result = await service.readWaitingReceive(params);
 
       return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
