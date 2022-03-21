@@ -225,7 +225,7 @@ class InvMoveCtl {
   public delete = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       let result: ApiResult<any> = { count:0, raws: [] };
-      const service = new InvStoreService(req.tenant.uuid);
+      const service = new InvMoveService(req.tenant.uuid);
       const inventoryService = new InvStoreService(req.tenant.uuid);
 
       const matched = matchedData(req, { locations: [ 'body' ] });
@@ -234,7 +234,6 @@ class InvMoveCtl {
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
         // 📌 자재출고 수정
         const moveResult = await service.delete(datas, req.user?.uid as number, tran);
-
         // 📌 수불 데이터 삭제
         const fromStoreResult = await inventoryService.transactInventory(
           moveResult.raws, 'DELETE', 
@@ -253,6 +252,7 @@ class InvMoveCtl {
           toStore: toStoreResult.raws,
         }];
         result.count = moveResult.count + fromStoreResult.count + toStoreResult.count;
+        console.log(result.raws);
       });
 
       return createApiResult(res, result, 200, '데이터 삭제 성공', this.stateTag, successState.DELETE);

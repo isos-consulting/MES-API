@@ -404,7 +404,7 @@ class PrdWorkCtl {
       const workDowntimeService = new PrdWorkDowntimeService(req.tenant.uuid);
       const orderService = new PrdOrderService(req.tenant.uuid);
       const inventoryService = new InvStoreService(req.tenant.uuid);
-      const tenantOptService = new StdTenantOptService(req.tenant.uuid);
+      // const tenantOptService = new StdTenantOptService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
       let datas = await service.convertFk(Object.values(matched));
 
@@ -415,7 +415,7 @@ class PrdWorkCtl {
 
           // ❗ 작업지시가 마감되어 있는 경우 Interlock
           await orderService.validateIsCompleted([work.order_uuid]);
-
+          
           // 📌 입고 창고 수불 내역 생성(생산입고)
           const storeResult = await inventoryService.transactInventory(
             data, 'DELETE', 
@@ -432,8 +432,8 @@ class PrdWorkCtl {
           );
 
           // 📌 창고 수불이력 생성(생산투입)
-          const isPullOption = await tenantOptService.getTenantOptValue('OUT_AUTO_PULL', tran);
-          const workInputBody = await workInputService.getWorkInputBody(data, data.reg_date, isPullOption);
+          // const isPullOption = await tenantOptService.getTenantOptValue('OUT_AUTO_PULL', tran);
+          const workInputBody = await workInputService.getWorkInputsBody(data, data.reg_date);
           const inputStoreResult = await inventoryService.transactInventory(
             workInputBody, 'DELETE', 
             { inout: 'FROM', tran_type: 'PRD_INPUT', reg_date: '', tran_id_alias: 'work_input_id' },
@@ -443,9 +443,9 @@ class PrdWorkCtl {
           // 📌 생산실적 관련 테이블 삭제
           const inputResult = await workInputService.deleteByWorkId(data.work_id, req.user?.uid as number, tran);
           const workerResult = await workWorkerService.deleteByWorkId(data.work_id, req.user?.uid as number, tran);
-          const routingResult = await workRoutingService.deleteByWorkId(data.work_id, req.user?.uid as number, tran);
           const rejectResult = await workRejectService.deleteByWorkId(data.work_id, req.user?.uid as number, tran);
           const downtimeResult = await workDowntimeService.deleteByWorkId(data.work_id, req.user?.uid as number, tran);
+          const routingResult = await workRoutingService.deleteByWorkId(data.work_id, req.user?.uid as number, tran);
 
           // ❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗ 공정검사 service로 바꿔야함
           // 📌 공정검사 이력 삭제

@@ -175,6 +175,31 @@ class PrdWorkInputService {
   /**
    * @param datas 작업실적 데이터
    * @param regDate 수불일시
+   * @returns 실적부적합 데이터
+   */
+   getWorkInputsBody = async (data: any, regDate: string) => {
+    const workInputRead = await this.repo.readRawsByWorkId(data.work_id);
+    const result = await Promise.all(
+      workInputRead.raws.map(async (workInput: any) => {
+        return {
+          work_input_id: workInput.work_input_id,
+          factory_id: workInput.factory_id,
+          prod_id: workInput.prod_id,
+          reg_date: regDate,
+          lot_no: workInput.lot_no,
+          qty: workInput.qty,
+          to_store_id: workInput.to_store_id,
+          to_location_id: workInput.to_location_id
+        }
+      })
+    );
+
+    return result;
+  }
+
+  /**
+   * @param datas 작업실적 데이터
+   * @param regDate 수불일시
    * @returns 작업실적 데이터
    */
   getWorkInputBody = async (data: any, regDate: string, isMinusStockOption: boolean) => {
