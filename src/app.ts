@@ -5,12 +5,13 @@ import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import jwtMiddleware from './middlewares/jwt.middleware';
 import routers from './routes';
-import response from './utils/response';
+import response from './utils/response_new';
 import morgan = require('morgan');
 import { stream } from './configs/winston';
 import { refreshToken } from './utils/refreshToken';
 import tenantMiddleware from './middlewares/tenant.middleware';
 import config from './configs/config';
+import isNumber from './utils/isNumber';
 
 // Import Environment
 dotenv.config();
@@ -48,7 +49,11 @@ app.use(cookieParser());
 // app.use(cors(corsOptions));
 app.use(cors());
 app.use('/health-check', async (req: express.Request, res: express.Response, next: express.NextFunction) => { 
-  return response(res, [], {}, 'HealthCheck', 200); 
+  return response(
+    res, 
+    { status: 200, message: 'HealthCheck' },
+    { state_tag: 'healthCheck', state_no: '0000', type: 'SUCCESS' }
+  );
 });
 
 // Create Log (IP, User, Date, Method, Uri, Status, Response Length, Referrer, Agent, ResponseTime, TotalTime)
@@ -78,7 +83,11 @@ app.use((err: createError.HttpError, req: express.Request, res: express.Response
   res.locals.error = config.node_env === 'development' || 'test' ? apiError : {};
 
   // render the error page
-  return response(res, [], {}, apiError.message, apiError.status);
+  return response(
+    res, 
+    { status: isNumber(apiError.status) ? apiError.status : 500, message: apiError.message },
+    { state_tag: 'unknown', state_no: '9999', type: 'ERROR' }
+  );
 });
 
 export default app;

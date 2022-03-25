@@ -15,9 +15,18 @@ get:
 
     - name: insp_detail_type_uuid
       in: query
-      required: true
       description: |
-        기준서 조회시 세부검사유형의 UUID 를 입력합니다.
+        기준서 조회시 세부검사유형의 UUID 를 입력합니다.<br/>
+        [미입력 시 세부검사유형코드를 필수로 입력합니다.]
+      schema:
+        type: string
+        format: string
+    
+    - name: insp_detail_type_cd
+      in: query
+      description: |
+        기준서 조회시 세부검사유형코드를 입력합니다.<br/>
+        [미입력 시 세부검사유형 UUID를 필수로 입력합니다.]
       schema:
         type: string
         format: string

@@ -14,6 +14,9 @@ const readWaitingReceive = (
       m_r.stmt_no,
       concat(m_r.stmt_no, '-', m_rd.seq) as stmt_no_sub,
       m_r.reg_date as reg_date,
+      a_it.uuid as insp_type_uuid,
+      a_it.insp_type_cd,
+      a_it.insp_type_nm,
       a_idt.uuid as insp_detail_type_uuid,
       a_idt.insp_detail_type_cd,
       a_idt.insp_detail_type_nm,
@@ -91,6 +94,7 @@ const readWaitingReceive = (
       LEFT JOIN adm_insp_detail_type_tb a_idt on a_idt.insp_detail_type_id = q_ir.insp_detail_type_id AND a_idt.insp_detail_type_cd = 'MAT_RECEIVE'
       GROUP BY q_ir.insp_reference_id) q_ir 	ON q_ir.insp_reference_id = m_rd.receive_detail_id      
     LEFT JOIN adm_insp_detail_type_tb a_idt on a_idt.insp_detail_type_cd = 'MAT_RECEIVE'
+    LEFT JOIN adm_insp_type_tb a_it on a_it.insp_type_id = a_idt.insp_type_id
     LEFT JOIN aut_user_tb a_uc ON a_uc.uid = m_rd.created_uid
     LEFT JOIN aut_user_tb a_uu ON a_uu.uid = m_rd.updated_uid
     WHERE (m_rd.insp_fg = TRUE AND COALESCE(q_ir.cnt, 0) = 0)
@@ -106,6 +110,9 @@ const readWaitingReceive = (
       o_r.stmt_no,
       concat(o_r.stmt_no, '-', o_rd.seq) as stmt_no_sub,
       o_r.reg_date as reg_date,
+      a_it.uuid as insp_type_uuid,
+      a_it.insp_type_cd,
+      a_it.insp_type_nm,
       a_idt.uuid as insp_detail_type_uuid,
       a_idt.insp_detail_type_cd,
       a_idt.insp_detail_type_nm,
@@ -183,6 +190,7 @@ const readWaitingReceive = (
       LEFT JOIN adm_insp_detail_type_tb a_idt on a_idt.insp_detail_type_id = q_ir.insp_detail_type_id AND a_idt.insp_detail_type_cd = 'OUT_RECEIVE'
       GROUP BY q_ir.insp_reference_id) q_ir 	ON q_ir.insp_reference_id = o_rd.receive_detail_id      
     LEFT JOIN adm_insp_detail_type_tb a_idt on a_idt.insp_detail_type_cd = 'OUT_RECEIVE'
+    LEFT JOIN adm_insp_type_tb a_it on a_it.insp_type_id = a_idt.insp_type_id
     LEFT JOIN aut_user_tb a_uc ON a_uc.uid = o_rd.created_uid
     LEFT JOIN aut_user_tb a_uu ON a_uu.uid = o_rd.updated_uid
     WHERE (o_rd.insp_fg = TRUE AND COALESCE(q_ir.cnt, 0) = 0)

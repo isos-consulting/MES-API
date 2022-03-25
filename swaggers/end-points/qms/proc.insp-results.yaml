@@ -147,6 +147,7 @@ post:
               required:
                 - factory_uuid
                 - work_uuid
+                - insp_type_uuid
                 - insp_detail_type_uuid
                 - insp_uuid
                 - prod_uuid
@@ -160,6 +161,7 @@ post:
                 - $ref: ../../schemas/qms/insp-result.schema.yaml#/uuid
                 - $ref: ../../schemas/qms/insp-result.schema.yaml#/factory_uuid
                 - $ref: ../../schemas/qms/insp-result.schema.yaml#/work_uuid
+                - $ref: ../../schemas/qms/insp-result.schema.yaml#/insp_type_uuid
                 - $ref: ../../schemas/qms/insp-result.schema.yaml#/insp_detail_type_uuid
                 - $ref: ../../schemas/qms/insp-result.schema.yaml#/insp_uuid
                 - $ref: ../../schemas/qms/insp-result.schema.yaml#/prod_uuid

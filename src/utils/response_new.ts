@@ -32,7 +32,7 @@ const response = (
   let stateCd: string = '';
   if (logInfo) {
     const typeStr = logInfo.type === 'SUCCESS' ? 'S' : 'E';
-    stateCd = `${logInfo.state_tag}-${typeStr}-${logInfo.state_no}`;
+    stateCd = `${logInfo.state_tag}-${typeStr}-${logInfo.state_no ?? '9999'}`;
   }
 
   let result: TResponse = { 

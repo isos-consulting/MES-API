@@ -55,6 +55,7 @@ class StdEquipService {
 
   public convertFk = async (datas: any) => {
     // ✅ CUD 연산이 실행되기 전 Fk Table 의 uuid 로 id 를 검색하여 request body 에 삽입하기 위하여 정보 Setting
+    console.log(datas);
     return await getFkIdByUuid(this.tenant, datas, this.fkIdInfos);
   }
 

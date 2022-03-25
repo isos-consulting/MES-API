@@ -67,7 +67,7 @@ class QmsInspResultCtl {
         data.header.seq++;
 
           // ✅ 검사 성적서 및 상세 데이터 생성
-        const headerResult = await service.create(data.header, req.user?.uid as number, tran);
+        const headerResult = await service.create([data.header], req.user?.uid as number, tran);
 
         const detailInfoResults: ApiResult<any> = { raws: [], count: 0 };
         const detailValueResults: ApiResult<any> = { raws: [], count: 0 };
@@ -112,13 +112,13 @@ class QmsInspResultCtl {
         if (data.header.pass_qty > 0) {
           switch(inspDetailTypeCd) {
             case 'MAT_RECEIVE': 
-              receiveDetailResult = await matReceiveDetailService.readByUuid(data.header.receive_detail_uuid);
+              receiveDetailResult = await matReceiveDetailService.readRawByUuid(data.header.receive_detail_uuid);
               incomeParams = [{
-                ...headerResult.raws[0],
+                ...headerResult.raws[0].dataValues,
                 receive_detail_id: data.header.receive_detail_id,
                 unit_id: receiveDetailResult.raws[0].unit_id,
                 qty: data.header.pass_qty
-              }]
+              }];
               incomeBody = await matIncomeService.getIncomeBody(incomeParams, data.header.reg_date);
               await storeService.validateStoreTypeByIds(incomeBody.map(body => body.to_store_id), 'AVAILABLE', tran);
               incomeResult = await matIncomeService.create(incomeBody, req.user?.uid as number, tran);
@@ -131,9 +131,9 @@ class QmsInspResultCtl {
               break;
 
             case 'OUT_RECEIVE': 
-              receiveDetailResult = await outReceiveDetailService.readByUuid(data.header.receive_detail_uuid);
+              receiveDetailResult = await outReceiveDetailService.readRawByUuid(data.header.receive_detail_uuid);
               incomeParams = [{
-                ...headerResult.raws[0],
+                ...headerResult.raws[0].dataValues,
                 receive_detail_id: data.header.receive_detail_id,
                 unit_id: receiveDetailResult.raws[0].unit_id,
                 qty: data.header.pass_qty
@@ -160,9 +160,9 @@ class QmsInspResultCtl {
         if (data.header.reject_qty > 0) {
           switch(inspDetailTypeCd) {
             case 'MAT_RECEIVE': 
-              receiveDetailResult = await matReceiveDetailService.readByUuid(data.header.receive_detail_uuid);
+              receiveDetailResult = await matReceiveDetailService.readRawByUuid(data.header.receive_detail_uuid);
               storeParams = [{
-                ...headerResult.raws[0],
+                ...headerResult.raws[0].dataValues,
                 unit_id: receiveDetailResult.raws[0].unit_id,
                 qty: data.header.reject_qty
               }];
@@ -170,9 +170,9 @@ class QmsInspResultCtl {
               break;
 
             case 'OUT_RECEIVE': 
-              receiveDetailResult = await outReceiveDetailService.readByUuid(data.header.receive_detail_uuid);
+              receiveDetailResult = await outReceiveDetailService.readRawByUuid(data.header.receive_detail_uuid);
               storeParams = [{
-                ...headerResult.raws[0],
+                ...headerResult.raws[0].dataValues,
                 unit_id: receiveDetailResult.raws[0].unit_id,
                 qty: data.header.reject_qty
               }];
@@ -420,12 +420,10 @@ class QmsInspResultCtl {
   // 📒 Fn[readWaitingReceive]: 수입검사 성적서 대기 List Read Function
   public readWaitingReceive = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      console.log('aaaa');
       let result: ApiResult<any> = { count:0, raws: [] };
       const service = new QmsInspResultService(req.tenant.uuid);
       const params = matchedData(req, { locations: [ 'query', 'params' ] });
 
-      console.log(params);
       result = await service.readWaitingReceive(params);
 
       return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
@@ -444,22 +442,29 @@ class QmsInspResultCtl {
     try {
       let result: ApiResult<any> = { count:0, raws: [] };
       const service = new QmsInspResultService(req.tenant.uuid);
+      const inspDetailTypeService = new AdmInspDetailTypeService(req.tenant.uuid);
       const params = matchedData(req, { locations: [ 'query', 'params' ] });
 
-      switch (params.insp_detail_type) {
-        case 'all':
-          const matReceiveRead = await service.readMatReceive(params);
-          const outReceiveRead = await service.readOutReceive(params);
+      if (!params.insp_detail_type_uuid) {
+        const matReceiveRead = await service.readMatReceive(params);
+        const outReceiveRead = await service.readOutReceive(params);
 
-          result.raws = [...matReceiveRead.raws, ...outReceiveRead.raws];
-          result.count = matReceiveRead.count + outReceiveRead.count;
-          break;
-        case 'matReceive': 
-          result = params.receive_detail_uuid ? await service.readMatReceiveByUuid(params.receive_detail_uuid) : await service.readMatReceive(params); 
-          break;
-        case 'outReceive': 
-          result = params.receive_detail_uuid ? await service.readOutReceiveByUuid(params.receive_detail_uuid) : await service.readOutReceive(params); 
-          break;
+        result.raws = [...matReceiveRead.raws, ...outReceiveRead.raws];
+        result.count = matReceiveRead.count + outReceiveRead.count;
+
+      } else {
+        const inspDetailTypeResult = await inspDetailTypeService.readByUuid(params.insp_detail_type_uuid);
+        const inspDeatilTypeCd = await inspDetailTypeResult.raws[0].insp_detail_type_cd;
+
+        switch (inspDeatilTypeCd) {
+          case 'MAT_RECEIVE': 
+            result = params.receive_detail_uuid ? await service.readMatReceiveByUuid(params.receive_detail_uuid) : await service.readMatReceive(params); 
+            break;
+  
+          case 'OUT_RECEIVE': 
+            result = params.receive_detail_uuid ? await service.readOutReceiveByUuid(params.receive_detail_uuid) : await service.readOutReceive(params); 
+            break;
+        }
       }
   
       return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
@@ -488,7 +493,9 @@ class QmsInspResultCtl {
       const inspResultRead = await service.readRawByUuid(params.uuid);
 
       // ❗ 등록되어있는 성적서가 없을 경우 Error Throw
-      if (!inspResultRead.raws[0]) { 
+      if (inspResultRead.raws[0]) { 
+        (params as any).insp_result_uuid = params.uuid;
+      } else {
         throw createApiError(
           400, 
           '성적서 조회결과가 없습니다.', 
@@ -507,10 +514,9 @@ class QmsInspResultCtl {
       }
 
       // 📌 insp_detail_type(세부검사유형)에 따라 작업자 검사 혹은 QC 검사 항목만 조회
-      if (inspDetailTypeResult.raws[0].worker_fg === '1') { (params as any).worker_fg = true; }
-      if (inspDetailTypeResult.raws[0].inspector_fg === '1') { (params as any).inspector_fg = true; }
+      if (inspDetailTypeResult.raws[0].worker_fg == '1') { (params as any).worker_fg = true; }
+      if (inspDetailTypeResult.raws[0].inspector_fg == '1') { (params as any).inspector_fg = true; }
       
-
       const detailInfoResult = await detailInfoService.read(params);
       let detailsResult: ApiResult<any> = { raws: [], count: detailInfoResult.count };
       let maxSampleCnt: number = 0;
@@ -612,8 +618,8 @@ class QmsInspResultCtl {
       // 📌 insp_detail_type(세부검사유형)에 따라 작업자 검사 혹은 QC 검사 항목만 조회
       const inspDetailTypeResult = await inspDetailTypeService.readRawById(headerResult.raws[0].insp_detail_type_id);
 
-      if (inspDetailTypeResult.raws[0].worker_fg === '1') { (params as any).worker_fg = true; }
-      if (inspDetailTypeResult.raws[0].inspector_fg === '1') { (params as any).inspector_fg = true; }
+      if (inspDetailTypeResult.raws[0].worker_fg == '1') { (params as any).worker_fg = true; }
+      if (inspDetailTypeResult.raws[0].inspector_fg == '1') { (params as any).inspector_fg = true; }
 
       const detailInfoResult = await detailInfoService.read(params);
       let detailsResult: ApiResult<any> = { raws: [], count: detailInfoResult.count };
@@ -688,8 +694,8 @@ class QmsInspResultCtl {
         const inspDetailTypeResult = await inspDetailTypeService.readByUuid(params.insp_detail_type_uuid);
 
         const detailParams: any = { insp_result_uuid: header.insp_result_uuid };
-        if (inspDetailTypeResult.raws[0].worker_fg === '1') { detailParams.worker_fg = true; }
-        if (inspDetailTypeResult.raws[0].inspector_fg === '1') { detailParams.inspector_fg = true; }
+        if (inspDetailTypeResult.raws[0].worker_fg == '1') { detailParams.worker_fg = true; }
+        if (inspDetailTypeResult.raws[0].inspector_fg == '1') { detailParams.inspector_fg = true; }
 
         const detailInfoResult = await detailInfoService.read(detailParams);
         let detailsResult: ApiResult<any> = { raws: [], count: detailInfoResult.count };
@@ -791,8 +797,8 @@ class QmsInspResultCtl {
 
       // 📌 insp_detail_type(세부검사유형)에 따라 작업자 검사 혹은 QC 검사 항목만 조회
       const inspDetailTypeResult = await inspDetailTypeService.readRawById(headerResult.raws[0].insp_detail_type_id);
-      if (inspDetailTypeResult.raws[0].worker_fg === '1') { (params as any).worker_fg = true; }
-      if (inspDetailTypeResult.raws[0].inspector_fg === '1') { (params as any).inspector_fg = true; }
+      if (inspDetailTypeResult.raws[0].worker_fg == '1') { (params as any).worker_fg = true; }
+      if (inspDetailTypeResult.raws[0].inspector_fg == '1') { (params as any).inspector_fg = true; }
 
       const detailInfoResult = await detailInfoService.read(params);
       let detailsResult: ApiResult<any> = { raws: [], count: detailInfoResult.count };
@@ -989,9 +995,9 @@ class QmsInspResultCtl {
         if (data.header.pass_qty > 0) {
           switch(inspDetailTypeCd) {
             case 'MAT_RECEIVE': 
-              receiveDetailResult = await matReceiveDetailService.readByUuid(data.header.receive_detail_uuid);
+              receiveDetailResult = await matReceiveDetailService.readRawByUuid(data.header.receive_detail_uuid);
               incomeParams = [{
-                ...headerResult.raws[0],
+                ...headerResult.raws[0].dataValues,
                 receive_detail_id: data.header.receive_detail_id,
                 unit_id: receiveDetailResult.raws[0].unit_id,
                 qty: data.header.pass_qty
@@ -1008,9 +1014,9 @@ class QmsInspResultCtl {
               break;
 
             case 'OUT_RECEIVE': 
-              receiveDetailResult = await outReceiveDetailService.readByUuid(data.header.receive_detail_uuid);
+              receiveDetailResult = await outReceiveDetailService.readRawByUuid(data.header.receive_detail_uuid);
               incomeParams = [{
-                ...headerResult.raws[0],
+                ...headerResult.raws[0].dataValues,
                 receive_detail_id: data.header.receive_detail_id,
                 unit_id: receiveDetailResult.raws[0].unit_id,
                 qty: data.header.pass_qty
@@ -1037,9 +1043,9 @@ class QmsInspResultCtl {
         if (data.header.reject_qty > 0) {
           switch(inspDetailTypeCd) {
             case 'MAT_RECEIVE': 
-              receiveDetailResult = await matReceiveDetailService.readByUuid(data.header.receive_detail_uuid);
+              receiveDetailResult = await matReceiveDetailService.readRawByUuid(data.header.receive_detail_uuid);
               storeParams = [{
-                ...headerResult.raws[0],
+                ...headerResult.raws[0].dataValues,
                 unit_id: receiveDetailResult.raws[0].unit_id,
                 qty: data.header.reject_qty
               }];
@@ -1047,9 +1053,9 @@ class QmsInspResultCtl {
               break;
 
             case 'OUT_RECEIVE': 
-              receiveDetailResult = await outReceiveDetailService.readByUuid(data.header.receive_detail_uuid);
+              receiveDetailResult = await outReceiveDetailService.readRawByUuid(data.header.receive_detail_uuid);
               storeParams = [{
-                ...headerResult.raws[0],
+                ...headerResult.raws[0].dataValues,
                 unit_id: receiveDetailResult.raws[0].unit_id,
                 qty: data.header.reject_qty
               }];
@@ -1340,7 +1346,7 @@ class QmsInspResultCtl {
                 if (incomeResult.raws[0]) {
                   storeResult = await inventoryService.transactInventory(
                     incomeResult.raws, 'DELETE', 
-                    { inout: 'TO', tran_type: 'MAT_INCOME', reg_date: data.header.reg_date, tran_id_alias: 'income_id' },
+                    { inout: 'TO', tran_type: 'MAT_INCOME', tran_id_alias: 'income_id' },
                     req.user?.uid as number, tran
                   );
                 } 
@@ -1350,7 +1356,7 @@ class QmsInspResultCtl {
                 if (incomeResult.raws[0]) {
                   storeResult = await inventoryService.transactInventory(
                     incomeResult.raws, 'DELETE', 
-                    { inout: 'TO', tran_type: 'OUT_INCOME', reg_date: data.header.reg_date, tran_id_alias: 'income_id' },
+                    { inout: 'TO', tran_type: 'OUT_INCOME', tran_id_alias: 'income_id' },
                     req.user?.uid as number, tran
                   );
                 } 
@@ -1362,15 +1368,13 @@ class QmsInspResultCtl {
             let rejectStoreResult: ApiResult<any> = { count:0, raws: [] };
             await inventoryService.transactInventory(
               headerRead.raws, 'DELETE', 
-              { inout: 'TO', tran_type: 'QMS_RECEIVE_INSP_REJECT', reg_date: data.header.reg_date, tran_id_alias: 'insp_result_id' },
+              { inout: 'TO', tran_type: 'QMS_RECEIVE_INSP_REJECT', tran_id_alias: 'insp_result_id' },
               req.user?.uid as number, tran
             );
-
 
             // 📌 검사 성적서 상세 값을 삭제하기 위하여 검사 성적서 상세정보 Id 조회
             const detailInfos = await detailInfoService.readByResultId(headerRead.raws[0].insp_result_id);
             const detailInfoIds = detailInfos.raws.map((raw: any) => { return raw.insp_result_detail_info_id });
-
             // ✅ 검사성적서상세값 삭제
             const detailValuesResult = await detailValueService.deleteByInfoIds(detailInfoIds, req.user?.uid as number, tran);
 
@@ -1379,7 +1383,6 @@ class QmsInspResultCtl {
 
             // ✅ 검사성적서 삭제
             const headerResult = await service.delete([data], req.user?.uid as number, tran);
-
             result.raws.push({
               result: {
                 header: headerResult.raws,

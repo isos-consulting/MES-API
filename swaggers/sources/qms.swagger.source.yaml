@@ -55,9 +55,9 @@ paths:
     $ref: ../end-points/qms/insp.{uuid}.details.yaml
   /qms/insp/{uuid}/include-details:
     $ref: ../end-points/qms/insp.{uuid}.include-details.yaml
-  /qms/insp/receive/include-details:
+  /qms/receive/insp/include-details:
     $ref: ../end-points/qms/insp.receive.include-details.yaml
-  /qms/insp/proc/include-details:
+  /qms/proc/insp/include-details:
     $ref: ../end-points/qms/insp.proc.include-details.yaml
   /qms/insps:
     $ref: ../end-points/qms/insps.yaml

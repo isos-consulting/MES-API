@@ -28,9 +28,10 @@ const qmsInspValidation = {
     param('uuid', '검사기준서UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '검사기준서UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'uuid', '검사기준서UUID')),
-    query('insp_detail_type_uuid', '기준서상세 유형UUID')
-      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'insp_detail_type_uuid', '기준서상세 유형UUID'))
-      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'insp_detail_type_uuid', '기준서상세 유형UUID'))
+    query('insp_detail_type_uuid', '기준서상세 유형UUID').optional({ nullable: true })
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'insp_detail_type_uuid', '기준서상세 유형UUID')),
+    query('insp_detail_type_cd', '기준서상세 유형코드').optional({ nullable: true })
+      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'insp_detail_type_cd', '기준서상세 유형코드'))
   ],
   readIncludeDetailsByReceive: [
     query('insp_detail_type_uuid', '기준서상세 유형UUID')
@@ -58,7 +59,7 @@ const qmsInspValidation = {
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'insp_type_uuid', '검사유형UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'insp_type_uuid', '검사유형UUID')),
     body('header.insp_no', '기준서번호').optional({ nullable: true })
-      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'insp_no', '기준서번호')),
+      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'insp_no', '기준서번호')),
     body('header.prod_uuid', '품목UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'prod_uuid', '품목UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'prod_uuid', '품목UUID')),

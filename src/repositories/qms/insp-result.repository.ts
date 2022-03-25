@@ -761,7 +761,7 @@ class QmsInspResultRepo {
             model: this.sequelize.models.AdmInspDetailType, 
             attributes: [], 
             required: false,
-            where: { insp_detail_type_uuid: params.insp_detail_type_uuid ? params.insp_detail_type_uuid : { [Op.ne]: null } }
+            where: { uuid: params.insp_detail_type_uuid ? params.insp_detail_type_uuid : { [Op.ne]: null } }
           },
           { 
             model: this.sequelize.models.PrdWork,
@@ -1252,6 +1252,7 @@ class QmsInspResultRepo {
           {
             emp_id: inspResult.emp_id ?? null,
             insp_result_fg: inspResult.insp_result_fg ?? null,
+            insp_handling_type_id: inspResult.insp_handling_type_id ?? null,
             insp_qty: inspResult.insp_qty ?? null,
             pass_qty: inspResult.pass_qty ?? null,
             reject_qty: inspResult.reject_qty ?? null,
@@ -1297,6 +1298,7 @@ class QmsInspResultRepo {
           {
             emp_id: inspResult.emp_id,
             insp_result_fg: inspResult.insp_result_fg,
+            insp_handling_type_id: inspResult.insp_handling_type_id,
             insp_qty: inspResult.insp_qty,
             pass_qty: inspResult.pass_qty,
             reject_qty: inspResult.reject_qty,

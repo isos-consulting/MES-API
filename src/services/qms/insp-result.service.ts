@@ -13,6 +13,7 @@ import QmsInspRepo from '../../repositories/qms/insp.repository';
 import AdmInspDetailTypeService from "../adm/insp-detail-type.service";
 import MatReceiveDetailRepo from "../../repositories/mat/receive-detail.repository";
 import OutReceiveDetailRepo from "../../repositories/out/receive-detail.repository";
+import AdmInspTypeRepo from "../../repositories/adm/insp-type.repository";
 import AdmInspDetailTypeRepo from "../../repositories/adm/insp-detail-type.repository";
 import AdmInspHandlingTypeRepo from "../../repositories/adm/insp-handling-type.repository";
 import StdUnitConvertService from "../std/unit-convert.service";
@@ -42,6 +43,12 @@ class QmsInspResultService {
         TRepo: QmsInspResultRepo,
         idName: 'insp_result_id',
         uuidName: 'uuid'
+      },
+      {
+        key: 'inspType',
+        TRepo: AdmInspTypeRepo,
+        idName: 'insp_type_id',
+        uuidName: 'insp_type_uuid'
       },
       {
         key: 'inspDetailType',
@@ -140,7 +147,8 @@ class QmsInspResultService {
   public convertFk = async (datas: any) => {
     // ✅ CUD 연산이 실행되기 전 Fk Table 의 uuid 로 id 를 검색하여 request body 에 삽입하기 위하여 정보 Setting
     const inspDetailTypeService = new AdmInspDetailTypeService(this.tenant);
-    const inspDetailType = await inspDetailTypeService.readByUuid(datas.insp_detail_type_uuid);
+    const inspDetailTypeUuid: string = datas.insp_detail_type_uuid ?? datas['0'].insp_detail_type_uuid;
+    const inspDetailType = await inspDetailTypeService.readByUuid(inspDetailTypeUuid);
 
     switch (inspDetailType.raws[0].insp_detail_type_cd) {
       case 'MAT_RECEIVE':

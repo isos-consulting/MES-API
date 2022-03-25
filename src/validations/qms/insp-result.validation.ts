@@ -46,6 +46,9 @@ const qmsInspResultValidation = {
     body('header.work_uuid', '실적UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'work_uuid', '실적UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'work_uuid', '실적UUID')),
+    body('header.insp_type_uuid', '검사유형UUID')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'insp_type_uuid', '검사유형UUID'))
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'insp_type_uuid', '검사유형UUID')),
     body('header.insp_detail_type_uuid', '세부검사유형UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'insp_detail_type_uuid', '세부검사유형UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'insp_detail_type_uuid', '세부검사유형UUID')),
@@ -143,7 +146,7 @@ const qmsInspResultValidation = {
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'remark', '비고'))
   ],
   deleteProcInsp: [
-    body('uuid', '검사성적서UUID')
+    body('*.uuid', '검사성적서UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '검사성적서UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '검사성적서UUID')),
   ],
@@ -185,6 +188,9 @@ const qmsInspResultValidation = {
     body('header.receive_detail_uuid', '입하상세UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'receive_detail_uuid', '입하상세UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'receive_detail_uuid', '입하상세UUID')),
+    body('header.insp_type_uuid', '검사유형UUID')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'insp_type_uuid', '검사유형UUID'))
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'insp_type_uuid', '검사유형UUID')),
     body('header.insp_detail_type_uuid', '세부검사유형UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'insp_detail_type_uuid', '세부검사유형UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'insp_detail_type_uuid', '세부검사유형UUID')),
@@ -257,6 +263,9 @@ const qmsInspResultValidation = {
     body('header.insp_detail_type_uuid', '세부검사유형UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'insp_detail_type_uuid', '세부검사유형UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'insp_detail_type_uuid', '세부검사유형UUID')),
+    body('header.insp_handling_type_uuid', '검사처리유형UUID')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'insp_handling_type_uuid', '검사처리유형UUID'))
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'insp_handling_type_uuid', '검사처리유형UUID')),
     body('header.emp_uuid', '검사자 사원UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'emp_uuid', '검사자 사원UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'emp_uuid', '검사자 사원UUID')),
@@ -306,10 +315,10 @@ const qmsInspResultValidation = {
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'remark', '비고'))
   ],
   deleteReceiveInsp: [
-    body('uuid', '검사성적서UUID')
+    body('*.uuid', '검사성적서UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '검사성적서UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '검사성적서UUID')),
-    body('insp_detail_type_uuid', '세부검사유형UUID')
+    body('*.insp_detail_type_uuid', '세부검사유형UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'insp_detail_type_uuid', '세부검사유형UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'insp_detail_type_uuid', '세부검사유형UUID')),
   ],
@@ -332,6 +341,9 @@ const qmsInspResultValidation = {
     body('header.factory_uuid', '공장UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'factory_uuid', '공장UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'factory_uuid', '공장UUID')),
+    body('header.insp_type_uuid', '검사유형UUID')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'insp_type_uuid', '검사유형UUID'))
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'insp_type_uuid', '검사유형UUID')),
     body('header.insp_handling_type_uuid', '검사처리유형UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'insp_handling_type_uuid', '검사처리유형UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'insp_handling_type_uuid', '검사처리유형UUID')),
@@ -403,6 +415,9 @@ const qmsInspResultValidation = {
     body('header.uuid', '검사성적서UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '검사성적서UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '검사성적서UUID')),
+    body('header.insp_handling_type_uuid', '검사처리유형UUID')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'insp_handling_type_uuid', '검사처리유형UUID'))
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'insp_handling_type_uuid', '검사처리유형UUID')),
     body('header.emp_uuid', '검사자 사원UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'emp_uuid', '검사자 사원UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'emp_uuid', '검사자 사원UUID')),
@@ -457,7 +472,7 @@ const qmsInspResultValidation = {
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'remark', '비고'))
   ],
   deleteFinalInsp: [
-    body('uuid', '검사성적서UUID')
+    body('*.uuid', '검사성적서UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '검사성적서UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '검사성적서UUID')),
   ],

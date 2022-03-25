@@ -91,15 +91,15 @@ class QmsInspService {
   };
 
   // 📌 공정검사 기준서 등록시 해당 품목의 생산이 진행중일 경우 기준서 생성 후 즉시 적용 불가
-  public validateWorkingByProd = async (datas: any) => {
+  public validateWorkingByProd = async (data: any) => {
     const inspTypeService = new AdmInspTypeService(this.tenant);
     const workService = new PrdWorkService(this.tenant);
 
     const inspTypeId = await inspTypeService.getIdByCd('PROC_INSP');
-    if (datas.apply_fg && datas.insp_type_id == inspTypeId) {
+    if (data.apply_fg && data.insp_type_id == inspTypeId) {
       const params = {
-        factory_uuid: datas.factory_uuid,
-        prod_uuid: datas.prod_uuid,
+        factory_uuid: data.factory_uuid,
+        prod_uuid: data.prod_uuid,
         complete_fg: false
       }
       const workRead = await workService.read(params);

@@ -170,6 +170,7 @@ post:
               required:
                 - factory_uuid
                 - receive_detail_uuid
+                - insp_type_uuid
                 - insp_detail_type_uuid
                 - insp_handling_type_uuid
                 - insp_uuid
@@ -184,6 +185,7 @@ post:
                 - $ref: ../../schemas/qms/insp-result.schema.yaml#/uuid
                 - $ref: ../../schemas/qms/insp-result.schema.yaml#/factory_uuid
                 - $ref: ../../schemas/qms/insp-result.schema.yaml#/receive_detail_uuid
+                - $ref: ../../schemas/qms/insp-result.schema.yaml#/insp_type_uuid
                 - $ref: ../../schemas/qms/insp-result.schema.yaml#/insp_detail_type_uuid
                 - $ref: ../../schemas/qms/insp-result.schema.yaml#/insp_handling_type_uuid
                 - $ref: ../../schemas/qms/insp-result.schema.yaml#/insp_uuid
@@ -257,6 +259,7 @@ put:
               required:
                 - uuid
                 - insp_detail_type_uuid
+                - insp_handling_type_uuid
                 - emp_uuid
                 - insp_qty
                 - pass_qty
@@ -264,6 +267,7 @@ put:
               allOf:
                 - $ref: ../../schemas/qms/insp-result.schema.yaml#/uuid
                 - $ref: ../../schemas/qms/insp-result.schema.yaml#/insp_detail_type_uuid
+                - $ref: ../../schemas/qms/insp-result.schema.yaml#/insp_handling_type_uuid
                 - $ref: ../../schemas/qms/insp-result.schema.yaml#/emp_uuid
                 - $ref: ../../schemas/qms/insp-result.schema.yaml#/insp_result_fg
                 - $ref: ../../schemas/qms/insp-result.schema.yaml#/insp_qty

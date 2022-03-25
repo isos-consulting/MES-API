@@ -19,8 +19,6 @@ import createApiError from '../../utils/createApiError';
 import QmsInspResultService from '../../services/qms/insp-result.service';
 import MatReceiveDetailService from '../../services/mat/receive-detail.service';
 import OutReceiveDetailService from '../../services/out/receive-detail.service';
-import AdmInspTypeService from '../../services/adm/insp-type.service';
-import StdFactoryService from '../../services/std/factory.service';
 import PrdWorkService from '../../services/prd/work.service';
 
 class QmsInspCtl {
@@ -54,15 +52,33 @@ class QmsInspCtl {
         let inspId: number;
         let maxSeq: number;
         let headerResult: ApiResult<any> = { count: 0, raws: [] };
-
-        // 📌 공정검사 기준서 등록시 해당 품목의 생산이 진행중일 경우 기준서 생성 후 즉시 적용 불가
-        if(data.header.apply_fg) {
-          await service.validateWorkingByProd(data.header);
-          data.header.apply_date = data.header.apply_date ? data.header.apply_date : moment(moment.now()).format().toString();
-        }
-
+        
         // 📌 자재입하의 UUID가 입력되지 않은 경우 자재입하 신규 발행
         if (!data.header.uuid) {
+          // 📌 공정검사 기준서 등록시 해당 품목의 생산이 진행중일 경우 기준서 생성 후 즉시 적용 불가
+          if(data.header.apply_fg) {
+            await service.validateWorkingByProd(data.header);
+            data.header.apply_date = data.header.apply_date ? data.header.apply_date : moment(moment.now()).format().toString();
+
+            // 📌 해당 품목의 모든 기준서를 비 활성화 상태로 만들기 위한 Body 생성
+            const read = await service.read({ 
+              factory_uuid:  data.header.factory_uuid,
+              prod_uuid:  data.header.prod_uuid,
+              insp_type_id:  data.header.insp_type_uuid
+            });
+
+            const wholeInspBody = read.raws.map((raw: any) => {
+              return {
+                uuid: raw.insp_uuid,
+                apply_fg: false,
+                apply_date: null
+              };
+            });
+
+            // 📌 수정할 품목의 모든 기준서를 미적용 상태로 수정
+            await service.updateApply(wholeInspBody, req.user?.uid as number, tran);
+          }
+
           // 📌 전표자동발행 옵션 여부 확인
           const hasAutoOption = await patternOptService.hasAutoOption({ table_nm: 'QMS_INSP_TB', col_nm: 'insp_no', tran });
 
@@ -78,18 +94,18 @@ class QmsInspCtl {
             });
           }
 
-          console.log(data.header);
           // 📌 전표 생성
           headerResult = await service.create([data.header], req.user?.uid as number, tran);
           inspId = headerResult.raws[0].insp_id;
           maxSeq = 0;
         } else {
-          inspId = data.header.insp_id;
+          // 📌 전표 수정
+          headerResult = await service.update([data.header], req.user?.uid as number, tran);
+          inspId = headerResult.raws[0].insp_id;
 
           // 📌 Max Seq 계산
           maxSeq = await detailService.getMaxSeq(inspId, tran) as number;
         }
-
         // 📌 생성된 기준서ID 입력 및 Max Seq 기준 Seq 발행
         data.details = data.details.map((detail: any) => {
           detail.insp_id = inspId;
@@ -168,6 +184,21 @@ class QmsInspCtl {
       const service = new QmsInspService(req.tenant.uuid);
       const detailService = new QmsInspDetailService(req.tenant.uuid);
       const inspDetailTypeService = new AdmInspDetailTypeService(req.tenant.uuid);
+
+      let inspDetailTypeRead: ApiResult<any> = { count: 0, raws: [] };
+      // ❗ insp_detail_type(세부검사유형)
+      if (!params.insp_detail_type_uuid && !params.insp_detail_type_cd) {
+        throw createApiError(
+          400, 
+          '세부검사유형 정보가 입력되지 않았습니다.', 
+          this.stateTag, 
+          errorState.NO_INPUT_REQUIRED_PARAM
+        );
+      } else if (params.insp_detail_type_cd) {
+        inspDetailTypeRead = await inspDetailTypeService.read(params);
+      } else { 
+        inspDetailTypeRead = await inspDetailTypeService.readByUuid(params.insp_detail_type_uuid); 
+      }
       
       const headerResult = await service.readByUuid(params.uuid);
 
@@ -182,10 +213,10 @@ class QmsInspCtl {
       }
 
       // 📌 insp_detail_type(세부검사유형)에 따라 작업자 검사 혹은 QC 검사 항목만 조회
-      const inspDetailTypeRead = await inspDetailTypeService.read(params);
+      console.log(inspDetailTypeRead.raws[0]);
       const inspDetailType = inspDetailTypeRead.raws[0];
-      if (inspDetailType.worker_fg === '1') { params.worker_fg = true; }
-      if (inspDetailType.inspector_fg === '1') { params.inspector_fg = true; }
+      if (inspDetailType.worker_fg == '1') { params.worker_fg = true; }
+      if (inspDetailType.inspector_fg == '1') { params.inspector_fg = true; }
 
       const detailsResult = await detailService.read(params);
       let maxSampleCnt: number = 0;
@@ -254,8 +285,6 @@ class QmsInspCtl {
       const service = new QmsInspService(req.tenant.uuid);
       const detailService = new QmsInspDetailService(req.tenant.uuid);
       const resultService = new QmsInspResultService(req.tenant.uuid);
-      const factoryService = new StdFactoryService(req.tenant.uuid);
-      const inspTypeService = new AdmInspTypeService(req.tenant.uuid);
       const inspDetailTypeService = new AdmInspDetailTypeService(req.tenant.uuid);
       const matReceiveDetailService = new MatReceiveDetailService(req.tenant.uuid);
       const outReceiveDetailService = new OutReceiveDetailService(req.tenant.uuid);
@@ -263,12 +292,12 @@ class QmsInspCtl {
       let inspResultRead: ApiResult<any> = { raws: [], count: 0 };
       let prodUuid: string | undefined = undefined;
       let inspUuid: string | undefined = undefined;
+      let factoryUuid: string | undefined = undefined;
+      let inspTypeUuid: string | undefined = undefined;
 
       // 📌 세부검사유형(자재, 외주)에 따라서 입하상세내역에 등록된 성적서 검색
       const inspDetailTypeRead = await inspDetailTypeService.readByUuid(params.insp_detail_type_uuid);
-
-      const factoryRead = await factoryService.readRawById(inspDetailTypeRead.raws[0].factory_id);
-      const inspTypeRead = await inspTypeService.readRawById(inspDetailTypeRead.raws[0].insp_type_id);
+      inspTypeUuid = inspDetailTypeRead.raws[0].insp_type_uuid;
 
       const inspDetailTypeCd = inspDetailTypeRead.raws[0].insp_detail_type_cd;
       switch (inspDetailTypeCd) {
@@ -292,19 +321,22 @@ class QmsInspCtl {
           case 'MAT_RECEIVE': 
             const matReceiveDetailRead = await matReceiveDetailService.readByUuid(params.receive_detail_uuid);
             prodUuid = matReceiveDetailRead.raws[0].prod_uuid;
+            factoryUuid = matReceiveDetailRead.raws[0].factory_uuid;
+
             break;
           case 'OUT_RECEIVE': 
             const outReceiveDetailRead = await outReceiveDetailService.readByUuid(params.receive_detail_uuid);
             prodUuid = outReceiveDetailRead.raws[0].prod_uuid;
+            factoryUuid = outReceiveDetailRead.raws[0].factory_uuid;
             break;
           default: break;
         } 
 
         // 📌 조회 조건에 따라 현재 적용중인 기준서 조회
         headerResult = await service.read({
-          factory_uuid: factoryRead.raws[0].uuid,
+          factory_uuid: factoryUuid,
           prod_uuid: prodUuid,
-          insp_type_uuid: inspTypeRead.raws[0].uuid,
+          insp_type_uuid: inspTypeUuid,
           apply_fg: true
         });
       }
@@ -369,17 +401,16 @@ class QmsInspCtl {
       const detailService = new QmsInspDetailService(req.tenant.uuid);
       const resultService = new QmsInspResultService(req.tenant.uuid);
       const workService = new PrdWorkService(req.tenant.uuid);
-      const factoryService = new StdFactoryService(req.tenant.uuid);
-      const inspTypeService = new AdmInspTypeService(req.tenant.uuid);
       const inspDetailTypeService = new AdmInspDetailTypeService(req.tenant.uuid);
 
       let inspResultRead: ApiResult<any> = { raws: [], count: 0 };
       let inspUuid: string | undefined = undefined;
       let prodUuid: string | undefined = undefined;
+      let factoryUuid: string | undefined = undefined;
+      let inspTypeUuid: string | undefined = undefined;
 
       const inspDetailTypeRead = await inspDetailTypeService.readByUuid(params.insp_detail_type_uuid);
-      const factoryRead = await factoryService.readRawById(inspDetailTypeRead.raws[0].factory_id);
-      const inspTypeRead = await inspTypeService.readRawById(inspDetailTypeRead.raws[0].insp_type_id);
+      inspTypeUuid = inspDetailTypeRead.raws[0].insp_type_uuid;
 
       // 📌 생산실적내역에 등록된 성적서 검색
       inspResultRead = await resultService.readProc(params);
@@ -393,12 +424,13 @@ class QmsInspCtl {
         // 📌 등록된 성적서가 없을 경우 품목 UUID 저장
         const workRead = await workService.readByUuid(params.work_uuid);
         prodUuid = workRead.raws[0].prod_uuid; 
+        factoryUuid = workRead.raws[0].factory_uuid;
 
         // 📌 조회 조건에 따라 현재 적용중인 기준서 조회
         headerResult = await service.read({
-          factory_uuid: factoryRead.raws[0].uuid,
+          factory_uuid: factoryUuid,
           prod_uuid: prodUuid,
-          insp_type_uuid: inspTypeRead.raws[0].uuid,
+          insp_type_uuid: inspTypeUuid,
           apply_fg: true
         });
       }
@@ -489,7 +521,7 @@ class QmsInspCtl {
 
           const wholeInspBody = read.raws.map((raw: any) => {
             return {
-              uuid: raw.dataValues.insp_uuid,
+              uuid: raw.insp_uuid,
               apply_fg: false,
               apply_date: null
             };
@@ -498,9 +530,8 @@ class QmsInspCtl {
           // 📌 수정할 품목의 모든 기준서를 미적용 상태로 수정
           await service.updateApply(wholeInspBody, req.user?.uid as number, tran);
         }
-
         // 📌 기준서 데이터 수정
-        const headerResult = await service.update(data.header, req.user?.uid as number, tran);
+        const headerResult = await service.update([data.header], req.user?.uid as number, tran);
         const detailResult = await detailService.update(data.details, req.user?.uid as number, tran);
 
         result.raws.push({
