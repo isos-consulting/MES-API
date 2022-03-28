@@ -352,8 +352,8 @@ class QmsInspCtl {
       }
 
       // 📌 insp_detail_type(세부검사유형)에 따라 작업자 검사 혹은 QC 검사 항목만 조회
-      if (inspDetailTypeRead.raws[0].worker_fg === '1') { (params as any).worker_fg = true; }
-      if (inspDetailTypeRead.raws[0].inspector_fg === '1') { (params as any).inspector_fg = true; }
+      if (inspDetailTypeRead.raws[0].worker_fg == '1') { (params as any).worker_fg = true; }
+      if (inspDetailTypeRead.raws[0].inspector_fg == '1') { (params as any).inspector_fg = true; }
       params.insp_uuid = headerResult.raws[0].insp_uuid;
 
       const detailsResult = await detailService.read(params);
@@ -446,8 +446,8 @@ class QmsInspCtl {
       }
 
       // 📌 insp_detail_type(세부검사유형)에 따라 작업자 검사 혹은 QC 검사 항목만 조회
-      if (inspDetailTypeRead.raws[0].worker_fg === '1') { (params as any).worker_fg = true; }
-      if (inspDetailTypeRead.raws[0].inspector_fg === '1') { (params as any).inspector_fg = true; }
+      if (inspDetailTypeRead.raws[0].worker_fg == '1') { (params as any).worker_fg = true; }
+      if (inspDetailTypeRead.raws[0].inspector_fg == '1') { (params as any).inspector_fg = true; }
       params.insp_uuid = headerResult.raws[0].insp_uuid;
 
       const detailsResult = await detailService.read(params);
