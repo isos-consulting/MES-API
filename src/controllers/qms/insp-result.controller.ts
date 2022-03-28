@@ -238,7 +238,7 @@ class QmsInspResultCtl {
         data.header.seq++;
 
         // ✅ 검사 성적서 및 상세 데이터 생성
-        const headerResult = await service.create(data.header, req.user?.uid as number, tran);
+        const headerResult = await service.create([data.header], req.user?.uid as number, tran);
 
         const detailInfoResults: ApiResult<any> = { raws: [], count: 0 };
         const detailValueResults: ApiResult<any> = { raws: [], count: 0 };
@@ -319,7 +319,7 @@ class QmsInspResultCtl {
           data.header.seq++;
 
           // ✅ 검사 성적서 및 상세 데이터 생성
-          const headerResult = await service.create(data.header, req.user?.uid as number, tran);
+          const headerResult = await service.create([data.header], req.user?.uid as number, tran);
 
           const detailInfoResults: ApiResult<any> = { raws: [], count: 0 };
           const detailValueResults: ApiResult<any> = { raws: [], count: 0 };
