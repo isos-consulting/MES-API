@@ -580,8 +580,9 @@ class QmsInspResultCtl {
       const service = new QmsInspResultService(req.tenant.uuid);
       const params = matchedData(req, { locations: [ 'query', 'params' ] });
 
-      if (params.work_uuid) { result = await service.readProcByUuid(params.work_uuid); }
-      else { result = await service.readProc(params); }
+      result = await service.readProc(params);
+      // if (params.work_uuid) { result = await service.readProcByUuid(params.work_uuid); }
+      // else {  }
   
       return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
     } catch (error) {
