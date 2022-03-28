@@ -607,7 +607,9 @@ class QmsInspResultCtl {
 
       const headerResult = await service.readProcByUuid(params.uuid);
       // ❗ 등록되어있는 성적서가 없을 경우 Error Throw
-      if (!headerResult.raws[0]) { 
+      if (headerResult.raws[0]) { 
+        (params as any).insp_result_uuid = params.uuid;
+      } else {
         throw createApiError(
           400, 
           '성적서 조회결과가 없습니다.', 
@@ -617,8 +619,7 @@ class QmsInspResultCtl {
       }
       
       // 📌 insp_detail_type(세부검사유형)에 따라 작업자 검사 혹은 QC 검사 항목만 조회
-      const inspDetailTypeResult = await inspDetailTypeService.readRawById(headerResult.raws[0].insp_detail_type_id);
-
+      const inspDetailTypeResult = await inspDetailTypeService.readByUuid(headerResult.raws[0].insp_detail_type_uuid);
       if (inspDetailTypeResult.raws[0].worker_fg == '1') { (params as any).worker_fg = true; }
       if (inspDetailTypeResult.raws[0].inspector_fg == '1') { (params as any).inspector_fg = true; }
 
@@ -787,7 +788,9 @@ class QmsInspResultCtl {
       const params = matchedData(req, { locations: [ 'query', 'params' ] });
 
       const headerResult = await service.readFinalByUuid(params.uuid);
-      if (!headerResult.raws[0]) { 
+      if (headerResult.raws[0]) { 
+        (params as any).insp_result_uuid = params.uuid;
+      } else {
         throw createApiError(
           400, 
           '성적서 조회결과가 없습니다.', 
