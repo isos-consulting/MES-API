@@ -147,29 +147,37 @@ class QmsInspResultService {
   public convertFk = async (datas: any) => {
     // ✅ CUD 연산이 실행되기 전 Fk Table 의 uuid 로 id 를 검색하여 request body 에 삽입하기 위하여 정보 Setting
     const inspDetailTypeService = new AdmInspDetailTypeService(this.tenant);
-    const inspDetailTypeUuid: string = datas.insp_detail_type_uuid ?? datas['0'].insp_detail_type_uuid;
-    const inspDetailType = await inspDetailTypeService.readByUuid(inspDetailTypeUuid);
+    
+    let inspDetailTypeUuid: string | undefined;
+    if (datas.insp_detail_type_uuid) { inspDetailTypeUuid = datas.insp_detail_type_uuid; }
+    else {
+      if (datas['0']) { inspDetailTypeUuid = datas['0'].insp_detail_type_uuid ?? undefined; }
+      else { inspDetailTypeUuid = undefined; }
+    }
 
-    switch (inspDetailType.raws[0].insp_detail_type_cd) {
-      case 'MAT_RECEIVE':
-        this.fkIdInfos.push({
-          key: 'receiveDetail',
-          TRepo: MatReceiveDetailRepo,
-          idName: 'receive_detail_id',
-          idAlias: 'insp_reference_id',
-          uuidName: 'receive_detail_uuid'
-        });
-        break;
-      case 'OUT_RECEIVE':
-        this.fkIdInfos.push({
-          key: 'receiveDetail',
-          TRepo: OutReceiveDetailRepo,
-          idName: 'receive_detail_id',
-          idAlias: 'insp_reference_id',
-          uuidName: 'receive_detail_uuid'
-        });
-        break;
-      // default: throw new Error('잘못된 insp_detail_type_cd(세부검사유형) 입력');
+    if (inspDetailTypeUuid) {
+      const inspDetailType = await inspDetailTypeService.readByUuid(inspDetailTypeUuid);
+      switch (inspDetailType.raws[0].insp_detail_type_cd) {
+        case 'MAT_RECEIVE':
+          this.fkIdInfos.push({
+            key: 'receiveDetail',
+            TRepo: MatReceiveDetailRepo,
+            idName: 'receive_detail_id',
+            idAlias: 'insp_reference_id',
+            uuidName: 'receive_detail_uuid'
+          });
+          break;
+        case 'OUT_RECEIVE':
+          this.fkIdInfos.push({
+            key: 'receiveDetail',
+            TRepo: OutReceiveDetailRepo,
+            idName: 'receive_detail_id',
+            idAlias: 'insp_reference_id',
+            uuidName: 'receive_detail_uuid'
+          });
+          break;
+        // default: throw new Error('잘못된 insp_detail_type_cd(세부검사유형) 입력');
+      }
     }
 
     return await getFkIdByUuid(this.tenant, datas, this.fkIdInfos);

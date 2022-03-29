@@ -285,10 +285,12 @@ put:
               items:
                 required:
                   - uuid
+                  - factory_uuid
                   - insp_result_fg
                 type: object
                 allOf:
                   - $ref: ../../schemas/qms/insp-result-detail-info.schema.yaml#/uuid
+                  - $ref: ../../schemas/qms/insp-result-detail-info.schema.yaml#/factory_uuid
                   - $ref: ../../schemas/qms/insp-result-detail-info.schema.yaml#/insp_result_fg
                   - $ref: ../../schemas/qms/insp-result-detail-info.schema.yaml#/remark
                 properties:

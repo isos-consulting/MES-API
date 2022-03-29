@@ -1139,7 +1139,7 @@ class QmsInspResultCtl {
         });
 
         // ✅ 검사 성적서 및 상세 데이터 수정 및 생성 (상세 값 추가 된 것은 생성, 기존 값에서 수정된 것은 수정)
-        const headerResult = await service.update(data.header, req.user?.uid as number, tran);
+        const headerResult = await service.update([data.header], req.user?.uid as number, tran);
         const detailInfosResult = await detailInfoService.update(detailInfos, req.user?.uid as number, tran);
 
         const createdDetailValuesResult = await detailValueService.create(detailValuesForCreate, req.user?.uid as number, tran);
@@ -1212,7 +1212,7 @@ class QmsInspResultCtl {
         });
 
         // ✅ 검사 성적서 및 상세 데이터 수정 및 생성 (상세 값 추가 된 것은 생성, 기존 값에서 수정된 것은 수정)
-        const headerResult = await service.update(data.header, req.user?.uid as number, tran);
+        const headerResult = await service.update([data.header], req.user?.uid as number, tran);
         const detailInfosResult = await detailInfoService.update(detailInfos, req.user?.uid as number, tran);
 
         const createdDetailValuesResult = await detailValueService.create(detailValuesForCreate, req.user?.uid as number, tran);

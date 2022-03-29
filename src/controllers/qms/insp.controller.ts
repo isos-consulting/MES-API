@@ -213,7 +213,6 @@ class QmsInspCtl {
       }
 
       // 📌 insp_detail_type(세부검사유형)에 따라 작업자 검사 혹은 QC 검사 항목만 조회
-      console.log(inspDetailTypeRead.raws[0]);
       const inspDetailType = inspDetailTypeRead.raws[0];
       if (inspDetailType.worker_fg == '1') { params.worker_fg = true; }
       if (inspDetailType.inspector_fg == '1') { params.inspector_fg = true; }
