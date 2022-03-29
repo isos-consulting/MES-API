@@ -54,8 +54,8 @@ router.route('/receive/insp-results').put(qmsInspResultValidation.updateReceiveI
 router.route('/receive/insp-results').delete(qmsInspResultValidation.deleteReceiveInsp, validationCallback, inspResult.deleteReceiveInsp);
 
 // 📌 최종검사
-router.route('/final/insp-results').get(qmsInspResultValidation.readFinal, validationCallback, inspResult.readFinal);
 router.route('/final/insp-result/:uuid/include-details').get(qmsInspResultValidation.readFinalIncludeDetails, validationCallback, inspResult.readFinalIncludeDetails);
+router.route('/final/insp-results').get(qmsInspResultValidation.readFinal, validationCallback, inspResult.readFinal);
 router.route('/final/insp-results').post(qmsInspResultValidation.createFinalInsp, validationCallback, inspResult.createFinalInsp);
 router.route('/final/insp-results').put(qmsInspResultValidation.updateFinalInsp, validationCallback, inspResult.updateFinalInsp);
 router.route('/final/insp-results').delete(qmsInspResultValidation.deleteFinalInsp, validationCallback, inspResult.deleteFinalInsp);
