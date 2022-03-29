@@ -3,7 +3,7 @@ import IPrdWorkWorker from "../../interfaces/prd/work-worker.interface";
 import PrdWorkRepo from '../../repositories/prd/work.repository';
 import PrdWorkWorkerRepo from "../../repositories/prd/work-worker.repository";
 import StdFactoryRepo from "../../repositories/std/factory.repository";
-import StdWorkerRepo from '../../repositories/std/worker.repository';
+import StdEmpRepo from '../../repositories/std/emp.repository';
 import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
 import getSubtractTwoDates from "../../utils/getSubtractTwoDates";
 import createApiError from "../../utils/createApiError";
@@ -43,10 +43,10 @@ class PrdWorkWorkerService {
         uuidName: 'work_routing_uuid'
       },
       {
-        key: 'worker',
-        TRepo: StdWorkerRepo,
-        idName: 'worker_id',
-        uuidName: 'worker_uuid'
+        key: 'emp',
+        TRepo: StdEmpRepo,
+        idName: 'emp_id',
+        uuidName: 'emp_uuid'
       },
     ];
   }
@@ -69,7 +69,7 @@ class PrdWorkWorkerService {
         return {
           factory_id: orderWorker.factory_id,
           work_id: data.work_id,
-          worker_id: orderWorker.worker_id
+          emp_id: orderWorker.emp_id
         };
       });
       return await this.repo.create(workerBody, uid, tran); }

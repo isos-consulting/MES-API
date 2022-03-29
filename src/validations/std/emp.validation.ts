@@ -34,13 +34,17 @@ const stdEmpValidation = {
 			.isDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'enter_date', '입사일자')),
 		body('*.leave_date','퇴사일자').optional({ nullable: true })
 			.isDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'leave_date', '퇴사일자')),
+		body('*.worker_fg','작업자유무').optional({ nullable: true })
+			.isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'worker_fg', '작업자유무')),
 		body('*.remark','비고').optional({ nullable: true })
 			.isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'remark', '비고')),
 	],
 	read: [
 		query('emp_status', '재직유무')
 			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'emp_status', '재직유무'))
-			.isIn([ 'all', 'incumbent', 'retiree' ]).withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'emp_status', '재직유무'))
+			.isIn([ 'all', 'incumbent', 'retiree' ]).withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'emp_status', '재직유무')),
+		query('worker_fg', '작업자 유무').optional({ nullable: true })
+			.isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'worker_fg', '작업자 유무'))
 	],
   readByUuid: [ 
     param('uuid', '사원UUID')
@@ -74,6 +78,8 @@ const stdEmpValidation = {
 			.isDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'enter_date', '입사일자')),
 		body('*.leave_date','퇴사일자').optional({ nullable: true })
 			.isDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'leave_date', '퇴사일자')),
+		body('*.worker_fg','작업자유무').optional({ nullable: true })
+			.isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'worker_fg', '작업자유무')),
 		body('*.remark','비고').optional({ nullable: true })
 			.isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'remark', '비고')),
 	],
@@ -107,6 +113,8 @@ const stdEmpValidation = {
 			.isDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'enter_date', '입사일자')),
 		body('*.leave_date','퇴사일자').optional({ nullable: true })
 			.isDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'leave_date', '퇴사일자')),
+		body('*.worker_fg','작업자유무').optional({ nullable: true })
+			.isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'worker_fg', '작업자유무')),
 		body('*.remark','비고').optional({ nullable: true })
 			.isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'remark', '비고')),
   ],
@@ -138,6 +146,8 @@ const stdEmpValidation = {
 			.isDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'enter_date', '입사일자')),
 		body('*.leave_date','퇴사일자').optional({ nullable: true })
 			.isDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'leave_date', '퇴사일자')),
+		body('*.worker_fg','작업자유무').optional({ nullable: true })
+			.isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'worker_fg', '작업자유무')),
 		body('*.remark','비고').optional({ nullable: true })
 			.isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'remark', '비고')),
   ],

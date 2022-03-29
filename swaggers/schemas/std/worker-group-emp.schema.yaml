@@ -1,10 +1,10 @@
 # STD_WORKER_GROUP_TB
 
 # Columns
-worker_group_worker_id: 
+worker_group_emp_id: 
   type: object
   properties: 
-    worker_group_worker_id:
+    worker_group_emp_id:
       description: 작업조-작업자ID
       type: number
       format: int4
@@ -25,10 +25,10 @@ worker_group_id:
       type: number
       format: int4
 
-worker_id: 
+emp_id: 
   type: object
   properties: 
-    worker_id:
+    emp_id:
       description: 작업자ID
       type: number
       format: int4
@@ -50,10 +50,10 @@ uuid:
       format: uuid
 
 # Uuids
-worker_group_worker_uuid:
+worker_group_emp_uuid:
   type: object
   properties: 
-    worker_group_worker_uuid:
+    worker_group_emp_uuid:
       description: 작업조-작업자UUID
       type: string
       format: uuid
@@ -74,10 +74,10 @@ worker_group_uuid:
       type: string
       format: uuid
 
-worker_uuid: 
+emp_uuid: 
   type: object
   properties: 
-    worker_uuid:
+    emp_uuid:
       description: 작업자UUID
       type: string
       format: uuid

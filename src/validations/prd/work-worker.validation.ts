@@ -27,9 +27,9 @@ const prdWorkWorkerValidation = {
     body('*.work_routing_uuid', '공정순서UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'work_routing_uuid', '공정순서UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'work_routing_uuid', '지시UUID')),
-    body('*.worker_uuid', '작업자UUID')
-      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'worker_uuid', '작업자UUID'))
-      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'worker_uuid', '작업자UUID')),
+    body('*.emp_uuid', '작업자UUID')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'emp_uuid', '작업자UUID'))
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'emp_uuid', '작업자UUID')),
     body('*.start_date', '작업시작일시').optional({ nullable: true })
       .isISO8601().toDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'start_date', '작업시작일시')),
     body('*.end_date', '작업종료일시').optional({ nullable: true })
@@ -41,9 +41,9 @@ const prdWorkWorkerValidation = {
     body('*.uuid', '작업자투입UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '작업자투입UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '작업자투입UUID')),
-    body('*.worker_uuid', '작업자UUID')
-      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'worker_uuid', '작업자UUID'))
-      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'worker_uuid', '작업자UUID')),
+    body('*.emp_uuid', '작업자UUID')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'emp_uuid', '작업자UUID'))
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'emp_uuid', '작업자UUID')),
     body('*.start_date', '작업시작일시').optional({ nullable: true })
       .isISO8601().toDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'start_date', '작업시작일시')),
     body('*.end_date', '작업종료일시').optional({ nullable: true })
@@ -55,8 +55,8 @@ const prdWorkWorkerValidation = {
     body('*.uuid', '작업자투입UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '작업자투입UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '작업자투입UUID')),
-    body('*.worker_uuid', '작업자UUID').optional({ nullable: true })  
-      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'worker_uuid', '작업자UUID')),
+    body('*.emp_uuid', '작업자UUID').optional({ nullable: true })  
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'emp_uuid', '작업자UUID')),
     body('*.start_date', '작업시작일시').optional({ nullable: true })
       .isISO8601().toDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'start_date', '작업시작일시')),
     body('*.end_date', '작업종료일시').optional({ nullable: true })

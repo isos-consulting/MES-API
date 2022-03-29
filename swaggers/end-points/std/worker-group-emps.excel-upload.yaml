@@ -1,29 +1,27 @@
 post:
   description: |
-    작업자 데이터를 대량으로 생성 및 수정합니다. <br/>
+    작업조-작업자 데이터를 대량으로 생성 및 수정합니다. <br/>
     uuid를 기준으로 데이터를 생성 및 수정합니다. <br/>
     uuid가 없는 항목은 생성, 있는 항목은 수정을 진행합니다. <br/>
     Excel Upload에 사용합니다.
-  summary: 작업자 대량 데이터 입력 (Excel Upload)
+  summary: 작업조-작업자 대량 데이터 입력 (Excel Upload)
   tags:
-    - 작업자(Worker)
+    - 작업조-작업자(WorkerGroupWorker)
   requestBody:
     content:
       application/json:
         schema:
           required:
             - factory_cd
-            - worker_cd
-            - worker_nm
+            - worker_group_cd
+            - emp_cd
+            - remark
           allOf:
-            - $ref: ../../schemas/std/worker.schema.yaml#/uuid
+            - $ref: ../../schemas/std/worker-group-emp.schema.yaml#/uuid
             - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
-            - $ref: ../../schemas/std/proc.schema.yaml#/proc_cd
-            - $ref: ../../schemas/std/workings.schema.yaml#/workings_cd
+            - $ref: ../../schemas/std/worker-group.schema.yaml#/worker_group_cd
             - $ref: ../../schemas/std/emp.schema.yaml#/emp_cd
-            - $ref: ../../schemas/std/worker.schema.yaml#/worker_cd
-            - $ref: ../../schemas/std/worker.schema.yaml#/worker_nm
-            - $ref: ../../schemas/std/worker.schema.yaml#/remark
+            - $ref: ../../schemas/std/worker-group-emp.schema.yaml#/remark
   responses:
     201:
       $ref: ../../responses/common/succeed-create.response.yaml

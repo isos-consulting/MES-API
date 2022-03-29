@@ -41,9 +41,8 @@ import StdTenantOptCtl from '../controllers/std/tenant-opt.controller';
 import StdUnitConvertCtl from '../controllers/std/unit-convert.controller';
 import StdUnitCtl from '../controllers/std/unit.controller';
 import StdVendorPriceCtl from '../controllers/std/vendor-price.controller';
-import StdWorkerGroupWorkerCtl from '../controllers/std/worker-group-worker.controller';
+import StdWorkerGroupEmpCtl from '../controllers/std/worker-group-emp.controller';
 import StdWorkerGroupCtl from '../controllers/std/worker-group.controller';
-import StdWorkerCtl from '../controllers/std/worker.controller';
 import StdWorkingsCtl from '../controllers/std/workings.controller';
 import validationCallback from '../utils/validationCallback';
 
@@ -88,9 +87,8 @@ import stdTenantOptValidation from '../validations/std/tenant-opt.validation';
 import stdUnitConvertValidation from '../validations/std/unit-convert.validation';
 import stdUnitValidation from '../validations/std/unit.validation';
 import stdVendorPriceValidation from '../validations/std/vendor-price.validation';
-import stdWorkerGroupWorkerValidation from '../validations/std/worker-group-worker.validation';
+import stdWorkerGroupEmpValidation from '../validations/std/worker-group-emp.validation';
 import stdWorkerGroupValidation from '../validations/std/worker-group.validation';
-import stdWorkerValidation from '../validations/std/worker.validation';
 import stdWorkingsValidation from '../validations/std/workings.validation';
 
 const router = express.Router();
@@ -443,17 +441,6 @@ router.route('/shifts').patch(stdShiftValidation.patch, validationCallback, shif
 router.route('/shifts').delete(stdShiftValidation.delete, validationCallback, shift.delete);
 //#endregion
 
-//#region ✅ Worker (작업자)
-const worker = new StdWorkerCtl();
-// router.route('/workers/excel-upload').post(worker.upsertBulkDatasFromExcel);
-router.route('/worker/:uuid').get(stdWorkerValidation.readByUuid, validationCallback, worker.readByUuid);
-router.route('/workers').get(stdWorkerValidation.read, validationCallback, worker.read);
-router.route('/workers').post(stdWorkerValidation.create, validationCallback, worker.create);
-router.route('/workers').put(stdWorkerValidation.update, validationCallback, worker.update);
-router.route('/workers').patch(stdWorkerValidation.patch, validationCallback, worker.patch);
-router.route('/workers').delete(stdWorkerValidation.delete, validationCallback, worker.delete);
-//#endregion
-
 //#region ✅ Workings (작업장)
 const workings = new StdWorkingsCtl();
 // router.route('/workingses/excel-upload').post(workings.upsertBulkDatasFromExcel);
@@ -476,15 +463,15 @@ router.route('/worker-groups').patch(stdWorkerGroupValidation.patch, validationC
 router.route('/worker-groups').delete(stdWorkerGroupValidation.delete, validationCallback, workerGroup.delete);
 //#endregion
 
-//#region ✅ WorkerGroupWorker (작업조-작업자)
-const workerGroupWorker = new StdWorkerGroupWorkerCtl();
-// router.route('/worker-group-workers/excel-upload').post(workerGroupWorker.upsertBulkDatasFromExcel);
-router.route('/worker-group-worker/:uuid').get(stdWorkerGroupWorkerValidation.readByUuid, validationCallback, workerGroupWorker.readByUuid);
-router.route('/worker-group-workers').get(stdWorkerGroupWorkerValidation.read, validationCallback, workerGroupWorker.read);
-router.route('/worker-group-workers').post(stdWorkerGroupWorkerValidation.create, validationCallback, workerGroupWorker.create);
-router.route('/worker-group-workers').put(stdWorkerGroupWorkerValidation.update, validationCallback, workerGroupWorker.update);
-router.route('/worker-group-workers').patch(stdWorkerGroupWorkerValidation.patch, validationCallback, workerGroupWorker.patch);
-router.route('/worker-group-workers').delete(stdWorkerGroupWorkerValidation.delete, validationCallback, workerGroupWorker.delete);
+//#region ✅ WorkerGroupEmp (작업조-작업자)
+const workerGroupEmp = new StdWorkerGroupEmpCtl();
+// router.route('/worker-group-emps/excel-upload').post(workerGroupEmp.upsertBulkDatasFromExcel);
+router.route('/worker-group-worker/:uuid').get(stdWorkerGroupEmpValidation.readByUuid, validationCallback, workerGroupEmp.readByUuid);
+router.route('/worker-group-emps').get(stdWorkerGroupEmpValidation.read, validationCallback, workerGroupEmp.read);
+router.route('/worker-group-emps').post(stdWorkerGroupEmpValidation.create, validationCallback, workerGroupEmp.create);
+router.route('/worker-group-emps').put(stdWorkerGroupEmpValidation.update, validationCallback, workerGroupEmp.update);
+router.route('/worker-group-emps').patch(stdWorkerGroupEmpValidation.patch, validationCallback, workerGroupEmp.patch);
+router.route('/worker-group-emps').delete(stdWorkerGroupEmpValidation.delete, validationCallback, workerGroupEmp.delete);
 //#endregion
 
 //#region ✅ ProdType (제품유형)

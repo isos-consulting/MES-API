@@ -2,7 +2,7 @@ import { Sequelize, Table, Column, Model, DataType, CreatedAt, UpdatedAt, Belong
 import IPrdWorkWorker from '../../interfaces/prd/work-worker.interface';
 import AutUser from '../aut/user.model';
 import StdFactory from '../std/factory.model';
-import StdWorker from '../std/worker.model';
+import StdEmp from '../std/emp.model';
 import PrdWork from './work.model';
 import PrdWorkRouting from './work-routing.model'
 
@@ -22,9 +22,9 @@ export default class PrdWorkWorker extends Model<IPrdWorkWorker> {
     type: DataType.INTEGER,
     allowNull: false,
   })
-  work_worker_id: number;
+  work_emp_id: number;
 
-  @Unique('prd_work_worker_tb_factory_id_work_id_work_routing_id_worker_id_un')
+  @Unique('prd_work_worker_tb_factory_id_work_id_work_routing_id_emp_id_un')
   @ForeignKey(() => StdFactory)
   @Column({
     comment: '공장ID',
@@ -33,7 +33,7 @@ export default class PrdWorkWorker extends Model<IPrdWorkWorker> {
   })
   factory_id: number;
 
-  @Unique('prd_work_worker_tb_factory_id_work_id_work_routing_id_worker_id_un')
+  @Unique('prd_work_worker_tb_factory_id_work_id_work_routing_id_emp_id_un')
   @ForeignKey(() => PrdWork)
   @Column({
     comment: '실적ID',
@@ -42,7 +42,7 @@ export default class PrdWorkWorker extends Model<IPrdWorkWorker> {
   })
   work_id: number;
 
-  @Unique('prd_work_worker_tb_factory_id_work_id_work_routing_id_worker_id_un')
+  @Unique('prd_work_worker_tb_factory_id_work_id_work_routing_id_emp_id_un')
   @ForeignKey(() => PrdWorkRouting)
   @Column({
     comment: '실적ID',
@@ -51,14 +51,14 @@ export default class PrdWorkWorker extends Model<IPrdWorkWorker> {
   })
   work_routing_id: number;
 
-  @Unique('prd_work_worker_tb_factory_id_work_id_work_routing_id_worker_id_un')
-  @ForeignKey(() => StdWorker)
+  @Unique('prd_work_worker_tb_factory_id_work_id_work_routing_id_emp_id_un')
+  @ForeignKey(() => StdEmp)
   @Column({
     comment: '작업자ID',
     type: DataType.INTEGER,
     allowNull: false,
   })
-  worker_id: number;
+  emp_id: number;
 
   @Column({
     comment: '작업 시작 일시',
@@ -134,8 +134,8 @@ export default class PrdWorkWorker extends Model<IPrdWorkWorker> {
   @BelongsTo(() => PrdWorkRouting, { foreignKey: 'work_routing_id', targetKey: 'work_routing_id', onDelete: 'restrict', onUpdate: 'cascade' })
   prdWorkRouting: PrdWorkRouting;
 
-  @BelongsTo(() => StdWorker, { foreignKey: 'worker_id', targetKey: 'worker_id', onDelete: 'restrict', onUpdate: 'cascade' })
-  stdWorker: StdWorker;
+  @BelongsTo(() => StdEmp, { foreignKey: 'emp_id', targetKey: 'emp_id', onDelete: 'restrict', onUpdate: 'cascade' })
+  stdEmp: StdEmp;
 
   // HasMany
   //#endregion

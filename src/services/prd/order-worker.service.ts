@@ -4,9 +4,9 @@ import IPrdOrder from "../../interfaces/prd/order.interface";
 import PrdOrderWorkerRepo from '../../repositories/prd/order-worker.repository';
 import PrdOrderRepo from '../../repositories/prd/order.repository';
 import StdFactoryRepo from '../../repositories/std/factory.repository';
-import StdWorkerRepo from '../../repositories/std/worker.repository';
+import StdEmpRepo from '../../repositories/std/emp.repository';
 import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
-import StdWorkerGroupWorkerService from "../std/worker-group-worker.service";
+import StdWorkerGroupEmpService from "../std/worker-group-emp.service";
 
 class PrdOrderWorkerService {
   tenant: string;
@@ -33,10 +33,10 @@ class PrdOrderWorkerService {
         uuidName: 'order_uuid'
       },
       {
-        key: 'worker',
-        TRepo: StdWorkerRepo,
-        idName: 'worker_id',
-        uuidName: 'worker_uuid'
+        key: 'emp',
+        TRepo: StdEmpRepo,
+        idName: 'emp_id',
+        uuidName: 'emp_uuid'
       }
     ];
   }
@@ -53,13 +53,13 @@ class PrdOrderWorkerService {
 
   public createByOrder = async (data: IPrdOrder, uid: number, tran: Transaction) => {
     try {
-      const workerGroupWorkerService = new StdWorkerGroupWorkerService(this.tenant);
-      const workerRead = await workerGroupWorkerService.readWorkerInGroup(data.worker_group_id as number);
+      const workerGroupEmpService = new StdWorkerGroupEmpService(this.tenant);
+      const workerRead = await workerGroupEmpService.readWorkerInGroup(data.worker_group_id as number);
       const workerBody: IPrdOrderWorker[] = workerRead.raws.map((raw: any) => {
         return {
           factory_id: raw.factory_id,
           order_id: data.order_id,
-          worker_id: raw.worker_id
+          emp_id: raw.emp_id
         }
       });
 

@@ -2,7 +2,7 @@ import { Sequelize, Table, Column, Model, DataType, CreatedAt, UpdatedAt, Belong
 import IPrdOrderWorker from '../../interfaces/prd/order-worker.interface';
 import AutUser from '../aut/user.model';
 import StdFactory from '../std/factory.model';
-import StdWorker from '../std/worker.model';
+import StdEmp from '../std/emp.model';
 import PrdOrder from './order.model';
 
 @Table({
@@ -21,9 +21,9 @@ export default class PrdOrderWorker extends Model<IPrdOrderWorker> {
     type: DataType.INTEGER,
     allowNull: false,
   })
-  order_worker_id: number;
+  order_emp_id: number;
 
-  @Unique('prd_order_worker_tb_factory_id_order_id_worker_id_un')
+  @Unique('prd_order_worker_tb_factory_id_order_id_emp_id_un')
   @ForeignKey(() => StdFactory)
   @Column({
     comment: '공장ID',
@@ -32,7 +32,7 @@ export default class PrdOrderWorker extends Model<IPrdOrderWorker> {
   })
   factory_id: number;
 
-  @Unique('prd_order_worker_tb_factory_id_order_id_worker_id_un')
+  @Unique('prd_order_worker_tb_factory_id_order_id_emp_id_un')
   @ForeignKey(() => PrdOrder)
   @Column({
     comment: '지시ID',
@@ -41,14 +41,14 @@ export default class PrdOrderWorker extends Model<IPrdOrderWorker> {
   })
   order_id: number;
 
-  @Unique('prd_order_worker_tb_factory_id_order_id_worker_id_un')
-  @ForeignKey(() => StdWorker)
+  @Unique('prd_order_worker_tb_factory_id_order_id_emp_id_un')
+  @ForeignKey(() => StdEmp)
   @Column({
     comment: '작업자ID',
     type: DataType.INTEGER,
     allowNull: false,
   })
-  worker_id: number;
+  emp_id: number;
 
   @CreatedAt
   @Column({
@@ -104,8 +104,8 @@ export default class PrdOrderWorker extends Model<IPrdOrderWorker> {
   @BelongsTo(() => PrdOrder, { foreignKey: 'order_id', targetKey: 'order_id', onDelete: 'restrict', onUpdate: 'cascade' })
   prdOrder: PrdOrder;
 
-  @BelongsTo(() => StdWorker, { foreignKey: 'worker_id', targetKey: 'worker_id', onDelete: 'restrict', onUpdate: 'cascade' })
-  stdWorker: StdWorker;
+  @BelongsTo(() => StdEmp, { foreignKey: 'emp_id', targetKey: 'emp_id', onDelete: 'restrict', onUpdate: 'cascade' })
+  stdEmp: StdEmp;
 
   // HasMany
   //#endregion

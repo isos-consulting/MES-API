@@ -47,6 +47,7 @@ class StdEmpRepo {
             addr_detail: emp.addr_detail,
             enter_date: emp.enter_date,
             leave_date: emp.leave_date,
+            worker_fg: emp.worker_fg,
             remark: emp.remark,
             created_uid: uid,
             updated_uid: uid,
@@ -80,14 +81,21 @@ class StdEmpRepo {
 
       switch (params.emp_status) {
         case 'all':
+          whereOptions = { worker_fg: params.worker_fg ? params.worker_fg : { [Op.ne] : null } }
           break;
         
         case 'incumbent':
-          whereOptions = { leave_date: { [Op.eq]: null } as any }
+          whereOptions = { [Op.and] : { 
+                          worker_fg: params.worker_fg ? params.worker_fg : { [Op.ne] : null }, 
+                          leave_date: { [Op.eq]: null } as any 
+                        }}
           break;
         
         case 'retiree':
-          whereOptions = { leave_date: { [Op.ne]: null } }
+          whereOptions = { [Op.and] : {
+                          worker_fg: params.worker_fg ? params.worker_fg : { [Op.ne] : null }, 
+                          leave_date: { [Op.ne]: null } 
+                        }}
           break;
 
         default:
@@ -121,6 +129,7 @@ class StdEmpRepo {
           'hp',
           'enter_date',
           'leave_date',
+          'worker_fg',
           'remark',
           'created_at',
           [ Sequelize.col('createUser.user_nm'), 'created_nm' ],
@@ -168,6 +177,7 @@ class StdEmpRepo {
             'hp',
             'enter_date',
             'leave_date',
+            'worker_fg',
             'remark',
             'created_at',
             [ Sequelize.col('createUser.user_nm'), 'created_nm' ],
@@ -225,6 +235,7 @@ class StdEmpRepo {
             addr_detail: emp.addr_detail ?? null,
             enter_date: emp.enter_date ?? null,
             leave_date: emp.leave_date ?? null,
+            worker_fg: emp.worker_fg ?? null,
             remark: emp.remark ?? null,
             updated_uid: uid,
           } as any,
@@ -270,6 +281,7 @@ class StdEmpRepo {
             addr_detail: emp.addr_detail,
             enter_date: emp.enter_date,
             leave_date: emp.leave_date,
+            worker_fg: emp.worker_fg,
             remark: emp.remark,
             updated_uid: uid,
           },

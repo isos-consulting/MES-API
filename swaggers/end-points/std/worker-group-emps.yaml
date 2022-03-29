@@ -19,7 +19,7 @@ get:
         type: string
         format: uuid
 
-    - name: worker_uuid
+    - name: emp_uuid
       in: query
       description: 작업자의 UUID를 입력하여 작업자에 따라 작업조-작업자을 조회합니다. [전체 조회시 입력하지 않습니다.]
       schema:
@@ -54,16 +54,16 @@ get:
                         type: array
                         items:
                           allOf:
-                            - $ref: ../../schemas/std/worker-group-worker.schema.yaml#/worker_group_worker_uuid
-                            - $ref: ../../schemas/std/worker-group-worker.schema.yaml#/factory_uuid
+                            - $ref: ../../schemas/std/worker-group-emp.schema.yaml#/worker_group_emp_uuid
+                            - $ref: ../../schemas/std/worker-group-emp.schema.yaml#/factory_uuid
                             - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
                             - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
-                            - $ref: ../../schemas/std/worker-group-worker.schema.yaml#/worker_group_uuid
+                            - $ref: ../../schemas/std/worker-group-emp.schema.yaml#/worker_group_uuid
                             - $ref: ../../schemas/std/worker-group.schema.yaml#/worker_group_cd
                             - $ref: ../../schemas/std/worker-group.schema.yaml#/worker_group_nm
-                            - $ref: ../../schemas/std/worker-group-worker.schema.yaml#/worker_uuid
+                            - $ref: ../../schemas/std/worker-group-emp.schema.yaml#/emp_uuid
                             - $ref: ../../schemas/std/worker.schema.yaml#/worker_nm
-                            - $ref: ../../schemas/std/worker-group-worker.schema.yaml#/remark
+                            - $ref: ../../schemas/std/worker-group-emp.schema.yaml#/remark
                             - $ref: ../../schemas/common/timestamp.schema.yaml
     500:
       $ref: ../../responses/common/general-error.response.yaml
@@ -81,12 +81,12 @@ post:
           required:
             - factory_uuid
             - worker_group_uuid
-            - worker_uuid
+            - emp_uuid
           allOf:
-            - $ref: ../../schemas/std/worker-group-worker.schema.yaml#/factory_uuid
-            - $ref: ../../schemas/std/worker-group-worker.schema.yaml#/worker_group_uuid
-            - $ref: ../../schemas/std/worker-group-worker.schema.yaml#/worker_uuid
-            - $ref: ../../schemas/std/worker-group-worker.schema.yaml#/remark
+            - $ref: ../../schemas/std/worker-group-emp.schema.yaml#/factory_uuid
+            - $ref: ../../schemas/std/worker-group-emp.schema.yaml#/worker_group_uuid
+            - $ref: ../../schemas/std/worker-group-emp.schema.yaml#/emp_uuid
+            - $ref: ../../schemas/std/worker-group-emp.schema.yaml#/remark
   responses:
     201:
       $ref: ../../responses/common/succeed-create.response.yaml
@@ -106,8 +106,8 @@ put:
           required:
             - uuid
           allOf:
-            - $ref: ../../schemas/std/worker-group-worker.schema.yaml#/uuid
-            - $ref: ../../schemas/std/worker-group-worker.schema.yaml#/remark
+            - $ref: ../../schemas/std/worker-group-emp.schema.yaml#/uuid
+            - $ref: ../../schemas/std/worker-group-emp.schema.yaml#/remark
   responses:
     201:
       $ref: ../../responses/common/succeed-update.response.yaml
@@ -127,8 +127,8 @@ patch:
           required:
             - uuid
           allOf:
-            - $ref: ../../schemas/std/worker-group-worker.schema.yaml#/uuid
-            - $ref: ../../schemas/std/worker-group-worker.schema.yaml#/remark
+            - $ref: ../../schemas/std/worker-group-emp.schema.yaml#/uuid
+            - $ref: ../../schemas/std/worker-group-emp.schema.yaml#/remark
   responses:
     201:
       $ref: ../../responses/common/succeed-update.response.yaml
@@ -148,7 +148,7 @@ delete:
           required:
             - uuid
           allOf:
-            - $ref: ../../schemas/std/worker-group-worker.schema.yaml#/uuid
+            - $ref: ../../schemas/std/worker-group-emp.schema.yaml#/uuid
   responses:
     200:
       $ref: ../../responses/common/succeed-delete.response.yaml

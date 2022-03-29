@@ -1,13 +1,13 @@
 import { Sequelize, Table, Column, Model, DataType, CreatedAt, UpdatedAt, BelongsTo, Unique, ForeignKey } from 'sequelize-typescript'
-import IStdWorkerGroupWorker from '../../interfaces/std/worker-group-worker.interface';
+import IStdWorkerGroupWorker from '../../interfaces/std/worker-group-emp.interface';
 import AutUser from '../aut/user.model';
 import StdFactory from './factory.model';
 import StdWorkerGroup from './worker-group.model';
-import StdWorker from './worker.model';
+import StdEmp from './emp.model';
 
 @Table({
-  tableName: 'STD_WORKER_GROUP_WORKER_TB',
-  modelName: 'StdWorkerGroupWorker',
+  tableName: 'STD_WORKER_GROUP_EMP_TB',
+  modelName: 'StdWorkerGroupEmp',
   comment: '작업조-작업자 정보 테이블',
   timestamps: true,
   underscored: true,
@@ -21,9 +21,9 @@ export default class StdWorkerGroupWorker extends Model<IStdWorkerGroupWorker> {
     type: DataType.INTEGER,
     allowNull: false,
   })
-  worker_group_worker_id: number;
+  worker_group_emp_id: number;
 
-  @Unique('std_worker_group_worker_tb_worker_group_id_worker_id_un')
+  @Unique('std_worker_group_emp_tb_worker_group_id_emp_id_un')
   @ForeignKey(() => StdWorkerGroup)
   @Column({
     comment: '작업조ID',
@@ -32,14 +32,14 @@ export default class StdWorkerGroupWorker extends Model<IStdWorkerGroupWorker> {
   })
   worker_group_id: number;
 
-  @Unique('std_worker_group_worker_tb_worker_group_id_worker_id_un')
-  @ForeignKey(() => StdWorker)
+  @Unique('std_worker_group_emp_tb_worker_group_id_emp_id_un')
+  @ForeignKey(() => StdEmp)
   @Column({
     comment: '작업자ID',
     type: DataType.INTEGER,
     allowNull: false,
   })
-  worker_id: number;
+  emp_id: number;
 
   @ForeignKey(() => StdFactory)
   @Column({
@@ -87,7 +87,7 @@ export default class StdWorkerGroupWorker extends Model<IStdWorkerGroupWorker> {
   })
   updated_uid: number;
 
-  @Unique('std_worker_group_worker_tb_uuid_un')
+  @Unique('std_worker_group_emp_tb_uuid_un')
   @Column({
     comment: '작업조-작업자UUID',
     type: DataType.UUID,
@@ -109,8 +109,8 @@ export default class StdWorkerGroupWorker extends Model<IStdWorkerGroupWorker> {
   @BelongsTo(() => StdWorkerGroup, { foreignKey: 'worker_group_id', targetKey: 'worker_group_id', onDelete: 'restrict', onUpdate: 'cascade' })
   stdWorkerGroup: StdWorkerGroup;
 
-  @BelongsTo(() => StdWorker, { foreignKey: 'worker_id', targetKey: 'worker_id', onDelete: 'restrict', onUpdate: 'cascade' })
-  stdWorker: StdWorker;
+  @BelongsTo(() => StdEmp, { foreignKey: 'emp_id', targetKey: 'emp_id', onDelete: 'restrict', onUpdate: 'cascade' })
+  stdEmp: StdEmp;
 
   // HasMany
   //#endregion

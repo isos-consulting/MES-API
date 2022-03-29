@@ -36,7 +36,7 @@ class PrdOrderWorkerRepo {
           {
             factory_id: orderWorker.factory_id,
             order_id: orderWorker.order_id,
-            worker_id: orderWorker.worker_id,
+            emp_id: orderWorker.emp_id,
             created_uid: uid,
             updated_uid: uid,
           },
@@ -73,7 +73,7 @@ class PrdOrderWorkerRepo {
             required: true,
             where: params.order_uuid ? { uuid: params.order_uuid } : {}
           },
-          { model: this.sequelize.models.StdWorker, attributes: [], required: true },
+          { model: this.sequelize.models.StdEmp, attributes: [], required: true },
           { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
@@ -83,14 +83,14 @@ class PrdOrderWorkerRepo {
           [ Sequelize.col('stdFactory.factory_cd'), 'factory_cd' ],
           [ Sequelize.col('stdFactory.factory_nm'), 'factory_nm' ],
           [ Sequelize.col('prdOrder.uuid'), 'order_uuid' ],
-          [ Sequelize.col('stdWorker.uuid'), 'worker_uuid' ],
-          [ Sequelize.col('stdWorker.worker_nm'), 'worker_nm' ],
+          [ Sequelize.col('stdEmp.uuid'), 'emp_uuid' ],
+          [ Sequelize.col('stdEmp.emp_nm'), 'emp_nm' ],
           'created_at',
           [ Sequelize.col('createUser.user_nm'), 'created_nm' ],
           'updated_at',
           [ Sequelize.col('updateUser.user_nm'), 'updated_nm' ]
         ],
-        order: [ 'factory_id', 'order_id', 'worker_id' ]
+        order: [ 'factory_id', 'order_id', 'emp_id' ]
       });
 
       return convertReadResult(result);
@@ -116,7 +116,7 @@ class PrdOrderWorkerRepo {
             required: true,
             where: params.order_uuid ? { uuid: params.order_uuid } : {}
           },
-          { model: this.sequelize.models.StdWorker, attributes: [], required: true },
+          { model: this.sequelize.models.StdEmp, attributes: [], required: true },
           { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
@@ -126,8 +126,8 @@ class PrdOrderWorkerRepo {
           [ Sequelize.col('stdFactory.factory_cd'), 'factory_cd' ],
           [ Sequelize.col('stdFactory.factory_nm'), 'factory_nm' ],
           [ Sequelize.col('prdOrder.uuid'), 'order_uuid' ],
-          [ Sequelize.col('stdWorker.uuid'), 'worker_uuid' ],
-          [ Sequelize.col('stdWorker.worker_nm'), 'worker_nm' ],
+          [ Sequelize.col('stdEmp.uuid'), 'emp_uuid' ],
+          [ Sequelize.col('stdEmp.emp_nm'), 'emp_nm' ],
           'created_at',
           [ Sequelize.col('createUser.user_nm'), 'created_nm' ],
           'updated_at',
@@ -172,7 +172,7 @@ class PrdOrderWorkerRepo {
       const promises = body.map((orderWorker: any) => {
         return this.repo.update(
           {
-            worker_id: orderWorker.worker_id ?? null,
+            emp_id: orderWorker.emp_id ?? null,
             updated_uid: uid,
           } as any,
           { 
@@ -205,7 +205,7 @@ class PrdOrderWorkerRepo {
       const promises = body.map((orderWorker: any) => {
         return this.repo.update(
           {
-            worker_id: orderWorker.worker_id,
+            emp_id: orderWorker.emp_id,
             updated_uid: uid,
           },
           { 

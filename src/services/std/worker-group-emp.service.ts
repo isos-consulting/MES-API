@@ -1,21 +1,21 @@
 import { Transaction } from "sequelize/types";
 import StdFactoryRepo from '../../repositories/std/factory.repository';
 import StdWorkerGroupRepo from '../../repositories/std/worker-group.repository';
-import StdWorkerRepo from '../../repositories/std/worker.repository';
-import StdWorkerGroupWorkerRepo from '../../repositories/std/worker-group-worker.repository';
+import StdEmpRepo from '../../repositories/std/emp.repository';
+import StdWorkerGroupEmpRepo from '../../repositories/std/worker-group-emp.repository';
 import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
-import IStdWorkerGroupWorker from "../../interfaces/std/routing.interface";
+import IStdWorkerGroupEmp from "../../interfaces/std/worker-group-emp.interface";
 
-class StdWorkerGroupWorkerService {
+class StdWorkerGroupEmpService {
   tenant: string;
   stateTag: string;
-  repo: StdWorkerGroupWorkerRepo;
+  repo: StdWorkerGroupEmpRepo;
   fkIdInfos: getFkIdInfo[];
 
   constructor(tenant: string) {
     this.tenant = tenant;
-    this.stateTag = 'StdWorkerGroupWorker';
-    this.repo = new StdWorkerGroupWorkerRepo(tenant);
+    this.stateTag = 'StdWorkerGroupEmp';
+    this.repo = new StdWorkerGroupEmpRepo(tenant);
 
     // ✅ CUD 연산이 실행되기 전 Fk Table 의 uuid 로 id 를 검색하여 request body 에 삽입하기 위하여 정보 Setting
     this.fkIdInfos = [
@@ -32,10 +32,10 @@ class StdWorkerGroupWorkerService {
         uuidName: 'worker_group_uuid'
       },
       {
-        key: 'worker',
-        TRepo: StdWorkerRepo,
-        idName: 'worker_id',
-        uuidName: 'worker_uuid'
+        key: 'emp',
+        TRepo: StdEmpRepo,
+        idName: 'emp_id',
+        uuidName: 'emp_uuid'
       },
     ];
   }
@@ -45,7 +45,7 @@ class StdWorkerGroupWorkerService {
     return await getFkIdByUuid(this.tenant, datas, this.fkIdInfos);
   };
 
-  public create = async (datas: IStdWorkerGroupWorker[], uid: number, tran: Transaction) => {
+  public create = async (datas: IStdWorkerGroupEmp[], uid: number, tran: Transaction) => {
     try { return await this.repo.create(datas, uid, tran); }
 		catch (error) { throw error; }
   };
@@ -66,20 +66,20 @@ class StdWorkerGroupWorkerService {
 		catch (error) { throw error; }
   };
 
-  public update = async (datas: IStdWorkerGroupWorker[], uid: number, tran: Transaction) => {
+  public update = async (datas: IStdWorkerGroupEmp[], uid: number, tran: Transaction) => {
     try { return await this.repo.update(datas, uid, tran); } 
 		catch (error) { throw error; }
   };
 
-  public patch = async (datas: IStdWorkerGroupWorker[], uid: number, tran: Transaction) => {
+  public patch = async (datas: IStdWorkerGroupEmp[], uid: number, tran: Transaction) => {
     try { return await this.repo.patch(datas, uid, tran) }
 		catch (error) { throw error; }
   };
 
-  public delete = async (datas: IStdWorkerGroupWorker[], uid: number, tran: Transaction) => {
+  public delete = async (datas: IStdWorkerGroupEmp[], uid: number, tran: Transaction) => {
     try { return await this.repo.delete(datas, uid, tran); }
 		catch (error) { throw error; }
   };
 }
 
-export default StdWorkerGroupWorkerService;
+export default StdWorkerGroupEmpService;

@@ -1,7 +1,7 @@
 import express = require('express');
 import { matchedData } from 'express-validator';
 import config from '../../configs/config';
-import StdWorkerGroupWorkerService from '../../services/std/worker-group-worker.service';
+import StdWorkerGroupEmpService from '../../services/std/worker-group-emp.service';
 import ApiResult from '../../interfaces/common/api-result.interface';
 import response from '../../utils/response';
 import { sequelizes } from '../../utils/getSequelize';
@@ -11,11 +11,11 @@ import isServiceResult from '../../utils/isServiceResult';
 import createApiResult from '../../utils/createApiResult_new';
 import { successState } from '../../states/common.state';
 
-class StdWorkerGroupWorkerCtl {
+class StdWorkerGroupEmpCtl {
   stateTag: string;
   //#region ✅ Constructor
   constructor() {
-    this.stateTag = 'StdWorkerGroupWorker';
+    this.stateTag = 'StdWorkerGroupEmp';
   };
   //#endregion
 
@@ -27,7 +27,7 @@ class StdWorkerGroupWorkerCtl {
   public create = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       let result: ApiResult<any> = { count:0, raws: [] };
-      const service = new StdWorkerGroupWorkerService(req.tenant.uuid);
+      const service = new StdWorkerGroupEmpService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
       const datas = await service.convertFk(Object.values(matched));
 
@@ -54,7 +54,7 @@ class StdWorkerGroupWorkerCtl {
   public read = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       let result: ApiResult<any> = { count:0, raws: [] };
-      const service = new StdWorkerGroupWorkerService(req.tenant.uuid);
+      const service = new StdWorkerGroupEmpService(req.tenant.uuid);
       const params = matchedData(req, { locations: [ 'query', 'params' ] });
 
       result = await service.read(params);
@@ -74,7 +74,7 @@ class StdWorkerGroupWorkerCtl {
 		public readByUuid = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
 			try {
 				let result: ApiResult<any> = { count:0, raws: [] };
-				const service = new StdWorkerGroupWorkerService(req.tenant.uuid);
+				const service = new StdWorkerGroupEmpService(req.tenant.uuid);
 	
 				result = await service.readByUuid(req.params.uuid);
 	
@@ -97,7 +97,7 @@ class StdWorkerGroupWorkerCtl {
   public update = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       let result: ApiResult<any> = { count: 0, raws: [] };
-      const service = new StdWorkerGroupWorkerService(req.tenant.uuid);
+      const service = new StdWorkerGroupEmpService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
       const datas = await service.convertFk(Object.values(matched));
 
@@ -124,7 +124,7 @@ class StdWorkerGroupWorkerCtl {
   public patch = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       let result: ApiResult<any> = { count:0, raws: [] };
-      const service = new StdWorkerGroupWorkerService(req.tenant.uuid);
+      const service = new StdWorkerGroupEmpService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
       const datas = await service.convertFk(Object.values(matched));
 
@@ -151,7 +151,7 @@ class StdWorkerGroupWorkerCtl {
   public delete = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       let result: ApiResult<any> = { count:0, raws: [] };
-      const service = new StdWorkerGroupWorkerService(req.tenant.uuid);
+      const service = new StdWorkerGroupEmpService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
       const datas = Object.values(matched);
 
@@ -205,4 +205,4 @@ class StdWorkerGroupWorkerCtl {
   //#endregion
 }
 
-export default StdWorkerGroupWorkerCtl;
+export default StdWorkerGroupEmpCtl;

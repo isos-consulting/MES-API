@@ -12,6 +12,7 @@ export default interface IStdEmp {
   hp?: string | null,
   enter_date?: string,
   leave_date?: string | null,
+  worker_fg?: boolean,
   remark?: string | null,
   created_at?: Date,
   created_uid?: number,

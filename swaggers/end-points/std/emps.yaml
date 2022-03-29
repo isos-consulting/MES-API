@@ -16,6 +16,15 @@ get:
       schema:
         type: string
         format: string
+    - name: worker_fg
+      in: query
+      required: true
+      description: |
+        사원의 작업자유무를 조회합니다. <br/>
+        [전체조회 시 입력하지 않습니다.]
+      schema:
+        type: boolean
+        format: boolean
 
   responses:
     200:
@@ -63,6 +72,7 @@ get:
                             - $ref: ../../schemas/std/emp.schema.yaml#/hp
                             - $ref: ../../schemas/std/emp.schema.yaml#/enter_date
                             - $ref: ../../schemas/std/emp.schema.yaml#/leave_date
+                            - $ref: ../../schemas/std/emp.schema.yaml#/worker_fg
                             - $ref: ../../schemas/std/emp.schema.yaml#/remark
                             - $ref: ../../schemas/common/timestamp.schema.yaml
     500:
@@ -94,6 +104,7 @@ post:
             - $ref: ../../schemas/std/emp.schema.yaml#/hp
             - $ref: ../../schemas/std/emp.schema.yaml#/enter_date
             - $ref: ../../schemas/std/emp.schema.yaml#/leave_date
+            - $ref: ../../schemas/std/emp.schema.yaml#/worker_fg
             - $ref: ../../schemas/std/emp.schema.yaml#/remark
   responses:
     201:
@@ -129,6 +140,7 @@ put:
             - $ref: ../../schemas/std/emp.schema.yaml#/hp
             - $ref: ../../schemas/std/emp.schema.yaml#/enter_date
             - $ref: ../../schemas/std/emp.schema.yaml#/leave_date
+            - $ref: ../../schemas/std/emp.schema.yaml#/worker_fg
             - $ref: ../../schemas/std/emp.schema.yaml#/remark
   responses:
     201:
@@ -162,6 +174,7 @@ patch:
             - $ref: ../../schemas/std/emp.schema.yaml#/hp
             - $ref: ../../schemas/std/emp.schema.yaml#/enter_date
             - $ref: ../../schemas/std/emp.schema.yaml#/leave_date
+            - $ref: ../../schemas/std/emp.schema.yaml#/worker_fg
             - $ref: ../../schemas/std/emp.schema.yaml#/remark
   responses:
     201:

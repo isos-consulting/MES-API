@@ -1,19 +1,18 @@
 import { Repository } from 'sequelize-typescript/dist/sequelize/repository/repository';
-import StdWorker from '../../models/std/worker.model';
-import IStdWorker from '../../interfaces/std/worker.interface';
+import StdWorkerGroupEmp from '../../models/std/worker-group-emp.model';
+import IStdWorkerGroupEmp from '../../interfaces/std/worker-group-emp.interface';
 import { Sequelize } from 'sequelize-typescript';
 import _ from 'lodash';
 import convertResult from '../../utils/convertResult';
-import { Op, Transaction } from 'sequelize';
-import { UniqueConstraintError } from 'sequelize';
+import { Op, Transaction, UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
 import ApiResult from '../../interfaces/common/api-result.interface';
 
-class StdWorkerRepo {
-  repo: Repository<StdWorker>;
+class StdWorkerGroupEmpRepo {
+  repo: Repository<StdWorkerGroupEmp>;
   sequelize: Sequelize;
   tenant: string;
 
@@ -21,7 +20,7 @@ class StdWorkerRepo {
   constructor(tenant: string) {
     this.tenant = tenant;
     this.sequelize = getSequelize(tenant);
-    this.repo = this.sequelize.getRepository(StdWorker);
+    this.repo = this.sequelize.getRepository(StdWorkerGroupEmp);
   }
   //#endregion
 
@@ -30,18 +29,15 @@ class StdWorkerRepo {
   //#region 🟢 Create Functions
 
   // 📒 Fn[create]: Default Create Function
-  public create = async(body: IStdWorker[], uid: number, transaction?: Transaction) => {
+  public create = async(body: IStdWorkerGroupEmp[], uid: number, transaction?: Transaction) => {
     try {
-      const promises = body.map((worker: any) => {
+      const promises = body.map((workerGroupEmp: any) => {
         return this.repo.create(
           {
-            factory_id: worker.factory_id,
-            proc_id: worker.proc_id,
-            workings_id: worker.workings_id,
-            emp_id: worker.emp_id,
-            worker_cd: worker.worker_cd,
-            worker_nm: worker.worker_nm,
-            remark: worker.remark,
+            factory_id: workerGroupEmp.factory_id,
+            worker_group_id: workerGroupEmp.worker_group_id,
+            emp_id: workerGroupEmp.emp_id,
+            remark: workerGroupEmp.remark,
             created_uid: uid,
             updated_uid: uid,
           },
@@ -72,35 +68,38 @@ class StdWorkerRepo {
             required: true, 
             where: { uuid: params.factory_uuid ? params.factory_uuid : { [Op.ne]: null } }
           },
-          { model: this.sequelize.models.StdProc, attributes: [], required: false },
-          { model: this.sequelize.models.StdWorkings, attributes: [], required: false },
-          { model: this.sequelize.models.StdEmp, attributes: [], required: false },
+          { 
+            model: this.sequelize.models.StdWorkerGroup, 
+            attributes: [], 
+            required: true, 
+            where: { uuid: params.worker_group_uuid ? params.worker_group_uuid : { [Op.ne]: null } }
+          },
+          { 
+            model: this.sequelize.models.StdEmp, 
+            attributes: [], 
+            required: true, 
+            where: { uuid: params.emp_uuid ? params.emp_uuid : { [Op.ne]: null } }
+          },
           { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
-          [ Sequelize.col('stdWorker.uuid'), 'worker_uuid' ],
+          [ Sequelize.col('stdWorkerGroupEmp.uuid'), 'worker_group_worker_uuid' ],
           [ Sequelize.col('stdFactory.uuid'), 'factory_uuid' ],
           [ Sequelize.col('stdFactory.factory_cd'), 'factory_cd' ],
           [ Sequelize.col('stdFactory.factory_nm'), 'factory_nm' ],
-          [ Sequelize.col('stdProc.uuid'), 'proc_uuid' ],
-          [ Sequelize.col('stdProc.proc_cd'), 'proc_cd' ],
-          [ Sequelize.col('stdProc.proc_nm'), 'proc_nm' ],
-          [ Sequelize.col('stdWorkings.uuid'), 'workings_uuid' ],
-          [ Sequelize.col('stdWorkings.workings_cd'), 'workings_cd' ],
-          [ Sequelize.col('stdWorkings.workings_nm'), 'workings_nm' ],
+          [ Sequelize.col('stdWorkerGroup.uuid'), 'worker_group_uuid' ],
+          [ Sequelize.col('stdWorkerGroup.worker_group_cd'), 'worker_group_cd' ],
+          [ Sequelize.col('stdWorkerGroup.worker_group_nm'), 'worker_group_nm' ],
           [ Sequelize.col('stdEmp.uuid'), 'emp_uuid' ],
-          [ Sequelize.col('stdEmp.emp_cd'), 'emp_cd' ],
           [ Sequelize.col('stdEmp.emp_nm'), 'emp_nm' ],
-          'worker_cd',
-          'worker_nm',
           'remark',
           'created_at',
           [ Sequelize.col('createUser.user_nm'), 'created_nm' ],
           'updated_at',
           [ Sequelize.col('updateUser.user_nm'), 'updated_nm' ]
         ],
-        order: [ 'factory_id', 'workings_id', 'proc_id', 'worker_id' ],
+        order: [ 'factory_id', 'worker_group_id' ],
       });
 
       return convertReadResult(result);
@@ -115,29 +114,21 @@ class StdWorkerRepo {
       const result = await this.repo.findOne({ 
         include: [
           { model: this.sequelize.models.StdFactory, attributes: [], required: true },
-          { model: this.sequelize.models.StdProc, attributes: [], required: false },
-          { model: this.sequelize.models.StdWorkings, attributes: [], required: false },
-          { model: this.sequelize.models.StdEmp, attributes: [], required: false },
+          { model: this.sequelize.models.StdWorkerGroup, attributes: [], required: true },
+          { model: this.sequelize.models.StdEmp, attributes: [], required: true },
           { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
-          [ Sequelize.col('stdWorker.uuid'), 'worker_uuid' ],
+          [ Sequelize.col('stdWorkerGroupEmp.uuid'), 'worker_group_worker_uuid' ],
           [ Sequelize.col('stdFactory.uuid'), 'factory_uuid' ],
           [ Sequelize.col('stdFactory.factory_cd'), 'factory_cd' ],
           [ Sequelize.col('stdFactory.factory_nm'), 'factory_nm' ],
-          [ Sequelize.col('stdProc.uuid'), 'proc_uuid' ],
-          [ Sequelize.col('stdProc.proc_cd'), 'proc_cd' ],
-          [ Sequelize.col('stdProc.proc_nm'), 'proc_nm' ],
-          [ Sequelize.col('stdWorkings.uuid'), 'workings_uuid' ],
-          [ Sequelize.col('stdWorkings.workings_cd'), 'workings_cd' ],
-          [ Sequelize.col('stdWorkings.workings_nm'), 'workings_nm' ],
+          [ Sequelize.col('stdWorkerGroup.uuid'), 'worker_group_uuid' ],
+          [ Sequelize.col('stdWorkerGroup.worker_group_cd'), 'worker_group_cd' ],
+          [ Sequelize.col('stdWorkerGroup.worker_group_nm'), 'worker_group_nm' ],
           [ Sequelize.col('stdEmp.uuid'), 'emp_uuid' ],
-          [ Sequelize.col('stdEmp.emp_cd'), 'emp_cd' ],
           [ Sequelize.col('stdEmp.emp_nm'), 'emp_nm' ],
-          'worker_cd',
-          'worker_nm',
-          'remark',
           'created_at',
           [ Sequelize.col('createUser.user_nm'), 'created_nm' ],
           'updated_at',
@@ -166,17 +157,30 @@ class StdWorkerRepo {
 
   // 📒 Fn[readRawByUnique]: Unique Key를 통하여 Raw Data Read Function
   public readRawByUnique = async(
-    params: { factory_id: number, worker_cd: string }
+    params: { worker_group_id: number, emp_id: number }
   ) => {
     const result = await this.repo.findOne({ 
       where: {
         [Op.and]: [
-          { factory_id: params.factory_id },
-          { worker_cd: params.worker_cd ? params.worker_cd : null }
+          { worker_group_id: params.worker_group_id },
+          { emp_id: params.emp_id }
         ]
       }
     });
     return convertReadResult(result);
+  };
+
+  // 📒 Fn[readWorkerInGroup]: 작업조에 포함된 작업자 조회
+  public readWorkerInGroup = async(groupId: number) => {
+    try {
+      const result = await this.repo.findAll({ 
+        where: { worker_group_id: groupId }
+      });
+
+      return convertReadResult(result);
+    } catch (error) {
+      throw error;
+    }
   };
 
   //#endregion
@@ -184,23 +188,18 @@ class StdWorkerRepo {
   //#region 🟡 Update Functions
   
   // 📒 Fn[update]: Default Update Function
-  public update = async(body: IStdWorker[], uid: number, transaction?: Transaction) => {
+  public update = async(body: IStdWorkerGroupEmp[], uid: number, transaction?: Transaction) => {
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      const promises = body.map((worker: any) => {
+      const promises = body.map((workerGroupEmp: any) => {
         return this.repo.update(
           {
-            proc_id: worker.proc_id ?? null,
-            workings_id: worker.workings_id ?? null,
-            emp_id: worker.emp_id ?? null,
-            worker_cd: worker.worker_cd ?? null,
-            worker_nm: worker.worker_nm ?? null,
-            remark: worker.remark ?? null,
+            remark: workerGroupEmp.remark != null ? workerGroupEmp.remark : null,
             updated_uid: uid,
           } as any,
           { 
-            where: { uuid: worker.uuid },
+            where: { uuid: workerGroupEmp.uuid },
             returning: true,
             individualHooks: true,
             transaction
@@ -209,7 +208,7 @@ class StdWorkerRepo {
       });
       const raws = await Promise.all(promises);
 
-      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdWorker.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdWorkerGroupEmp.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -222,23 +221,18 @@ class StdWorkerRepo {
   //#region 🟠 Patch Functions
   
   // 📒 Fn[patch]: Default Patch Function
-  public patch = async(body: IStdWorker[], uid: number, transaction?: Transaction) => {
+  public patch = async(body: IStdWorkerGroupEmp[], uid: number, transaction?: Transaction) => {
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      const promises = body.map((worker: any) => {
+      const promises = body.map((workerGroupEmp: any) => {
         return this.repo.update(
           {
-            proc_id: worker.proc_id,
-            workings_id: worker.workings_id,
-            emp_id: worker.emp_id,
-            worker_cd: worker.worker_cd,
-            worker_nm: worker.worker_nm,
-            remark: worker.remark,
+            remark: workerGroupEmp.remark,
             updated_uid: uid,
           },
           { 
-            where: { uuid: worker.uuid },
+            where: { uuid: workerGroupEmp.uuid },
             returning: true,
             individualHooks: true,
             transaction
@@ -247,7 +241,7 @@ class StdWorkerRepo {
       });
       const raws = await Promise.all(promises);
 
-      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdWorker.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdWorkerGroupEmp.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -260,16 +254,16 @@ class StdWorkerRepo {
   //#region 🔴 Delete Functions
   
   // 📒 Fn[delete]: Default Delete Function
-  public delete = async(body: IStdWorker[], uid: number, transaction?: Transaction) => {
+  public delete = async(body: IStdWorkerGroupEmp[], uid: number, transaction?: Transaction) => {
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      const promises = body.map((worker: any) => {
-        return this.repo.destroy({ where: { uuid: worker.uuid }, transaction});
+      const promises = body.map((workerGroupEmp: any) => {
+        return this.repo.destroy({ where: { uuid: workerGroupEmp.uuid }, transaction});
       });
       const count = _.sum(await Promise.all(promises));
 
-      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.StdWorker.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.StdWorkerGroupEmp.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
     } catch (error) {
       throw error;
@@ -281,4 +275,4 @@ class StdWorkerRepo {
   //#endregion
 }
 
-export default StdWorkerRepo;
+export default StdWorkerGroupEmpRepo;
