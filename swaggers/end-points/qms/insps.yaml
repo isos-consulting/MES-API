@@ -30,6 +30,15 @@ get:
         [전체 조회시 입력하지 않습니다.]
       schema:
         type: string
+        format: uuid
+
+    - name: insp_type_cd
+      in: query
+      description: |
+        기준서 유형코드를 입력하여 검사기준서 데이터를 조회합니다. <br/>
+        [전체 조회시 입력하지 않습니다.]
+      schema:
+        type: string
         format: varchar(20)
 
     - name: apply_fg

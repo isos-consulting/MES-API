@@ -77,7 +77,12 @@ class QmsInspRepo {
             model: this.sequelize.models.AdmInspType, 
             attributes: [], 
             required: true, 
-            where: { uuid: params.insp_type_uuid ? params.insp_type_uuid : { [Op.ne]: null } }
+            where: { [Op.and]: 
+              {
+                uuid: params.insp_type_uuid ? params.insp_type_uuid : { [Op.ne]: null },
+                insp_type_cd: params.insp_type_cd ? params.insp_type_cd : { [Op.ne]: null },
+              } 
+            }
           },
           { 
             model: this.sequelize.models.StdProd, 
