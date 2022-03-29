@@ -25,6 +25,7 @@ class PrdWorkInputService {
   stdStoreRepo: StdStoreRepo;
   storeRepo: InvStoreRepo;
   bomRepo: StdBomRepo;
+  bomInputTypeRepo: AdmBomInputTypeRepo;
   fkIdInfos: getFkIdInfo[];
 
   constructor(tenant: string) {
@@ -34,6 +35,7 @@ class PrdWorkInputService {
     this.stdStoreRepo = new StdStoreRepo(tenant);
     this.storeRepo = new InvStoreRepo(tenant);
     this.bomRepo = new StdBomRepo(tenant);
+    this.bomInputTypeRepo = new AdmBomInputTypeRepo(tenant);
 
     this.fkIdInfos = [
       {
@@ -109,6 +111,12 @@ class PrdWorkInputService {
 		catch (error) { throw error; }
   };
 
+  // 📒 Fn[readRawsByWorkId]: 생산실적의 Id를 이용하여 Raw Data Read Function
+  public readRawsByWorkId = async(workId: number) => {
+    try { return await this.repo.readRawsByWorkId(workId); } 
+		catch (error) { throw error; }
+  };
+
   // 📒 Fn[readWorkInputGroup]: 생산실적의 자재 투입 그룹 Read Function (비입력)
   public readWorkInputGroup = async (params: any) => {
     try { 
@@ -144,6 +152,21 @@ class PrdWorkInputService {
   public deleteByWorkIds = async (workId: number[], uid: number, tran: Transaction) => {
     try { return await this.repo.deleteByWorkIds(workId, uid, tran); }
     catch (error) { throw error; }
+  }
+
+  public deleteOnlyPull = async (datas: IPrdWorkInput[], uid: number, tran: Transaction) => {
+    try {
+      const bomInputTypeRead = await this.bomInputTypeRepo.readRawByUnique({ bom_input_type_cd: 'PULL' });
+      
+      let deleteRawsByInput: IPrdWorkInput[] = [];
+      datas.filter((input: any) => {
+        if (input.bom_input_type_id == bomInputTypeRead.raws[0].bom_input_type_id) { deleteRawsByInput.push(input); }
+      });
+
+      return await this.repo.delete(deleteRawsByInput, uid, tran);
+    } catch (error) {
+      throw error;
+    }
   }
 
   /**

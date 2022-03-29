@@ -295,7 +295,6 @@ class PrdWorkCtl {
       const workInputService = new PrdWorkInputService(req.tenant.uuid);
       const workRejectService = new PrdWorkRejectService(req.tenant.uuid);
       const inventoryService = new InvStoreService(req.tenant.uuid);
-      const tenantOptService = new StdTenantOptService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
       let datas = await service.convertFk(Object.values(matched));
 
@@ -324,19 +323,22 @@ class PrdWorkCtl {
             { inout: 'TO', tran_type: 'PRD_REJECT', reg_date: '', tran_id_alias: 'work_reject_id' },
             req.user?.uid as number, tran
           );
-
+          
           // 📌 창고 수불이력 삭제(생산투입)
-          const isPullOption = await tenantOptService.getTenantOptValue('OUT_AUTO_PULL', tran);
-          const workInputBody = await workInputService.getWorkInputBody(workResult.raws[0], workResult.raws[0].reg_date, isPullOption);
+          const workInputBody = await workInputService.readRawsByWorkId(workResult.raws[0].work_id);
           const fromStoreResult = await inventoryService.transactInventory(
-            workInputBody, 'DELETE', 
+            workInputBody.raws, 'DELETE', 
             { inout: 'FROM', tran_type: 'PRD_INPUT', reg_date: '', tran_id_alias: 'work_input_id' },
             req.user?.uid as number, tran
           );
 
+          // 📌 생산투입 이력 삭제 (선입선출 이력만 삭제)
+          const workInputResult = await workInputService.deleteOnlyPull(workInputBody.raws, req.user?.uid as number, tran);
+          
           result.raws.push({
             work: workResult.raws,
             order: orderResult.raws,
+            input: workInputResult.raws,
             toStore: [...toStoreResult.raws, ...rejectStoreResult.raws],
             fromStore: fromStoreResult.raws,
           });
