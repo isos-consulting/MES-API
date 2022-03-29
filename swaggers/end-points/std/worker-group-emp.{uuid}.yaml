@@ -49,7 +49,7 @@ get:
                             - $ref: ../../schemas/std/worker-group.schema.yaml#/worker_group_cd
                             - $ref: ../../schemas/std/worker-group.schema.yaml#/worker_group_nm
                             - $ref: ../../schemas/std/worker-group-emp.schema.yaml#/emp_uuid
-                            - $ref: ../../schemas/std/worker.schema.yaml#/worker_nm
+                            - $ref: ../../schemas/std/emp.schema.yaml#/emp_nm
                             - $ref: ../../schemas/std/worker-group-emp.schema.yaml#/remark
                             - $ref: ../../schemas/common/timestamp.schema.yaml
     500:

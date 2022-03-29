@@ -94,7 +94,7 @@ get:
                             - $ref: ../../schemas/std/worker-group.schema.yaml#/worker_group_cd
                             - $ref: ../../schemas/std/worker-group.schema.yaml#/worker_group_nm
                             - $ref: ../../schemas/prd/work.schema.yaml#/worker_cnt
-                            - $ref: ../../schemas/std/worker.schema.yaml#/worker_nm
+                            - $ref: ../../schemas/std/emp.schema.yaml#/emp_nm
                             - $ref: ../../schemas/prd/work.schema.yaml#/complete_state
                             - $ref: ../../schemas/prd/work.schema.yaml#/complete_fg
                             - $ref: ../../schemas/prd/work.schema.yaml#/to_store_uuid
