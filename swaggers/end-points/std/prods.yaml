@@ -108,7 +108,8 @@ get:
                             - $ref: ../../schemas/std/prod.schema.yaml#/lot_fg
                             - $ref: ../../schemas/std/prod.schema.yaml#/use_fg
                             - $ref: ../../schemas/std/prod.schema.yaml#/active_fg
-                            - $ref: ../../schemas/std/prod.schema.yaml#/bom_type_cd
+                            - $ref: ../../schemas/std/prod.schema.yaml#/bom_type_uuid
+                            - $ref: ../../schemas/adm/bom-type.schema.yaml#/bom_type_cd
                             - $ref: ../../schemas/adm/bom-type.schema.yaml#/bom_type_nm
                             - $ref: ../../schemas/std/prod.schema.yaml#/width
                             - $ref: ../../schemas/std/prod.schema.yaml#/length
@@ -137,7 +138,9 @@ get:
                             - $ref: ../../schemas/std/prod.schema.yaml#/qms_proc_insp_fg
                             - $ref: ../../schemas/std/prod.schema.yaml#/qms_final_insp_fg
                             - $ref: ../../schemas/std/prod.schema.yaml#/prd_active_fg
-                            - $ref: ../../schemas/std/prod.schema.yaml#/prd_plan_type_cd
+                            - $ref: ../../schemas/std/prod.schema.yaml#/prd_plan_type_uuid
+                            - $ref: ../../schemas/adm/prd-plan-type.schema.yaml#/prd_plan_type_cd
+                            - $ref: ../../schemas/adm/prd-plan-type.schema.yaml#/prd_plan_type_nm
                             - $ref: ../../schemas/adm/prd-plan-type.schema.yaml#/prd_plan_type_nm
                             - $ref: ../../schemas/std/prod.schema.yaml#/prd_min
                             - $ref: ../../schemas/std/prod.schema.yaml#/prd_max
@@ -182,7 +185,7 @@ post:
             - $ref: ../../schemas/std/prod.schema.yaml#/lot_fg
             - $ref: ../../schemas/std/prod.schema.yaml#/use_fg
             - $ref: ../../schemas/std/prod.schema.yaml#/active_fg
-            - $ref: ../../schemas/std/prod.schema.yaml#/bom_type_cd
+            - $ref: ../../schemas/std/prod.schema.yaml#/bom_type_uuid
             - $ref: ../../schemas/std/prod.schema.yaml#/width
             - $ref: ../../schemas/std/prod.schema.yaml#/length
             - $ref: ../../schemas/std/prod.schema.yaml#/height
@@ -204,7 +207,7 @@ post:
             - $ref: ../../schemas/std/prod.schema.yaml#/qms_proc_insp_fg
             - $ref: ../../schemas/std/prod.schema.yaml#/qms_final_insp_fg
             - $ref: ../../schemas/std/prod.schema.yaml#/prd_active_fg
-            - $ref: ../../schemas/std/prod.schema.yaml#/prd_plan_type_cd
+            - $ref: ../../schemas/std/prod.schema.yaml#/prd_plan_type_uuid
             - $ref: ../../schemas/std/prod.schema.yaml#/prd_min
             - $ref: ../../schemas/std/prod.schema.yaml#/prd_max
   responses:
@@ -252,7 +255,7 @@ put:
             - $ref: ../../schemas/std/prod.schema.yaml#/lot_fg
             - $ref: ../../schemas/std/prod.schema.yaml#/use_fg
             - $ref: ../../schemas/std/prod.schema.yaml#/active_fg
-            - $ref: ../../schemas/std/prod.schema.yaml#/bom_type_cd
+            - $ref: ../../schemas/std/prod.schema.yaml#/bom_type_uuid
             - $ref: ../../schemas/std/prod.schema.yaml#/width
             - $ref: ../../schemas/std/prod.schema.yaml#/length
             - $ref: ../../schemas/std/prod.schema.yaml#/height
@@ -274,7 +277,7 @@ put:
             - $ref: ../../schemas/std/prod.schema.yaml#/qms_proc_insp_fg
             - $ref: ../../schemas/std/prod.schema.yaml#/qms_final_insp_fg
             - $ref: ../../schemas/std/prod.schema.yaml#/prd_active_fg
-            - $ref: ../../schemas/std/prod.schema.yaml#/prd_plan_type_cd
+            - $ref: ../../schemas/std/prod.schema.yaml#/prd_plan_type_uuid
             - $ref: ../../schemas/std/prod.schema.yaml#/prd_min
             - $ref: ../../schemas/std/prod.schema.yaml#/prd_max
   responses:
@@ -308,7 +311,7 @@ patch:
             - $ref: ../../schemas/std/prod.schema.yaml#/lot_fg
             - $ref: ../../schemas/std/prod.schema.yaml#/use_fg
             - $ref: ../../schemas/std/prod.schema.yaml#/active_fg
-            - $ref: ../../schemas/std/prod.schema.yaml#/bom_type_cd
+            - $ref: ../../schemas/std/prod.schema.yaml#/bom_type_uuid
             - $ref: ../../schemas/std/prod.schema.yaml#/width
             - $ref: ../../schemas/std/prod.schema.yaml#/length
             - $ref: ../../schemas/std/prod.schema.yaml#/height
@@ -330,7 +333,7 @@ patch:
             - $ref: ../../schemas/std/prod.schema.yaml#/qms_proc_insp_fg
             - $ref: ../../schemas/std/prod.schema.yaml#/qms_final_insp_fg
             - $ref: ../../schemas/std/prod.schema.yaml#/prd_active_fg
-            - $ref: ../../schemas/std/prod.schema.yaml#/prd_plan_type_cd
+            - $ref: ../../schemas/std/prod.schema.yaml#/prd_plan_type_uuid
             - $ref: ../../schemas/std/prod.schema.yaml#/prd_min
             - $ref: ../../schemas/std/prod.schema.yaml#/prd_max
   responses:

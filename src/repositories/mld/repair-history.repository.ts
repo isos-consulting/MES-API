@@ -93,7 +93,7 @@ class MldRepairHistoryRepo {
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
-					[ Sequelize.col('repairHistory.uuid'), 'repair_history_uuid' ],
+					[ Sequelize.col('MldRepairHistory.uuid'), 'repair_history_uuid' ],
 					[ Sequelize.col('stdFactory.uuid'), 'factory_uuid' ],
           [ Sequelize.col('stdFactory.factory_cd'), 'factory_cd' ],
           [ Sequelize.col('stdFactory.factory_nm'), 'factory_nm' ],
@@ -173,7 +173,7 @@ class MldRepairHistoryRepo {
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
-					[ Sequelize.col('repairHistory.uuid'), 'repair_history_uuid' ],
+					[ Sequelize.col('MldRepairHistory.uuid'), 'repair_history_uuid' ],
 					[ Sequelize.col('stdFactory.uuid'), 'factory_uuid' ],
           [ Sequelize.col('stdFactory.factory_cd'), 'factory_cd' ],
           [ Sequelize.col('stdFactory.factory_nm'), 'factory_nm' ],

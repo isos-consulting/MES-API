@@ -1,0 +1,83 @@
+# STD_WORKER_GROUP_TB
+
+# Columns
+worker_group_emp_id: 
+  type: object
+  properties: 
+    worker_group_emp_id:
+      description: 작업조-작업자ID
+      type: number
+      format: int4
+
+factory_id: 
+  type: object
+  properties: 
+    factory_id:
+      description: 공장ID
+      type: number
+      format: int4
+
+worker_group_id: 
+  type: object
+  properties: 
+    worker_group_id:
+      description: 작업조ID
+      type: number
+      format: int4
+
+emp_id: 
+  type: object
+  properties: 
+    emp_id:
+      description: 작업자ID
+      type: number
+      format: int4
+
+remark: 
+  type: object
+  properties: 
+    remark:
+      description: 비고
+      type: string
+      format: varchar(250)
+
+uuid:
+  type: object
+  properties: 
+    uuid:
+      description: 작업조-작업자UUID
+      type: string
+      format: uuid
+
+# Uuids
+worker_group_emp_uuid:
+  type: object
+  properties: 
+    worker_group_emp_uuid:
+      description: 작업조-작업자UUID
+      type: string
+      format: uuid
+
+factory_uuid:
+  type: object
+  properties: 
+    factory_uuid:
+      description: 공장UUID
+      type: string
+      format: uuid
+
+worker_group_uuid: 
+  type: object
+  properties: 
+    worker_group_uuid:
+      description: 작업조UUID
+      type: string
+      format: uuid
+
+emp_uuid: 
+  type: object
+  properties: 
+    emp_uuid:
+      description: 작업자UUID
+      type: string
+      format: uuid

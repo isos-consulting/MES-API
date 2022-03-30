@@ -17,13 +17,13 @@ factory_id:
       type: number
       format: int4
 
-insp_type_cd: 
+insp_type_uuid: 
   type: object
   properties: 
-    insp_type_cd:
-      description: 검사유형코드
+    insp_type_uuid:
+      description: 검사유형UUID
       type: string
-      format: varchar(20)
+      format: uuid
 
 insp_no: 
   type: object

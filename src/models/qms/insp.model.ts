@@ -34,10 +34,10 @@ export default class QmsInsp extends Model<IQmsInsp> {
 
   @Column({
     comment: '검사유형 코드',
-    type: DataType.STRING(20),
+    type: DataType.INTEGER,
     allowNull: false,
   })
-  insp_type_cd: string;
+  insp_type_id: number;
 
   @Unique('qms_insp_tb_factory_id_insp_no_un')
   @Column({
@@ -142,7 +142,7 @@ export default class QmsInsp extends Model<IQmsInsp> {
   @BelongsTo(() => StdProd, { foreignKey: 'prod_id', targetKey: 'prod_id', onDelete: 'restrict', onUpdate: 'cascade' })
   stdProd: StdProd;
 
-  @BelongsTo(() => AdmInspType, { foreignKey: 'insp_type_cd', targetKey: 'insp_type_cd', constraints: false })
+  @BelongsTo(() => AdmInspType, { foreignKey: 'insp_type_id', targetKey: 'insp_type_id', onDelete: 'restrict', onUpdate: 'cascade' })
   admInspType: AdmInspType;
 
   // HasMany

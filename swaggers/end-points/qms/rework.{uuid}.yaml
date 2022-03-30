@@ -66,7 +66,8 @@ get:
                             - $ref: ../../schemas/std/unit.schema.yaml#/unit_cd
                             - $ref: ../../schemas/std/unit.schema.yaml#/unit_nm
                             - $ref: ../../schemas/qms/rework.schema.yaml#/lot_no
-                            - $ref: ../../schemas/qms/rework.schema.yaml#/rework_type_cd
+                            - $ref: ../../schemas/qms/rework.schema.yaml#/rework_type_uuid
+                            - $ref: ../../schemas/adm/rework-type.schema.yaml#/rework_type_cd
                             - $ref: ../../schemas/adm/rework-type.schema.yaml#/rework_type_nm
                             - $ref: ../../schemas/std/reject-type.schema.yaml#/reject_type_uuid
                             - $ref: ../../schemas/std/reject-type.schema.yaml#/reject_type_cd

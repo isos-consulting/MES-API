@@ -64,5 +64,12 @@ uuid:
       description: 회사옵션UUID
       type: string
       format: uuid
-# Uuids
 
+# Uuids
+company_opt_uuid:
+  type: object
+  properties:
+    company_opt_uuid:
+      description: 회사옵션UUID
+      type: string
+      format: uuid

@@ -3,10 +3,9 @@ import IAdmPatternOpt from '../../interfaces/adm/pattern-opt.interface';
 import AutUser from '../aut/user.model';
 
 @Table({
-  // tableName: 'ADM_PATTERN_OPT_TB',
-  tableName: 'ADM_PATTERN_OPT_VW',
+  tableName: 'ADM_PATTERN_OPT_TB',
   modelName: 'AdmPatternOpt',
-  comment: '자동번호발행 옵션정보 테이브',
+  comment: '자동번호발행 옵션정보 테이블',
   timestamps: true,
   underscored: true,
 })

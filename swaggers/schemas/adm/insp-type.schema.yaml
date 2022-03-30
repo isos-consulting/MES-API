@@ -56,5 +56,12 @@ uuid:
       description: 검사유형UUID
       type: string
       format: uuid
-# Uuids
 
+# Uuids
+insp_type_uuid:
+  type: object
+  properties:
+    insp_type_uuid:
+      description: 검사유형UUID
+      type: string
+      format: uuid

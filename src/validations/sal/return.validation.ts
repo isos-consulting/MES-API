@@ -94,11 +94,11 @@ const salReturnValidation = {
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'outgo_detail_uuid', '출하상세UUID')),
     body('details.*.reject_uuid', '부적합UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'reject_uuid', '부적합UUID')),
-    body('details.*.from_store_uuid', '입고창고UUID')
-      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'from_store_uuid', '입고창고UUID'))
-      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'from_store_uuid', '입고창고UUID')),
-    body('details.*.from_location_uuid', '입고위치UUID').optional({ nullable: true })
-      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'from_location_uuid', '입고위치UUID')),
+    body('details.*.to_store_uuid', '입고창고UUID')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'to_store_uuid', '입고창고UUID'))
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'to_store_uuid', '입고창고UUID')),
+    body('details.*.to_location_uuid', '입고위치UUID').optional({ nullable: true })
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'to_location_uuid', '입고위치UUID')),
     body('details.*.remark', '비고').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'remark', '비고')),
   ],

@@ -4,8 +4,57 @@ import { errorState } from '../../states/common.state';
 import createValidationError from '../../utils/createValidationError';
 
 const stateTag = 'stdEquip';
-   
+  
 const stdEquipValidation = {
+	upsertBulkDatasFromExcel: [
+		query('uuid', '설비UUID').optional({ nullable: true })
+			.isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'uuid', '설비UUID')),
+		query('factory_cd', '공장코드')
+			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'factory_cd', '공장코드'))
+			.isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'factory_cd', '공장코드')),
+		query('equip_type_cd', '설비 유형코드').optional({ nullable: true })
+			.isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'equip_type_cd', '설비 유형코드')),
+		query('equip_cd', '설비코드')
+			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'equip_cd', '설비코드'))
+			.isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'equip_cd', '설비코드')),
+		query('equip_nm', '설비명')
+			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'equip_nm', '설비명'))
+			.isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'equip_nm', '설비명')),
+		query('workings_uuid', '작업장UUID').optional({ nullable: true })
+			.isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'workings_uuid', '작업장UUID')),
+		query('manager_emp_uuid', '관리자(정)UUID').optional({ nullable: true })
+			.isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'manager_emp_uuid', '관리자(정)UUID')),
+		query('sub_manager_emp_uuid', '관리자(부)UUID').optional({ nullable: true })
+			.isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'sub_manager_emp_uuid', '관리자(부)UUID')),
+		query('equip_no', '설비관리번호').optional({ nullable: true })
+			.isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'equip_no', '설비관리번호')),
+		query('equip_grade', '설비등급').optional({ nullable: true })
+			.isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'equip_grade', '설비등급')),
+		query('equip_model', '설비모델명').optional({ nullable: true })
+			.isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'equip_model', '설비모델명')),
+		query('equip_spec', '설비제원').optional({ nullable: true })
+			.isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'equip_spec', '설비제원')),
+		query('voltage', '전압').optional({ nullable: true })
+			.isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'voltage', '전압')),
+		query('manufacturer', '제조사').optional({ nullable: true })
+			.isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'manufacturer', '제조사')),
+		query('purchase_partner', '구매업체').optional({ nullable: true })
+			.isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'purchase_partner', '구매업체')),
+		query('purchase_date', '구매일자').optional({ nullable: true })
+			.isDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'purchase_date', '구매일자')),
+		query('purchase_tel', '구매업체연락처').optional({ nullable: true })
+			.isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'purchase_tel', '구매업체연락처')),
+		query('purchase_price', '구매금액').optional({ nullable: true })
+			.isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'purchase_price', '구매금액')),
+		query('use_fg', '사용여부')
+			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'use_fg', '사용여부'))
+			.isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'use_fg', '사용여부')),
+		query('prd_fg', '생산설비여부')
+			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'prd_fg', '생산설비여부'))
+			.isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'prd_fg', '생산설비여부')),
+		query('remark', '구매금액').optional({ nullable: true })
+			.isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'remark', '비고')),
+	],
   read: [
     query('facotry_uuid', '공장UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'facotry_uuid', '공장UUID')),

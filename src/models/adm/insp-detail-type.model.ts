@@ -4,8 +4,7 @@ import AutUser from '../aut/user.model';
 import AdmInspType from './insp-type.model';
 
 @Table({
-  // tableName: 'ADM_INSP_DETAIL_TYPE_TB',
-  tableName: 'ADM_INSP_DETAIL_TYPE_VW',
+  tableName: 'ADM_INSP_DETAIL_TYPE_TB',
   modelName: 'AdmInspDetailType',
   comment: '세부검사유형 정보 테이블',
   timestamps: true,
@@ -111,10 +110,7 @@ export default class AdmInspDetailType extends Model<IAdmInspDetailType> {
   @BelongsTo(() => AutUser, { as: 'updateUser', foreignKey: 'updated_uid', targetKey: 'uid', onDelete: 'restrict', onUpdate: 'cascade' })
   updateUser: AutUser;
   
-	// @BelongsTo(() => AdmInspType, { foreignKey: 'insp_type_id', targetKey: 'insp_type_id', onDelete: 'restrict', onUpdate: 'cascade' })
-  // AdmInspType: AdmInspType;
-
-	@BelongsTo(() => AdmInspType, { foreignKey: 'insp_type_cd', targetKey: 'insp_type_cd', constraints: false })
+	@BelongsTo(() => AdmInspType, { foreignKey: 'insp_type_id', targetKey: 'insp_type_id', onDelete: 'restrict', onUpdate: 'cascade' })
   AdmInspType: AdmInspType;
 
   // HasMany

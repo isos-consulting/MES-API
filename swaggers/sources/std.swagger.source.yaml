@@ -296,14 +296,6 @@ paths:
   /std/shifts:
     $ref: ../end-points/std/shifts.yaml
 
-  # ✅ Worker (작업자)
-  /std/workers/excel-upload:
-    $ref: ../end-points/std/workers.excel-upload.yaml
-  /std/worker/{uuid}:
-    $ref: ../end-points/std/worker.{uuid}.yaml
-  /std/workers:
-    $ref: ../end-points/std/workers.yaml
-
   # ✅ Workings (작업장)
   /std/workingses/excel-upload:
     $ref: ../end-points/std/workingses.excel-upload.yaml
@@ -321,12 +313,12 @@ paths:
     $ref: ../end-points/std/worker-groups.yaml
 
   # ✅ WorkerGroupWorker (작업조-작업자)
-  /std/worker-group-workers/excel-upload:
-    $ref: ../end-points/std/worker-group-workers.excel-upload.yaml
-  /std/worker-group-worker/{uuid}:
-    $ref: ../end-points/std/worker-group-worker.{uuid}.yaml
-  /std/worker-group-workers:
-    $ref: ../end-points/std/worker-group-workers.yaml
+  /std/worker-group-emps/excel-upload:
+    $ref: ../end-points/std/worker-group-emps.excel-upload.yaml
+  /std/worker-group-emp/{uuid}:
+    $ref: ../end-points/std/worker-group-emp.{uuid}.yaml
+  /std/worker-group-emps:
+    $ref: ../end-points/std/worker-group-emps.yaml
 
   # ✅ ProdType (제품유형)
   /std/prod-types/excel-upload:

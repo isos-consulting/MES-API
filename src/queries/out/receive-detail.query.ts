@@ -92,10 +92,12 @@ const readReceiveDetails = (receiveDetailUuid?: string, receiveUuid?: string, fa
     LEFT JOIN std_store_tb s_s ON s_s.store_id = o_rd.to_store_id
     LEFT JOIN std_location_tb s_l ON s_l.location_id = o_rd.to_location_id
     LEFT JOIN out_income_tb o_i ON o_i.receive_detail_id = o_rd.receive_detail_id
-    LEFT JOIN (	SELECT insp_reference_id, count(*) AS cnt 
-      FROM qms_insp_result_tb
-      WHERE insp_type_cd = 'RECEIVE_INSP'
-      GROUP BY insp_reference_id) q_ir 	ON q_ir.insp_reference_id = o_rd.receive_detail_id
+    LEFT JOIN (	
+      SELECT q_ir.insp_reference_id, count(q_ir.*) AS cnt 
+      FROM qms_insp_result_tb q_ir
+      JOIN adm_insp_detail_type_tb a_idt on a_idt.insp_detail_type_id = q_ir.insp_detail_type_id
+      WHERE a_idt.insp_detail_type_cd = 'OUT_RECEIVE'
+      GROUP BY q_ir.insp_reference_id) q_ir 	ON q_ir.insp_reference_id = o_rd.receive_detail_id
     LEFT JOIN aut_user_tb a_uc ON a_uc.uid = o_rd.created_uid
     LEFT JOIN aut_user_tb a_uu ON a_uu.uid = o_rd.updated_uid
     ${searchQuery}

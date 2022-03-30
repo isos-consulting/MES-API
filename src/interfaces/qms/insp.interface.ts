@@ -1,7 +1,7 @@
 export default interface IQmsInsp {
   insp_id?: number,
   factory_id?: number,
-  insp_type_cd?: string,
+  insp_type_id?: number,
   insp_no?: string,
   prod_id?: number,
   reg_date?: string,

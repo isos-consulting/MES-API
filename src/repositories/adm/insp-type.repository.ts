@@ -64,7 +64,7 @@ class AdmInspTypeRepo {
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
-					// [ Sequelize.col('admInspType.uuid'), 'insp_type_uuid' ],
+					[ Sequelize.col('admInspType.uuid'), 'insp_type_uuid' ],
           'insp_type_cd',
           'insp_type_nm',
           'worker_fg',
@@ -94,7 +94,7 @@ class AdmInspTypeRepo {
 					{ model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
 				],
 				attributes: [
-					// [ Sequelize.col('admInspType.uuid'), 'insp_type_uuid' ],
+					[ Sequelize.col('admInspType.uuid'), 'insp_type_uuid' ],
 					'insp_type_cd',
           'insp_type_nm',
           'worker_fg',
@@ -123,6 +123,12 @@ class AdmInspTypeRepo {
 	// 📒 Fn[readRawByUuid]: Id 를 포함한 Raw Data Read Function
 	public readRawByUuid = async(uuid: string) => {
 		const result = await this.repo.findOne({ where: { uuid } });
+		return convertReadResult(result);
+	};
+
+  // 📒 Fn[readRawById]: Id 기준 Raw Data Read Function
+	public readRawById = async(id: number) => {
+		const result = await this.repo.findOne({ where: { insp_type_cd: id } });
 		return convertReadResult(result);
 	};
 

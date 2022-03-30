@@ -1,4 +1,3 @@
+const moment = require('moment');
 
-import { BOM_INPUT_TYPE } from "../src/types/bom-input-type.type";
-
-console.log(Object.values(BOM_INPUT_TYPE).includes(1));
+console.log(moment(moment.now()).format('YYYY-MM-DD').toString());

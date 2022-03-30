@@ -42,11 +42,11 @@ export default class QmsRework extends Model<IQmsRework> {
   reg_date: string;
 
   @Column({
-    comment: '재작업 유형 코드',
-    type: DataType.STRING(20),
+    comment: '재작업 유형ID',
+    type: DataType.INTEGER,
     allowNull: false,
   })
-  rework_type_cd: string;
+  rework_type_id: number;
 
   @ForeignKey(() => StdProd)
   @Column({
@@ -170,7 +170,7 @@ export default class QmsRework extends Model<IQmsRework> {
   @BelongsTo(() => StdReject, { foreignKey: 'reject_id', targetKey: 'reject_id', onDelete: 'restrict', onUpdate: 'cascade' })
   stdReject: StdReject;
 
-  @BelongsTo(() => AdmReworkType, { foreignKey: 'rework_type_cd', targetKey: 'rework_type_cd', constraints: false })
+  @BelongsTo(() => AdmReworkType, { foreignKey: 'rework_type_id', targetKey: 'rework_type_id', constraints: false })
   admReworkType: AdmReworkType;
 
   @BelongsTo(() => StdStore, { as: 'fromStore', foreignKey: 'from_store_id', targetKey: 'store_id', onDelete: 'restrict', onUpdate: 'cascade' })

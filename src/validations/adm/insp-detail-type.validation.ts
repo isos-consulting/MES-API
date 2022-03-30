@@ -6,8 +6,12 @@ const stateTag = 'admInspDetailType';
 
 const admInspDetailTypeValidation = {
   read: [ 
-    query('insp_type_uuid').optional({ nullable: true })
-      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'insp_type_uuid', '검사유형UUID'))
+    query('insp_type_uuid', '검사유형UUID').optional({ nullable: true })
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'insp_type_uuid', '검사유형UUID')),
+    query('insp_type_cd', '검사유형코드').optional({ nullable: true })
+      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'insp_type_cd', '검사유형코드')),
+    query('insp_detail_type_cd', '세부검사유형코드').optional({ nullable: true })
+      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'insp_detail_type_cd', '세부검사유형코드'))
   ],
   readByUuid: [ 
     param('uuid', '세부검사유형UUID')

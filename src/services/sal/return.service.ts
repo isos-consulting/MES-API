@@ -109,7 +109,7 @@ class SalReturnService {
    * @param _transaction Transaction
    * @returns 합계 금액, 수량이 계산 된 전표 결과
    */
-   updateTotal = async (id: number, uuid: string, uid: number, tran?: Transaction) => {
+  updateTotal = async (id: number, uuid: string, uid: number, tran?: Transaction) => {
     const getTotals = await this.detailRepo.getTotals(id, tran);
     const totalQty = getTotals?.totalQty;
     const totalPrice = getTotals?.totalPrice;

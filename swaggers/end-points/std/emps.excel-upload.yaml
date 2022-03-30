@@ -28,6 +28,7 @@ post:
             - $ref: ../../schemas/std/emp.schema.yaml#/hp
             - $ref: ../../schemas/std/emp.schema.yaml#/enter_date
             - $ref: ../../schemas/std/emp.schema.yaml#/leave_date
+            - $ref: ../../schemas/std/emp.schema.yaml#/worker_fg
             - $ref: ../../schemas/std/emp.schema.yaml#/remark
   responses:
     201:

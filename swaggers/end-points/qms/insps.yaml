@@ -23,10 +23,19 @@ get:
         type: string
         format: uuid
 
+    - name: insp_type_uuid
+      in: query
+      description: |
+        기준서 유형의 UUID에 따라 검사기준서 데이터를 조회합니다. <br/>
+        [전체 조회시 입력하지 않습니다.]
+      schema:
+        type: string
+        format: uuid
+
     - name: insp_type_cd
       in: query
       description: |
-        기준서 유형 코드에 따라 검사기준서 데이터를 조회합니다. <br/>
+        기준서 유형코드를 입력하여 검사기준서 데이터를 조회합니다. <br/>
         [전체 조회시 입력하지 않습니다.]
       schema:
         type: string
@@ -73,7 +82,8 @@ get:
                             - $ref: ../../schemas/qms/insp.schema.yaml#/factory_uuid
                             - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
                             - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
-                            - $ref: ../../schemas/qms/insp.schema.yaml#/insp_type_cd
+                            - $ref: ../../schemas/qms/insp.schema.yaml#/insp_type_uuid
+                            - $ref: ../../schemas/adm/insp-type.schema.yaml#/insp_type_cd
                             - $ref: ../../schemas/adm/insp-type.schema.yaml#/insp_type_nm
                             - $ref: ../../schemas/qms/insp.schema.yaml#/insp_no
                             - $ref: ../../schemas/qms/insp.schema.yaml#/prod_uuid
@@ -126,14 +136,13 @@ post:
               type: object
               required:
                 - factory_uuid
-                - insp_type_cd
-                - insp_no
+                - insp_type_uuid
                 - prod_uuid
                 - reg_date
               allOf:
                 - $ref: ../../schemas/qms/insp.schema.yaml#/uuid
                 - $ref: ../../schemas/qms/insp.schema.yaml#/factory_uuid
-                - $ref: ../../schemas/qms/insp.schema.yaml#/insp_type_cd
+                - $ref: ../../schemas/qms/insp.schema.yaml#/insp_type_uuid
                 - $ref: ../../schemas/qms/insp.schema.yaml#/insp_no
                 - $ref: ../../schemas/qms/insp.schema.yaml#/prod_uuid
                 - $ref: ../../schemas/qms/insp.schema.yaml#/reg_date
@@ -211,6 +220,7 @@ put:
                   - spec_std
                 type: object
                 allOf:        
+                  - $ref: ../../schemas/qms/insp-detail.schema.yaml#/uuid
                   - $ref: ../../schemas/qms/insp-detail.schema.yaml#/insp_item_desc
                   - $ref: ../../schemas/qms/insp-detail.schema.yaml#/spec_std
                   - $ref: ../../schemas/qms/insp-detail.schema.yaml#/spec_min
@@ -267,6 +277,7 @@ patch:
                   - uuid
                 type: object
                 allOf:        
+                  - $ref: ../../schemas/qms/insp-detail.schema.yaml#/uuid
                   - $ref: ../../schemas/qms/insp-detail.schema.yaml#/insp_item_desc
                   - $ref: ../../schemas/qms/insp-detail.schema.yaml#/spec_std
                   - $ref: ../../schemas/qms/insp-detail.schema.yaml#/spec_min

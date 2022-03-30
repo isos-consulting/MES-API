@@ -41,7 +41,7 @@ get:
                         type: array
                         items:
                           allOf:
-                            - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/uuid
+                            - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/pattern_opt_uuid
                             - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/pattern_opt_cd
                             - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/pattern_opt_nm
                             - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/table_nm

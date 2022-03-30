@@ -34,7 +34,7 @@ export default class PrdWorkRouting extends Model<IPrdWorkRouting> {
   })
   factory_id: number;
 
-  @Unique('prd_work_routing_tb_work_id_proc_id_un')
+  @Unique('prd_work_routing_tb_work_id_proc_id_proc_no_un')
   @ForeignKey(() => PrdWork)
   @Column({
     comment: '실적ID',
@@ -43,7 +43,7 @@ export default class PrdWorkRouting extends Model<IPrdWorkRouting> {
   })
   work_id: number;
 
-  @Unique('prd_work_routing_tb_work_id_proc_id_un')
+  @Unique('prd_work_routing_tb_work_id_proc_id_proc_no_un')
   @ForeignKey(() => StdProc)
   @Column({
     comment: '공정ID',
@@ -52,6 +52,7 @@ export default class PrdWorkRouting extends Model<IPrdWorkRouting> {
   })
   proc_id: number;
 
+  @Unique('prd_work_routing_tb_work_id_proc_id_proc_no_un')
   @Column({
     comment: '공정순서',
     type: DataType.INTEGER,

@@ -32,6 +32,7 @@ class AdmPatternOptRepo {
       const promises = body.map((patternOpt: any) => {
         return this.repo.create(
           {
+            pattern_opt_cd: patternOpt.pattern_opt_cd,
             pattern_opt_nm: patternOpt.pattern_opt_nm,
             table_nm: patternOpt.table_nm,
             auto_fg: patternOpt.auto_fg,
@@ -65,7 +66,7 @@ class AdmPatternOptRepo {
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
-					// [ Sequelize.col('admPatternOpt.uuid'), 'pattern_opt_uuid' ],
+					[ Sequelize.col('admPatternOpt.uuid'), 'pattern_opt_uuid' ],
           'pattern_opt_cd',
           'pattern_opt_nm',
           'table_nm',
@@ -119,7 +120,7 @@ class AdmPatternOptRepo {
 					{ model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
 				],
 				attributes: [
-					// [ Sequelize.col('admPatternOpt.uuid'), 'pattern_opt_uuid' ],
+					[ Sequelize.col('admPatternOpt.uuid'), 'pattern_opt_uuid' ],
 					'pattern_opt_cd',
           'pattern_opt_nm',
           'table_nm',

@@ -23,14 +23,14 @@ get:
         type: string
         format: uuid
 
-    - name: rework_type_cd
+    - name: rework_type_uuid
       in: query
       description: |
-        부적합품 판정 유형 코드에 따라 부적합품판정 데이터를 조회합니다. <br/>
+        부적합품 판정 유형UUID에 따라 부적합품판정 데이터를 조회합니다. <br/>
         [전체 조회시 입력하지 않습니다.]
       schema:
         type: string
-        format: varchar(20)
+        format: uuid
     
     - name: start_date
       in: query
@@ -100,7 +100,8 @@ get:
                             - $ref: ../../schemas/std/unit.schema.yaml#/unit_cd
                             - $ref: ../../schemas/std/unit.schema.yaml#/unit_nm
                             - $ref: ../../schemas/qms/rework.schema.yaml#/lot_no
-                            - $ref: ../../schemas/qms/rework.schema.yaml#/rework_type_cd
+                            - $ref: ../../schemas/qms/rework.schema.yaml#/rework_type_uuid
+                            - $ref: ../../schemas/adm/rework-type.schema.yaml#/rework_type_cd
                             - $ref: ../../schemas/adm/rework-type.schema.yaml#/rework_type_nm
                             - $ref: ../../schemas/std/reject-type.schema.yaml#/reject_type_uuid
                             - $ref: ../../schemas/std/reject-type.schema.yaml#/reject_type_cd
@@ -142,7 +143,7 @@ post:
             - reg_date
             - prod_uuid
             - lot_no
-            - rework_type_cd
+            - rework_type_uuid
             - reject_uuid
             - qty
           allOf:
@@ -150,7 +151,7 @@ post:
             - $ref: ../../schemas/qms/rework.schema.yaml#/reg_date
             - $ref: ../../schemas/qms/rework.schema.yaml#/prod_uuid
             - $ref: ../../schemas/qms/rework.schema.yaml#/lot_no
-            - $ref: ../../schemas/qms/rework.schema.yaml#/rework_type_cd
+            - $ref: ../../schemas/qms/rework.schema.yaml#/rework_type_uuid
             - $ref: ../../schemas/qms/rework.schema.yaml#/reject_uuid
             - $ref: ../../schemas/qms/rework.schema.yaml#/qty
             - $ref: ../../schemas/qms/rework.schema.yaml#/from_store_uuid

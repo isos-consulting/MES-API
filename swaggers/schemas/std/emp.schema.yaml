@@ -104,6 +104,14 @@ leave_date:
       description: 퇴사일자
       type: string
       format: date
+
+worker_fg: 
+  type: object
+  properties: 
+    worker_fg:
+      description: 작업자유무
+      type: boolean
+      format: boolean
       
 remark: 
   type: object

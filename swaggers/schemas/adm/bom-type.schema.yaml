@@ -40,5 +40,12 @@ uuid:
       description: BOM 구성유형UUID
       type: string
       format: uuid
-# Uuids
 
+# Uuids
+bom_type_uuid:
+  type: object
+  properties:
+    bom_type_uuid:
+      description: BOM 구성유형UUID
+      type: string
+      format: uuid

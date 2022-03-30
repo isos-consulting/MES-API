@@ -65,16 +65,21 @@ class AdmInspDetailTypeRepo {
             model: this.sequelize.models.AdmInspType, 
             attributes: [], 
             required: true, 
-            // where: { uuid: params.insp_type_uuid ? params.insp_type_uuid : { [Op.ne]: null } }
+            where: { 
+              [Op.and]: {
+                uuid: params.insp_type_uuid ? params.insp_type_uuid : { [Op.ne]: null },
+                insp_type_cd: params.insp_type_cd ? params.insp_type_cd : { [Op.ne]: null } 
+              }
+            }
           },
           { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
-          // [ Sequelize.col('admInspDetailType.uuid'), 'insp_detail_type_uuid' ],
+          [ Sequelize.col('admInspDetailType.uuid'), 'insp_detail_type_uuid' ],
           'insp_detail_type_cd',
           'insp_detail_type_nm',
-          // [ Sequelize.col('admInspType.uuid'), 'insp_type_uuid' ],
+          [ Sequelize.col('admInspType.uuid'), 'insp_type_uuid' ],
           [ Sequelize.col('admInspType.insp_type_cd'), 'insp_type_cd' ],
           [ Sequelize.col('admInspType.insp_type_nm'), 'insp_type_nm' ],
           'worker_fg',
@@ -84,6 +89,11 @@ class AdmInspDetailTypeRepo {
           'updated_at',
           [ Sequelize.col('updateUser.user_nm'), 'updated_nm' ]
         ],
+        where: {
+          [Op.and]: [
+            { insp_detail_type_cd: params.insp_detail_type_cd ? params.insp_detail_type_cd : { [Op.ne]: null } }
+          ]
+        },
         order: [ 'sortby' ],
       });
 
@@ -99,20 +109,15 @@ class AdmInspDetailTypeRepo {
 		try {
 			const result = await this.repo.findOne({ 
 				include: [
-					{ 
-            model: this.sequelize.models.AdmInspType, 
-            attributes: [], 
-            required: true, 
-            where: { uuid: params.insp_type_uuid ? params.insp_type_uuid : { [Op.ne]: null } }
-          },
+					{ model: this.sequelize.models.AdmInspType, attributes: [], required: true },
 					{ model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
 					{ model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
 				],
 				attributes: [
-					// [ Sequelize.col('admInspDetailType.uuid'), 'insp_detail_type_uuid' ],
+					[ Sequelize.col('admInspDetailType.uuid'), 'insp_detail_type_uuid' ],
 					'insp_detail_type_cd',
           'insp_detail_type_nm',
-          // [ Sequelize.col('admInspType.uuid'), 'insp_type_uuid' ],
+          [ Sequelize.col('admInspType.uuid'), 'insp_type_uuid' ],
           [ Sequelize.col('admInspType.insp_type_cd'), 'insp_type_cd' ],
           [ Sequelize.col('admInspType.insp_type_nm'), 'insp_type_nm' ],
           'worker_fg',
@@ -140,6 +145,12 @@ class AdmInspDetailTypeRepo {
 	// 📒 Fn[readRawByUuid]: Id 를 포함한 Raw Data Read Function
 	public readRawByUuid = async(uuid: string) => {
 		const result = await this.repo.findOne({ where: { uuid } });
+		return convertReadResult(result);
+	};
+
+  // 📒 Fn[readRawById]: Id 를 포함한 Raw Data Read Function
+	public readRawById = async(insp_detail_type_id: number) => {
+		const result = await this.repo.findOne({ where: { insp_detail_type_id } });
 		return convertReadResult(result);
 	};
 

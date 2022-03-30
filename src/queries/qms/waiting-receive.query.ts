@@ -1,6 +1,6 @@
 const readWaitingReceive = (
   params: {
-    insp_detail_type: 'all' | 'matReceive' | 'outReceive'
+    insp_detail_type: undefined | 'MAT_RECEIVE' | 'OUT_RECEIVE'
     factory_uuid?: string,
     start_date?: string,
     end_date?: string
@@ -14,8 +14,12 @@ const readWaitingReceive = (
       m_r.stmt_no,
       concat(m_r.stmt_no, '-', m_rd.seq) as stmt_no_sub,
       m_r.reg_date as reg_date,
-      'MAT_RECEIVE' as insp_detail_type_cd,
-      '자재수입검사' as insp_detail_type_nm,
+      a_it.uuid as insp_type_uuid,
+      a_it.insp_type_cd,
+      a_it.insp_type_nm,
+      a_idt.uuid as insp_detail_type_uuid,
+      a_idt.insp_detail_type_cd,
+      a_idt.insp_detail_type_nm,
       s_f.uuid as factory_uuid,
       s_f.factory_cd,
       s_f.factory_nm,
@@ -84,10 +88,13 @@ const readWaitingReceive = (
     LEFT JOIN std_store_tb s_s ON s_s.store_id = m_rd.to_store_id
     LEFT JOIN std_location_tb s_l ON s_l.location_id = m_rd.to_location_id
     LEFT JOIN mat_income_tb m_i ON m_i.receive_detail_id = m_rd.receive_detail_id
-    LEFT JOIN (	SELECT insp_reference_id, count(*) AS cnt 
-      FROM qms_insp_result_tb
-      WHERE insp_type_cd = 'RECEIVE_INSP'
-      GROUP BY insp_reference_id) q_ir 	ON q_ir.insp_reference_id = m_rd.receive_detail_id
+    LEFT JOIN (	
+      SELECT q_ir.insp_reference_id, count(q_ir.*) AS cnt 
+      FROM qms_insp_result_tb q_ir
+      LEFT JOIN adm_insp_detail_type_tb a_idt on a_idt.insp_detail_type_id = q_ir.insp_detail_type_id AND a_idt.insp_detail_type_cd = 'MAT_RECEIVE'
+      GROUP BY q_ir.insp_reference_id) q_ir 	ON q_ir.insp_reference_id = m_rd.receive_detail_id      
+    LEFT JOIN adm_insp_detail_type_tb a_idt on a_idt.insp_detail_type_cd = 'MAT_RECEIVE'
+    LEFT JOIN adm_insp_type_tb a_it on a_it.insp_type_id = a_idt.insp_type_id
     LEFT JOIN aut_user_tb a_uc ON a_uc.uid = m_rd.created_uid
     LEFT JOIN aut_user_tb a_uu ON a_uu.uid = m_rd.updated_uid
     WHERE (m_rd.insp_fg = TRUE AND COALESCE(q_ir.cnt, 0) = 0)
@@ -103,8 +110,12 @@ const readWaitingReceive = (
       o_r.stmt_no,
       concat(o_r.stmt_no, '-', o_rd.seq) as stmt_no_sub,
       o_r.reg_date as reg_date,
-      'OUT_RECEIVE' as insp_detail_type_cd,
-      '외주수입검사' as insp_detail_type_nm,
+      a_it.uuid as insp_type_uuid,
+      a_it.insp_type_cd,
+      a_it.insp_type_nm,
+      a_idt.uuid as insp_detail_type_uuid,
+      a_idt.insp_detail_type_cd,
+      a_idt.insp_detail_type_nm,
       s_f.uuid as factory_uuid,
       s_f.factory_cd,
       s_f.factory_nm,
@@ -152,7 +163,7 @@ const readWaitingReceive = (
       s_l.location_nm as to_location_nm,
       o_rd.remark,
       o_rd.barcode,
-      m_i.uuid as income_uuid,
+      o_i.uuid as income_uuid,
       o_rd.created_at,
       o_rd.created_uid,
       a_uc.user_nm as created_nm,
@@ -172,11 +183,14 @@ const readWaitingReceive = (
     LEFT JOIN mat_order_detail_tb m_od	ON m_od.order_detail_id = o_rd.order_detail_id
     LEFT JOIN std_store_tb s_s ON s_s.store_id = o_rd.to_store_id
     LEFT JOIN std_location_tb s_l ON s_l.location_id = o_rd.to_location_id
-    LEFT JOIN mat_income_tb m_i ON m_i.receive_detail_id = o_rd.receive_detail_id
-    LEFT JOIN (	SELECT insp_reference_id, count(*) AS cnt 
-      FROM qms_insp_result_tb
-      WHERE insp_type_cd = 'RECEIVE_INSP'
-      GROUP BY insp_reference_id) q_ir 	ON q_ir.insp_reference_id = o_rd.receive_detail_id
+    LEFT JOIN out_income_tb o_i ON o_i.receive_detail_id = o_rd.receive_detail_id
+    LEFT JOIN (	
+      SELECT q_ir.insp_reference_id, count(q_ir.*) AS cnt 
+      FROM qms_insp_result_tb q_ir
+      LEFT JOIN adm_insp_detail_type_tb a_idt on a_idt.insp_detail_type_id = q_ir.insp_detail_type_id AND a_idt.insp_detail_type_cd = 'OUT_RECEIVE'
+      GROUP BY q_ir.insp_reference_id) q_ir 	ON q_ir.insp_reference_id = o_rd.receive_detail_id      
+    LEFT JOIN adm_insp_detail_type_tb a_idt on a_idt.insp_detail_type_cd = 'OUT_RECEIVE'
+    LEFT JOIN adm_insp_type_tb a_it on a_it.insp_type_id = a_idt.insp_type_id
     LEFT JOIN aut_user_tb a_uc ON a_uc.uid = o_rd.created_uid
     LEFT JOIN aut_user_tb a_uu ON a_uu.uid = o_rd.updated_uid
     WHERE (o_rd.insp_fg = TRUE AND COALESCE(q_ir.cnt, 0) = 0)
@@ -186,27 +200,27 @@ const readWaitingReceive = (
 
   let query: string;
   switch (params.insp_detail_type) {
-    case 'all': 
-      query = `
-        ${readMaterialQuery}
-        UNION ALL
-        ${readOutsourcingQuery}
-        ORDER BY factory_uuid, reg_date, receive_uuid, seq, receive_detail_uuid;
-      `;
-      break;
-    case 'matReceive':
+    
+    case 'MAT_RECEIVE':
       query = `
         ${readMaterialQuery}
         ORDER BY m_rd.factory_id, m_r.reg_date, m_rd.receive_id, m_rd.seq, m_rd.receive_detail_id;
       `;
       break;
-    case 'outReceive':
+    case 'OUT_RECEIVE':
       query = `
         ${readOutsourcingQuery}
         ORDER BY o_rd.factory_id, o_r.reg_date, o_rd.receive_id, o_rd.seq, o_rd.receive_detail_id;
       `;
       break;
-    default: query = ''; break;
+    default: 
+      query = `
+        ${readMaterialQuery}
+        UNION
+        ${readOutsourcingQuery}
+        ORDER BY factory_uuid, reg_date, receive_uuid, seq, receive_detail_uuid;
+      `;
+      break;
   }
 
   return query;

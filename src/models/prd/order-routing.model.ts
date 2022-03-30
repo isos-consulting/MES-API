@@ -34,7 +34,7 @@ export default class PrdOrderRouting extends Model<IPrdOrderRouting> {
   })
   factory_id: number;
 
-  @Unique('prd_order_routing_tb_order_id_proc_id_un')
+  @Unique('prd_order_routing_tb_order_id_proc_id_proc_no_un')
   @ForeignKey(() => PrdOrder)
   @Column({
     comment: '지시ID',
@@ -43,7 +43,7 @@ export default class PrdOrderRouting extends Model<IPrdOrderRouting> {
   })
   order_id: number;
 
-  @Unique('prd_order_routing_tb_order_id_proc_id_un')
+  @Unique('prd_order_routing_tb_order_id_proc_id_proc_no_un')
   @ForeignKey(() => StdProc)
   @Column({
     comment: '공정ID',
@@ -52,6 +52,7 @@ export default class PrdOrderRouting extends Model<IPrdOrderRouting> {
   })
   proc_id: number;
 
+  @Unique('prd_order_routing_tb_order_id_proc_id_proc_no_un')
   @Column({
     comment: '공정순서',
     type: DataType.INTEGER,

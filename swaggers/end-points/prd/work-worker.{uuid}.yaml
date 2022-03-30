@@ -47,8 +47,8 @@ get:
                             - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
                             - $ref: ../../schemas/prd/work-worker.schema.yaml#/work_uuid
                             - $ref: ../../schemas/prd/work-worker.schema.yaml#/work_routing_uuid
-                            - $ref: ../../schemas/prd/work-worker.schema.yaml#/worker_uuid
-                            - $ref: ../../schemas/std/worker.schema.yaml#/worker_nm
+                            - $ref: ../../schemas/prd/work-worker.schema.yaml#/emp_uuid
+                            - $ref: ../../schemas/std/emp.schema.yaml#/emp_nm
                             - $ref: ../../schemas/prd/work-worker.schema.yaml#/start_date
                             - $ref: ../../schemas/prd/work-worker.schema.yaml#/end_date
                             - $ref: ../../schemas/prd/work-worker.schema.yaml#/work_time

@@ -50,11 +50,14 @@ get:
                                 - $ref: ../../schemas/qms/insp-result.schema.yaml#/factory_uuid
                                 - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
                                 - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
-                                - $ref: ../../schemas/qms/insp-result.schema.yaml#/insp_type_cd
+                                - $ref: ../../schemas/qms/insp-result.schema.yaml#/insp_type_uuid
+                                - $ref: ../../schemas/adm/insp-type.schema.yaml#/insp_type_cd
                                 - $ref: ../../schemas/adm/insp-type.schema.yaml#/insp_type_nm
-                                - $ref: ../../schemas/qms/insp-result.schema.yaml#/insp_detail_type_cd
+                                - $ref: ../../schemas/qms/insp-result.schema.yaml#/insp_detail_type_uuid
+                                - $ref: ../../schemas/adm/insp-detail-type.schema.yaml#/insp_detail_type_cd
                                 - $ref: ../../schemas/adm/insp-detail-type.schema.yaml#/insp_detail_type_nm
-                                - $ref: ../../schemas/qms/insp-result.schema.yaml#/insp_handling_type_cd
+                                - $ref: ../../schemas/qms/insp-result.schema.yaml#/insp_handling_type_uuid
+                                - $ref: ../../schemas/adm/insp-handling-type.schema.yaml#/insp_handling_type_cd
                                 - $ref: ../../schemas/adm/insp-handling-type.schema.yaml#/insp_handling_type_nm
                                 - $ref: ../../schemas/qms/insp-result.schema.yaml#/receive_detail_uuid
                                 - $ref: ../../schemas/mat/receive-detail.schema.yaml#/stmt_no_sub

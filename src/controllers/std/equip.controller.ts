@@ -32,6 +32,7 @@ class StdEquipCtl {
       const service = new StdEquipService(req.tenant.uuid);
       const fileService = new AdmFileMgmtService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
+      console.log(matched);
       const datas: any[] = await service.convertFk(Object.values(matched));
 
 			let fileUuids: string[] = [];
@@ -52,7 +53,7 @@ class StdEquipCtl {
       });
 
       // 📌 Temp S3에 있는 File 데이터를 Real S3로 이동
-      await fileService.moveToRealStorage(fileUuids);
+      if (fileUuids) { await fileService.moveToRealStorage(fileUuids); }
 			
       return createApiResult(res, result, 201, '데이터 생성 성공', this.stateTag, successState.CREATE);
     } catch (error) {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              

@@ -56,8 +56,8 @@ get:
                             - $ref: ../../schemas/std/factory.schema.yaml#/factory_cd
                             - $ref: ../../schemas/std/factory.schema.yaml#/factory_nm
                             - $ref: ../../schemas/prd/order-worker.schema.yaml#/order_uuid
-                            - $ref: ../../schemas/prd/order-worker.schema.yaml#/worker_uuid
-                            - $ref: ../../schemas/std/worker.schema.yaml#/worker_nm
+                            - $ref: ../../schemas/prd/order-worker.schema.yaml#/emp_uuid
+                            - $ref: ../../schemas/std/emp.schema.yaml#/emp_nm
                             - $ref: ../../schemas/common/timestamp.schema.yaml
     500:
       $ref: ../../responses/common/general-error.response.yaml
@@ -76,11 +76,11 @@ post:
           required:
             - factory_uuid
             - order_uuid
-            - worker_uuid
+            - emp_uuid
           allOf:
             - $ref: ../../schemas/prd/order-worker.schema.yaml#/factory_uuid
             - $ref: ../../schemas/prd/order-worker.schema.yaml#/order_uuid
-            - $ref: ../../schemas/prd/order-worker.schema.yaml#/worker_uuid
+            - $ref: ../../schemas/prd/order-worker.schema.yaml#/emp_uuid
   responses:
     201:
       $ref: ../../responses/common/succeed-create.response.yaml
@@ -100,10 +100,10 @@ put:
         schema:
           required:
             - uuid
-            - worker_uuid
+            - emp_uuid
           allOf:
             - $ref: ../../schemas/prd/order-worker.schema.yaml#/uuid
-            - $ref: ../../schemas/prd/order-worker.schema.yaml#/worker_uuid
+            - $ref: ../../schemas/prd/order-worker.schema.yaml#/emp_uuid
   responses:
     201:
       $ref: ../../responses/common/succeed-update.response.yaml
@@ -125,7 +125,7 @@ patch:
             - uuid
           allOf:
             - $ref: ../../schemas/prd/order-worker.schema.yaml#/uuid
-            - $ref: ../../schemas/prd/order-worker.schema.yaml#/worker_uuid
+            - $ref: ../../schemas/prd/order-worker.schema.yaml#/emp_uuid
   responses:
     201:
       $ref: ../../responses/common/succeed-update.response.yaml

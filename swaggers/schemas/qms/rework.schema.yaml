@@ -33,13 +33,13 @@ prod_id:
       type: number
       format: int4
 
-rework_type_cd: 
+rework_type_id: 
   type: object
   properties: 
-    rework_type_cd:
-      description: 부적합품판정 유형 코드
-      type: string
-      format: varchar(20)
+    rework_type_id:
+      description: 부적합품판정 유형ID
+      type: number
+      format: int4
 
 reject_id: 
   type: object
@@ -143,6 +143,14 @@ reject_uuid:
   properties: 
     reject_uuid:
       description: 부적합항목UUID
+      type: string
+      format: uuid
+
+rework_type_uuid:
+  type: object
+  properties: 
+    rework_type_uuid:
+      description: 부적합판정 유형UUID
       type: string
       format: uuid
 

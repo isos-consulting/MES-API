@@ -33,7 +33,7 @@ get:
                         type: array
                         items:
                           allOf:
-                            - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/uuid
+                            - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/pattern_opt_uuid
                             - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/pattern_opt_cd
                             - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/pattern_opt_nm
                             - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/table_nm
@@ -58,6 +58,8 @@ post:
           required:
             - pattern_opt_cd
             - pattern_opt_nm
+            - table_nm
+            - auto_fg
           allOf:
             - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/pattern_opt_cd
             - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/pattern_opt_nm
@@ -86,6 +88,8 @@ put:
             - uuid
             - pattern_opt_cd
             - pattern_opt_nm
+            - table_nm
+            - auto_fg
           allOf:
             - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/uuid
             - $ref: ../../schemas/adm/pattern-opt.schema.yaml#/pattern_opt_cd

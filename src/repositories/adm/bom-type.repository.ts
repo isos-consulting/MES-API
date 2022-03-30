@@ -63,7 +63,7 @@ class AdmBomTypeRepo {
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
-					// [ Sequelize.col('admBomType.uuid'), 'bom_type_uuid' ],
+					[ Sequelize.col('admBomType.uuid'), 'bom_type_uuid' ],
           'bom_type_cd',
           'bom_type_nm',
 					'sortby',
@@ -72,7 +72,6 @@ class AdmBomTypeRepo {
           'updated_at',
           [ Sequelize.col('updateUser.user_nm'), 'updated_nm' ]
         ],
-        where: params.bom_type_cd ? { bom_type_cd: params.bom_type_cd } : {},
         order: [ 'sortby' ],
       });
 
@@ -93,7 +92,7 @@ class AdmBomTypeRepo {
 					{ model: sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
 				],
 				attributes: [
-					// [ Sequelize.col('admBomType.uuid'), 'bom_type_uuid' ],
+					[ Sequelize.col('admBomType.uuid'), 'bom_type_uuid' ],
 					'bom_type_cd',
           'bom_type_nm',
 					'sortby',

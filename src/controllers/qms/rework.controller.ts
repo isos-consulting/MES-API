@@ -18,6 +18,7 @@ import response from '../../utils/response';
 import testErrorHandlingHelper from '../../utils/testErrorHandlingHelper';
 import BaseCtl from '../base.controller';
 import config from '../../configs/config';
+import AdmReworkTypeRepo from '../../repositories/adm/rework-type.repository';
 
 class QmsReworkCtl extends BaseCtl {
   constructor() {
@@ -77,6 +78,13 @@ class QmsReworkCtl extends BaseCtl {
         idName: 'location_id',
         idAlias: 'to_location_id',
         uuidName: 'to_location_uuid'
+      },
+      {
+        key: 'reworkType',
+        TRepo: AdmReworkTypeRepo,
+        idName: 'rework_type_id',
+        idAlias: 'rework_type_id',
+        uuidName: 'rework_type_uuid'
       },
     ];
   };

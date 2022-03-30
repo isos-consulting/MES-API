@@ -112,6 +112,18 @@ class OutReceiveDetailRepo {
     return convertReadResult(result);
   };
 
+  // 📒 Fn[readRawsByIds]: Id 를 포함한 Raw Datas Read Function
+  public readRawsByIds = async(ids: number[]) => {
+    const result = await this.repo.findAll({ where: { receive_detail_id: { [Op.in]: ids } } });
+    return convertReadResult(result);
+  };
+
+  // 📒 Fn[readRawById]: Id 를 포함한 Raw Data Read Function
+  public readRawById = async(id: number) => {
+    const result = await this.repo.findOne({ where: { receive_detail_id: id } });
+    return convertReadResult(result);
+  };
+
   //#endregion
 
   //#region 🟡 Update Functions

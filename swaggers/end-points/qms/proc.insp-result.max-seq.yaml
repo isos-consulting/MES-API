@@ -14,13 +14,11 @@ get:
         type: string
         format: uuid
 
-    - name: insp_detail_type
+    - name: insp_detail_type_uuid
       in: query
       required: true
       description: |
-        성적서의 최대 차수 조회시 세부검사유형을 입력합니다. <br/> 
-        [selfProc]: 자주검사 조회 <br/>
-        [patrolProc]: 순회검사 조회
+        성적서의 최대 차수 조회시 세부검사유형 UUID를 입력합니다.
       schema:
         type: string
         format: string

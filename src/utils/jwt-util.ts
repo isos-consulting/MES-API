@@ -18,7 +18,7 @@ const sign = (user: IUser) => {
   // secret으로 sign하여 발급하고 return
   return jwt.sign(payload, secret, {
     algorithm: 'HS256',
-    expiresIn: '30m',
+    expiresIn: '7d',
     subject: 'iso-was-access-token',
     issuer: 'isos',
     audience: 'iso-client-user'

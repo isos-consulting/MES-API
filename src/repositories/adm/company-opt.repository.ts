@@ -66,7 +66,7 @@ class AdmCompanyOptRepo {
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
-					// [ Sequelize.col('admCompanyOpt.uuid'), 'company_opt_uuid' ],
+					[ Sequelize.col('admCompanyOpt.uuid'), 'company_opt_uuid' ],
           'company_opt_cd',
           'company_opt_nm',
           'remark',
@@ -96,7 +96,7 @@ class AdmCompanyOptRepo {
 					{ model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
 				],
 				attributes: [
-					// [ Sequelize.col('admCompanyOpt.uuid'), 'company_opt_uuid' ],
+					[ Sequelize.col('admCompanyOpt.uuid'), 'company_opt_uuid' ],
 					'company_opt_cd',
           'company_opt_nm',
           'remark',

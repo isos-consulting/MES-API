@@ -10,7 +10,6 @@ import { getSequelize } from '../../utils/getSequelize';
 import ApiResult from '../../interfaces/common/api-result.interface';
 import QmsInspResult from '../../models/qms/insp-result.model';
 import IQmsInspResult from '../../interfaces/qms/insp-result.interface';
-import getInspTypeCd from '../../utils/getInspTypeCd';
 import { readWaitingReceive } from '../../queries/qms/waiting-receive.query';
 
 class QmsInspResultRepo {
@@ -37,9 +36,9 @@ class QmsInspResultRepo {
         return this.repo.create(
           {
             factory_id: inspResult.factory_id,
-            insp_type_cd: inspResult.insp_type_cd,
-            insp_detail_type_cd: inspResult.insp_detail_type_cd,
-            insp_handling_type_cd: inspResult.insp_handling_type_cd,
+            insp_type_id: inspResult.insp_type_id,
+            insp_detail_type_id: inspResult.insp_detail_type_id,
+            insp_handling_type_id: inspResult.insp_handling_type_id,
             insp_reference_id: inspResult.insp_reference_id,
             seq: inspResult.seq,
             insp_id: inspResult.insp_id,
@@ -82,6 +81,7 @@ class QmsInspResultRepo {
   // 📒 Fn[readWaitingReceive]: 수입검사 성적서 대기 List Read Function
   public readWaitingReceive = async(params?: any) => {
     try {
+      console.log('abc');
       const result = await this.sequelize.query(readWaitingReceive(params));
       return convertReadResult(result[0]);
     } catch (error) {
@@ -107,8 +107,18 @@ class QmsInspResultRepo {
             required: true, 
             where: { uuid: params.factory_uuid ? params.factory_uuid : { [Op.ne]: null } }
           },
-          { model: this.sequelize.models.AdmInspType, attributes: [], required: true },
-          { model: this.sequelize.models.AdmInspDetailType, attributes: [], required: false },
+          { 
+            model: this.sequelize.models.AdmInspType, 
+            attributes: [], 
+            required: true,
+            where: { insp_type_cd: 'RECEIVE_INSP' }
+          },
+          { 
+            model: this.sequelize.models.AdmInspDetailType, 
+            attributes: [], 
+            required: false,
+            where: { insp_detail_type_cd: 'MAT_RECEIVE' }
+          },
           { model: this.sequelize.models.AdmInspHandlingType, attributes: [], required: false },
           { 
             model: this.sequelize.models.MatReceiveDetail,
@@ -156,11 +166,14 @@ class QmsInspResultRepo {
           [ Sequelize.col('stdFactory.uuid'), 'factory_uuid' ],
           [ Sequelize.col('stdFactory.factory_cd'), 'factory_cd' ],
           [ Sequelize.col('stdFactory.factory_nm'), 'factory_nm' ],
-          'insp_type_cd',
+          [ Sequelize.col('admInspType.uuid'), 'insp_type_uuid' ],
+          [ Sequelize.col('admInspType.insp_type_cd'), 'insp_type_cd' ],
           [ Sequelize.col('admInspType.insp_type_nm'), 'insp_type_nm' ],
-          'insp_detail_type_cd',
+          [ Sequelize.col('admInspDetailType.uuid'), 'insp_detail_type_uuid' ],
+          [ Sequelize.col('admInspDetailType.insp_detail_type_cd'), 'insp_detail_type_cd' ],
           [ Sequelize.col('admInspDetailType.insp_detail_type_nm'), 'insp_detail_type_nm' ],
-          'insp_handling_type_cd',
+          [ Sequelize.col('admInspHandlingType.uuid'), 'insp_handling_type_uuid' ],
+          [ Sequelize.col('admInspHandlingType.insp_handling_type_cd'), 'insp_handling_type_cd' ],
           [ Sequelize.col('admInspHandlingType.insp_handling_type_nm'), 'insp_handling_type_nm' ],
           [ Sequelize.col('matReceiveDetail.uuid'), 'receive_detail_uuid' ],
           [ Sequelize.fn('concat', Sequelize.col('matReceiveDetail.matReceive.stmt_no'), '-', Sequelize.col('matReceiveDetail.seq')), 'stmt_no_sub'],
@@ -222,9 +235,7 @@ class QmsInspResultRepo {
         ],
         where: {
           [Op.and]: [
-            params.start_date && params.end_date ? dateWhereOptions : {},
-            { insp_detail_type_cd: 'MAT_RECEIVE' },
-            { insp_type_cd: getInspTypeCd('RECEIVE_INSP') }
+            params.start_date && params.end_date ? dateWhereOptions : {}
           ]
         },
         order: [ 'factory_id', 'insp_reference_id' ],
@@ -289,11 +300,14 @@ class QmsInspResultRepo {
           [ Sequelize.col('stdFactory.uuid'), 'factory_uuid' ],
           [ Sequelize.col('stdFactory.factory_cd'), 'factory_cd' ],
           [ Sequelize.col('stdFactory.factory_nm'), 'factory_nm' ],
-          'insp_type_cd',
+          [ Sequelize.col('admInspType.uuid'), 'insp_type_uuid' ],
+          [ Sequelize.col('admInspType.insp_type_cd'), 'insp_type_cd' ],
           [ Sequelize.col('admInspType.insp_type_nm'), 'insp_type_nm' ],
-          'insp_detail_type_cd',
+          [ Sequelize.col('admInspDetailType.uuid'), 'insp_detail_type_uuid' ],
+          [ Sequelize.col('admInspDetailType.insp_detail_type_cd'), 'insp_detail_type_cd' ],
           [ Sequelize.col('admInspDetailType.insp_detail_type_nm'), 'insp_detail_type_nm' ],
-          'insp_handling_type_cd',
+          [ Sequelize.col('admInspHandlingType.uuid'), 'insp_handling_type_uuid' ],
+          [ Sequelize.col('admInspHandlingType.insp_handling_type_cd'), 'insp_handling_type_cd' ],
           [ Sequelize.col('admInspHandlingType.insp_handling_type_nm'), 'insp_handling_type_nm' ],
           [ Sequelize.col('matReceiveDetail.uuid'), 'receive_detail_uuid' ],
           [ Sequelize.fn('concat', Sequelize.col('matReceiveDetail.matReceive.stmt_no'), '-', Sequelize.col('matReceiveDetail.seq')), 'stmt_no_sub'],
@@ -373,13 +387,20 @@ class QmsInspResultRepo {
             required: true,
             where: { uuid: uuids }
           },
+          { 
+            model: this.sequelize.models.AdmInspType, 
+            attributes: [], 
+            required: true,
+            where: { insp_type_cd: 'RECEIVE_INSP' }
+          },
+          { 
+            model: this.sequelize.models.AdmInspDetailType, 
+            attributes: [], 
+            required: false,
+            where: { insp_detail_type_cd: 'MAT_RECEIVE' }
+          },
         ],
-        where: {
-          [Op.and]: [
-            { insp_detail_type_cd: 'MAT_RECEIVE' },
-            { insp_type_cd: getInspTypeCd('RECEIVE_INSP') }
-          ]
-        }
+        where: {}
       });
 
       return convertReadResult(result);
@@ -406,8 +427,18 @@ class QmsInspResultRepo {
             required: true, 
             where: { uuid: params.factory_uuid ? params.factory_uuid : { [Op.ne]: null } }
           },
-          { model: this.sequelize.models.AdmInspType, attributes: [], required: true },
-          { model: this.sequelize.models.AdmInspDetailType, attributes: [], required: false },
+          { 
+            model: this.sequelize.models.AdmInspType, 
+            attributes: [], 
+            required: true,
+            where: { insp_type_cd: 'RECEIVE_INSP' }
+          },
+          { 
+            model: this.sequelize.models.AdmInspDetailType, 
+            attributes: [], 
+            required: false,
+            where: { insp_detail_type_cd: 'OUT_RECEIVE' }
+          },
           { model: this.sequelize.models.AdmInspHandlingType, attributes: [], required: false },
           { 
             model: this.sequelize.models.OutReceiveDetail,
@@ -456,11 +487,14 @@ class QmsInspResultRepo {
           [ Sequelize.col('stdFactory.uuid'), 'factory_uuid' ],
           [ Sequelize.col('stdFactory.factory_cd'), 'factory_cd' ],
           [ Sequelize.col('stdFactory.factory_nm'), 'factory_nm' ],
-          'insp_type_cd',
+          [ Sequelize.col('admInspType.uuid'), 'insp_type_uuid' ],
+          [ Sequelize.col('admInspType.insp_type_cd'), 'insp_type_cd' ],
           [ Sequelize.col('admInspType.insp_type_nm'), 'insp_type_nm' ],
-          'insp_detail_type_cd',
+          [ Sequelize.col('admInspDetailType.uuid'), 'insp_detail_type_uuid' ],
+          [ Sequelize.col('admInspDetailType.insp_detail_type_cd'), 'insp_detail_type_cd' ],
           [ Sequelize.col('admInspDetailType.insp_detail_type_nm'), 'insp_detail_type_nm' ],
-          'insp_handling_type_cd',
+          [ Sequelize.col('admInspHandlingType.uuid'), 'insp_handling_type_uuid' ],
+          [ Sequelize.col('admInspHandlingType.insp_handling_type_cd'), 'insp_handling_type_cd' ],
           [ Sequelize.col('admInspHandlingType.insp_handling_type_nm'), 'insp_handling_type_nm' ],
           [ Sequelize.col('outReceiveDetail.uuid'), 'receive_detail_uuid' ],
           [ Sequelize.fn('concat', Sequelize.col('outReceiveDetail.outReceive.stmt_no'), '-', Sequelize.col('outReceiveDetail.seq')), 'stmt_no_sub'],
@@ -522,9 +556,7 @@ class QmsInspResultRepo {
         ],
         where: {
           [Op.and]: [
-            params.start_date && params.end_date ? dateWhereOptions : {},
-            { insp_detail_type_cd: 'OUT_RECEIVE' },
-            { insp_type_cd: getInspTypeCd('RECEIVE_INSP') }
+            params.start_date && params.end_date ? dateWhereOptions : {}
           ]
         },
         order: [ 'factory_id', 'insp_reference_id' ],
@@ -590,11 +622,14 @@ class QmsInspResultRepo {
           [ Sequelize.col('stdFactory.uuid'), 'factory_uuid' ],
           [ Sequelize.col('stdFactory.factory_cd'), 'factory_cd' ],
           [ Sequelize.col('stdFactory.factory_nm'), 'factory_nm' ],
-          'insp_type_cd',
+          [ Sequelize.col('admInspType.uuid'), 'insp_type_uuid' ],
+          [ Sequelize.col('admInspType.insp_type_cd'), 'insp_type_cd' ],
           [ Sequelize.col('admInspType.insp_type_nm'), 'insp_type_nm' ],
-          'insp_detail_type_cd',
+          [ Sequelize.col('admInspDetailType.uuid'), 'insp_detail_type_uuid' ],
+          [ Sequelize.col('admInspDetailType.insp_detail_type_cd'), 'insp_detail_type_cd' ],
           [ Sequelize.col('admInspDetailType.insp_detail_type_nm'), 'insp_detail_type_nm' ],
-          'insp_handling_type_cd',
+          [ Sequelize.col('admInspHandlingType.uuid'), 'insp_handling_type_uuid' ],
+          [ Sequelize.col('admInspHandlingType.insp_handling_type_cd'), 'insp_handling_type_cd' ],
           [ Sequelize.col('admInspHandlingType.insp_handling_type_nm'), 'insp_handling_type_nm' ],
           [ Sequelize.col('outReceiveDetail.uuid'), 'receive_detail_uuid' ],
           [ Sequelize.fn('concat', Sequelize.col('outReceiveDetail.outReceive.stmt_no'), '-', Sequelize.col('outReceiveDetail.seq')), 'stmt_no_sub'],
@@ -674,13 +709,20 @@ class QmsInspResultRepo {
             required: true,
             where: { uuid: uuids }
           },
+          { 
+            model: this.sequelize.models.AdmInspType, 
+            attributes: [], 
+            required: true,
+            where: { insp_type_cd: 'RECEIVE_INSP' }
+          },
+          { 
+            model: this.sequelize.models.AdmInspDetailType, 
+            attributes: [], 
+            required: false,
+            where: { insp_detail_type_cd: 'OUT_RECEIVE' }
+          },
         ],
-        where: {
-          [Op.and]: [
-            { insp_detail_type_cd: 'OUT_RECEIVE' },
-            { insp_type_cd: getInspTypeCd('RECEIVE_INSP') }
-          ]
-        }
+        where: {}
       });
 
       return convertReadResult(result);
@@ -709,8 +751,18 @@ class QmsInspResultRepo {
             required: true, 
             where: { uuid: params.factory_uuid ? params.factory_uuid : { [Op.ne]: null } }
           },
-          { model: this.sequelize.models.AdmInspType, attributes: [], required: true },
-          { model: this.sequelize.models.AdmInspDetailType, attributes: [], required: false },
+          { 
+            model: this.sequelize.models.AdmInspType, 
+            attributes: [], 
+            required: true,
+            where: { insp_type_cd: 'PROC_INSP' }
+          },
+          { 
+            model: this.sequelize.models.AdmInspDetailType, 
+            attributes: [], 
+            required: false,
+            where: { uuid: params.insp_detail_type_uuid ? params.insp_detail_type_uuid : { [Op.ne]: null } }
+          },
           { 
             model: this.sequelize.models.PrdWork,
             attributes: [],
@@ -739,9 +791,11 @@ class QmsInspResultRepo {
           [ Sequelize.col('stdFactory.uuid'), 'factory_uuid' ],
           [ Sequelize.col('stdFactory.factory_cd'), 'factory_cd' ],
           [ Sequelize.col('stdFactory.factory_nm'), 'factory_nm' ],
-          'insp_type_cd',
+          [ Sequelize.col('admInspType.uuid'), 'insp_type_uuid' ],
+          [ Sequelize.col('admInspType.insp_type_cd'), 'insp_type_cd' ],
           [ Sequelize.col('admInspType.insp_type_nm'), 'insp_type_nm' ],
-          'insp_detail_type_cd',
+          [ Sequelize.col('admInspDetailType.uuid'), 'insp_detail_type_uuid' ],
+          [ Sequelize.col('admInspDetailType.insp_detail_type_cd'), 'insp_detail_type_cd' ],
           [ Sequelize.col('admInspDetailType.insp_detail_type_nm'), 'insp_detail_type_nm' ],
           [ Sequelize.col('prdWork.uuid'), 'work_uuid' ],
           'seq',
@@ -783,8 +837,6 @@ class QmsInspResultRepo {
         where: {
           [Op.and]: [
             params.start_date && params.end_date ? dateWhereOptions : {},
-            { insp_type_cd: getInspTypeCd('PROC_INSP') },
-            { insp_detail_type_cd: params.insp_detail_type_cd ? params.insp_detail_type_cd : { [Op.ne]: null } },
             { seq: params.seq ? params.seq : { [Op.ne]: null } }
           ]
         },
@@ -827,9 +879,11 @@ class QmsInspResultRepo {
           [ Sequelize.col('stdFactory.uuid'), 'factory_uuid' ],
           [ Sequelize.col('stdFactory.factory_cd'), 'factory_cd' ],
           [ Sequelize.col('stdFactory.factory_nm'), 'factory_nm' ],
-          'insp_type_cd',
+          [ Sequelize.col('admInspType.uuid'), 'insp_type_uuid' ],
+          [ Sequelize.col('admInspType.insp_type_cd'), 'insp_type_cd' ],
           [ Sequelize.col('admInspType.insp_type_nm'), 'insp_type_nm' ],
-          'insp_detail_type_cd',
+          [ Sequelize.col('admInspDetailType.uuid'), 'insp_detail_type_uuid' ],
+          [ Sequelize.col('admInspDetailType.insp_detail_type_cd'), 'insp_detail_type_cd' ],
           [ Sequelize.col('admInspDetailType.insp_detail_type_nm'), 'insp_detail_type_nm' ],
           [ Sequelize.col('prdWork.uuid'), 'work_uuid' ],
           'seq',
@@ -881,11 +935,23 @@ class QmsInspResultRepo {
   public readProcByWorkId = async(workId: number) => {
     try {
       const result = await this.repo.findAll({ 
+        include: [
+          { 
+            model: this.sequelize.models.AdmInspType, 
+            attributes: [], 
+            required: true,
+            where: { insp_type_cd: 'PROC_INSP' }
+          },
+          { 
+            model: this.sequelize.models.AdmInspDetailType, 
+            attributes: [], 
+            required: false,
+            where: { insp_detail_type_cd: [ 'SELF_PROC', 'PATROL_PROC' ] }
+          },
+        ],
         where: {
           [Op.and]: [
-            { insp_reference_id: workId },
-            { insp_detail_type_cd: [ 'SELF_PROC', 'PATROL_PROC' ] },
-            { insp_type_cd: getInspTypeCd('PROC_INSP') }
+            { insp_reference_id: workId }
           ]
         }
       });
@@ -916,7 +982,12 @@ class QmsInspResultRepo {
             required: true, 
             where: { uuid: params.factory_uuid ? params.factory_uuid : { [Op.ne]: null } }
           },
-          { model: this.sequelize.models.AdmInspType, attributes: [], required: true },
+          { 
+            model: this.sequelize.models.AdmInspType, 
+            attributes: [], 
+            required: true,
+            where: { insp_type_cd: 'FINAL_INSP' }
+          },
           { model: this.sequelize.models.AdmInspHandlingType, attributes: [], required: false },
           { model: this.sequelize.models.QmsInsp, attributes: [], required: true },
           {
@@ -952,9 +1023,11 @@ class QmsInspResultRepo {
           [ Sequelize.col('stdFactory.uuid'), 'factory_uuid' ],
           [ Sequelize.col('stdFactory.factory_cd'), 'factory_cd' ],
           [ Sequelize.col('stdFactory.factory_nm'), 'factory_nm' ],
-          'insp_type_cd',
+          [ Sequelize.col('admInspType.uuid'), 'insp_type_uuid' ],
+          [ Sequelize.col('admInspType.insp_type_cd'), 'insp_type_cd' ],
           [ Sequelize.col('admInspType.insp_type_nm'), 'insp_type_nm' ],
-          'insp_handling_type_cd',
+          [ Sequelize.col('admInspHandlingType.uuid'), 'insp_handling_type_uuid' ],
+          [ Sequelize.col('admInspHandlingType.insp_handling_type_cd'), 'insp_handling_type_cd' ],
           [ Sequelize.col('admInspHandlingType.insp_handling_type_nm'), 'insp_handling_type_nm' ],
           'seq',
           [ Sequelize.col('qmsInsp.uuid'), 'insp_uuid' ],
@@ -1018,8 +1091,7 @@ class QmsInspResultRepo {
         ],
         where: {
           [Op.and]: [
-            params.start_date && params.end_date ? dateWhereOptions : {},
-            { insp_type_cd: getInspTypeCd('FINAL_INSP') }
+            params.start_date && params.end_date ? dateWhereOptions : {}
           ]
         },
         order: [ 'factory_id', 'insp_reference_id' ],
@@ -1072,9 +1144,11 @@ class QmsInspResultRepo {
           [ Sequelize.col('stdFactory.uuid'), 'factory_uuid' ],
           [ Sequelize.col('stdFactory.factory_cd'), 'factory_cd' ],
           [ Sequelize.col('stdFactory.factory_nm'), 'factory_nm' ],
-          'insp_type_cd',
+          [ Sequelize.col('admInspType.uuid'), 'insp_type_uuid' ],
+          [ Sequelize.col('admInspType.insp_type_cd'), 'insp_type_cd' ],
           [ Sequelize.col('admInspType.insp_type_nm'), 'insp_type_nm' ],
-          'insp_handling_type_cd',
+          [ Sequelize.col('admInspHandlingType.uuid'), 'insp_handling_type_uuid' ],
+          [ Sequelize.col('admInspHandlingType.insp_handling_type_cd'), 'insp_handling_type_cd' ],
           [ Sequelize.col('admInspHandlingType.insp_handling_type_nm'), 'insp_handling_type_nm' ],
           'seq',
           [ Sequelize.col('qmsInsp.uuid'), 'insp_uuid' ],
@@ -1178,6 +1252,7 @@ class QmsInspResultRepo {
           {
             emp_id: inspResult.emp_id ?? null,
             insp_result_fg: inspResult.insp_result_fg ?? null,
+            insp_handling_type_id: inspResult.insp_handling_type_id ?? null,
             insp_qty: inspResult.insp_qty ?? null,
             pass_qty: inspResult.pass_qty ?? null,
             reject_qty: inspResult.reject_qty ?? null,
@@ -1223,6 +1298,7 @@ class QmsInspResultRepo {
           {
             emp_id: inspResult.emp_id,
             insp_result_fg: inspResult.insp_result_fg,
+            insp_handling_type_id: inspResult.insp_handling_type_id,
             insp_qty: inspResult.insp_qty,
             pass_qty: inspResult.pass_qty,
             reject_qty: inspResult.reject_qty,
@@ -1277,13 +1353,13 @@ class QmsInspResultRepo {
   // 📒 Fn[getMaxSeq]: 성적서의 Max Sequence 조회
   /**
    * 성적서의 Max Sequence 조회
-   * @param inspTypeCd 검사유형 코드
-   * @param inspDetailTypeCd 세부검사유형 코드
+   * @param inspTypeId 검사유형 ID
+   * @param inspDetailTypeId 세부검사유형 ID
    * @param inspReferenceId 전표 ID
    * @param transaction Transaction
    * @returns Max Sequence
    */
-  getMaxSeq = async(inspTypeCd: string, inspDetailTypeCd: string, inspReferenceId: number, transaction?: Transaction) => {
+  getMaxSeq = async(inspTypeId: number, inspDetailTypeId: number, inspReferenceId: number, transaction?: Transaction) => {
     try {
       const result = await this.repo.findOne({ 
         attributes: [
@@ -1291,12 +1367,12 @@ class QmsInspResultRepo {
         ],
         where: { 
           [Op.and]: [
-            { insp_type_cd: inspTypeCd },
-            { insp_detail_type_cd: inspDetailTypeCd },
+            { insp_type_id: inspTypeId },
+            { insp_detail_type_id: inspDetailTypeId },
             { insp_reference_id: inspReferenceId },
           ]
         },
-        group: [ 'insp_type_cd', 'insp_detail_type_cd', 'insp_reference_id' ],
+        group: [ 'insp_type_id', 'insp_detail_type_id', 'insp_reference_id' ],
         transaction
       });
 

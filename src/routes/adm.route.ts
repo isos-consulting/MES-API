@@ -26,17 +26,23 @@ import admTranTypeValidation from '../validations/adm/tran-type.validation';
 import AdmBomInputTypeCtl from '../controllers/adm/bom-input-type.controller';
 import admBomInputTypeValidation from '../validations/adm/bom-input-type.validation';
 import admDemandTypeValidation from '../validations/adm/demand-type.validation';
+import admBomTypeValidation from '../validations/adm/bom-type.validation';
+import admCompanyOptValidation from '../validations/adm/company-opt.validation';
+import admPrdPlanTypeValidation from '../validations/adm/prd-plan-type.validation';
+import admStoreTypeValidation from '../validations/adm/store-type.validation';
+import admPatternOptValidation from '../validations/adm/pattern-opt.validation';
+import admReworkTypeValidation from '../validations/adm/rework-type.validation';
 
 const router = express.Router();
 
 //#region ✅ BomType (BOM 구성 유형)
 const bomType = new AdmBomTypeCtl();
-router.route('/bom-type/:uuid').get(bomType.read);
-router.route('/bom-types').get(bomType.read);
-router.route('/bom-types').post(bomType.create);
-router.route('/bom-types').put(bomType.update);
-router.route('/bom-types').patch(bomType.patch);
-router.route('/bom-types').delete(bomType.delete);
+router.route('/bom-type/:uuid').get(admBomTypeValidation.readByUuid, validationCallback, bomType.readByUuid);
+router.route('/bom-types').get(admBomTypeValidation.read, validationCallback, bomType.read);
+router.route('/bom-types').post(admBomTypeValidation.create, validationCallback, bomType.create);
+router.route('/bom-types').put(admBomTypeValidation.update, validationCallback, bomType.update);
+router.route('/bom-types').patch(admBomTypeValidation.patch, validationCallback, bomType.patch);
+router.route('/bom-types').delete(admBomTypeValidation.delete, validationCallback, bomType.delete);
 //#endregion
 
 //#region ✅ BomType (BOM 투입 유형)
@@ -71,12 +77,12 @@ router.route('/insp-handling-types').delete(inspHandlingType.delete);
 
 //#region ✅ PrdPlanType (생산계획 유형)
 const prdPlanType = new AdmPrdPlanTypeCtl();
-router.route('/prd-plan-type/:uuid').get(prdPlanType.read);
-router.route('/prd-plan-types').get(prdPlanType.read);
-router.route('/prd-plan-types').post(prdPlanType.create);
-router.route('/prd-plan-types').put(prdPlanType.update);
-router.route('/prd-plan-types').patch(prdPlanType.patch);
-router.route('/prd-plan-types').delete(prdPlanType.delete);
+router.route('/prd-plan-type/:uuid').get(admPrdPlanTypeValidation.readByUuid, validationCallback, prdPlanType.readByUuid);
+router.route('/prd-plan-types').get(admPrdPlanTypeValidation.read, validationCallback, prdPlanType.read);
+router.route('/prd-plan-types').post(admPrdPlanTypeValidation.create, validationCallback, prdPlanType.create);
+router.route('/prd-plan-types').put(admPrdPlanTypeValidation.update, validationCallback, prdPlanType.update);
+router.route('/prd-plan-types').patch(admPrdPlanTypeValidation.patch, validationCallback, prdPlanType.patch);
+router.route('/prd-plan-types').delete(admPrdPlanTypeValidation.delete, validationCallback, prdPlanType.delete);
 //#endregion
 
 //#region ✅ InspDetailType (세부검사 유형)
@@ -111,32 +117,32 @@ router.route('/demand-types').delete(admDemandTypeValidation.delete, validationC
 
 //#region ✅ PatternOpt (자동번호발행 옵션)
 const patternOpt = new AdmPatternOptCtl();
-router.route('/pattern-opt/:uuid').get(patternOpt.read);
-router.route('/pattern-opts').get(patternOpt.read);
-router.route('/pattern-opts').post(patternOpt.create);
-router.route('/pattern-opts').put(patternOpt.update);
-router.route('/pattern-opts').patch(patternOpt.patch);
-router.route('/pattern-opts').delete(patternOpt.delete);
+router.route('/pattern-opt/:uuid').get(admPatternOptValidation.readByUuid, validationCallback, patternOpt.readByUuid);
+router.route('/pattern-opts').get(admPatternOptValidation.read, validationCallback, patternOpt.read);
+router.route('/pattern-opts').post(admPatternOptValidation.create, validationCallback, patternOpt.create);
+router.route('/pattern-opts').put(admPatternOptValidation.update, validationCallback, patternOpt.update);
+router.route('/pattern-opts').patch(admPatternOptValidation.patch, validationCallback, patternOpt.patch);
+router.route('/pattern-opts').delete(admPatternOptValidation.delete, validationCallback, patternOpt.delete);
 //#endregion
 
 //#region ✅ ReworkType (재작업 유형)
 const reworkType = new AdmReworkTypeCtl();
-router.route('/rework-type/:uuid').get(reworkType.read);
-router.route('/rework-types').get(reworkType.read);
-router.route('/rework-types').post(reworkType.create);
-router.route('/rework-types').put(reworkType.update);
-router.route('/rework-types').patch(reworkType.patch);
-router.route('/rework-types').delete(reworkType.delete);
+router.route('/rework-type/:uuid').get(admReworkTypeValidation.readByUuid, validationCallback, reworkType.readByUuid);
+router.route('/rework-types').get(admReworkTypeValidation.read, validationCallback, reworkType.read);
+router.route('/rework-types').post(admReworkTypeValidation.create, validationCallback, reworkType.create);
+router.route('/rework-types').put(admReworkTypeValidation.update, validationCallback, reworkType.update);
+router.route('/rework-types').patch(admReworkTypeValidation.patch, validationCallback, reworkType.patch);
+router.route('/rework-types').delete(admReworkTypeValidation.delete, validationCallback, reworkType.delete);
 //#endregion
 
 //#region ✅ StoreType (창고 유형)
 const storeType = new AdmStoreTypeCtl();
-router.route('/store-type/:uuid').get(storeType.read);
-router.route('/store-types').get(storeType.read);
-router.route('/store-types').post(storeType.create);
-router.route('/store-types').put(storeType.update);
-router.route('/store-types').patch(storeType.patch);
-router.route('/store-types').delete(storeType.delete);
+router.route('/store-type/:uuid').get(admStoreTypeValidation.readByUuid, validationCallback, storeType.readByUuid);
+router.route('/store-types').get(admStoreTypeValidation.read, validationCallback, storeType.read);
+router.route('/store-types').post(admStoreTypeValidation.create, validationCallback, storeType.create);
+router.route('/store-types').put(admStoreTypeValidation.update, validationCallback, storeType.update);
+router.route('/store-types').patch(admStoreTypeValidation.patch, validationCallback, storeType.patch);
+router.route('/store-types').delete(admStoreTypeValidation.delete, validationCallback, storeType.delete);
 //#endregion
 
 //#region ✅ FileMgmtType (파일관리유형)
@@ -171,12 +177,12 @@ router.route('/file-mgmts').delete(admFileMgmtValidation.delete, validationCallb
 
 //#region ✅ CompanyOpt (회사 옵션)
 const companyOpt = new AdmCompanyOptCtl();
-router.route('/company-opt/:uuid').get(companyOpt.read);
-router.route('/company-opts').get(companyOpt.read);
-router.route('/company-opts').post(companyOpt.create);
-router.route('/company-opts').put(companyOpt.update);
-router.route('/company-opts').patch(companyOpt.patch);
-router.route('/company-opts').delete(companyOpt.delete);
+router.route('/company-opt/:uuid').get(admCompanyOptValidation.readByUuid, validationCallback, companyOpt.readByUuid);
+router.route('/company-opts').get(admCompanyOptValidation.read, validationCallback, companyOpt.read);
+router.route('/company-opts').post(admCompanyOptValidation.create, validationCallback, companyOpt.create);
+router.route('/company-opts').put(admCompanyOptValidation.update, validationCallback, companyOpt.update);
+router.route('/company-opts').patch(admCompanyOptValidation.patch, validationCallback, companyOpt.patch);
+router.route('/company-opts').delete(admCompanyOptValidation.delete, validationCallback, companyOpt.delete);
 //#endregion
 
 //#region ✅ CycleUnit (주기단위)

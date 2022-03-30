@@ -48,5 +48,13 @@ uuid:
       description: 창고유형UUID
       type: string
       format: uuid
+
 # Uuids
+store_type_uuid:
+  type: object
+  properties:
+    store_type_uuid:
+      description: 창고유형UUID
+      type: string
+      format: uuid
 

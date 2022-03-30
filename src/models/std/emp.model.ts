@@ -102,6 +102,14 @@ export default class StdEmp extends Model<IStdEmp> {
   leave_date: string;
 
   @Column({
+    comment: '작업자 유무',
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  worker_fg: boolean;
+
+  @Column({
     comment: '비고',
     type: DataType.STRING(250),
   })
