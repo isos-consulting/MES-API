@@ -53,7 +53,7 @@ class StdEquipCtl {
       });
 
       // 📌 Temp S3에 있는 File 데이터를 Real S3로 이동
-      await fileService.moveToRealStorage(fileUuids);
+      if (fileUuids) { await fileService.moveToRealStorage(fileUuids); }
 			
       return createApiResult(res, result, 201, '데이터 생성 성공', this.stateTag, successState.CREATE);
     } catch (error) {                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                              
