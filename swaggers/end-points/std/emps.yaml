@@ -18,7 +18,6 @@ get:
         format: string
     - name: worker_fg
       in: query
-      required: true
       description: |
         사원의 작업자유무를 조회합니다. <br/>
         [전체조회 시 입력하지 않습니다.]
