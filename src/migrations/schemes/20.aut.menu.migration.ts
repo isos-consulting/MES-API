@@ -44,7 +44,7 @@ const seedDatas: IAutMenu[] = [
 		{ menu_id: 38, menu_type_id: null, menu_nm: '작업 리소스 정보', menu_uri: '\/std\/work-resource', menu_form_nm: null, component_nm: null, icon: null, parent_id: 1, sortby: 13, use_fg: true, created_uid: 1, updated_uid: 1 },
 			{ menu_id: 39, menu_type_id: 2, menu_nm: '작업교대 등록', menu_uri: '\/std\/shifts', menu_form_nm: 'frm_STD_Shift', component_nm: 'PgStdShift', icon: null, parent_id: 38, sortby: 1, use_fg: true, created_uid: 1, updated_uid: 1 },
 			{ menu_id: 40, menu_type_id: 2, menu_nm: '작업조 등록', menu_uri: '\/std\/worker-groups', menu_form_nm: 'frm_STD_WorkerGroup', component_nm: 'PgStdWorkerGroup', icon: null, parent_id: 38, sortby: 2, use_fg: true, created_uid: 1, updated_uid: 1 },
-			{ menu_id: 41, menu_type_id: 2, menu_nm: '작업자 등록', menu_uri: '\/std\/workers', menu_form_nm: 'frm_STD_Worker', component_nm: 'PgStdWorker', icon: null, parent_id: 38, sortby: 3, use_fg: true, created_uid: 1, updated_uid: 1 },
+			// { menu_id: 41, menu_type_id: 2, menu_nm: '작업자 등록', menu_uri: '\/std\/workers', menu_form_nm: 'frm_STD_Worker', component_nm: 'PgStdWorker', icon: null, parent_id: 38, sortby: 3, use_fg: true, created_uid: 1, updated_uid: 1 },
 			{ menu_id: 42, menu_type_id: 2, menu_nm: '작업조별 작업자 등록', menu_uri: '\/std\/worker-group-workers', menu_form_nm: 'frm_STD_WorkerGroupWorker', component_nm: 'PgStdWorkerGroupWorker', icon: null, parent_id: 38, sortby: 4, use_fg: true, created_uid: 1, updated_uid: 1 },
 		{ menu_id: 43, menu_type_id: null, menu_nm: '단위 정보', menu_uri: '\/std\/unit', menu_form_nm: null, component_nm: null, icon: null, parent_id: 1, sortby: 14, use_fg: true, created_uid: 1, updated_uid: 1 },
 			{ menu_id: 44, menu_type_id: 2, menu_nm: '단위 등록', menu_uri: '\/std\/units', menu_form_nm: 'frm_STD_Unit', component_nm: 'PgStdUnit', icon: null, parent_id: 43, sortby: 1, use_fg: true, created_uid: 1, updated_uid: 1 },
@@ -129,7 +129,7 @@ const seedDatas: IAutMenu[] = [
 	{ menu_id: 111, menu_type_id: null, menu_nm: '품질관리', menu_uri: 'qms', menu_form_nm: null, component_nm: null, icon: 'ico_nav_qualityManagementSystems', parent_id: 0, sortby: 7, use_fg: true, created_uid: 1, updated_uid: 1 },
 		{ menu_id: 112, menu_type_id: 2, menu_nm: '검사기준서 등록', menu_uri: '\/qms\/insps', menu_form_nm: 'frm_QMS_Insp', component_nm: 'PgQmsInsp', icon: null, parent_id: 111, sortby: 1, use_fg: true, created_uid: 1, updated_uid: 1 },
 		{ menu_id: 113, menu_type_id: null, menu_nm: '수입검사 정보', menu_uri: '\/qms\/receive', menu_form_nm: null, component_nm: null, icon: null, parent_id: 111, sortby: 2, use_fg: true, created_uid: 1, updated_uid: 1 },
-			{ menu_id: 114, menu_type_id: 2, menu_nm: '수입검사 성적서 등록', menu_uri: '\/qms\/receive-insp-results', menu_form_nm: 'frm_QMS_ReceiveInspResult', component_nm: 'PgQmsRecevieInspResult', icon: null, parent_id: 113, sortby: 1, use_fg: true, created_uid: 1, updated_uid: 1 },
+			{ menu_id: 114, menu_type_id: 2, menu_nm: '수입검사 성적서 등록', menu_uri: '\/qms\/receive-insp-results', menu_form_nm: 'frm_QMS_ReceiveInspResult', component_nm: 'PgQmsReceiveInspResult', icon: null, parent_id: 113, sortby: 1, use_fg: true, created_uid: 1, updated_uid: 1 },
 			{ menu_id: 115, menu_type_id: 2, menu_nm: '수입검사 결과 현황', menu_uri: '\/qms\/receive-insp-result-reports', menu_form_nm: null, component_nm: 'PgQmsReceiveInspResultReport', icon: null, parent_id: 113, sortby: 2, use_fg: true, created_uid: 1, updated_uid: 1 },
 		{ menu_id: 116, menu_type_id: null, menu_nm: '공정검사 정보', menu_uri: '\/qms\/proc-insp', menu_form_nm: null, component_nm: null, icon: null, parent_id: 111, sortby: 3, use_fg: true, created_uid: 1, updated_uid: 1 },
 			{ menu_id: 117, menu_type_id: 2, menu_nm: '공정검사 성적서 등록', menu_uri: '\/qms\/proc-insp-results', menu_form_nm: 'frm_QMS_ProcInspResult', component_nm: 'PgQmsProcInspResult', icon: null, parent_id: 116, sortby: 1, use_fg: true, created_uid: 1, updated_uid: 1 },
@@ -169,8 +169,8 @@ const seedDatas: IAutMenu[] = [
 		{ menu_id: 145, menu_type_id: 2, menu_nm: '설비등록대장', menu_uri: '\/eqm\/history-cards', menu_form_nm: null, component_nm: 'PgEqmHistoryCard', icon: null, parent_id: 144, sortby: 1, use_fg: true, created_uid: 1, updated_uid: 1 },
 		{ menu_id: 146, menu_type_id: 2, menu_nm: '설비수리이력 등록', menu_uri: '\/eqm\/repair-history', menu_form_nm: null, component_nm: 'PgEqmRepairHistory', icon: null, parent_id: 144, sortby: 2, use_fg: true, created_uid: 1, updated_uid: 1 },
 		{ menu_id: 147, menu_type_id: null, menu_nm: '설비점검 정보', menu_uri: '\/eqm\/insp', menu_form_nm: null, component_nm: null, icon: null, parent_id: 144, sortby: 3, use_fg: true, created_uid: 1, updated_uid: 1 },
-			{ menu_id: 148, menu_type_id: null, menu_nm: '설비점검 기준서 등록', menu_uri: '\/eqm\/insp\/insps', menu_form_nm: null, component_nm: 'PgEqmInsp', icon: null, parent_id: 147, sortby: 1, use_fg: true, created_uid: 1, updated_uid: 1 },
-			{ menu_id: 149, menu_type_id: null, menu_nm: '설비점검 성적서 등록', menu_uri: '\/eqm\/insp-result', menu_form_nm: null, component_nm: 'PgEqmInspResult', icon: null, parent_id: 147, sortby: 2, use_fg: true, created_uid: 1, updated_uid: 1 },
+			{ menu_id: 148, menu_type_id: 2, menu_nm: '설비점검 기준서 등록', menu_uri: '\/eqm\/insp\/insps', menu_form_nm: null, component_nm: 'PgEqmInsp', icon: null, parent_id: 147, sortby: 1, use_fg: true, created_uid: 1, updated_uid: 1 },
+			{ menu_id: 149, menu_type_id: 2, menu_nm: '설비점검 성적서 등록', menu_uri: '\/eqm\/insp-result', menu_form_nm: null, component_nm: 'PgEqmInspResult', icon: null, parent_id: 147, sortby: 2, use_fg: true, created_uid: 1, updated_uid: 1 },
 ];
 
 const baseMigration = new BaseMigration('AutMenu', 'menu_id', seedDatas);

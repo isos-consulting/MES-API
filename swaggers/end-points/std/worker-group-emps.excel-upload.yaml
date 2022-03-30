@@ -6,7 +6,7 @@ post:
     Excel Upload에 사용합니다.
   summary: 작업조-작업자 대량 데이터 입력 (Excel Upload)
   tags:
-    - 작업조-작업자(WorkerGroupWorker)
+    - 작업조-작업자(WorkerGroupEmp)
   requestBody:
     content:
       application/json:
