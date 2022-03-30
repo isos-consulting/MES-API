@@ -84,7 +84,7 @@ class StdWorkerGroupEmpRepo {
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
-          [ Sequelize.col('stdWorkerGroupEmp.uuid'), 'worker_group_worker_uuid' ],
+          [ Sequelize.col('stdWorkerGroupEmp.uuid'), 'worker_group_emp_uuid' ],
           [ Sequelize.col('stdFactory.uuid'), 'factory_uuid' ],
           [ Sequelize.col('stdFactory.factory_cd'), 'factory_cd' ],
           [ Sequelize.col('stdFactory.factory_nm'), 'factory_nm' ],
@@ -120,7 +120,7 @@ class StdWorkerGroupEmpRepo {
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
-          [ Sequelize.col('stdWorkerGroupEmp.uuid'), 'worker_group_worker_uuid' ],
+          [ Sequelize.col('stdWorkerGroupEmp.uuid'), 'worker_group_emp_uuid' ],
           [ Sequelize.col('stdFactory.uuid'), 'factory_uuid' ],
           [ Sequelize.col('stdFactory.factory_cd'), 'factory_cd' ],
           [ Sequelize.col('stdFactory.factory_nm'), 'factory_nm' ],
