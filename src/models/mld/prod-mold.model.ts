@@ -21,7 +21,7 @@ export default class MldProdMold extends Model<IMldProdMold> {
     type: DataType.INTEGER,
     allowNull: false,
   })
-  proc_equip_id: number;
+  prod_mold_id: number;
 
   @Unique('mld_prod_mold_tb_factory_id_prod_id_mold_id_un')
   @ForeignKey(() => StdFactory)

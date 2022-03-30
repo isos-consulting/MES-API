@@ -21,7 +21,7 @@ export default class PrdOrderWorker extends Model<IPrdOrderWorker> {
     type: DataType.INTEGER,
     allowNull: false,
   })
-  order_emp_id: number;
+  order_worker_id: number;
 
   @Unique('prd_order_worker_tb_factory_id_order_id_emp_id_un')
   @ForeignKey(() => StdFactory)
