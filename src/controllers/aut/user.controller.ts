@@ -260,13 +260,13 @@ class AutUserCtl {
 
       // 📌 DB에 bcrypt 단방향 암호화 방식으로 저장되어있는 Password
       const originPwd = user?.pwd;
-
+      console.log(originPwd);
       // ❗ 아이디가 없는 경우 Interlock
       if (!originPwd) { throw createHttpError(404, '사용자 아이디 또는 비밀번호 불일치'); }
 
       // 📌 Client에서 양방향 crypto.aes 암호화 방식으로 보낸 Password를 복호화 Key를 통하여 Convert한 Password
       // const convertedPwd = decrypt(datas, config.crypto.secret);
-			const convertedPwd = decrypt(datas[0].pwd, config.crypto.secret);
+			const convertedPwd = config.node_env !== 'test' ? decrypt(datas[0].pwd, config.crypto.secret) : datas[0].pwd;
 
       // ❗ 비밀번호 불일치 Interlock
       const match = await bcrypt.compare(convertedPwd, originPwd);

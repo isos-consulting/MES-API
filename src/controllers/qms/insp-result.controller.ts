@@ -987,7 +987,7 @@ class QmsInspResultCtl {
           { inout: 'TO', tran_type: 'QMS_RECEIVE_INSP_REJECT', reg_date: data.header.reg_date, tran_id_alias: 'insp_result_id' },
           req.user?.uid as number, tran
         );
-
+        
         // 📌 성적서 합불 수량 대비 창고 수불데이터 Setting
         let storeResult: ApiResult<any> = { raws: [], count: 0 };
         let receiveDetailResult: ApiResult<any> = { raws: [], count: 0 };
@@ -999,14 +999,15 @@ class QmsInspResultCtl {
         if (data.header.pass_qty > 0) {
           switch(inspDetailTypeCd) {
             case 'MAT_RECEIVE': 
-              receiveDetailResult = await matReceiveDetailService.readRawByUuid(data.header.receive_detail_uuid);
+              receiveDetailResult = await matReceiveDetailService.readRawById(headerResult.raws[0].insp_reference_id);
+              
               incomeParams = [{
-                ...headerResult.raws[0].dataValues,
-                receive_detail_id: data.header.receive_detail_id,
+                ...headerResult.raws[0],
+                receive_detail_id: headerResult.raws[0].insp_reference_id,
                 unit_id: receiveDetailResult.raws[0].unit_id,
                 qty: data.header.pass_qty
-              }]
-              incomeBody = await matIncomeService.getIncomeBody(incomeParams, data.header.reg_date);
+              }];
+              incomeBody = await matIncomeService.getIncomeBody(incomeParams, headerResult.raws[0].reg_date);
               await storeService.validateStoreTypeByIds(incomeBody.map(body => body.to_store_id), 'AVAILABLE', tran);
               incomeResult = await matIncomeService.create(incomeBody, req.user?.uid as number, tran);
 
@@ -1018,14 +1019,15 @@ class QmsInspResultCtl {
               break;
 
             case 'OUT_RECEIVE': 
-              receiveDetailResult = await outReceiveDetailService.readRawByUuid(data.header.receive_detail_uuid);
+              receiveDetailResult = await outReceiveDetailService.readRawByUuid(headerResult.raws[0].insp_reference_id);
+              
               incomeParams = [{
-                ...headerResult.raws[0].dataValues,
-                receive_detail_id: data.header.receive_detail_id,
+                ...headerResult.raws[0],
+                receive_detail_id: headerResult.raws[0].insp_reference_id,
                 unit_id: receiveDetailResult.raws[0].unit_id,
                 qty: data.header.pass_qty
-              }]
-              incomeBody = await outIncomeService.getIncomeBody(incomeParams, data.header.reg_date);
+              }];
+              incomeBody = await outIncomeService.getIncomeBody(incomeParams, headerResult.raws[0].reg_date);
               await storeService.validateStoreTypeByIds(incomeBody.map(body => body.to_store_id), 'AVAILABLE', tran);
               incomeResult = await outIncomeService.create(incomeBody, req.user?.uid as number, tran);
 
