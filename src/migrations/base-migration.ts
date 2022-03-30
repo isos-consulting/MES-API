@@ -40,7 +40,7 @@ class BaseMigration {
       console.log(`✅Success Create ${_tableName}`);
     })
     .catch((err) => { 
-      console.log(`❗️Error in Create ${_tableName} : ${err}`);
+      console.log(`❗️❗️❗️❗️❗️❗️Error in Create ${_tableName} : ${err}`);
     });
   }
 
@@ -58,7 +58,7 @@ class BaseMigration {
       console.log(`✅Success Seed ${_tableName}`);
     })
     .catch((err) => {
-      console.log(`❗️Error in Seed ${_tableName} : ${err}`);
+      console.log(`❗️❗️❗️❗️❗️❗️Error in Seed ${_tableName} : ${err}`);
     });;
 
     if (!_pkName) { return; }
@@ -67,7 +67,7 @@ class BaseMigration {
       console.log(`✅Success Rearrange Sequence ${_tableName}[${_pkName}]`);
     })
     .catch((err) => {
-      console.log(`❗️Error in Rearrange Sequence ${_tableName}[${_pkName}] : ${err}`);
+      console.log(`❗️❗️❗️❗️❗️❗️Error in Rearrange Sequence ${_tableName}[${_pkName}] : ${err}`);
     });;
   }
 
@@ -82,7 +82,7 @@ class BaseMigration {
         console.log(`✅Success Drop ${_tableName}`);
       })
       .catch((err) => {
-        console.log(`❗️Error in Drop ${_tableName} : ${err}`);
+        console.log(`❗️❗️❗️❗️❗️❗️Error in Drop ${_tableName} : ${err}`);
       });
   }
 
