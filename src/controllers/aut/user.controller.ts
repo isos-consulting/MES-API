@@ -260,7 +260,6 @@ class AutUserCtl {
 
       // 📌 DB에 bcrypt 단방향 암호화 방식으로 저장되어있는 Password
       const originPwd = user?.pwd;
-      console.log(originPwd);
       // ❗ 아이디가 없는 경우 Interlock
       if (!originPwd) { throw createHttpError(404, '사용자 아이디 또는 비밀번호 불일치'); }
 

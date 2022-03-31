@@ -35,9 +35,7 @@ class InvStoreCtl {
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => {
         // 📌 실사등록 Body 생성
-        console.log(1111);
         datas = await service.getCreateBody(datas, tran);
-        console.log(22222);
         // 📌 재고 실사 내역 생성
         result = await service.create(datas, req.user?.uid as number, tran);
       });

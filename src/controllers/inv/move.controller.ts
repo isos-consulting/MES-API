@@ -252,7 +252,6 @@ class InvMoveCtl {
           toStore: toStoreResult.raws,
         }];
         result.count = moveResult.count + fromStoreResult.count + toStoreResult.count;
-        console.log(result.raws);
       });
 
       return createApiResult(res, result, 200, '데이터 삭제 성공', this.stateTag, successState.DELETE);

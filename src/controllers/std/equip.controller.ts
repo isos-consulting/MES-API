@@ -32,7 +32,6 @@ class StdEquipCtl {
       const service = new StdEquipService(req.tenant.uuid);
       const fileService = new AdmFileMgmtService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
-      console.log(matched);
       const datas: any[] = await service.convertFk(Object.values(matched));
 
 			let fileUuids: string[] = [];

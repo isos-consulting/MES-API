@@ -161,6 +161,7 @@ class PrdOrderCtl {
 
       // 📌 실적이 저장된 경우 수정되면 안되는 데이터를 수정 할 때의 Interlock
       await service.validateUpdateByWork(datas);
+      console.log('1111');
       
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
         result = await service.update(datas, req.user?.uid as number, tran); 

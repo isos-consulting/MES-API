@@ -29,10 +29,10 @@ const stdUnitConvertValidation = {
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'remark', '비고')),
 	],
 	read: [
-		param('unit_uuid', '단위UUID').optional({ nullable: true })
-      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'uuid', '단위변환UUID')),
-		param('prod_uuid', '품목UUID').optional({ nullable: true })
-      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'uuid', '품목UUID'))
+		query('unit_uuid', '단위UUID').optional({ nullable: true })
+         .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'uuid', '단위변환UUID')),
+		query('prod_uuid', '품목UUID').optional({ nullable: true })
+         .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'uuid', '품목UUID'))
 	],
   readByUuid: [ 
     param('uuid', '단위변환UUID')
@@ -40,24 +40,21 @@ const stdUnitConvertValidation = {
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'uuid', '단위변환UUID'))
   ],
   create: [
-    body('*.from_unit_uuid', 'From단위UUID')
+   body('*.from_unit_uuid', 'From단위UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'from_unit_uuid', 'From단위UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'from_unit_uuid', 'From단위UUID')),
-		body('*.to_unit_uuid', 'To단위UUID')
+   body('*.to_unit_uuid', 'To단위UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'to_unit_uuid', 'To단위UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'to_unit_uuid', 'To단위UUID')),
-		body('*.from_value', '변환 전 값')
+   body('*.from_value', '변환 전 값')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'from_value', '변환 전 값'))
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'from_value', '변환 전 값')),
-		body('*.to_value', '변환 후 값')
+   body('*.to_value', '변환 후 값')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'to_value', '변환 후 값'))
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'to_value', '변환 후 값')),
-		body('*.convert_value', '변환 값(계산 값)')
-      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'convert_value', '변환 값(계산 값)'))
-      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'convert_value', '변환 값(계산 값)')),
-		body('*.prod_uuid', '품목UUID').optional({ nullable: true })
+   body('*.prod_uuid', '품목UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'prod_uuid', '품목UUID')),
-		body('*.remark', '비고').optional({ nullable: true })
+   body('*.remark', '비고').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'remark', '비고')),
 	],
   update: [
@@ -70,9 +67,6 @@ const stdUnitConvertValidation = {
 		body('*.to_value', '변환 후 값')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'to_value', '변환 후 값'))
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'to_value', '변환 후 값')),
-		body('*.convert_value', '변환 값(계산 값)')
-      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'convert_value', '변환 값(계산 값)'))
-      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'convert_value', '변환 값(계산 값)')),
 		body('*.remark', '비고').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'remark', '비고')),
   ],
@@ -84,8 +78,6 @@ const stdUnitConvertValidation = {
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'from_value', '변환 전 값')),
 		body('*.to_value', '변환 후 값').optional({ nullable: true })
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'to_value', '변환 후 값')),
-		body('*.convert_value', '변환 값(계산 값)').optional({ nullable: true })
-      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'convert_value', '변환 값(계산 값)')),
 		body('*.remark', '비고').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'remark', '비고')),
   ],

@@ -32,6 +32,8 @@ import admPrdPlanTypeValidation from '../validations/adm/prd-plan-type.validatio
 import admStoreTypeValidation from '../validations/adm/store-type.validation';
 import admPatternOptValidation from '../validations/adm/pattern-opt.validation';
 import admReworkTypeValidation from '../validations/adm/rework-type.validation';
+import admInspTypeValidation from '../validations/adm/insp-type.validation';
+import admInspHandlingTypeValidation from '../validations/adm/insp-handling-type.validation';
 
 const router = express.Router();
 
@@ -57,22 +59,22 @@ router.route('/bom-input-types').delete(admBomInputTypeValidation.delete, valida
 
 //#region ✅ InspType (검사 유형)
 const inspType = new AdmInspTypeCtl();
-router.route('/insp-type/:uuid').get(inspType.read);
-router.route('/insp-types').get(inspType.read);
-router.route('/insp-types').post(inspType.create);
-router.route('/insp-types').put(inspType.update);
-router.route('/insp-types').patch(inspType.patch);
-router.route('/insp-types').delete(inspType.delete);
+router.route('/insp-type/:uuid').get(admInspTypeValidation.readByUuid, validationCallback, inspType.readByUuid);
+router.route('/insp-types').get(admInspTypeValidation.read, validationCallback, inspType.read);
+router.route('/insp-types').post(admInspTypeValidation.create, validationCallback, inspType.create);
+router.route('/insp-types').put(admInspTypeValidation.update, validationCallback, inspType.update);
+router.route('/insp-types').patch(admInspTypeValidation.patch, validationCallback, inspType.patch);
+router.route('/insp-types').delete(admInspTypeValidation.delete, validationCallback, inspType.delete);
 //#endregion
 
 //#region ✅ InspHandlingType (검사처리 유형)
 const inspHandlingType = new AdmInspHandlingTypeCtl();
-router.route('/insp-handling-type/:uuid').get(inspHandlingType.read);
-router.route('/insp-handling-types').get(inspHandlingType.read);
-router.route('/insp-handling-types').post(inspHandlingType.create);
-router.route('/insp-handling-types').put(inspHandlingType.update);
-router.route('/insp-handling-types').patch(inspHandlingType.patch);
-router.route('/insp-handling-types').delete(inspHandlingType.delete);
+router.route('/insp-handling-type/:uuid').get(admInspHandlingTypeValidation.readByUuid, validationCallback, inspHandlingType.readByUuid);
+router.route('/insp-handling-types').get(admInspHandlingTypeValidation.read, validationCallback, inspHandlingType.read);
+router.route('/insp-handling-types').post(admInspHandlingTypeValidation.create, validationCallback, inspHandlingType.create);
+router.route('/insp-handling-types').put(admInspHandlingTypeValidation.update, validationCallback, inspHandlingType.update);
+router.route('/insp-handling-types').patch(admInspHandlingTypeValidation.patch, validationCallback, inspHandlingType.patch);
+router.route('/insp-handling-types').delete(admInspHandlingTypeValidation.delete, validationCallback, inspHandlingType.delete);
 //#endregion
 
 //#region ✅ PrdPlanType (생산계획 유형)

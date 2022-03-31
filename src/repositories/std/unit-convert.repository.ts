@@ -38,7 +38,7 @@ class StdUnitConvertRepo {
             to_unit_id: unitConvert.to_unit_id,
             from_value: unitConvert.from_value,
             to_value: unitConvert.to_value,
-            convert_value: unitConvert.convert_value,
+            convert_value: (unitConvert.to_value / unitConvert.from_value),
             prod_id: unitConvert.prod_id,
             remark: unitConvert.remark,
             created_uid: uid,
@@ -262,7 +262,7 @@ class StdUnitConvertRepo {
           {
             from_value: unitConvert.from_value ?? null,
             to_value: unitConvert.to_value ?? null,
-            convert_value: unitConvert.convert_value ?? null,
+            convert_value: (unitConvert.to_value / unitConvert.from_value) ?? null,
             remark: unitConvert.remark ?? null,
             updated_uid: uid,
           } as any,
@@ -298,7 +298,7 @@ class StdUnitConvertRepo {
           {
             from_value: unitConvert.from_value,
             to_value: unitConvert.to_value,
-            convert_value: unitConvert.convert_value,
+            convert_value: (unitConvert.to_value / unitConvert.from_value),
             remark: unitConvert.remark,
             updated_uid: uid,
           },

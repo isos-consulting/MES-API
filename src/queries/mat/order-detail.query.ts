@@ -60,6 +60,7 @@ const readOrderDetails = (
       s_u.unit_cd,
       s_u.unit_nm,
       s_s.uuid as to_store_uuid,
+      s_p.qms_receive_insp_fg,
       s_s.store_cd as to_store_cd,
       s_s.store_nm as to_store_nm,
       s_l.uuid as to_location_uuid,

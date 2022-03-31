@@ -17,15 +17,15 @@ const readWorkRoutings = (
 
   const createTempTable = `
     -- [[ 공정순서 별 작업자 리스트 조회 임시테이블 생성 ]]
-    CREATE TEMP TABLE temp_worker_tb(work_routing_id int, worker_nm text);
+    CREATE TEMP TABLE temp_worker_tb(work_routing_id int, emp_nm text);
     CREATE INDEX ON temp_worker_tb(work_routing_id);
 
     INSERT INTO temp_worker_tb
     SELECT 	p_ww.work_routing_id, 
-        CASE WHEN count(p_ww.worker_id) = 1 THEN max(s_w.worker_nm) 
-        ELSE max(s_w.worker_nm) || '외 ' || count(p_ww.worker_id) || '명' END AS worker_nm
+        CASE WHEN count(p_ww.emp_id) = 1 THEN max(s_w.emp_nm) 
+        ELSE max(s_w.emp_nm) || '외 ' || count(p_ww.emp_id) || '명' END AS emp_nm
     FROM prd_work_worker_tb p_ww
-    JOIN std_worker_tb s_w ON s_w.worker_id = p_ww.worker_id 
+    JOIN std_emp_tb s_e ON s_e.emp_id = p_ww.emp_id 
     GROUP BY p_ww.work_routing_id ;
     
 
@@ -68,7 +68,7 @@ const readWorkRoutings = (
       p_wr.end_date,
       p_wr.work_time,
       p_wr.ongoing_fg,
-      t_w.worker_nm,
+      t_w.emp_nm,
       p_wr.remark,
       p_wr.created_at,
       p_wr.created_uid,

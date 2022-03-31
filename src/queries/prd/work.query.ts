@@ -156,7 +156,7 @@ const readWorks = (
       s_wg.worker_group_cd,
       s_wg.worker_group_nm,
       CAST(COALESCE(p_ww.cnt,0) AS int) as worker_cnt,
-      p_ww1.worker_nm,
+      p_ww1.emp_nm,
       CASE WHEN p_w.complete_fg = TRUE THEN '완료' ELSE '미완료' END as complete_state,
       p_w.complete_fg,
       s_s.uuid as to_store_uuid,
@@ -194,9 +194,9 @@ const readWorks = (
     LEFT JOIN (	SELECT p_ww.work_id, count(*) AS cnt 
           FROM prd_work_worker_tb p_ww
           GROUP BY p_ww.work_id) p_ww ON p_ww.work_id = p_w.work_id
-    LEFT JOIN (	SELECT p_ww.work_id, array_to_string(array_agg(s_w.worker_nm), ',', '') AS worker_nm
+    LEFT JOIN (	SELECT p_ww.work_id, array_to_string(array_agg(s_w.emp_nm), ',', '') AS emp_nm
           FROM prd_work_worker_tb p_ww
-          LEFT JOIN std_worker_tb s_w ON s_w.worker_id = p_ww.worker_id 
+          LEFT JOIN std_emp_tb s_w ON s_w.emp_id = p_ww.emp_id 
           GROUP BY p_ww.work_id) p_ww1 ON p_ww1.work_id = p_w.work_id
     LEFT JOIN aut_user_tb a_uc ON a_uc.uid = p_w.created_uid
     LEFT JOIN aut_user_tb a_uu ON a_uu.uid = p_w.updated_uid

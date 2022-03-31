@@ -118,6 +118,7 @@ get:
                             - $ref: ../../schemas/std/model.schema.yaml#/model_nm
                             - $ref: ../../schemas/std/prod.schema.yaml#/rev
                             - $ref: ../../schemas/std/prod.schema.yaml#/prod_std
+                            - $ref: ../../schemas/std/prod.schema.yaml#/qms_receive_insp_fg
                             - $ref: ../../schemas/std/prod.schema.yaml#/unit_uuid
                             - $ref: ../../schemas/std/unit.schema.yaml#/unit_cd
                             - $ref: ../../schemas/std/unit.schema.yaml#/unit_nm

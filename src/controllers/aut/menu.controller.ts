@@ -90,7 +90,7 @@ class AutMenuCtl {
 				if (secondMenu) { firstMenu.sub_menu.push(secondMenu); }
 				menuResult.push(firstMenu)
 			}
-			console.log(menuResult)
+      
 			result.count =  result_sub.count
 			result.raws = menuResult
 

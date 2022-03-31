@@ -736,9 +736,6 @@ class QmsInspCtl {
         details: await detailService.convertFk(matched.details),
       }
 
-      console.log(data.header);
-      console.log(data.details);
-
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
         // 📌 기준서 상세 삭제
         const detailResult = await detailService.delete(data.details, req.user?.uid as number, tran);
