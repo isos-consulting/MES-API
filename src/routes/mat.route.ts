@@ -9,6 +9,8 @@ import MatReceiveCtl from '../controllers/mat/receive.controller';
 import MatReleaseCtl from '../controllers/mat/release.controller';
 import matReceiveValidation from '../validations/mat/receive.validation';
 import validationCallback from '../utils/validationCallback';
+import matOrderDetailValidation from '../validations/mat/order-detail.validation';
+import matOrderValidation from '../validations/mat/order.validation';
 import matReceiveDetailValidation from '../validations/mat/receive-detail.validation';
 import matReturnValidation from '../validations/mat/return.validation';
 import matReturnDetailValidation from '../validations/mat/return-detail.validation';
@@ -48,22 +50,22 @@ router.route('/return-details').get(matReturnDetailValidation.read, validationCa
 
 //#region ✅ Order (자재발주)
 const order = new MatOrderCtl();
-router.route('/orders/report').get(order.readReport);
-router.route('/order/:uuid').get(order.read);
-router.route('/order/:uuid/include-details').get(order.readIncludeDetails);
-router.route('/order/:uuid/details').get(order.readDetails);
-router.route('/orders').get(order.read);
-router.route('/orders').post(order.create);
-router.route('/orders').put(order.update);
-router.route('/orders').patch(order.patch);
-router.route('/orders').delete(order.delete);
+router.route('/orders/report').get(matOrderValidation.readReport, validationCallback, order.readReport);
+router.route('/order/:uuid').get(matOrderValidation.read, validationCallback, order.read);
+router.route('/order/:uuid/include-details').get(matOrderValidation.readIncludeDetails, validationCallback, order.readIncludeDetails);
+router.route('/order/:uuid/details').get(matOrderValidation.readDetails, validationCallback, order.readDetails);
+router.route('/orders').get(matOrderValidation.read, validationCallback, order.read);
+router.route('/orders').post(matOrderValidation.create, validationCallback, order.create);
+router.route('/orders').put(matOrderValidation.update, validationCallback, order.update);
+router.route('/orders').patch(matOrderValidation.patch, validationCallback, order.patch);
+router.route('/orders').delete(matOrderValidation.delete, validationCallback, order.delete);
 //#endregion
 
 //#region ✅ OrderDetail (자재발주상세)
 const orderDetail = new MatOrderDetailCtl();
-router.route('/order-details/complete').put(orderDetail.updateComplete);
-router.route('/order-detail/:uuid').get(orderDetail.read);
-router.route('/order-details').get(orderDetail.read);
+router.route('/order-details/complete').put(matOrderDetailValidation.updateComplete, validationCallback, orderDetail.updateComplete);
+router.route('/order-detail/:uuid').get(matOrderDetailValidation.updateComplete, validationCallback, orderDetail.read);
+router.route('/order-details').get(matOrderDetailValidation.updateComplete, validationCallback, orderDetail.read);
 //#endregion
 
 //#region ✅ Receive (자재입하)

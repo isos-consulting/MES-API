@@ -1,93 +1,25 @@
-import * as express from 'express';
-import { Transaction } from 'sequelize/types';
-import ApiResult from '../../interfaces/common/api-result.interface';
-import MatOrderDetailRepo from '../../repositories/mat/order-detail.repository';
-import MatOrderRepo from '../../repositories/mat/order.repository';
-import StdFactoryRepo from '../../repositories/std/factory.repository';
-import StdMoneyUnitRepo from '../../repositories/std/money-unit.repository';
-import StdPartnerRepo from '../../repositories/std/partner.repository';
-import StdProdRepo from '../../repositories/std/prod.repository';
-import StdUnitRepo from '../../repositories/std/unit.repository';
-import checkArray from '../../utils/checkArray';
-import { getSequelize } from '../../utils/getSequelize';
-import isDateFormat from '../../utils/isDateFormat';
-import isUuid from '../../utils/isUuid';
-import response from '../../utils/response';
-import testErrorHandlingHelper from '../../utils/testErrorHandlingHelper';
-import unsealArray from '../../utils/unsealArray';
-import AdmPatternHistoryCtl from '../adm/pattern-history.controller';
-import BaseCtl, { getFkIdInfo } from '../base.controller';
+import express from 'express';
+import { matchedData } from 'express-validator';
 import config from '../../configs/config';
+import MatOrderService from '../../services/mat/order.service';
+import MatOrderDetailService from '../../services/mat/order-detail.service';
+import createDatabaseError from '../../utils/createDatabaseError';
+import createUnknownError from '../../utils/createUnknownError';
+import { sequelizes } from '../../utils/getSequelize';
+import isServiceResult from '../../utils/isServiceResult';
+import response from '../../utils/response_new';
+import createApiResult from '../../utils/createApiResult_new';
+import { successState } from '../../states/common.state';
+import ApiResult from '../../interfaces/common/api-result.interface';
+import AdmPatternHistoryService from '../../services/adm/pattern-history.service';
+import AdmPatternOptService from '../../services/adm/pattern-opt.service';
 
-class MatOrderCtl extends BaseCtl {
-  // ✅ Raws 유형(Header, Details)에 따라 Fk 변환 기준 변경 변수
-  headerFkIdInfos: getFkIdInfo[];
-  detailsFkIdInfos: getFkIdInfo[];
-
-  // ✅ 조회조건 Types
-  completeStates: string[];
-  sort_type: string[];
+class MatOrderCtl {
+  stateTag: string
 
   //#region ✅ Constructor
   constructor() {
-    // ✅ 부모 Controller (Base Controller) 의 CRUD Function 과 상속 받는 자식 Controller(this) 의 Repository 를 연결하기 위하여 생성자에서 Repository 생성
-    super(MatOrderRepo);
-
-    // ✅ CUD 연산이 실행되기 전 Fk Table 의 uuid 로 id 를 검색하여 request body 에 삽입하기 위하여 정보 Setting
-    this.fkIdInfos = [
-      {
-        key: 'order',
-        TRepo: MatOrderRepo,
-        idName: 'order_id',
-        uuidName: 'order_uuid'
-      },
-      {
-        key: 'factory',
-        TRepo: StdFactoryRepo,
-        idName: 'factory_id',
-        uuidName: 'factory_uuid'
-      },
-      {
-        key: 'partner',
-        TRepo: StdPartnerRepo,
-        idName: 'partner_id',
-        uuidName: 'partner_uuid'
-      },
-      {
-        key: 'prod',
-        TRepo: StdProdRepo,
-        idName: 'prod_id',
-        uuidName: 'prod_uuid'
-      },
-      {
-        key: 'unit',
-        TRepo: StdUnitRepo,
-        idName: 'unit_id',
-        uuidName: 'unit_uuid'
-      },
-      {
-        key: 'moneyUnit',
-        TRepo: StdMoneyUnitRepo,
-        idName: 'money_unit_id',
-        uuidName: 'money_unit_uuid'
-      },
-    ];
-
-    // ✅ Raws 유형(Header, Details)에 따라 Fk 변환 기준 변경
-    this.headerFkIdInfos = [
-      ...this.fkIdInfos,
-      {
-        key: 'uuid',
-        TRepo: MatOrderRepo,
-        idName: 'order_id',
-        uuidName: 'uuid'
-      }
-    ];
-    this.detailsFkIdInfos = [...this.fkIdInfos];
-
-    // ✅ 조회조건 Types Setting
-    this.completeStates = [ 'all', 'complete', 'incomplete' ];
-    this.sort_type = [ 'partner', 'prod', 'date' ];
+    this.stateTag = 'matOrder'
   };
   //#endregion
 
@@ -97,178 +29,246 @@ class MatOrderCtl extends BaseCtl {
 
   // 📒 Fn[create] (✅ Inheritance): Default Create Function
   public create = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    try { 
-      req.body = await this.getBodyIncludedId(req.tenant.uuid, req.body);
+    try {
+      let result: ApiResult<any> = { count:0, raws: [] };
+      const service = new MatOrderService(req.tenant.uuid);
+      const detailService = new MatOrderDetailService(req.tenant.uuid);
+      const patternOptService = new AdmPatternOptService(req.tenant.uuid);
+      const patternService = new AdmPatternHistoryService(req.tenant.uuid);
 
-      const sequelize = getSequelize(req.tenant.uuid);
-      const repo = new MatOrderRepo(req.tenant.uuid);
-      const detailRepo = new MatOrderDetailRepo(req.tenant.uuid);
-      let result: ApiResult<any> = { count: 0, raws: [] };
+      const matched = matchedData(req, { locations: [ 'body' ] });
+			
+      const data = {
+        header: (await service.convertFk(matched.header))[0],
+        details: await detailService.convertFk(matched.details),
+      }
+			console.log(data);
+      await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
+        let orderUuid: string;
+        let orderId: number;
+        let maxSeq: number;
+        let headerResult: ApiResult<any> = { count: 0, raws: [] };
 
-      await sequelize.transaction(async(tran) => { 
-        for await (const data of req.body) {
-          let orderId: number;
-          let orderUuid: string;
-          let maxSeq: number;
-          let headerResult: ApiResult<any>;
-          const [ header ] = data.header;
+        // 📌 자재발주의 UUID가 입력되지 않은 경우 자재발주 신규 발행
+        if (!data.header.uuid) {
+          // 📌 전표자동발행 옵션 여부 확인
+          const hasAutoOption = await patternOptService.hasAutoOption({ table_nm: 'MAT_ORDER_TB', col_nm: 'stmt_no', tran });
 
-          orderUuid = header.uuid;
-          if (!orderUuid) {
-            // 📌 전표번호가 수기 입력되지 않고 자동발행 Option일 경우 번호 자동발행
-            if (!header.stmt_no) { 
-              header.stmt_no = await new AdmPatternHistoryCtl().getPattern({
-                tenant: req.tenant.uuid,
-                factory_id: header.factory_id,
-                table_nm: 'MAT_ORDER_TB',
-                col_nm: 'stmt_no',
-                reg_date: header.reg_date,
-                partner_uuid: header.partner_uuid,
-                uid: req.user?.uid as number,
-                tran: tran
-              });
-
-              if (!header.stmt_no) { throw new Error('잘못된 전표번호 입력(전표번호 자동발행 확인)') }
-            }
-
-            headerResult = await repo.create(data.header, req.user?.uid as number, tran);
-            orderId = headerResult.raws[0].order_id;
-            orderUuid = headerResult.raws[0].uuid;
-
-            maxSeq = 0;
-          } else {
-            orderId = header.order_id;
-
-            // Max Seq 계산
-            maxSeq = await detailRepo.getMaxSeq(orderId, tran) as number;
+          // 📌 전표의 자동발행옵션이 On인 경우
+          if (hasAutoOption) {
+            data.header.stmt_no = await patternService.getPattern({
+              factory_id: data.header.factory_id,
+              table_nm: 'MAT_ORDER_TB',
+              col_nm: 'stmt_no',
+              reg_date: data.header.reg_date,
+              uid: req.user?.uid as number,
+              tran: tran
+            });
           }
 
-          data.details = data.details.map((detail: any) => {
-            detail.order_id = orderId;
-            detail.seq = ++maxSeq;
-            detail.total_price = detail.qty * detail.price * detail.exchange; 
-            return detail;
-          });
+          // 📌 전표 생성
+          headerResult = await service.create([data.header], req.user?.uid as number, tran);
+          orderUuid = headerResult.raws[0].uuid;
+          orderId = headerResult.raws[0].order_id;
+          maxSeq = 0;
+        } else {
+          orderUuid = data.header.uuid;
+          orderId = data.header.order_id;
 
-          const detailResult = await detailRepo.create(data.details, req.user?.uid as number, tran);
-          headerResult = await this.updateTotals(req.tenant.uuid, orderId, orderUuid, req.user?.uid as number, tran);
-
-          result.raws.push({ header: headerResult.raws, details: detailResult.raws });
-          result.count += headerResult.count + detailResult.count;
+          // 📌 Max Seq 계산
+          maxSeq = await detailService.getMaxSeq(orderId, tran) as number;
         }
+
+        // 📌 생성된 발주ID 입력 및 Max Seq 기준 Seq 발행
+        data.details = data.details.map((detail: any) => {
+          detail.order_id = orderId;
+          detail.seq = ++maxSeq;
+          return detail;
+        });
+      
+        // 📌 자재발주상세 등록 및 합계금액 계산
+        let detailResult = await detailService.create(data.details, req.user?.uid as number, tran);
+        detailResult = await detailService.updateTotalPrice(detailResult.raws, req.user?.uid as number, tran);
+
+        // 📌 자재발주의 합계수량 및 합계금액 계산
+        headerResult = await service.updateTotal(orderId, orderUuid, req.user?.uid as number, tran);
+
+        result.raws = [{
+          header: headerResult.raws[0],
+          details: detailResult.raws,
+        }];
+        result.count = headerResult.count + detailResult.count;
       });
 
-      return response(res, result.raws, { count: result.count }, '', 201);
-    } catch (e) {
-      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return createApiResult(res, result, 201, '데이터 생성 성공', this.stateTag, successState.CREATE);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
     }
   };
+
   //#endregion
 
   //#region 🔵 Read Functions
 
   // 📒 Fn[read] (✅ Inheritance): Default Read Function
-  // public read = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-  // }
+  public read = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      let result: ApiResult<any> = { count:0, raws: [] };
+      const service = new MatOrderService(req.tenant.uuid);
+      const params = matchedData(req, { locations: [ 'query', 'params' ] });
 
-  // 📒 Fn[readIncludeDetails]: 발주 데이터의 Header + Detail 함께 조회
+      result = await service.read(params);
+
+      return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+      
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
+    }
+  };
+
+  // 📒 Fn[readByUuid] (✅ Inheritance): Default ReadByUuid Function
+  public readByUuid = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      let result: ApiResult<any> = { count:0, raws: [] };
+      const service = new MatOrderService(req.tenant.uuid);
+
+      result = await service.readByUuid(req.params.uuid);
+
+      return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
+    }
+  };
+
+  // 📒 Fn[readIncludeDetails]: 자재발주 데이터의 Header + Detail 함께 조회
   public readIncludeDetails = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      const repo = new MatOrderRepo(req.tenant.uuid);
-      const detailRepo = new MatOrderDetailRepo(req.tenant.uuid);
       let result: ApiResult<any> = { count: 0, raws: [] };
+      const params = matchedData(req, { locations: [ 'query', 'params' ] });
+      const service = new MatOrderService(req.tenant.uuid);
+      const detailService = new MatOrderDetailService(req.tenant.uuid);
+      
+      const headerResult = await service.readByUuid(params.uuid);
+      const detailsResult = await detailService.read({ ...params, order_uuid: params.uuid });
 
-      const params = Object.assign(req.query, req.params);
-      params.order_uuid = params.uuid;
-      if (!this.completeStates.includes(params.complete_state)) { throw new Error('잘못된 complete_state(완료 여부) 입력') }
-
-      const headerResult = await repo.readByUuid(params.order_uuid);
-      const detailsResult = await detailRepo.read(params);
-
-      result.raws = [{ header: unsealArray(headerResult.raws), details: detailsResult.raws }];
+      result.raws = [{ 
+        header: headerResult.raws[0] ?? {}, 
+        details: detailsResult.raws 
+      }];
       result.count = headerResult.count + detailsResult.count;
       
-      return response(res, result.raws, { count: result.count });
-    } catch (e) {
-      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
     }
   };
 
-  // 📒 Fn[readDetails]: 발주 데이터의 Detail 조회
+  // 📒 Fn[readDetails]: 자재발주 데이터의 Detail 조회
   public readDetails = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      const detailRepo = new MatOrderDetailRepo(req.tenant.uuid);
-
-      const params = Object.assign(req.query, req.params);
-      params.order_uuid = params.uuid;
-      if (!this.completeStates.includes(params.complete_state)) { throw new Error('잘못된 complete_state(완료 여부) 입력') }
-
-      const result = await detailRepo.read(params);
+      const params = matchedData(req, { locations: [ 'query', 'params' ] });
+      const detailService = new MatOrderDetailService(req.tenant.uuid);
       
-      return response(res, result.raws, { count: result.count });
-    } catch (e) {
-      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      const result = await detailService.read({ ...params, order_uuid: params.uuid });
+      
+      return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
     }
   };
 
-  // 📒 Fn[readReport]: 발주현황 데이터 조회
+  // 📒 Fn[readReport]: 자재발주현황 데이터 조회
   public readReport = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    try {;
-      const repo = new MatOrderRepo(req.tenant.uuid);
+    try {
+      const params = matchedData(req, { locations: [ 'query', 'params' ] });
+      const service = new MatOrderService(req.tenant.uuid);
 
-      const params = Object.assign(req.query, req.params);
-			
-      if (!this.completeStates.includes(params.complete_state)) { throw new Error('잘못된 complete_state(완료 여부) 입력') }
-      if (!this.sort_type.includes(params.sort_type)) { throw new Error('잘못된 sort_type(정렬) 입력') }
-
-      const result = await repo.readReport(params);
+      const result = await service.readReport(params);
       
-      return response(res, result.raws, { count: result.count });
-    } catch (e) {
-      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
     }
   };
 
   //#endregion
 
   //#region 🟡 Update Functions
-  
+
   // 📒 Fn[update] (✅ Inheritance): Default Update Function
   public update = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      req.body = await this.getBodyIncludedId(req.tenant.uuid, req.body);
+      let result: ApiResult<any> = { count:0, raws: [] };
+      const service = new MatOrderService(req.tenant.uuid);
+      const detailService = new MatOrderDetailService(req.tenant.uuid);
+      const matched = matchedData(req, { locations: [ 'body' ] });
 
-      const sequelize = getSequelize(req.tenant.uuid);
-      const repo = new MatOrderRepo(req.tenant.uuid);
-      const detailRepo = new MatOrderDetailRepo(req.tenant.uuid);
-      let result: ApiResult<any> = { count: 0, raws: [] };
+      const data = {
+        header: (await service.convertFk(matched.header))[0],
+        details: await detailService.convertFk(matched.details),
+      }
 
-      // 📌 Detail Data의 합계금액 계산
-      req.body = req.body.map((data: any) => {
-        data.details = data.details.map((detail: any) => {
-          detail.total_price = detail.qty * detail.price * detail.exchange; 
-          return detail;
-        });
-        return data;
+      await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
+
+        // 📌 자재발주 수정
+        let headerResult = await service.update([data.header], req.user?.uid as number, tran);
+
+        // 📌 자재발주상세 수정 및 합계금액 계산
+        let detailResult = await detailService.update(data.details, req.user?.uid as number, tran);
+        detailResult = await detailService.updateTotalPrice(detailResult.raws, req.user?.uid as number, tran);
+
+        // 📌 자재발주의 합계수량 및 합계금액 계산
+        const orderId = headerResult.raws[0].order_id;
+        const orderUuid = headerResult.raws[0].uuid;
+        headerResult = await service.updateTotal(orderId, orderUuid, req.user?.uid as number, tran);
+
+        result.raws = [{
+          header: headerResult.raws[0],
+          details: detailResult.raws
+        }];
+        result.count = headerResult.count + detailResult.count;
       });
 
-      await sequelize.transaction(async(tran) => { 
-        for await (const data of req.body) {
-          await repo.patch(data.header, req.user?.uid as number, tran);
-          const detailResult = await detailRepo.update(data.details, req.user?.uid as number, tran);
-          const headerResult = await this.updateTotals(req.tenant.uuid, data.header[0].order_id, data.header[0].uuid, req.user?.uid as number, tran);
+      return createApiResult(res, result, 200, '데이터 수정 성공', this.stateTag, successState.UPDATE);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
 
-          result.raws.push({ header: headerResult.raws, details: detailResult.raws });
-          result.count += headerResult.count + detailResult.count;
-        }
-      });
-      
-      return response(res, result.raws, { count: result.count }, '', 201);
-    } catch (e) {
-      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
     }
   };
-  
+
   //#endregion
 
   //#region 🟠 Patch Functions
@@ -276,146 +276,97 @@ class MatOrderCtl extends BaseCtl {
   // 📒 Fn[patch] (✅ Inheritance): Default Patch Function
   public patch = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      req.body = await this.getBodyIncludedId(req.tenant.uuid, req.body);
-      
-      const sequelize = getSequelize(req.tenant.uuid);
-      const repo = new MatOrderRepo(req.tenant.uuid);
-      const detailRepo = new MatOrderDetailRepo(req.tenant.uuid);
-      let result: ApiResult<any> = { count: 0, raws: [] };
+      let result: ApiResult<any> = { count:0, raws: [] };
+      const service = new MatOrderService(req.tenant.uuid);
+      const detailService = new MatOrderDetailService(req.tenant.uuid);
+      const matched = matchedData(req, { locations: [ 'body' ] });
 
-      // 📌 Detail Data의 합계금액 계산
-      req.body = req.body.map((data: any) => {
-        data.details = data.details.map((detail: any) => {
-          detail.total_price = detail.qty * detail.price * detail.exchange; 
-          return detail;
-        });
-        return data;
+      const data = {
+        header: (await service.convertFk(matched.header))[0],
+        details: await detailService.convertFk(matched.details),
+      }
+
+      await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
+        // 📌 자재발주 수정
+        let headerResult = await service.patch([data.header], req.user?.uid as number, tran);
+
+        // 📌 자재입하상세 수정 및 합계금액 계산
+        let detailResult = await detailService.patch(data.details, req.user?.uid as number, tran);
+        detailResult = await detailService.updateTotalPrice(detailResult.raws, req.user?.uid as number, tran);
+
+        // 📌 자재입하의 합계수량 및 합계금액 계산
+        const orderId = headerResult.raws[0].order_id;
+        const orderUuid = headerResult.raws[0].uuid;
+        headerResult = await service.updateTotal(orderId, orderUuid, req.user?.uid as number, tran);
+
+        result.raws = [{
+          header: headerResult.raws[0],
+          details: detailResult.raws
+        }];
+        result.count = headerResult.count + detailResult.count;
       });
 
-      await sequelize.transaction(async(tran) => { 
-        for await (const data of req.body) {
-          await repo.patch(data.header, req.user?.uid as number, tran);
-          const detailResult = await detailRepo.patch(data.details, req.user?.uid as number, tran);
-          const headerResult = await this.updateTotals(req.tenant.uuid, data.header[0].order_id, data.header[0].uuid, req.user?.uid as number, tran);
+      return createApiResult(res, result, 200, '데이터 수정 성공', this.stateTag, successState.UPDATE);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
 
-          result.raws.push({ header: headerResult.raws, details: detailResult.raws });
-          result.count += headerResult.count + detailResult.count;
-        }
-      });
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
 
-      return response(res, result.raws, { count: result.count }, '', 201);
-    } catch (e) {
-      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
     }
   };
-  
   //#endregion
 
   //#region 🔴 Delete Functions
 
-  // 📒 Fn[delete] (✅ Inheritance): Delete Create Function
+  // 📒 Fn[delete] (✅ Inheritance): Default Delete Function
   public delete = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      req.body = await this.getBodyIncludedId(req.tenant.uuid, req.body);
-      
-      const sequelize = getSequelize(req.tenant.uuid);
-      const repo = new MatOrderRepo(req.tenant.uuid);
-      const detailRepo = new MatOrderDetailRepo(req.tenant.uuid);
-      let result: ApiResult<any> = { count: 0, raws: [] };
+      let result: ApiResult<any> = { count:0, raws: [] };
+      const service = new MatOrderService(req.tenant.uuid);
+      const detailService = new MatOrderDetailService(req.tenant.uuid);
+      const matched = matchedData(req, { locations: [ 'body' ] });
 
-      await sequelize.transaction(async(tran) => { 
-        for await (const data of req.body) {
-          const detailResult = await detailRepo.delete(data.details, req.user?.uid as number, tran);
-          const count = await detailRepo.getCount(data.header[0].order_id, tran);
+      const data = {
+        header: (await service.convertFk(matched.header))[0],
+        details: await detailService.convertFk(matched.details),
+      }
 
-          let headerResult: ApiResult<any> = { raws: [], count: 0 };
-          // 📌 발주전표의 상세데이터가 모두 삭제될 경우 전표를 함께 삭제
-          if (count == 0) { headerResult = await repo.delete(data.header, req.user?.uid as number, tran); } 
-          else { headerResult = await this.updateTotals(req.tenant.uuid, data.header[0].order_id, data.header[0].uuid, req.user?.uid as number, tran); }
+      await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
+        // 📌 자재입하상세 삭제
+        const detailResult = await detailService.delete(data.details, req.user?.uid as number, tran);
 
-          result.raws.push({ header: headerResult.raws, details: detailResult.raws });
-          result.count += headerResult.count + detailResult.count;
+        // 📌 전표 내 상세전표 데이터 개수 조회
+        //    상세전표개수가 0개일 경우 (전표데이터 삭제)
+        //    상세전표개수가 1개 이상일 경우 (전표데이터 합계 데이터 계산)
+        const count = await detailService.getCountInHeader(data.header.receive_id, tran);
+        let headerResult: ApiResult<any>;
+        if (count == 0) {
+          headerResult = await service.delete([data.header], req.user?.uid as number, tran);
+        } else {
+          headerResult = await service.updateTotal(data.header.receive_id, data.header.uuid, req.user?.uid as number, tran);
         }
+
+        result.raws = [{
+          header: headerResult.raws[0],
+          details: detailResult.raws
+        }];
+        result.count = headerResult.count + detailResult.count;
       });
-  
-      return response(res, result.raws, { count: result.count }, '', 200);
-    } catch (e) {
-      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+
+      return createApiResult(res, result, 200, '데이터 삭제 성공', this.stateTag, successState.DELETE);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
     }
   };
 
   //#endregion
-
-  //#endregion
-
-  //#region ✅ Inherited Hooks 
-
-  //#region 🔵 Read Hooks
-
-  // 📒 Fn[beforeRead]: Read DB Tasking 이 실행되기 전 호출되는 Function
-  beforeRead = async(req: express.Request) => {
-    if (isUuid(req.params.uuid)) { return; }
-    if (!isDateFormat(req.query.start_date)) { throw new Error('잘못된 start_date(기준시작일자) 입력') };
-    if (!isDateFormat(req.query.end_date)) { throw new Error('잘못된 end_date(기준종료일자) 입력') };
-  }
-
-  // 📒 Fn[afterRead]: Read DB Tasking 이 실행된 후 호출되는 Function
-  // afterRead = async(req: express.Request, result: ApiResult<any>) => {}
-
-  //#endregion
-
-  //#endregion
-
-  //#region ✅ Optional Functions
-
-  // 📒 Fn[getBodyIncludedId]: Body 내의 Uuid => Id Conversion
-  /**
-   * Body 내 Uuid => Id Conversion
-   * @param body Request Body
-   * @returns Uuid => Id 로 Conversion 되어있는 Body
-   */
-  getBodyIncludedId = async (tenant: string, body: any) => {
-    const resultBody: any[] = [];
-
-    for await (const data of checkArray(body)) {
-      if (data.header) { data.header = await this.getFkId(tenant, data.header, this.headerFkIdInfos); }
-      if (data.details) { data.details = await this.getFkId(tenant, data.details, this.detailsFkIdInfos); }
-      resultBody.push({ header: data.header, details: data.details });
-    }
-
-    return resultBody;
-  }
-
-  // 📒 Fn[updateTotals]: 전표 합계 금액, 수량 계산
-  /**
-   * 전표 합계 금액, 수량 계산
-   * @param id 발주 전표 Id
-   * @param uuid 발주 전표 Uuid
-   * @param uid 데이터 수정자 Uid
-   * @param tran Transaction
-   * @returns 합계 금액, 수량이 계산 된 전표 결과
-   */
-  updateTotals = async (tenant: string, id: number, uuid: string, uid: number, tran?: Transaction) => {
-    const repo = new MatOrderRepo(tenant);
-    const detailRepo = new MatOrderDetailRepo(tenant);
-
-    const getTotals = await detailRepo.getTotals(id, tran);
-    if (!getTotals) { throw new Error('전표 합계금액, 수량 값이 잘못되었습니다.'); }
-
-    const totalQty = getTotals.totalQty;
-    const totalPrice = getTotals.totalPrice;
-
-    const result = await repo.patch(
-      [{ 
-        total_qty: totalQty,
-        total_price: totalPrice,
-        uuid: uuid,
-      }], 
-      uid, tran
-    );
-
-    return result;
-  }
 
   //#endregion
 }

@@ -1,43 +1,29 @@
 import { Transaction } from "sequelize/types";
-import MatReceiveDetailRepo from "../../repositories/mat/receive-detail.repository";
-import MatReceiveRepo from "../../repositories/mat/receive.repository";
-import StdSupplierRepo from "../../repositories/std/supplier.repository";
-import StdFactoryRepo from "../../repositories/std/factory.repository";
-import StdPartnerRepo from "../../repositories/std/partner.repository";
-import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
+import MatOrderDetailRepo from "../../repositories/mat/order-detail.repository";
 import MatOrderRepo from "../../repositories/mat/order.repository";
+import StdFactoryRepo from '../../repositories/std/factory.repository';
+import StdPartnerRepo from '../../repositories/std/partner.repository';
+import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
 
-class MatReceiveService {
+class MatOrderService {
   tenant: string;
   stateTag: string;
-  repo: MatReceiveRepo;
-  detailRepo: MatReceiveDetailRepo;
+  repo: MatOrderRepo;
+  detailRepo: MatOrderDetailRepo;
   fkIdInfos: getFkIdInfo[];
 
   constructor(tenant: string) {
     this.tenant = tenant;
-    this.stateTag = 'matReceive';
-    this.repo = new MatReceiveRepo(tenant);
-    this.detailRepo = new MatReceiveDetailRepo(tenant);
+    this.stateTag = 'matOrder';
+    this.repo = new MatOrderRepo(tenant);
+    this.detailRepo = new MatOrderDetailRepo(tenant);
 
     this.fkIdInfos = [
       {
         key: 'uuid',
-        TRepo: MatReceiveRepo,
-        idName: 'receive_id',
+        TRepo: MatOrderRepo,
+        idName: 'order_id',
         uuidName: 'uuid'
-      },
-      {
-        key: 'receive',
-        TRepo: MatReceiveRepo,
-        idName: 'receive_id',
-        uuidName: 'receive_uuid'
-      },
-      {
-        key: 'factory',
-        TRepo: StdFactoryRepo,
-        idName: 'factory_id',
-        uuidName: 'factory_uuid'
       },
       {
         key: 'order',
@@ -46,16 +32,16 @@ class MatReceiveService {
         uuidName: 'order_uuid'
       },
       {
+        key: 'factory',
+        TRepo: StdFactoryRepo,
+        idName: 'factory_id',
+        uuidName: 'factory_uuid'
+      },
+      {
         key: 'partner',
         TRepo: StdPartnerRepo,
         idName: 'partner_id',
         uuidName: 'partner_uuid'
-      },
-      {
-        key: 'supplier',
-        TRepo: StdSupplierRepo,
-        idName: 'supplier_id',
-        uuidName: 'supplier_uuid'
       },
     ];
   }
@@ -82,11 +68,6 @@ class MatReceiveService {
 
   public readReport = async (params: any) => {
     try { return await this.repo.readReport(params); } 
-    catch (error) { throw error; }
-  };
-
-  public readLotTracking = async (params: any) => {
-    try { return await this.repo.readLotTrackingToReverse(params); } 
     catch (error) { throw error; }
   };
 
@@ -132,4 +113,4 @@ class MatReceiveService {
   }
 }
 
-export default MatReceiveService;
+export default MatOrderService;

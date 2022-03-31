@@ -1,52 +1,41 @@
 import { Transaction } from "sequelize/types";
-import MatReceiveDetailRepo from "../../repositories/mat/receive-detail.repository";
 import MatOrderDetailRepo from "../../repositories/mat/order-detail.repository";
+import MatOrderRepo from "../../repositories/mat/Order.repository";
 import StdFactoryRepo from "../../repositories/std/factory.repository";
-import StdLocationRepo from "../../repositories/std/location.repository";
 import StdMoneyUnitRepo from "../../repositories/std/money-unit.repository";
-import StdProdRepo from "../../repositories/std/prod.repository";
-import StdStoreRepo from "../../repositories/std/store.repository";
-import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
-import InvStoreRepo from "../../repositories/inv/store.repository";
-import createApiError from "../../utils/createApiError";
-import { errorState } from "../../states/common.state";
-import MatReceiveRepo from "../../repositories/mat/receive.repository";
 import StdUnitRepo from "../../repositories/std/unit.repository";
-import QmsInspResultRepo from "../../repositories/qms/insp-result.repository";
+import StdProdRepo from "../../repositories/std/prod.repository";
+import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
 
-class MatReceiveDetailService {
+class MatOrderDetailService {
   tenant: string;
   stateTag: string;
-  repo: MatReceiveDetailRepo;
-  storeRepo: InvStoreRepo;
-  inspResultRepo: QmsInspResultRepo;
+  repo: MatOrderDetailRepo;
   fkIdInfos: getFkIdInfo[];
 
   constructor(tenant: string) {
     this.tenant = tenant;
-    this.stateTag = 'matReceiveDetail';
-    this.repo = new MatReceiveDetailRepo(tenant);
-    this.storeRepo = new InvStoreRepo(tenant);
-    this.inspResultRepo = new QmsInspResultRepo(tenant);
+    this.stateTag = 'matOrderDetail';
+    this.repo = new MatOrderDetailRepo(tenant);
 
     this.fkIdInfos = [
       {
         key: 'uuid',
-        TRepo: MatReceiveDetailRepo,
-        idName: 'receive_detail_id',
+        TRepo: MatOrderDetailRepo,
+        idName: 'order_detail_id',
         uuidName: 'uuid'
       },
       {
-        key: 'receiveDetail',
-        TRepo: MatReceiveDetailRepo,
-        idName: 'receive_detail_id',
-        uuidName: 'receive_detail_uuid'
+        key: 'orderDetail',
+        TRepo: MatOrderDetailRepo,
+        idName: 'order_detail_id',
+        uuidName: 'order_detail_uuid'
       },
       {
-        key: 'receive',
-        TRepo: MatReceiveRepo,
-        idName: 'receive_id',
-        uuidName: 'receive_uuid'
+        key: 'order',
+        TRepo: MatOrderRepo,
+        idName: 'order_id',
+        uuidName: 'order_uuid'
       },
       {
         key: 'factory',
@@ -71,26 +60,6 @@ class MatReceiveDetailService {
         TRepo: StdMoneyUnitRepo,
         idName: 'money_unit_id',
         uuidName: 'money_unit_uuid'
-      },
-      {
-        key: 'orderDetail',
-        TRepo: MatOrderDetailRepo,
-        idName: 'order_detail_id',
-        uuidName: 'order_detail_uuid'
-      },
-      {
-        key: 'toStore',
-        TRepo: StdStoreRepo,
-        idName: 'store_id',
-        idAlias: 'to_store_id',
-        uuidName: 'to_store_uuid'
-      },
-      {
-        key: 'toLocation',
-        TRepo: StdLocationRepo,
-        idName: 'location_id',
-        idAlias: 'to_location_id',
-        uuidName: 'to_location_uuid'
       },
     ];
   }
@@ -140,6 +109,11 @@ class MatReceiveDetailService {
     catch (error) { throw error; }
   }
 
+	public updateComplete = async (datas: any[], uid: number, tran: Transaction) => {
+    try { return await this.repo.updateComplete(datas, uid, tran); } 
+    catch (error) { throw error; }
+  }
+
   /**
    * 입력한 전표에 해당하는 상세전표의 개수 조회
    * @param id 전표의 ID
@@ -177,25 +151,6 @@ class MatReceiveDetailService {
 
     return await this.repo.patch(datas, uid, tran);
   }
-
-  public validateHasInspResultByUuids = async (uuids: string[]) => {
-    try {
-      const read = await this.inspResultRepo.readMatReceiveByReceiveUuids(uuids);
-      if (read.raws.length > 0) {
-        throw createApiError(
-          400, 
-          { 
-            admin_message: `입하상세번호 ${read.raws[0].uuid}의 수입검사 이력이 등록되어 수정할 수 없습니다.`,
-            user_message: '수입검사 이력이 등록되어 수정할 수 없습니다.'
-          },
-          this.stateTag, 
-          errorState.INVALID_DATA
-        );
-      }
-
-      return true;
-    } catch (error) { throw error; }
-  }
 }
 
-export default MatReceiveDetailService;
+export default MatOrderDetailService;
