@@ -27,7 +27,7 @@ const matOrderDetailValidation = {
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'uuid', '자재발주상세UUID'))
   ],
 	updateComplete: [
-		body('*.uuid', '자재입하UUID')
+		body('*.uuid', '자재발주상세UUID')
 			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '자재발주상세UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '자재발주상세UUID')),
 		body('*.complete_fg', '발주완료 유무')

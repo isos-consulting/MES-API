@@ -42,8 +42,8 @@ class MatOrderCtl {
         header: (await service.convertFk(matched.header))[0],
         details: await detailService.convertFk(matched.details),
       }
-			console.log(data);
-      await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
+
+			await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
         let orderUuid: string;
         let orderId: number;
         let maxSeq: number;
@@ -290,11 +290,11 @@ class MatOrderCtl {
         // 📌 자재발주 수정
         let headerResult = await service.patch([data.header], req.user?.uid as number, tran);
 
-        // 📌 자재입하상세 수정 및 합계금액 계산
+        // 📌 자재발주상세 수정 및 합계금액 계산
         let detailResult = await detailService.patch(data.details, req.user?.uid as number, tran);
         detailResult = await detailService.updateTotalPrice(detailResult.raws, req.user?.uid as number, tran);
 
-        // 📌 자재입하의 합계수량 및 합계금액 계산
+        // 📌 자재발주의 합계수량 및 합계금액 계산
         const orderId = headerResult.raws[0].order_id;
         const orderUuid = headerResult.raws[0].uuid;
         headerResult = await service.updateTotal(orderId, orderUuid, req.user?.uid as number, tran);
@@ -334,18 +334,18 @@ class MatOrderCtl {
       }
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
-        // 📌 자재입하상세 삭제
+        // 📌 자재발주상세 삭제
         const detailResult = await detailService.delete(data.details, req.user?.uid as number, tran);
 
         // 📌 전표 내 상세전표 데이터 개수 조회
         //    상세전표개수가 0개일 경우 (전표데이터 삭제)
         //    상세전표개수가 1개 이상일 경우 (전표데이터 합계 데이터 계산)
-        const count = await detailService.getCountInHeader(data.header.receive_id, tran);
+        const count = await detailService.getCountInHeader(data.header.order_id, tran);
         let headerResult: ApiResult<any>;
         if (count == 0) {
           headerResult = await service.delete([data.header], req.user?.uid as number, tran);
         } else {
-          headerResult = await service.updateTotal(data.header.receive_id, data.header.uuid, req.user?.uid as number, tran);
+          headerResult = await service.updateTotal(data.header.order_id, data.header.uuid, req.user?.uid as number, tran);
         }
 
         result.raws = [{

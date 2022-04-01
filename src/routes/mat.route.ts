@@ -51,7 +51,7 @@ router.route('/return-details').get(matReturnDetailValidation.read, validationCa
 //#region ✅ Order (자재발주)
 const order = new MatOrderCtl();
 router.route('/orders/report').get(matOrderValidation.readReport, validationCallback, order.readReport);
-router.route('/order/:uuid').get(matOrderValidation.read, validationCallback, order.read);
+router.route('/order/:uuid').get(matOrderValidation.readByUuid, validationCallback, order.readByUuid);
 router.route('/order/:uuid/include-details').get(matOrderValidation.readIncludeDetails, validationCallback, order.readIncludeDetails);
 router.route('/order/:uuid/details').get(matOrderValidation.readDetails, validationCallback, order.readDetails);
 router.route('/orders').get(matOrderValidation.read, validationCallback, order.read);
@@ -64,8 +64,8 @@ router.route('/orders').delete(matOrderValidation.delete, validationCallback, or
 //#region ✅ OrderDetail (자재발주상세)
 const orderDetail = new MatOrderDetailCtl();
 router.route('/order-details/complete').put(matOrderDetailValidation.updateComplete, validationCallback, orderDetail.updateComplete);
-router.route('/order-detail/:uuid').get(matOrderDetailValidation.updateComplete, validationCallback, orderDetail.read);
-router.route('/order-details').get(matOrderDetailValidation.updateComplete, validationCallback, orderDetail.read);
+router.route('/order-detail/:uuid').get(matOrderDetailValidation.readByUuid, validationCallback, orderDetail.readByUuid);
+router.route('/order-details').get(matOrderDetailValidation.read, validationCallback, orderDetail.read);
 //#endregion
 
 //#region ✅ Receive (자재입하)

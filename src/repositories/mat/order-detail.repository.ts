@@ -173,7 +173,7 @@ class MatOrderDetailRepo {
   public updateComplete = async(body: IMatOrderDetail[], uid: number, transaction?: Transaction) => {
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
-
+			
       const promises = body.map((orderDetail: any) => {
         return this.repo.update(
           {
