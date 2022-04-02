@@ -9,6 +9,8 @@ import qmsInspValidation from '../validations/qms/insp.validation';
 import validationCallback from '../utils/validationCallback';
 import qmsInspDetailValidation from '../validations/qms/insp-detail.validation';
 import qmsInspResultValidation from '../validations/qms/insp-result.validation';
+import qmsReworkValidation from '../validations/qms/rework.validation';
+import qmsReworkDisassembleValidation from '../validations/qms/rework-disassemble.validation';
 
 const router = express.Router();
 
@@ -63,19 +65,19 @@ router.route('/final/insp-results').delete(qmsInspResultValidation.deleteFinalIn
 
 //#region ✅ Rework (부적합품판정)
 const rework = new QmsReworkCtl();
-router.route('/rework/:uuid').get(rework.read);
-router.route('/reworks').get(rework.read);
-router.route('/reworks').post(rework.create);
-router.route('/reworks/disassembles').post(rework.createDisassemble);
-router.route('/reworks').put(rework.update);
-router.route('/reworks').patch(rework.patch);
-router.route('/reworks').delete(rework.delete);
+router.route('/rework/:uuid').get(qmsReworkValidation.readByUuid, validationCallback, rework.readByUuid);
+router.route('/reworks').get(qmsReworkValidation.read, validationCallback, rework.read);
+router.route('/reworks').post(qmsReworkValidation.create, validationCallback, rework.create);
+router.route('/reworks/disassembles').post(qmsReworkValidation.createDisassemble, validationCallback, rework.createDisassemble);
+router.route('/reworks').put(qmsReworkValidation.update, validationCallback, rework.update);
+router.route('/reworks').patch(qmsReworkValidation.patch, validationCallback, rework.patch);
+router.route('/reworks').delete(qmsReworkValidation.delete, validationCallback, rework.delete);
 //#endregion
 
 //#region ✅ Rework (부적합품판정-분해상세)
 const reworkDisassemble = new QmsReworkDisassembleCtl();
-router.route('/rework-disassemble/:uuid').get(reworkDisassemble.read);
-router.route('/rework-disassembles').get(reworkDisassemble.read);
+router.route('/rework-disassemble/:uuid').get(qmsReworkDisassembleValidation.readByUuid, validationCallback, reworkDisassemble.readByUuid);
+router.route('/rework-disassembles').get(qmsReworkDisassembleValidation.read, validationCallback, reworkDisassemble.read);
 //#endregion
 
 export default router;

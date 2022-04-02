@@ -282,6 +282,13 @@ class QmsReworkRepo {
     return convertReadResult(result);
   };
 
+	// 📒 Fn[readRawById]: Id 를 포함한 Raw Data Read Function
+	public readRawById = async(id: number) => {
+		const result = await this.repo.findOne({ where: { rework_id: id } });
+		return convertReadResult(result);
+	};
+	
+
   //#endregion
 
   //#region 🟡 Update Functions
