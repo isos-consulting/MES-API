@@ -17,6 +17,7 @@ import StdBomRepo from "../../repositories/std/bom.repository";
 import InvStoreService from "../inv/store.service";
 import StdTenantOptService from "../std/tenant-opt.service";
 import { cloneDeep } from "lodash";
+import StdUnitConvertService from "../std/unit-convert.service";
 
 class PrdWorkInputService {
   tenant: string;
@@ -226,37 +227,47 @@ class PrdWorkInputService {
    * @returns 작업실적 데이터
    */
   getWorkInputBody = async (data: any, regDate: string, isMinusStockOption: boolean) => {
+    const unitConvertService = new StdUnitConvertService(this.tenant);
     let result: any = { pushBody: [], pullBody: [] };
 
     const pushArray = data.inputDatas.filter((input: any) => input.bom_input_type_id == BOM_INPUT_TYPE.PUSH);
     const pullArray = data.inputDatas.filter((input: any) => input.bom_input_type_id == BOM_INPUT_TYPE.PULL);
 
-    pushArray.forEach((typePush: any) => {
-      result.pushBody.push({
-        work_input_id: typePush.work_input_id,
-        factory_id: typePush.factory_id,
-        prod_id: typePush.prod_id,
-        reg_date: regDate,
-        lot_no: typePush.lot_no,
-        qty: typePush.qty,
-        from_store_id: typePush.from_store_id,
-        from_location_id: typePush.from_location_id
+    const pushResult = await Promise.all(
+      pushArray.map(async (typePush: any) => {
+        // 📌 품목의 단위와 입고의 단위가 다를 경우 단위변환 진행
+        const convertedQty = await unitConvertService.convertQty(typePush.prod_id, typePush.unit_id, typePush.qty);
+
+        return {
+          work_input_id: typePush.work_input_id,
+          factory_id: typePush.factory_id,
+          prod_id: typePush.prod_id,
+          reg_date: regDate,
+          lot_no: typePush.lot_no,
+          qty: convertedQty,
+          from_store_id: typePush.from_store_id,
+          from_location_id: typePush.from_location_id
+        }
       })
-    });
+    );
 
     const pullResult = await Promise.all(
       pullArray.map(async (typePull: any) => {
+        // 📌 품목의 단위와 입고의 단위가 다를 경우 단위변환 진행
+        const convertedQty = await unitConvertService.convertQty(typePull.prod_id, typePull.unit_id, (Number(data.work.qty) + Number(data.work.reject_qty)) * Number(typePull.usage));
+
         const params: IPrdWorkInput = {
           factory_id: data.work.factory_id,
           prod_id: typePull.prod_id,
           from_store_id: typePull.from_store_id,
           from_location_id: typePull.from_location_id,
-          qty: (Number(data.work.qty) + Number(data.work.reject_qty)) * Number(typePull.usage),
+          qty: convertedQty,
         }
         return await this.getPullInputBody(params, regDate, isMinusStockOption);
       })
     );
 
+    result.pushBody = [pushResult[0]];
     result.pullBody = pullResult[0];
     return result;
   }
@@ -319,7 +330,7 @@ class PrdWorkInputService {
       }
 
       verifyInput[input.prod_id].usage = input.c_usage;
-      verifyInput[input.prod_id].qty += Number(input.qty);
+      verifyInput[input.prod_id].qty += +input.qty;
       verifyInput[input.prod_id].bom_input_type_id = input.bom_input_type_id
       verifyInput[input.prod_id].from_store_id = input.from_store_id
       verifyInput[input.prod_id].from_location_id = input.from_location_id
@@ -341,6 +352,7 @@ class PrdWorkInputService {
       result.inputDatas.push(input);
     });
 
+    console.log(verifyInput);
     // pull방식이 아닌 품목값 제거
     inputProdArray.forEach((prod: number) => { delete workVerifyInput[prod]; });
 
