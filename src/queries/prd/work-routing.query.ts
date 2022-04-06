@@ -22,8 +22,8 @@ const readWorkRoutings = (
 
     INSERT INTO temp_worker_tb
     SELECT 	p_ww.work_routing_id, 
-        CASE WHEN count(p_ww.emp_id) = 1 THEN max(s_w.emp_nm) 
-        ELSE max(s_w.emp_nm) || '외 ' || count(p_ww.emp_id) || '명' END AS emp_nm
+        CASE WHEN count(p_ww.emp_id) = 1 THEN max(s_e.emp_nm) 
+        ELSE max(s_e.emp_nm) || '외 ' || count(p_ww.emp_id) || '명' END AS emp_nm
     FROM prd_work_worker_tb p_ww
     JOIN std_emp_tb s_e ON s_e.emp_id = p_ww.emp_id 
     GROUP BY p_ww.work_routing_id ;

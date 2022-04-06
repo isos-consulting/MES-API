@@ -212,6 +212,7 @@ class PrdWorkCtl {
            * work         : 실적정보
            */
           const workValidateResult = await service.validateUpdateComplete(data, tran);
+          console.log(workValidateResult);
           
           // 📌 생산실적 완료 처리
           const workResult = await service.updateComplete({ uuid: data.uuid, qty: workValidateResult.work.qty, reject_qty: workValidateResult.work.reject_qty, complete_fg: true }, req.user?.uid as number, tran);
@@ -241,6 +242,7 @@ class PrdWorkCtl {
            * pullBody  : pull방식 투입 품목 Body
            * pushBody  : push방식 투입 품목 Body
            */
+
           const workInputBody = await workInputService.getWorkInputBody(workValidateResult, workResult.raws[0].reg_date, isMinusStockOption);
           
           // pull방식 품목들 수불처리 전 create work_input 
@@ -253,15 +255,21 @@ class PrdWorkCtl {
               body.bom_input_type_id = workValidateResult.verifyInput[prodId].bom_input_type_id;
             });
           });
-          const createWorkInputResult = await workInputService.create(workInputBody.pullBody as IPrdWorkInput[], req.user?.uid as number, tran);
 
-          // Create 결과의 work_input_id 수불을 위한 object에 셋팅
-          createWorkInputResult.raws.forEach((input: any) => {
-            workInputBody.pullBody.forEach((body: IPrdWorkInput) => {
-              if(input.prod_id == body.prod_id && input.lot_no == body.lot_no) { body.work_input_id = input.work_input_id; }
+          if (!workInputBody.pullBody) {
+            workInputBody.pullBody = [];
+          }
+          else {
+            const createWorkInputResult = await workInputService.create(workInputBody.pullBody as IPrdWorkInput[], req.user?.uid as number, tran);
+            
+            // Create 결과의 work_input_id 수불을 위한 object에 셋팅
+            createWorkInputResult.raws.forEach((input: any) => {
+              workInputBody.pullBody.forEach((body: IPrdWorkInput) => {
+                if(input.prod_id == body.prod_id && input.lot_no == body.lot_no) { body.work_input_id = input.work_input_id; }
+              });
             });
-          });
-
+          }
+          
           const inputStoreResult = await inventoryService.transactInventory(
             [...workInputBody.pushBody, ...workInputBody.pullBody ], 'CREATE', 
             { inout: 'FROM', tran_type: 'PRD_INPUT', reg_date: workResult.raws[0].reg_date, tran_id_alias: 'work_input_id' },
