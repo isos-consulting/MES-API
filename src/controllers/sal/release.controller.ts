@@ -37,6 +37,8 @@ class SalReleaseCtl {
       const matched = matchedData(req, { locations: [ 'body' ] });
       const datas: any[] = await service.convertFk(Object.values(matched));
 
+      console.log(datas);
+
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
         // 📌 제품출고 생성
         const releaseResult = await service.create(datas, req.user?.uid as number, tran);

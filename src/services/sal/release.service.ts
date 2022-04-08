@@ -5,6 +5,7 @@ import StdProdRepo from "../../repositories/std/prod.repository";
 import StdStoreRepo from "../../repositories/std/store.repository";
 import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
 import SalReleaseRepo from "../../repositories/sal/release.repository";
+import SalOrderDetailRepo from "../../repositories/sal/order-detail.repository";
 import SalOutgoDetailRepo from "../../repositories/sal/outgo-detail.repository";
 import ISalRelease from "../../interfaces/sal/release.interface";
 import SalOutgoOrderDetailRepo from "../../repositories/sal/outgo-order-detail.repository";
@@ -38,6 +39,12 @@ class SalReleaseService {
         TRepo: StdProdRepo,
         idName: 'prod_id',
         uuidName: 'prod_uuid'
+      },
+      {
+        key: 'orderDetail',
+        TRepo: SalOrderDetailRepo,
+        idName: 'order_detail_id',
+        uuidName: 'order_detail_uuid'
       },
       {
         key: 'outgoDetail',

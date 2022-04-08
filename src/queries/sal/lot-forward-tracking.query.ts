@@ -132,6 +132,7 @@ const readLotForwardReport = (
 	// 📌 생성된 임시테이블(Temp Table) 삭제(Drop)
 	const dropTempTableQuery = `
 		DROP TABLE temp_lot;
+		DROP TABLE temp_work_routing;
 	`;
 	//#endregion
 

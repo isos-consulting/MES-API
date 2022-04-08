@@ -143,7 +143,7 @@ const seedDatas: IAutMenu[] = [
 	
 	// [[ 재고관리 ]]
 	{ menu_id: 125, menu_type_id: null, menu_nm: '재고관리', menu_uri: 'inv', menu_form_nm: null, component_nm: null, icon: 'ico_nav_inventory', parent_id: 0, sortby: 8, use_fg: true, created_uid: 1, updated_uid: 1 },
-		{ menu_id: 126, menu_type_id: 1, menu_nm: '재고현황', menu_uri: '\/inv\/stores\/stocks', menu_form_nm: null, component_nm: 'PgInvStoresStocks', icon: null, parent_id: 125, sortby: 1, use_fg: true, created_uid: 1, updated_uid: 1 },
+		{ menu_id: 126, menu_type_id: 1, menu_nm: '재고현황', menu_uri: '\/inv\/stocks', menu_form_nm: null, component_nm: 'PgInvStoresStocks', icon: null, parent_id: 125, sortby: 1, use_fg: true, created_uid: 1, updated_uid: 1 },
 		{ menu_id: 127, menu_type_id: null, menu_nm: '재고실사 정보', menu_uri: '\/inv\/store', menu_form_nm: null, component_nm: null, icon: null, parent_id: 125, sortby: 2, use_fg: true, created_uid: 1, updated_uid: 1 },
 			{ menu_id: 128, menu_type_id: 2, menu_nm: '재고실사 관리', menu_uri: '\/inv\/stores', menu_form_nm: 'frm_INV_Store', component_nm: 'PgInvStore', icon: null, parent_id: 127, sortby: 1, use_fg: true, created_uid: 1, updated_uid: 1 },
 			{ menu_id: 129, menu_type_id: 1, menu_nm: '재고실사 현황', menu_uri: '\/inv\/store-reports', menu_form_nm: null, component_nm: 'PgInvStoreReport', icon: null, parent_id: 127, sortby: 2, use_fg: true, created_uid: 1, updated_uid: 1 },
