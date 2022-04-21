@@ -37,6 +37,8 @@ const prdOrderRoutingValidation = {
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'mold_uuid', '금형UUID')),
     body('*.mold_cavity', '금형Cavity').optional({ nullable: true })
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'mold_cavity', '금형Cavity')),
+    body('*.prd_signal_cnt', '생산카운트 신호 수').optional({ nullable: true })
+      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'prd_signal_cnt', '생산카운트 신호 수')),
     body('*.remark', '비고').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'remark', '비고')),
   ],
@@ -53,6 +55,8 @@ const prdOrderRoutingValidation = {
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'mold_uuid', '금형UUID')),
     body('*.mold_cavity', '금형Cavity').optional({ nullable: true })
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'mold_cavity', '금형Cavity')),
+    body('*.prd_signal_cnt', '생산카운트 신호 수').optional({ nullable: true })
+      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'prd_signal_cnt', '생산카운트 신호 수')),
     body('*.remark', '비고').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'remark', '비고')),
   ],
@@ -68,6 +72,8 @@ const prdOrderRoutingValidation = {
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'mold_uuid', '금형UUID')),
     body('*.mold_cavity', '금형Cavity').optional({ nullable: true })
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'mold_cavity', '금형Cavity')),
+    body('*.prd_signal_cnt', '생산카운트 신호 수').optional({ nullable: true })
+      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'prd_signal_cnt', '생산카운트 신호 수')),
     body('*.remark', '비고').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'remark', '비고')),
   ],

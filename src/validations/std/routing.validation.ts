@@ -41,6 +41,8 @@ const stdRoutingValidation = {
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'cycle_time', '소요시간')),
 		body('*.uph', '시간당 생산량').optional({ nullable: true })
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uph', '시간당 생산량')),
+      body('*.prd_signal_cnt', '생산카운트 신호 수').optional({ nullable: true })
+      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'prd_signal_cnt', '생산카운트 신호 수')),
   ],
   update: [
     body('*.uuid', '라우팅UUID')
@@ -56,6 +58,9 @@ const stdRoutingValidation = {
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'cycle_time', '소요시간')),
 		body('*.uph', '시간당 생산량').optional({ nullable: true })
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uph', '시간당 생산량')),
+      body('*.prd_signal_cnt', '생산카운트 신호 수')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'prd_signal_cnt', '생산카운트 신호 수'))
+      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'prd_signal_cnt', '생산카운트 신호 수')),
   ],
   patch: [
     body('*.uuid', '라우팅UUID')
@@ -69,6 +74,8 @@ const stdRoutingValidation = {
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'cycle_time', '소요시간')),
 		body('*.uph', '시간당 생산량').optional({ nullable: true })
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uph', '시간당 생산량')),
+      body('*.prd_signal_cnt', '생산카운트 신호 수').optional({ nullable: true })
+      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'prd_signal_cnt', '생산카운트 신호 수')),
   ],
   delete: [
     body('*.uuid', '라우팅UUID')
