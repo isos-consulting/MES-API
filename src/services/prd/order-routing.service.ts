@@ -84,7 +84,8 @@ class PrdOrderRoutingService {
           proc_id: raw.proc_id,
           proc_no: raw.proc_no,
           workings_id: data.workings_id,
-          equip_id: raw.equip_id
+          equip_id: raw.equip_id,
+          prd_signal_cnt: raw.prd_signal_cnt
         }
       });
       return await this.repo.create(routingBody, uid, tran); 

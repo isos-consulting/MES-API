@@ -119,6 +119,18 @@ export default class PrdWorkRouting extends Model<IPrdWorkRouting> {
   ongoing_fg: boolean;
 
   @Column({
+    comment: '생산 카운트 신호 수',
+    type: DataType.INTEGER,
+  })
+  prd_signal_cnt: number;
+
+  @Column({
+    comment: '생산 카운트 시작 값',
+    type: DataType.DECIMAL(19,6),
+  })
+  start_signal_val: number;
+
+  @Column({
     comment: '비고',
     type: DataType.STRING(250),
   })

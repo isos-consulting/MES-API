@@ -78,6 +78,14 @@ export default class StdRouting extends Model<IStdRouting> {
   })
   uph: number;
 
+  @Column({
+    comment: '생산카운트 신호 수',
+    type: DataType.INTEGER,
+    allowNull: false,
+    defaultValue: 1,
+  })
+  prd_signal_cnt: number;
+
   @CreatedAt
   @Column({
     comment: '데이터 생성 일시',

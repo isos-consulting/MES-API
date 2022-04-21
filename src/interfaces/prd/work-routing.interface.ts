@@ -13,6 +13,8 @@ export default interface IPrdWorkRouting { // 공정 순서(실적)
   end_date?: string | null,
   work_time?: string | null,
   ongoing_fg?: boolean | null,
+  prd_signal_cnt?: number | null,
+  start_signal_val ?: number | null,
   remark?: string | null,
   created_at?: Date,
   created_uid?: number,

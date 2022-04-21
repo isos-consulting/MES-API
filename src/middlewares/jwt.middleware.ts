@@ -7,7 +7,7 @@ import response from '../utils/response_new';
 export default async(req: express.Request, res: express.Response, next: express.NextFunction) => {
   try {
     // 로그인 및 사용자 정보 조회,등록,수정 및 Swagger Document의 경우 Token값을 검사하지 않고 API통신 진행
-    if(req.path.indexOf('sign-in') !== -1 || req.path.indexOf('api-docs') !== -1 || req.path.indexOf('swagger') !== -1 || req.path.indexOf('favicon') !== -1) {
+    if(req.path.indexOf('sign-in') !== -1 || req.path.indexOf('favicon') !== -1) {
       return next();
     } else {
       req.user = undefined;
@@ -19,7 +19,7 @@ export default async(req: express.Request, res: express.Response, next: express.
           { state_tag: 'authentication', type: 'ERROR', state_no: errorState.NO_TOKEN }
         );
       } else {
-        // 📌 Authrization이 Bearer 형태가 아닌경우 Error Return
+        // 📌 Authrization이 Bearer 형태가 아닌경우 Error Return`
         if (!req.headers.authorization.startsWith("Bearer ")){
           return response(
             res, 

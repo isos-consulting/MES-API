@@ -86,7 +86,8 @@ class PrdWorkRoutingService {
           proc_id: orderRouting.proc_id,
           proc_no: orderRouting.proc_no,
           workings_id: orderRouting.workings_id,
-          equip_id: orderRouting.equip_id
+          equip_id: orderRouting.equip_id,
+          prd_signal_cnt: orderRouting.prd_signal_cnt,
         };
       });
 

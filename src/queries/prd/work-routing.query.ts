@@ -68,6 +68,8 @@ const readWorkRoutings = (
       p_wr.end_date,
       p_wr.work_time,
       p_wr.ongoing_fg,
+      p_wr.prd_signal_cnt,
+      p_wr.start_signal_val,
       t_w.emp_nm,
       p_wr.remark,
       p_wr.created_at,

@@ -28,7 +28,7 @@ const baseDbSetting = {
 export default async(req: express.Request, res: express.Response, next: express.NextFunction) => {
   try {
     // Swagger Document의 경우 Tenant를 격리하지 않고 API통신 진행
-    if(req.path.indexOf('api-docs') !== -1 || req.path.indexOf('swagger') !== -1 || req.path.indexOf('favicon') !== -1) {
+    if(req.path.indexOf('favicon') !== -1) {
       return next();
     } else {
       // 📌 Test 환경에서는 Auth Server를 거치지 않고 Environment의 Connection 정보 사용

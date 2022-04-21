@@ -8,6 +8,7 @@ export default interface IPrdOrderRouting { // 공정 순서(지시)
   equip_id?: number | null,
   mold_id?: number | null,
   mold_cavity?: number | null,
+  prd_signal_cnt?: number | null,
   remark?: string | null,
   created_at?: Date,
   created_uid?: number,

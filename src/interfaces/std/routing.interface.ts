@@ -7,6 +7,7 @@ export default interface IStdRouting {
   auto_work_fg?: boolean,
   cycle_time?: number | null,
   uph?: number | null,
+  prd_signal_cnt?: number | null,
   created_at?: Date,
   created_uid?: number,
   updated_at?: Date,

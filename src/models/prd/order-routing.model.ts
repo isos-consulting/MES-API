@@ -89,6 +89,12 @@ export default class PrdOrderRouting extends Model<IPrdOrderRouting> {
   mold_cavity: number;
 
   @Column({
+    comment: '생산카운트 신호 수',
+    type: DataType.INTEGER,
+  })
+  prd_signal_cnt: number;
+
+  @Column({
     comment: '비고',
     type: DataType.STRING(250),
   })
