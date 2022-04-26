@@ -2,6 +2,7 @@ import { Sequelize } from 'sequelize-typescript';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
 import { readTempGraph } from '../../queries/gat/temp-graph.query';
+import { DatabaseError } from 'sequelize';
 
 class GatDataHistoryRepo {
   sequelize: Sequelize;
@@ -22,10 +23,14 @@ class GatDataHistoryRepo {
   public readTempGraph = async(params?: any) => {
     try {
       const result = await this.sequelize.query(readTempGraph(params));
-
       return convertReadResult(result[0]);
     } catch (error) {
-      throw error;
+			if (error instanceof DatabaseError) { 
+				return convertReadResult('');; 
+			} else {
+				throw error;
+			}
+      
     }
   };
 

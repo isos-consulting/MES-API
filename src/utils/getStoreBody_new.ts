@@ -15,8 +15,8 @@ const getStoreBody = (params: {
   const datas = checkArray(params.datas);
 
   let qtyAlias = params.qty_alias ?? 'qty';
-  let storeAlias = params.store_alias ?? params.inout === 'FROM' ? 'from_store_id' : 'to_store_id';
-  let locationAlias = params.location_alias ?? params.inout === 'FROM' ? 'from_location_id' : 'to_location_id';
+	let storeAlias = params.store_alias ?? (params.inout === 'FROM' ? 'from_store_id' : 'to_store_id');
+  let locationAlias = params.location_alias ?? (params.inout === 'FROM' ? 'from_location_id' : 'to_location_id');
 
   const result: IInvStore[] = datas.map((data: any) => {
     return {
