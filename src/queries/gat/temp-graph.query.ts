@@ -39,7 +39,7 @@ const readTempGraph = (
 		s_dm.data_map_nm,
 		s_dh.value
 	FROM ${table} s_dh
-	JOIN std_data_map_tb s_dm ON s_dh.data_gear_id = s_dm.data_gear_id AND s_dh.data_item_id = s_dm.data_item_id AND s_dh.data_item_id = s_dm.data_item_id AND s_dh.data_channel = s_dm.data_channel   
+	JOIN std_data_map_tb s_dm ON s_dh.data_gear_id = s_dm.data_gear_id AND s_dh.equip_id = s_dm.equip_id AND s_dh.data_item_id = s_dm.data_item_id AND s_dh.data_channel = s_dm.data_channel   
 	JOIN std_data_gear_tb s_dg on s_dh.data_gear_id  = s_dg.data_gear_id
 	JOIN std_data_item_tb s_di on s_dh.data_item_id  = s_di.data_item_id
 	JOIN std_equip_tb s_e on s_dh.equip_id = s_e.equip_id
