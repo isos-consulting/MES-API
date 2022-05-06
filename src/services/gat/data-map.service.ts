@@ -59,6 +59,11 @@ class StdDataMapService {
 		catch (error) { throw error; }
   };
 
+	public readEquip = async (params: any) => {
+    try { return await this.repo.readEquip(params); } 
+		catch (error) { throw error; }
+  };
+
   public update = async (datas: any[], uid: number, tran: Transaction) => {
     try { return await this.repo.update(datas, uid, tran); }
 		catch (error) { throw error; }

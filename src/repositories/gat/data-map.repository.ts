@@ -179,6 +179,78 @@ class StdDataMapRepo {
     }
   };
 
+	// 📒 Fn[readEquip]: ReadEquip Function
+	public readEquip = async(params?: any) => {
+		try {
+			const result = await this.repo.findAll({ 
+				include: [
+					{ 
+						model: this.sequelize.models.StdDataItem, 
+						attributes: [], 
+						required: true, 
+						where: { 
+							[Op.and]: [ 
+								{ monitoring_fg: true },
+								{ uuid: params.data_item_uuid ? params.data_item_uuid : { [Op.ne]: null } }
+							] 
+						}
+					},
+					{ 
+            model: this.sequelize.models.StdEquip, 
+            attributes: [], 
+            required: true, 
+						include: [
+							{ 
+								model: this.sequelize.models.StdFactory, 
+								attributes: [], 
+								required: true, 
+								where: { uuid: params.factory_uuid ?? { [Op.ne]: null } }
+							},
+						],
+						where: {
+							[Op.and]: [
+								params.use_fg != null ? { use_fg: params.use_fg } : {},
+							]
+						}
+          },
+					{ model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+					{ model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+				],
+				attributes: [
+					[ Sequelize.col('stdDataMap.uuid'), 'data_map_uuid' ],
+					[ Sequelize.col('stdDataItem.uuid'), 'data_item_uuid' ],
+					[ Sequelize.col('stdDataItem.data_item_cd'), 'data_item_cd' ],
+					[ Sequelize.col('stdDataItem.data_item_nm'), 'data_item_nm' ],
+					[ Sequelize.col('stdEquip.uuid'), 'equip_uuid' ],
+					[ Sequelize.col('stdEquip.equip_cd'), 'equip_cd' ],
+					[ Sequelize.col('stdEquip.equip_nm'), 'equip_nm' ],
+					[ Sequelize.col('stdEquip.stdFactory.uuid'), 'factory_uuid' ],
+          [ Sequelize.col('stdEquip.stdFactory.factory_cd'), 'factory_cd' ],
+          [ Sequelize.col('stdEquip.stdFactory.factory_nm'), 'factory_nm' ],
+					'data_map_nm',
+					'data_channel',
+					'history_yn',
+					'weight',
+					'work_fg',
+					'community_function',
+					'slave',
+					'alarm_fg',
+					'ieee752_fg',
+					'monitoring_fg',
+					'created_at',
+					[ Sequelize.col('createUser.user_nm'), 'created_nm' ],
+					'updated_at',
+					[ Sequelize.col('updateUser.user_nm'), 'updated_nm' ]
+				],
+				order: [ 'data_map_id' ],
+			});
+
+			return convertReadResult(result);
+		} catch (error) {
+			throw error;
+		}
+	};
+
   // 📒 Fn[readRawsByUuids]: Id 를 포함한 Raw Datas Read Function
   public readRawsByUuids = async(uuids: string[]) => {
     const result = await this.repo.findAll({ where: { uuid: { [Op.in]: uuids } } });

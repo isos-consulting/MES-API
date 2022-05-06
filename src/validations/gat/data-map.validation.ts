@@ -6,6 +6,15 @@ import createValidationError from '../../utils/createValidationError';
 const stateTag = 'stdDataMap';
   
 const stdDataMapValidation = {
+	readEquip: [
+    query('factory_uuid', '공장UUID')
+			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'factory_uuid', '공장UUID'))
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'factory_uuid', '공장UUID')),
+		query('data_item_uuid', '인터페이스 항목UUID').optional({ nullable: true })
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'data_item_uuid', '인터페이스 항목UUID')),
+		query('use_fg', '설비사용 유무').optional({ nullable: true })
+      .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'use_fg', '설비사용 유무')),
+  ],
   read: [
     query('data_item_uuid', '인터페이스 항목UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'data_item_uuid', '인터페이스 항목UUID')),
