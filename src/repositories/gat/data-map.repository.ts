@@ -5,12 +5,13 @@ import { Sequelize } from 'sequelize-typescript';
 import convertResult from '../../utils/convertResult';
 import _ from 'lodash';
 import { Op, Transaction } from 'sequelize';
-import { UniqueConstraintError } from 'sequelize';
+import { UniqueConstraintError, DatabaseError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
 import ApiResult from '../../interfaces/common/api-result.interface';
+import { readInterfaceGraph } from '../../queries/gat/interface-graph.query';
 
 class StdDataMapRepo {
   repo: Repository<StdDataMap>;
@@ -217,7 +218,6 @@ class StdDataMapRepo {
 					{ model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
 				],
 				attributes: [
-					[ Sequelize.col('stdDataMap.uuid'), 'data_map_uuid' ],
 					[ Sequelize.col('stdDataItem.uuid'), 'data_item_uuid' ],
 					[ Sequelize.col('stdDataItem.data_item_cd'), 'data_item_cd' ],
 					[ Sequelize.col('stdDataItem.data_item_nm'), 'data_item_nm' ],
@@ -226,28 +226,31 @@ class StdDataMapRepo {
 					[ Sequelize.col('stdEquip.equip_nm'), 'equip_nm' ],
 					[ Sequelize.col('stdEquip.stdFactory.uuid'), 'factory_uuid' ],
           [ Sequelize.col('stdEquip.stdFactory.factory_cd'), 'factory_cd' ],
-          [ Sequelize.col('stdEquip.stdFactory.factory_nm'), 'factory_nm' ],
-					'data_map_nm',
-					'data_channel',
-					'history_yn',
-					'weight',
-					'work_fg',
-					'community_function',
-					'slave',
-					'alarm_fg',
-					'ieee752_fg',
-					'monitoring_fg',
-					'created_at',
-					[ Sequelize.col('createUser.user_nm'), 'created_nm' ],
-					'updated_at',
-					[ Sequelize.col('updateUser.user_nm'), 'updated_nm' ]
+          [ Sequelize.col('stdEquip.stdFactory.factory_nm'), 'factory_nm' ]
 				],
-				order: [ 'data_map_id' ],
+				group: [ 'stdDataItem.uuid', 'stdDataItem.data_item_cd', 'stdDataItem.data_item_nm', 
+				'stdEquip.uuid', 'stdEquip.equip_cd', 'stdEquip.equip_nm',
+				'stdEquip.stdFactory.uuid', 'stdEquip.stdFactory.factory_cd', 'stdEquip.stdFactory.factory_nm' ],
 			});
 
 			return convertReadResult(result);
 		} catch (error) {
 			throw error;
+		}
+	};
+
+	// 📒 Fn[readGraph]: 인터페이스 그래프
+	public readGraph = async(params?: any) => {
+		try {
+			const result = await this.sequelize.query(readInterfaceGraph(params));
+			return convertReadResult(result[0]);
+		} catch (error) {
+			if (error instanceof DatabaseError) { 
+				return convertReadResult('');; 
+			} else {
+				throw error;
+			}
+			
 		}
 	};
 

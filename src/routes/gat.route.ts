@@ -40,6 +40,7 @@ router.route('/data-gears').delete(gatDataGearValidation.delete, validationCallb
 //#region ✅ DataMap (인터페이스 매핑)
 const dataMap = new StdDataMapCtl();
 router.route('/data-map/:uuid').get(gatDataMapValidation.readByUuid, validationCallback, dataMap.readByUuid);
+router.route('/data-maps/graph').get(gatDataMapValidation.readGraph, validationCallback, dataMap.readGraph);
 router.route('/data-maps/equip').get(gatDataMapValidation.readEquip, validationCallback, dataMap.readEquip);
 router.route('/data-maps').get(gatDataMapValidation.read, validationCallback, dataMap.read);
 router.route('/data-maps').post(gatDataMapValidation.create, validationCallback, dataMap.create);
