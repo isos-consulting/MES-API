@@ -416,7 +416,7 @@ class QmsInspResultCtl {
   
   //#endregion
 
-  //#region 🔵 Read Functions
+//#region 🔵 Read Functions
   // 📒 Fn[readWaitingReceive]: 수입검사 성적서 대기 List Read Function
   public readWaitingReceive = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {

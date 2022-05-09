@@ -323,7 +323,7 @@ class StdStoreRepo {
 
       // 📌 출하 창고 조회
       case 'outgo':
-        whereOptions = { return_store_fg: true };
+        whereOptions = { outgo_store_fg: true };
         break;
 
       // 📌 최종검사 창고 조회

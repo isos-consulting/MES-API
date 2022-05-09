@@ -196,7 +196,6 @@ class PrdWorkService {
 
     // ❗ 생산기준 생산투입정보 검증 및 가져오기
     let workVerifyInput = await workInputService.getVerifyInput(workResult.work_id, verifyInput, tran);
-    console.log('aaaa', workVerifyInput);
 
     const qty: number = await workRoutingRepo.getFinalQtyByWork(data.work_id);
 

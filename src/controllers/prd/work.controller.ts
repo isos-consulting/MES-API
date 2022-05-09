@@ -210,7 +210,6 @@ class PrdWorkCtl {
            * work         : 실적정보
            */
           const workValidateResult = await service.validateUpdateComplete(data, tran);
-          console.log(workValidateResult);
           
           // 📌 생산실적 완료 처리
           const workResult = await service.updateComplete({ uuid: data.uuid, qty: workValidateResult.work.qty, reject_qty: workValidateResult.work.reject_qty, complete_fg: true }, req.user?.uid as number, tran);

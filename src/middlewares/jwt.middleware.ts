@@ -7,7 +7,7 @@ import response from '../utils/response_new';
 export default async(req: express.Request, res: express.Response, next: express.NextFunction) => {
   try {
     // 로그인 및 사용자 정보 조회,등록,수정 및 Swagger Document의 경우 Token값을 검사하지 않고 API통신 진행
-    if(req.path.indexOf('sign-in') !== -1 || req.path.indexOf('favicon') !== -1) {
+    if(req.path.indexOf('sign-in') !== -1 || req.path.indexOf('favicon') !== -1 || req.path.indexOf('api-docs') !== -1) {
       return next();
     } else {
       req.user = undefined;
@@ -30,6 +30,7 @@ export default async(req: express.Request, res: express.Response, next: express.
 
         const token = req.headers.authorization.substring(7, req.headers.authorization.length);
         const result = verify(token);
+        
         if (result.ok) {
           const readUser = await new AutUserRepo(req.tenant.uuid).readAuth(result.uuid) as any;
           let user = readUser;
@@ -41,7 +42,6 @@ export default async(req: express.Request, res: express.Response, next: express.
               { state_tag: 'authentication', type: 'ERROR', state_no: errorState.NOT_FOUND_USER }
             );
           }
-
           // 📌 정상 Token일 경우 Request에 User 정보를 담아 다음 Middleware로 이동
           req.user = { uid: user.uid, uuid: user.uuid, user_nm: user.user_nm, email: user.email };
           return next();

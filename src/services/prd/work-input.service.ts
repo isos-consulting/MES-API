@@ -352,7 +352,6 @@ class PrdWorkInputService {
       result.inputDatas.push(input);
     });
 
-    console.log(verifyInput);
     // pull방식이 아닌 품목값 제거
     inputProdArray.forEach((prod: number) => { delete workVerifyInput[prod]; });
 
