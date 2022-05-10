@@ -146,7 +146,10 @@ class EqmInspDetailService {
         if (data.periodicity_fg && !(data.base_date && data.cycle_unit_id && data.cycle)) {
           throw createApiError(
             400, 
-            `설비정기점검에 필요한 요소가 입력되지 않았습니다. [base_date, cycle_unit_uuid, cycle]`, 
+            {
+              admin_message: `설비정기점검에 필요한 요소가 입력되지 않았습니다. [base_date, cycle_unit_uuid, cycle]`,
+              user_message: `설비정기점검에 필요한 요소가 입력되지 않았습니다.`,
+            },
             this.stateTag, 
             errorState.NO_INPUT_REQUIRED_VALUE
           );
@@ -156,7 +159,10 @@ class EqmInspDetailService {
         if (!data.periodicity_fg && !data.daily_insp_cycle_id) {
           throw createApiError(
             400, 
-            `설비일상점검에 필요한 요소가 입력되지 않았습니다. [daily_insp_cycle_uuid]`, 
+            {
+              admin_message: `설비일상점검에 필요한 요소가 입력되지 않았습니다. [daily_insp_cycle_uuid]`,
+              user_message: `설비일상점검에 필요한 요소가 입력되지 않았습니다.`
+            }, 
             this.stateTag, 
             errorState.NO_INPUT_REQUIRED_VALUE
           );

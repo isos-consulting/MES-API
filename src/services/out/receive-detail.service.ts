@@ -184,7 +184,10 @@ class OutReceiveDetailService {
       if (read.raws.length > 0) {
         throw createApiError(
           400, 
-          `입하상세번호 ${read.raws[0].uuid}의 수입검사 이력이 등록되어 수정할 수 없습니다.`,
+          { 
+            admin_message: `입하상세번호 ${read.raws[0].uuid}의 수입검사 이력이 등록되어 수정할 수 없습니다.`,
+            user_message: '수입검사 이력이 등록되어 수정할 수 없습니다.'
+          },
           this.stateTag, 
           errorState.INVALID_DATA
         );

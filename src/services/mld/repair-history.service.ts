@@ -107,7 +107,10 @@ class MldRepairHistoryService {
           if (occurTime < 0) { 
             throw createApiError(
               400, 
-              `잘못된 수리시작일시(start_date) 및 수리완료일시(end_date)가 입력되었습니다. [${data.start_date}, ${data.end_date}]`, 
+              {
+                admin_message: `잘못된 수리시작일시(start_date) 및 수리완료일시(end_date)가 입력되었습니다. [${data.start_date}, ${data.end_date}]`, 
+                user_message: `잘못된 수리시작일시(${data.start_date}) 및 수리완료일시(${data.end_date})가 입력되었습니다.`
+              },
               this.stateTag, 
               errorState.INVALID_DIFF_DATE
             );

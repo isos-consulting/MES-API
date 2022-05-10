@@ -56,7 +56,10 @@ class AdmDemandTypeService {
       if (read.count === 0) {
         throw createApiError(
           400, 
-          `일치하는 자재출고요청 유형이 없습니다. [자재출고요청 유형: ${demandTypeCd}]`, 
+          { 
+            admin_message: `일치하는 자재출고요청 유형이 없습니다. [자재출고요청 유형: ${demandTypeCd}]`,
+            user_message: '자재출고요청 유형정보가 존재하지 않습니다.' 
+          }, 
           this.stateTag, 
           errorState.NO_DATA
         );

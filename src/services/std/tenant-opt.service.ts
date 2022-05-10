@@ -50,7 +50,10 @@ class StdTenantOptService {
     if (!option) {
       throw createApiError(
         400, 
-        `유효하지 않은 사용자정의옵션입니다. [${tenantOpt}]`, 
+        { 
+          admin_message: `유효하지 않은 사용자정의옵션입니다. [${tenantOpt}]`,
+          user_message: '사용자정의옵션 정보가 존재하지 않습니다.'
+        }, 
         this.stateTag, 
         errorState.INVALID_DATA
       );

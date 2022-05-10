@@ -31,7 +31,7 @@ const createUnknownError = (
 
   return response(
     res, 
-    { status: isNumber(error.status) ? error.status : 500, message: error.message },
+    { status: isNumber(error.status) ? error.status : 500, message: { admin_message: error.message, user_message: error.message } },
     { state_tag: 'unknown', state_no: '9999', type: 'ERROR' }
   );
 };

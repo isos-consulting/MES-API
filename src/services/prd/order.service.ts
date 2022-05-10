@@ -172,7 +172,10 @@ class PrdOrderService {
     if (workRead.raws[0]) { 
       throw createApiError(
         400, 
-        `지시번호 [${workRead.raws[0].order_uuid}]의 생산실적이 이미 등록되어 있습니다.`, 
+        {
+          admin_message: `지시번호 [${workRead.raws[0].order_uuid}]의 생산실적이 이미 등록되어 있습니다.`,
+          user_message: '이미 생산실적이 등록되어 수정할 수 없습니다.'
+        }, 
         this.stateTag, 
         errorState.FAILED_SAVE_TO_RELATED_DATA
       );
@@ -199,7 +202,10 @@ class PrdOrderService {
       if (order.work_fg) {
         throw createApiError(
           400, 
-          `지시번호 [${order.uuid}]의 생산실적이 진행중입니다.`, 
+          { 
+            admin_message: `지시번호 [${order.uuid}]의 생산실적이 진행중입니다.`,
+            user_message: '이미 생산 진행중인 작업지시 입니다.'
+          },
           this.stateTag, 
           errorState.FAILED_SAVE_TO_RELATED_DATA
         );
@@ -214,7 +220,10 @@ class PrdOrderService {
       if (order.comlete_fg) { 
         throw createApiError(
           400, 
-          `지시번호 [${order.uuid}]는 완료 상태입니다.`, 
+          {
+            admin_message: `지시번호 [${order.uuid}]는 완료 상태입니다.`, 
+            user_message: '이미 생산 완료된 작업지시 입니다.'
+          },
           this.stateTag, 
           errorState.FAILED_SAVE_TO_RELATED_DATA
         );

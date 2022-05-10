@@ -155,7 +155,10 @@ class PrdWorkService {
       if (work.complete_fg) {
         throw createApiError(
           400, 
-          `실적번호 [${work.uuid}]는 완료상태이므로 데이터 저장이 불가능합니다.`, 
+          { 
+            admin_message: `실적번호 [${work.uuid}]는 완료상태이므로 데이터 저장이 불가능합니다.`,
+            user_message: '이미 생산완료된 작업으로 데이터 저장을 할 수 없습니다.'
+          }, 
           this.stateTag, 
           errorState.FAILED_SAVE_TO_RELATED_DATA
         );
@@ -170,7 +173,10 @@ class PrdWorkService {
         if (totalProducedQty != totalConsumedQty) { 
           throw createApiError(
             400, 
-            `투입품목의 투입수량이 일치하지 않습니다.`,
+            { 
+              admin_message: `투입품목의 투입수량이 일치하지 않습니다.`,
+              user_message: `투입품목의 투입수량이 일치하지 않습니다.`
+            },
             this.stateTag, 
             errorState.FAILED_SAVE_TO_RELATED_DATA
           );
@@ -212,7 +218,10 @@ class PrdWorkService {
     if ((Number(qty) + Number(rejectQty)) == 0) {
       throw createApiError(
         400, 
-        `실적번호 [${data.uuid}]는 생산수량이 등록되지 않아 저장이 불가능합니다.`, 
+        {
+          admin_message: `실적번호 [${data.uuid}]는 생산수량이 등록되지 않아 저장이 불가능합니다.`,
+          user_message: '생산수량이 등록되지 않아 저장할 수 없습니다.'
+        }, 
         this.stateTag, 
         errorState.FAILED_SAVE_TO_RELATED_DATA
       );

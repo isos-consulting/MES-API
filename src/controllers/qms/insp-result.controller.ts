@@ -498,7 +498,10 @@ class QmsInspResultCtl {
       } else {
         throw createApiError(
           400, 
-          '성적서 조회결과가 없습니다.', 
+          { 
+            admin_message: '성적서 조회결과가 없습니다.',
+            user_message: '성적서 조회결과가 없습니다.',
+          }, 
           this.stateTag, 
           errorState.NO_DATA
         );
@@ -612,7 +615,10 @@ class QmsInspResultCtl {
       } else {
         throw createApiError(
           400, 
-          '성적서 조회결과가 없습니다.', 
+          { 
+            admin_message: '성적서 조회결과가 없습니다.',
+            user_message: '성적서 조회결과가 없습니다.',
+          }, 
           this.stateTag, 
           errorState.NO_DATA
         );
@@ -744,7 +750,7 @@ class QmsInspResultCtl {
       //📌 Value Object 추가되는 부분 처리를 위한 Response Function 직접 호출
       return response(
         res, 
-        { value: { count: result.count, max_sample_cnt: maxSampleCnt }, raws: result.raws, status: 200, message: '데이터 조회 성공' },
+        { value: { count: result.count, max_sample_cnt: maxSampleCnt }, raws: result.raws, status: 200, message: { admin_message: '데이터 조회 성공', user_message: '데이터 조회 성공' } },
         { state_tag: this.stateTag, type: 'SUCCESS', state_no: successState.READ }
       );
     } catch (error) {
@@ -793,7 +799,10 @@ class QmsInspResultCtl {
       } else {
         throw createApiError(
           400, 
-          '성적서 조회결과가 없습니다.', 
+          { 
+            admin_message: '성적서 조회결과가 없습니다.',
+            user_message: '성적서 조회결과가 없습니다.' 
+          }, 
           this.stateTag, 
           errorState.NO_DATA
         );

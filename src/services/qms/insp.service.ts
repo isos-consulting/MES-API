@@ -106,7 +106,10 @@ class QmsInspService {
       if(workRead.raws.length > 0) {
         throw createApiError(
           400, 
-          '등록하려고 하는 기준서의 품번이 현재 생산 진행중이므로 적용이 불가합니다.', 
+          {
+            admin_message: '등록하려고 하는 기준서의 품번이 현재 생산 진행중이므로 적용이 불가합니다.',
+            user_message: '등록하려고 하는 기준서의 품번이 현재 생산 진행중이므로 적용이 불가합니다.',
+          },
           this.stateTag, 
           errorState.FAILED_SAVE_TO_RELATED_DATA
         );

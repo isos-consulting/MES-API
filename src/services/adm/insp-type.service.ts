@@ -61,7 +61,10 @@ class AdmInspTypeService {
       if (read.count === 0) {
         throw createApiError(
           400, 
-          `일치하는 검사유형이 없습니다. [검사유형: ${inspTypeCd}]`, 
+          {
+            admin_message: `일치하는 검사유형이 없습니다. [검사유형: ${inspTypeCd}]`,
+            user_message: '검사유형정보가 존재하지 않습니다.'
+          }, 
           this.stateTag, 
           errorState.NO_DATA
         );

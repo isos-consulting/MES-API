@@ -82,7 +82,10 @@ class AdmFileMgmtService {
     } catch (error) { 	
 				throw createApiError(
 				400, 
-				`Temp Storage에 파일존재 여부 확인중 문제가 방생 하였습니다. ${error}`, 
+				{
+          admin_message: `Temp Storage에 파일존재 여부 확인중 문제가 발생 하였습니다. ${error}`,
+          user_message: `파일존재 여부 확인중 문제가 발생 하였습니다.`,
+        }, 
 				this.stateTag, 
 				errorState.EMPTY_FILE_IN_TEMP_STORAGE
 			); 
@@ -102,7 +105,10 @@ class AdmFileMgmtService {
     } catch (error) { 	
 				throw createApiError(
 				400, 
-				`Real Storage에 파일존재 여부 확인중 문제가 방생 하였습니다. ${error}`, 
+				{
+          admin_message: `Real Storage에 파일존재 여부 확인중 문제가 발생 하였습니다. ${error}`, 
+          user_message: `파일존재 여부 확인중 문제가 발생 하였습니다.`
+        }, 
 				this.stateTag, 
 				errorState.EMPTY_FILE_IN_REAL_STORAGE
 			); 
@@ -122,7 +128,10 @@ class AdmFileMgmtService {
     } catch (error) { 	
 				throw createApiError(
 				400, 
-				`파일업로드 요청중 문제가 발생하였습니다. ${error}`, 
+				{
+          admin_message: `파일업로드 요청중 문제가 발생하였습니다. ${error}`,
+          user_message: `파일업로드 요청중 문제가 발생하였습니다.`,
+        }, 
 				this.stateTag, 
 				errorState.FAILED_UPLOAD_FILE
 			); 
@@ -142,7 +151,10 @@ class AdmFileMgmtService {
     } catch (error) { 
 			throw createApiError(
 				400, 
-				`파일삭제 요청중 문제가 발생하였습니다. ${error}`, 
+				{
+          admin_message: `파일삭제 요청중 문제가 발생하였습니다. ${error}`,
+          user_message: `파일삭제 요청중 문제가 발생하였습니다.`,
+        }, 
 				this.stateTag, 
 				errorState.FAILED_DELETE_FILE
 			); 

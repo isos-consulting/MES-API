@@ -56,7 +56,10 @@ class AdmTranTypeService {
       if (read.count === 0) {
         throw createApiError(
           400, 
-          `일치하는 수불유형이 없습니다. [수불유형: ${tranTypeCd}]`, 
+          { 
+            admin_message: `일치하는 수불유형이 없습니다. [수불유형: ${tranTypeCd}]`,
+            user_message: '수불유형정보가 존재하지 않습니다.'
+          }, 
           this.stateTag, 
           errorState.NO_DATA
         );

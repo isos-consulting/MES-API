@@ -86,7 +86,10 @@ class EqmInspService {
       if (getSubtractTwoDates(data.reg_date, data.apply_date) < 0) {
         throw createApiError(
           400, 
-          `잘못된 등록일시(reg_date) 및 적용일시(apply_date)가 입력되었습니다. [${data.reg_date}, ${data.apply_date}]`, 
+          { 
+            admin_message: `잘못된 등록일시(${data.reg_date}) 및 적용일시(${data.apply_date})가 입력되었습니다.`,
+            user_message: `잘못된 등록일시(${data.reg_date}) 및 적용일시(${data.apply_date})가 입력되었습니다.` 
+          }, 
           this.stateTag, 
           errorState.INVALID_DIFF_DATE
         );
@@ -110,7 +113,10 @@ class EqmInspService {
       if (datas.count === 0) {
         throw createApiError(
           400, 
-          `기준서에 해당하는 설비가 없습니다. [설비UUID: ${uuid}]`, 
+          {
+            admin_message: `설비 기준으로 등록된 기준서가 없습니다. [설비UUID: ${uuid}]`,
+            user_message: '기준서 조회결과가 없습니다.'
+          }, 
           this.stateTag, 
           errorState.NO_DATA
         );

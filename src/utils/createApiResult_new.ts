@@ -12,7 +12,7 @@ const createApiResult = (
 ) => {
   return response(
     res, 
-    { value: { count: result.count }, raws: result.raws, status, message },
+    { value: { count: result.count }, raws: result.raws, status, message: { admin_message: message, user_message: message } },
     { state_tag: stateTag, type: 'SUCCESS', state_no: stateNo }
   );
 };

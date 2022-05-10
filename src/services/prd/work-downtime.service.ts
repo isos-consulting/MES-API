@@ -150,7 +150,10 @@ class PrdWorkDowntimeService {
           if (occurTime < 0) { 
             throw createApiError(
               400, 
-              `잘못된 작업시작일시(start_date) 및 작업종료일시(end_date)가 입력되었습니다. [${data.start_date}, ${data.end_date}]`, 
+              {
+                admin_message: `잘못된 작업시작일시(start_date) 및 작업종료일시(end_date)가 입력되었습니다. [${data.start_date}, ${data.end_date}]`, 
+                user_message: `잘못된 작업시작일시(${data.start_date}) 및 작업종료일시(${data.end_date})가 입력되었습니다.`
+              },
               this.stateTag, 
               errorState.INVALID_DIFF_DATE
             );
@@ -170,7 +173,10 @@ class PrdWorkDowntimeService {
     if (count > 0) {
       throw createApiError(
         400, 
-        `시간내에 이미 등록된 비가동 내역이 존재합니다. [${data.start_date}, ${data.end_date}, ${data.equip_id}]`, 
+        { 
+          admin_message: `시간내에 이미 등록된 비가동 내역이 존재합니다. [${data.start_date}, ${data.end_date}, ${data.equip_id}]`,
+          user_message: `시간내에 이미 등록된 비가동 내역이 존재합니다.`
+        }, 
         this.stateTag, 
         errorState.INVALID_DUP_DATA
       );
