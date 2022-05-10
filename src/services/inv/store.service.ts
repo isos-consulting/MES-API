@@ -221,7 +221,10 @@ class InvStoreService {
       if (qty > remain) { 
         throw createApiError(
           400, 
-          `현재 투입에 필요한 재고수량이 부족합니다.`, 
+          { 
+            admin_message: `현재 투입에 필요한 재고수량이 부족합니다.`,
+            user_message: `현재 투입에 필요한 재고수량이 부족합니다.`
+          }, 
           this.stateTag, 
           errorState.NOT_ENOUGH_STOCK
         );
@@ -338,7 +341,10 @@ class InvStoreService {
       if (data.qty == 0) {
         throw createApiError(
           400, 
-          `기존재고와 실사하려는 수량이 동일합니다.`, 
+          { 
+            admin_message: `기존재고와 실사하려는 수량이 동일합니다.`,
+            user_message: `기존재고와 실사하려는 수량이 동일합니다.`
+          }, 
           this.stateTag, 
           errorState.INVALID_DATA
         );

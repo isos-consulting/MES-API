@@ -93,7 +93,10 @@ class EqmRepairHistoryService {
           if (occurTime <= 0) { 
             throw createApiError(
               400, 
-              `잘못된 발생시작일시(occur_start_date) 및 발생종료일시(occur_end_date)가 입력되었습니다. [${data.occur_start_date}, ${data.occur_end_date}]`, 
+              {
+                admin_message: `잘못된 발생시작일시(occur_start_date) 및 발생종료일시(occur_end_date)가 입력되었습니다. [${data.start_date}, ${data.end_date}]`, 
+                user_message: `잘못된 발생시작일시(${data.occur_start_date}) 및 발생종료일시(${data.occur_end_date})가 입력되었습니다.`
+              },
               this.stateTag, 
               errorState.INVALID_DIFF_DATE
             );
@@ -109,7 +112,10 @@ class EqmRepairHistoryService {
           if (repairTime <= 0) { 
             throw createApiError(
               400, 
-              `잘못된 수리시작일시(repair_start_date) 및 수리종료일시(repair_end_date)가 입력되었습니다. [${data.repair_start_date}, ${data.repair_end_date}]`, 
+              {
+                admin_message: `잘못된 수리시작일시(repair_start_date) 및 수리완료일시(repair_end_date)가 입력되었습니다. [${data.start_date}, ${data.end_date}]`, 
+                user_message: `잘못된 수리시작일시(${data.repair_start_date}) 및 수리완료일시(${data.repair_end_date})가 입력되었습니다.`
+              },
               this.stateTag, 
               errorState.INVALID_DIFF_DATE
             );

@@ -77,7 +77,10 @@ class StdStoreService {
       if (!storeId) {
         throw createApiError(
           400, 
-          `외주창고가 존재하지 않습니다.`, 
+          {
+            admin_message: `외주창고가 존재하지 않습니다.`,
+            user_message: `외주창고가 존재하지 않습니다.`,
+          }, 
           this.stateTag, 
           errorState.NO_DATA
         );
@@ -101,7 +104,10 @@ class StdStoreService {
       if (read.count === 0) {
         throw createApiError(
           400, 
-          `일치하는 창고유형이 없습니다. [창고유형: ${storeType}]`, 
+          { 
+            admin_message: `일치하는 창고유형이 없습니다. [창고유형: ${storeType}]`, 
+            user_message: '창고유형정보가 존재하지 않습니다.'
+          }, 
           this.stateTag, 
           errorState.NO_DATA
         );
@@ -135,7 +141,10 @@ class StdStoreService {
         if (!validated) {
           throw createApiError(
             400, 
-            `유효하지 않은 창고 유형입니다. [창고유형: ${storeType}]`, 
+            {
+              admin_message: `유효하지 않은 창고 유형입니다. [창고유형: ${storeType}]`, 
+              user_message: '창고유형코드값이 존재하지 않습니다.'
+            }, 
             this.stateTag, 
             errorState.INVALID_DATA
           );

@@ -190,7 +190,10 @@ class QmsInspCtl {
       if (!params.insp_detail_type_uuid && !params.insp_detail_type_cd) {
         throw createApiError(
           400, 
-          '세부검사유형 정보가 입력되지 않았습니다.', 
+          { 
+            admin_message: '세부검사유형 정보가 입력되지 않았습니다.',
+            user_message: '세부검사유형 정보가 입력되지 않았습니다.' 
+          }, 
           this.stateTag, 
           errorState.NO_INPUT_REQUIRED_PARAM
         );
@@ -206,7 +209,10 @@ class QmsInspCtl {
       if (!headerResult.raws[0]) { 
         throw createApiError(
           400, 
-          '기준서 조회결과가 없습니다.', 
+          { 
+            admin_message: '기준서 조회결과가 없습니다.',
+            user_message: '기준서 조회결과가 없습니다.'
+          }, 
           this.stateTag, 
           errorState.NO_DATA
         );
@@ -344,7 +350,10 @@ class QmsInspCtl {
       if (!headerResult.raws[0]) { 
         throw createApiError(
           400, 
-          '기준서 조회결과가 없습니다.', 
+          { 
+            admin_message: '기준서 조회결과가 없습니다.',
+            user_message: '기준서 조회결과가 없습니다.'
+          }, 
           this.stateTag, 
           errorState.NO_DATA
         );
@@ -438,7 +447,10 @@ class QmsInspCtl {
       if (!headerResult.raws[0]) { 
         throw createApiError(
           400, 
-          '기준서 조회결과가 없습니다.', 
+          { 
+            admin_message: '기준서 조회결과가 없습니다.',
+            user_message: '기준서 조회결과가 없습니다.'
+          }, 
           this.stateTag, 
           errorState.NO_DATA
         );

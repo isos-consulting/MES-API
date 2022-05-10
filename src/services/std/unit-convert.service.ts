@@ -96,7 +96,10 @@ class StdUnitConvertService {
     if (!prod) {
       throw createApiError(
         400, 
-        `유효하지 않은 품목ID입니다. [${prodId}]`, 
+        { 
+          admin_message: `유효하지 않은 품목ID입니다. [${prodId}]`,
+          user_message: '품목정보가 존재하지 않습니다.'
+        }, 
         this.stateTag, 
         errorState.INVALID_DATA
       );
@@ -109,7 +112,10 @@ class StdUnitConvertService {
       if (!convertValue) {
         throw createApiError(
           400, 
-          `단위변환 데이터가 존재하지 않습니다. [from: ${unitId}, to: ${prod.unit_id}]`, 
+          {
+            admin_message: `단위변환 데이터가 존재하지 않습니다. [from: ${unitId}, to: ${prod.unit_id}]`,
+            user_message: '단위변환정보가 존재하지 않습니다.'
+          }, 
           this.stateTag, 
           errorState.INVALID_DATA
         );

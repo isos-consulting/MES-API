@@ -2,7 +2,7 @@ import { TServiceResult } from './response_new';
 
 const createApiError = (
   status: number,
-  message: string,
+  message: { admin_message: string, user_message?: string },
   stateTag: string,
   stateNo: string
 ) => {

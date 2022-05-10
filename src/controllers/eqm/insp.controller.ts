@@ -205,44 +205,10 @@ class EqmInspCtl {
       if (headerResult.count == 0) {
         throw createApiError(
           400, 
-          `기준서 정보가 존재하지 않습니다.`, 
-          this.stateTag, 
-          errorState.NO_DATA
-        );
-      }
-
-      const detailsResult = await detailService.read({ ...params, insp_uuid: headerResult.raws[0].insp_uuid });
-
-      result.raws = [{ 
-        header: headerResult.raws[0] ?? {}, 
-        details: detailsResult.raws 
-      }];
-      result.count = headerResult.count + detailsResult.count;
-      
-      return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
-    } catch (error) {
-      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
-
-      const dbError = createDatabaseError(error, this.stateTag);
-      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
-
-      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
-    }
-  };
-
-  // 📒 Fn[readIncludeDetailsByEquip]: 설비 기준 기준서 데이터의 Header + Detail 함께 조회
-  public readIncludeDetailsByEquip = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    try {
-      let result: ApiResult<any> = { count: 0, raws: [] };
-      const params = matchedData(req, { locations: [ 'query', 'params' ] });
-      const service = new EqmInspService(req.tenant.uuid);
-      const detailService = new EqmInspDetailService(req.tenant.uuid);
-      
-      const headerResult = await service.read({ equip_uuid: params.equip_uuid, apply_fg: true });
-      if (headerResult.count == 0) {
-        throw createApiError(
-          400, 
-          `기준서 정보가 존재하지 않습니다.`, 
+          { 
+            admin_message: `기준서 정보가 존재하지 않습니다.`,
+            user_message: `기준서 정보가 존재하지 않습니다.`
+          }, 
           this.stateTag, 
           errorState.NO_DATA
         );

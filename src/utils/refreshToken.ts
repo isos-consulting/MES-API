@@ -12,7 +12,7 @@ const refreshToken = async (req: express.Request, res: express.Response) => {
     if (!req.headers.authorization.startsWith("Bearer ")){
       return response(
         res, 
-        { raws: [], value: {}, status: 400, message: '잘못된 토큰정보가 입력되었습니다.' },
+        { raws: [], value: {}, status: 400, message: { admin_message: '잘못된 토큰정보가 입력되었습니다.', user_message: '잘못된 토큰정보가 입력되었습니다.' }},
         { state_tag: 'authentication', type: 'ERROR', state_no: errorState.INVALID_TOKEN }
       );
     }
@@ -33,7 +33,7 @@ const refreshToken = async (req: express.Request, res: express.Response) => {
     if (!user) {
       return response(
         res, 
-        { raws: [], value: {}, status: 401, message: '토큰정보의 사용자를 찾을 수 없습니다.' },
+        { raws: [], value: {}, status: 401, message: { admin_message: '토큰정보의 사용자를 찾을 수 없습니다.', user_message: '토큰정보의 사용자를 찾을 수 없습니다.' }},
         { state_tag: 'authentication', type: 'ERROR', state_no: errorState.NOT_FOUND_USER }
       );
     }
@@ -48,7 +48,7 @@ const refreshToken = async (req: express.Request, res: express.Response) => {
       if (refreshResult === false) {
         return response(
           res, 
-          { raws: [], value: {}, status: 401, message: 'REFRESH 토큰 정보가 만료되었습니다.' },
+          { raws: [], value: {}, status: 401, message: { admin_message: 'REFRESH 토큰 정보가 만료되었습니다.', user_message: 'REFRESH 토큰 정보가 만료되었습니다.' }},
           { state_tag: 'authentication', type: 'ERROR', state_no: errorState.EXPIRED_REFRESH_TOKEN }
         );
       } else {
@@ -66,7 +66,7 @@ const refreshToken = async (req: express.Request, res: express.Response) => {
       // 3. access token이 만료되지 않은경우 => refresh 할 필요가 없습니다.
       return response(
         res, 
-        { raws: [], value: {}, status: 400, message: 'ACCESS 토큰 정보가 만료되지 않았습니다.' },
+        { raws: [], value: {}, status: 400, message: { admin_message: 'ACCESS 토큰 정보가 만료되지 않았습니다.', user_message: 'ACCESS 토큰 정보가 만료되지 않았습니다.' }},
         { state_tag: 'authentication', type: 'ERROR', state_no: errorState.NOT_EXPIRED_ACCESS_TOKEN }
       );
     }
@@ -74,7 +74,7 @@ const refreshToken = async (req: express.Request, res: express.Response) => {
     // access token 또는 refresh token이 헤더에 없는 경우
     return response(
       res, 
-      { raws: [], value: {}, status: 400, message: '토큰 정보가 없습니다.' },
+      { raws: [], value: {}, status: 400, message: { admin_message: '토큰 정보가 없습니다.', user_message: '토큰 정보가 없습니다.' }},
       { state_tag: 'authentication', type: 'ERROR', state_no: errorState.NO_TOKEN }
     );
   }

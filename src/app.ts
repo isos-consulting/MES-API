@@ -51,7 +51,7 @@ app.use(cors());
 app.use('/health-check', async (req: express.Request, res: express.Response, next: express.NextFunction) => { 
   return response(
     res, 
-    { status: 200, message: 'HealthCheck' },
+    { status: 200, message: { admin_message: 'HealthCheck', user_message: 'HealthCheck' }},
     { state_tag: 'healthCheck', state_no: '0000', type: 'SUCCESS' }
   );
 });
@@ -85,7 +85,7 @@ app.use((err: createError.HttpError, req: express.Request, res: express.Response
   // render the error page
   return response(
     res, 
-    { status: isNumber(apiError.status) ? apiError.status : 500, message: apiError.message },
+    { status: isNumber(apiError.status) ? apiError.status : 500, message: { admin_message: apiError.message, user_message: '[오류발생] 관리자에게 문의하세요.'} },
     { state_tag: 'unknown', state_no: '9999', type: 'ERROR' }
   );
 });

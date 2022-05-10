@@ -4,7 +4,7 @@ import * as express from 'express';
 type TResultInfo = {
   raws?: any[],
   value?: any,
-  message?: string,
+  message?: { admin_message: string, user_message: string },
   status?: number
 };
 
@@ -20,13 +20,13 @@ type TResponse = {
   success: boolean,
   state_cd: string,
   state?: TLogInfo,
-  message: string,
+  message: { admin_message: string, user_message: string },
   datas: { value: any, raws: any[] }
 }
 
 const response = (
   res: express.Response, 
-  resultInfo: TResultInfo = { raws: [], value: {}, message: '', status: httpStatus.OK }, 
+  resultInfo: TResultInfo = { raws: [], value: {}, message: { admin_message: '', user_message: ''}, status: httpStatus.OK }, 
   logInfo?: TLogInfo
 ) => {
   let stateCd: string = '';
@@ -39,7 +39,7 @@ const response = (
     success: Number(resultInfo.status) < 400 ? true : false, 
     state_cd: stateCd,
     state: logInfo,
-    message: resultInfo.message ?? '', 
+    message: resultInfo.message ?? { admin_message: '', user_message: '' }, 
     datas: { 
       value: resultInfo.value ? {...resultInfo.value} : {}, 
       raws: resultInfo.raws ? [...resultInfo.raws] : []

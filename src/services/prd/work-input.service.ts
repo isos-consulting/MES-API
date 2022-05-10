@@ -185,7 +185,10 @@ class PrdWorkInputService {
       if (!storeId) {
         throw createApiError(
           400, 
-          `가용창고가 존재하지 않습니다.`, 
+          { 
+            admin_message: `가용창고가 존재하지 않습니다.`,
+            user_message: `가용창고가 존재하지 않습니다.`
+          }, 
           this.stateTag, 
           errorState.NO_DATA
         );
@@ -323,7 +326,10 @@ class PrdWorkInputService {
       if (!verifyInput[input.prod_id]) { 
         throw createApiError(
           400, 
-          `작업지시대비 투입품목이 일치하지 않습니다.`,
+          {
+            admin_message: `작업지시대비 투입품목이 일치하지 않습니다.`,
+            user_message: `작업지시대비 투입품목이 일치하지 않습니다.`
+          },
           this.stateTag, 
           errorState.FAILED_SAVE_TO_RELATED_DATA
         ); 
@@ -339,7 +345,10 @@ class PrdWorkInputService {
       if (!Object.values(BOM_INPUT_TYPE).includes(input.bom_input_type_id)) {
         throw createApiError(
           400, 
-          `투입품목[${input.uuid}}]의 투입방법이 잘못 되었습니다.`,
+          { 
+            admin_message: `투입품목[${input.uuid}}]의 투입방법이 잘못 되었습니다.`,
+            user_message: 'BOM 투입방법정보가 존재하지 않습니다.'
+          },
           this.stateTag, 
           errorState.FAILED_SAVE_TO_RELATED_DATA
         );

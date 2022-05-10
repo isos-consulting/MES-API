@@ -81,7 +81,10 @@ class AdmInspDetailTypeService {
       if (read.count === 0) {
         throw createApiError(
           400, 
-          `일치하는 검사상세유형이 없습니다. [검사상세유형: ${inspDetailTypeCd}]`, 
+          {
+            admin_message: `일치하는 검사상세유형이 없습니다. [검사상세유형: ${inspDetailTypeCd}]`,
+            user_message: '검사상세 유형정보가 존재하지 않습니다.'
+          }, 
           this.stateTag, 
           errorState.NO_DATA
         );
