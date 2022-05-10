@@ -44,6 +44,7 @@ import StdVendorPriceCtl from '../controllers/std/vendor-price.controller';
 import StdWorkerGroupEmpCtl from '../controllers/std/worker-group-emp.controller';
 import StdWorkerGroupCtl from '../controllers/std/worker-group.controller';
 import StdWorkingsCtl from '../controllers/std/workings.controller';
+import StdDataMapCtl from '../controllers/std/data-map.controller';
 import validationCallback from '../utils/validationCallback';
 
 import stdBomValidation from '../validations/std/bom.validation';
@@ -570,6 +571,11 @@ router.route('/companies').post(stdCompanyValidation.create, validationCallback,
 router.route('/companies').put(stdCompanyValidation.update, validationCallback, company.update);
 router.route('/companies').patch(stdCompanyValidation.patch, validationCallback, company.patch);
 router.route('/companies').delete(stdCompanyValidation.delete, validationCallback, company.delete);
+//#endregion
+
+//#region ✅ dataMap (인터페이스 설비)
+const dataMap = new StdDataMapCtl();
+router.route('/data-map/report').get(dataMap.readInterfaceMonitoring);
 //#endregion
 
 export default router;
