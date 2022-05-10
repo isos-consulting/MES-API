@@ -1,8 +1,9 @@
 import { Sequelize } from 'sequelize-typescript';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
-import { readTempGraph } from '../../queries/gat/temp-graph.query';
+import { readRowData } from '../../queries/gat/temp-graph.query';
 import { DatabaseError } from 'sequelize';
+import { readInterfaceGraph } from '../../queries/gat/interface-graph.query';
 
 class GatDataHistoryRepo {
   sequelize: Sequelize;
@@ -19,10 +20,10 @@ class GatDataHistoryRepo {
 
   //#region 🔵 Read Functions
 
-  // 📒 Fn[readTempGraph]: 온도 그래프
-  public readTempGraph = async(params?: any) => {
+  // 📒 Fn[readRowData]: 인터페이스 row data
+  public readRowData = async(params?: any) => {
     try {
-      const result = await this.sequelize.query(readTempGraph(params));
+      const result = await this.sequelize.query(readRowData(params));
       return convertReadResult(result[0]);
     } catch (error) {
 			if (error instanceof DatabaseError) { 
@@ -33,6 +34,21 @@ class GatDataHistoryRepo {
       
     }
   };
+
+	// 📒 Fn[readGraph]: 인터페이스 그래프
+	public readGraph = async(params?: any) => {
+		try {
+			const result = await this.sequelize.query(readInterfaceGraph(params));
+			return convertReadResult(result[0]);
+		} catch (error) {
+			if (error instanceof DatabaseError) { 
+				return convertReadResult('');; 
+			} else {
+				throw error;
+			}
+			
+		}
+	};
 
   //#endregion
 }

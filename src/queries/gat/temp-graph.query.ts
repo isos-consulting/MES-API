@@ -1,6 +1,6 @@
 import moment from 'moment';
 
-const readTempGraph = (
+const readRowData = (
   params: {
     start_date: Date,
     end_date: Date,
@@ -50,4 +50,4 @@ const readTempGraph = (
 
   return query;
 }
-export { readTempGraph }
+export { readRowData }

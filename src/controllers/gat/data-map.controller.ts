@@ -90,50 +90,6 @@ class StdDataMapCtl {
     }
   };
 
-	// 📒 Fn[readEquip] (✅ Inheritance): readEquip Function
-	public readEquip = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-		try {
-			let result: ApiResult<any> = { count:0, raws: [] };
-			const service = new StdDataMapService(req.tenant.uuid);
-			const params = matchedData(req, { locations: [ 'query', 'params' ] });
-
-			result = await service.readEquip(params);
-
-			return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
-		} catch (error) {
-			if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
-			
-			const dbError = createDatabaseError(error, this.stateTag);
-			if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
-
-			return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
-		}
-	};
-
-		// 📒 Fn[readGraph] (✅ Inheritance): readGraph Function
-		public readGraph = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-			try {
-				let result: ApiResult<any> = { count:0, raws: [] };
-				const service = new StdDataMapService(req.tenant.uuid);
-				const params = matchedData(req, { locations: [ 'query', 'params' ] });
-	
-				const rowData = await service.readGraph(params);
-				const parserData = await service.parserGraphData(rowData.raws);
-				
-				result.count = parserData.length
-				result.raws = parserData
-
-				return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
-			} catch (error) {
-				if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
-				
-				const dbError = createDatabaseError(error, this.stateTag);
-				if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
-	
-				return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
-			}
-		};
-
   //#region 🟡 Update Functions
 
   // 📒 Fn[update] (✅ Inheritance): Default Update Function

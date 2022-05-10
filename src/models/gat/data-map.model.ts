@@ -8,13 +8,13 @@ import StdDataItem from './data-item.model';
 @Table({
   tableName: 'STD_DATA_MAP_TB',
   modelName: 'StdDataMap',
-  comment: '인터페이스 매핑 정보 테이블',
+  comment: '인터페이스 맵 정보 테이블',
   timestamps: true,
   underscored: true,
 })
 export default class StdDataMap extends Model<IStdDataMap> {
   @Column({
-    comment: '인터페이스 매핑 ID',
+    comment: '인터페이스 맵 ID',
     primaryKey: true,
     autoIncrement: true,
     autoIncrementIdentity: true,
@@ -24,7 +24,7 @@ export default class StdDataMap extends Model<IStdDataMap> {
   data_map_id: number;
 
 	@Column({
-    comment: '안터페이스 매핑명',
+    comment: '안터페이스 맵명',
     type: DataType.STRING(50),
   })
   data_map_nm: string;
@@ -155,7 +155,7 @@ export default class StdDataMap extends Model<IStdDataMap> {
 
   @Unique('std_data_map_tb_uuid_un')
   @Column({
-    comment: '인터페이스 매핑UUID',
+    comment: '인터페이스 맵UUID',
     type: DataType.UUID,
     allowNull: false,
     defaultValue: Sequelize.fn('gen_random_uuid')

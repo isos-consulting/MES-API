@@ -5,13 +5,13 @@ import { Sequelize } from 'sequelize-typescript';
 import convertResult from '../../utils/convertResult';
 import _ from 'lodash';
 import { Op, Transaction } from 'sequelize';
-import { UniqueConstraintError, DatabaseError } from 'sequelize';
+import { UniqueConstraintError } from 'sequelize';
 import getPreviousRaws from '../../utils/getPreviousRaws';
 import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
 import ApiResult from '../../interfaces/common/api-result.interface';
-import { readInterfaceGraph } from '../../queries/gat/interface-graph.query';
+
 
 class StdDataMapRepo {
   repo: Repository<StdDataMap>;
@@ -236,21 +236,6 @@ class StdDataMapRepo {
 			return convertReadResult(result);
 		} catch (error) {
 			throw error;
-		}
-	};
-
-	// 📒 Fn[readGraph]: 인터페이스 그래프
-	public readGraph = async(params?: any) => {
-		try {
-			const result = await this.sequelize.query(readInterfaceGraph(params));
-			return convertReadResult(result[0]);
-		} catch (error) {
-			if (error instanceof DatabaseError) { 
-				return convertReadResult('');; 
-			} else {
-				throw error;
-			}
-			
 		}
 	};
 

@@ -5,36 +5,10 @@ import createValidationError from '../../utils/createValidationError';
 const stateTag = 'stdDataMap';
   
 const stdDataMapValidation = {
-	readGraph: [
-    query('factory_uuid', '공장UUID')
-			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'factory_uuid', '공장UUID'))
-      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'factory_uuid', '공장UUID')),
-		query('data_item_uuid', '인터페이스 항목UUID')
-			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'data_item_uuid', '인터페이스 항목UUID'))
-      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'data_item_uuid', '인터페이스 항목UUID')),
-		query('equip_uuid', '설비 UUID')
-			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'equip_uuid', '설비 UUID'))
-      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'equip_uuid', '설비 UUID')),
-		query('start_date', '시작일자').optional({ nullable: true })
-			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'start_date', '시작일자'))
-      .isDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'start_date', '시작일자')),
-		query('end_date', '종료일자')
-			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'end_date', '종료일자'))
-			.isDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'end_date', '종료일자')),
-  ],
-	readEquip: [
-    query('factory_uuid', '공장UUID')
-			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'factory_uuid', '공장UUID'))
-      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'factory_uuid', '공장UUID')),
-		query('data_item_uuid', '인터페이스 항목UUID').optional({ nullable: true })
-      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'data_item_uuid', '인터페이스 항목UUID')),
-		query('use_fg', '설비사용 유무').optional({ nullable: true })
-      .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'use_fg', '설비사용 유무')),
-  ],
   read: [
     query('data_item_uuid', '인터페이스 항목UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'data_item_uuid', '인터페이스 항목UUID')),
-		query('data_gear_uuid', '인터페이스 매핑UUID').optional({ nullable: true })
+		query('data_gear_uuid', '인터페이스 맵UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'data_gear_uuid', '인터페이스 장비UUID')),
 		query('equip_uuid', '설비UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'equip_uuid', '설비UUID')),
@@ -42,9 +16,9 @@ const stdDataMapValidation = {
       .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'monitoring_fg', '모니터링 유무')),
   ],
   readByUuid: [ 
-    param('uuid', '인테페이스 매핑UUID')
-			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '인테페이스 매핑UUID'))
-      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'uuid', '인테페이스 매핑UUID'))
+    param('uuid', '인테페이스 맵UUID')
+			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '인테페이스 맵UUID'))
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'uuid', '인테페이스 맵UUID'))
   ],
   create: [
 		body('*.data_item_uuid', '인터페이스 항목UUID')
@@ -56,9 +30,9 @@ const stdDataMapValidation = {
 		body('*.equip_uuid', '설비UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'equip_uuid', '설비UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'equip_uuid', '설비UUID')),
-    body('*.data_map_nm', '인터페이스 매핑 명')
-      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'data_map_nm', '인터페이스 매핑 명'))
-      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'data_map_nm', '인터페이스 매핑 명')),
+    body('*.data_map_nm', '인터페이스 맵 명')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'data_map_nm', '인터페이스 맵 명'))
+      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'data_map_nm', '인터페이스 맵 명')),
 		body('*.data_channel', '채널')
 			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'data_channel', '채널'))
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'data_channel', '채널')),
@@ -82,9 +56,9 @@ const stdDataMapValidation = {
 
   ],
   update: [
-    body('*.uuid', '인테페이스 매핑UUID')
-      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '인테페이스 매핑UUID'))
-      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '인테페이스 매핑UUID')),
+    body('*.uuid', '인테페이스 맵UUID')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '인테페이스 맵UUID'))
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '인테페이스 맵UUID')),
 		body('*.data_item_uuid', '인터페이스 항목UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'data_item_uuid', '인터페이스 항목UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'data_item_uuid', '인터페이스 항목UUID')),
@@ -94,9 +68,9 @@ const stdDataMapValidation = {
 		body('*.equip_uuid', '설비UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'equip_uuid', '설비UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'equip_uuid', '설비UUID')),
-    body('*.data_map_nm', '인터페이스 매핑 명')
-      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'data_map_nm', '인터페이스 매핑 명'))
-      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'data_map_nm', '인터페이스 매핑 명')),
+    body('*.data_map_nm', '인터페이스 맵 명')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'data_map_nm', '인터페이스 맵 명'))
+      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'data_map_nm', '인터페이스 맵 명')),
 		body('*.data_channel', '채널')
 			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'data_channel', '채널'))
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'data_channel', '채널')),
@@ -119,17 +93,17 @@ const stdDataMapValidation = {
       .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'monitoring_fg', '모니터링 유무')),
   ],
   patch: [
-    body('*.uuid', '인테페이스 매핑UUID')
-      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '인테페이스 매핑UUID'))
-      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '인테페이스 매핑UUID')),
+    body('*.uuid', '인테페이스 맵UUID')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '인테페이스 맵UUID'))
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '인테페이스 맵UUID')),
 		body('*.data_item_uuid', '인터페이스 항목UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'data_item_uuid', '인터페이스 항목UUID')),
 		body('*.data_gear_uuid', '인터페이스 장비UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'data_gear_uuid', '인터페이스 장비UUID')),
 		body('*.equip_uuid', '설비UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'equip_uuid', '설비UUID')),
-    body('*.data_map_nm', '인터페이스 매핑 명').optional({ nullable: true })
-      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'data_map_nm', '인터페이스 매핑 명')),
+    body('*.data_map_nm', '인터페이스 맵 명').optional({ nullable: true })
+      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'data_map_nm', '인터페이스 맵 명')),
 		body('*.data_channel', '채널').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'data_channel', '채널')),
 		body('*.history_yn', 'history 유무').optional({ nullable: true })
@@ -151,9 +125,9 @@ const stdDataMapValidation = {
     
     ],
   delete: [
-    body('*.uuid', '인테페이스 매핑UUID')
-      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '인테페이스 매핑UUID'))
-      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '인테페이스 매핑UUID')),
+    body('*.uuid', '인테페이스 맵UUID')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '인테페이스 맵UUID'))
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '인테페이스 맵UUID')),
   ],
 };
 

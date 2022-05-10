@@ -59,16 +59,6 @@ class StdDataMapService {
 		catch (error) { throw error; }
   };
 
-	public readEquip = async (params: any) => {
-    try { return await this.repo.readEquip(params); } 
-		catch (error) { throw error; }
-  };
-
-	public readGraph = async (params: any) => {
-    try { return await this.repo.readGraph(params); } 
-		catch (error) { throw error; }
-  };
-
   public update = async (datas: any[], uid: number, tran: Transaction) => {
     try { return await this.repo.update(datas, uid, tran); }
 		catch (error) { throw error; }
@@ -82,31 +72,6 @@ class StdDataMapService {
   public delete = async (datas: any[], uid: number, tran: Transaction) => {
     try { return await this.repo.delete(datas, uid, tran); }
 		catch (error) { throw error; }
-  }
-
-	public parserGraphData = async (datas: any[]) => {
-    try { 
-			let reusltSub: any = [];			
-			let label: string ='';
-			let data: any ='';
-			let background: string ='';
-
-			datas.forEach((values: any) => {
-				if (values.data_map_nm !== label) {
-					reusltSub.push({label, data, background });
-					data = [];
-					label = values.data_map_nm
-					background = "#" + Math.round(Math.random() * 0xffffff).toString(16);
-				}
-				data.push({x: values.value, y: values.created_at});
-			});
-
-			reusltSub.push({label, data, background });
-			
-			const reuslt = reusltSub.filter((values: any) =>{ return (!!values.label) });
-
-			return reuslt; 
-		} catch (error) { throw error; }
   };
 }
 

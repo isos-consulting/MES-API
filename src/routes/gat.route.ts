@@ -12,14 +12,16 @@ import gatDataMapValidation from '../validations/gat/data-map.validation';
 
 const router = express.Router();
 
-//#region ✅ 게더링 데이터 (GatDataHistory)
+//#region ✅ 게더링 이력 데이터 (GatDataHistory)
 const dataHistory = new GatDataHistoryCtl();
-router.route('/data-history/report').get(gatDataHistoryValidation.readTempGraph,validationCallback,dataHistory.readTempGraph);
+router.route('/data-history/row').get(gatDataHistoryValidation.readRowData,validationCallback,dataHistory.readRowData);
+router.route('/data-history/graph').get(gatDataHistoryValidation.readGraph,validationCallback,dataHistory.readGraph);
 //#endregion
 
 //#region ✅ DataItem (인터페이서 항목)
 const dataItem = new StdDataItemCtl();
 router.route('/data-item/:uuid').get(gatDataItemValidation.readByUuid, validationCallback, dataItem.readByUuid);
+router.route('/data-items/equip').get(gatDataItemValidation.readEquip, validationCallback, dataItem.readEquip);
 router.route('/data-items').get(gatDataItemValidation.read, validationCallback, dataItem.read);
 router.route('/data-items').post(gatDataItemValidation.create, validationCallback, dataItem.create);
 router.route('/data-items').put(gatDataItemValidation.update, validationCallback, dataItem.update);
@@ -37,11 +39,9 @@ router.route('/data-gears').patch(gatDataGearValidation.patch, validationCallbac
 router.route('/data-gears').delete(gatDataGearValidation.delete, validationCallback, dataGear.delete);
 //#endregion
 
-//#region ✅ DataMap (인터페이스 매핑)
+//#region ✅ DataMap (인터페이스 맵)
 const dataMap = new StdDataMapCtl();
 router.route('/data-map/:uuid').get(gatDataMapValidation.readByUuid, validationCallback, dataMap.readByUuid);
-router.route('/data-maps/graph').get(gatDataMapValidation.readGraph, validationCallback, dataMap.readGraph);
-router.route('/data-maps/equip').get(gatDataMapValidation.readEquip, validationCallback, dataMap.readEquip);
 router.route('/data-maps').get(gatDataMapValidation.read, validationCallback, dataMap.read);
 router.route('/data-maps').post(gatDataMapValidation.create, validationCallback, dataMap.create);
 router.route('/data-maps').put(gatDataMapValidation.update, validationCallback, dataMap.update);

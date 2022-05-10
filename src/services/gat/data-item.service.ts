@@ -1,15 +1,18 @@
 import { Transaction } from "sequelize/types";
 import StdDataItemRepo from "../../repositories/gat/data-item.repository";
+import StdDataMapRepo from "../../repositories/gat/data-map.repository";
 
 class StdDataItemService {
   tenant: string;
   stateTag: string;
   repo: StdDataItemRepo;
+	mapRepo: StdDataMapRepo;
 
   constructor(tenant: string) {
     this.tenant = tenant;
     this.stateTag = 'stdDataItem';
     this.repo = new StdDataItemRepo(tenant);
+		this.mapRepo = new StdDataMapRepo(tenant);
   }
 
   public create = async (datas: any[], uid: number, tran: Transaction) => {
@@ -24,6 +27,11 @@ class StdDataItemService {
   
   public readByUuid = async (uuid: string) => {
     try { return await this.repo.readByUuid(uuid); } 
+		catch (error) { throw error; }
+  };
+
+	public readEquip = async (params: any) => {
+    try { return await this.mapRepo.readEquip(params); } 
 		catch (error) { throw error; }
   };
 
