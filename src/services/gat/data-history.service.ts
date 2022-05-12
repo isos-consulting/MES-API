@@ -28,19 +28,19 @@ class InvMoveService {
 			let reusltSub: any = [];			
 			let label: string ='';
 			let data: any ='';
-			let background: string ='';
+			let backgroundColor: string ='';
 
 			datas.forEach((values: any) => {
 				if (values.data_map_nm !== label) {
-					reusltSub.push({label, data, background });
+					reusltSub.push({label, data, backgroundColor });
 					data = [];
 					label = values.data_map_nm
-					background = "#" + Math.round(Math.random() * 0xffffff).toString(16);
+					backgroundColor = "#" + Math.round(Math.random() * 0xffffff).toString(16);
 				}
-				data.push({x: values.value, y: values.created_at});
+				data.push({x: values.created_at, y: values.value});
 			});
 
-			reusltSub.push({label, data, background });
+			reusltSub.push({label, data, backgroundColor });
 			
 			const reuslt = reusltSub.filter((values: any) =>{ return (!!values.label) });
 
