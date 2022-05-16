@@ -17,6 +17,8 @@ import salOutgoDetailValidation from '../validations/sal/outgo-detail.validation
 import salReleaseValidation from '../validations/sal/release.validation';
 import salReturnValidation from '../validations/sal/return.validation';
 import matReturnDetailValidation from '../validations/mat/return-detail.validation';
+import salOrderValidation from '../validations/sal/order.validation';
+import salOrderDetailValidation from '../validations/sal/order-detail.validation';
 
 const router = express.Router();
 
@@ -41,22 +43,22 @@ router.route('/return-details').get(matReturnDetailValidation.read, validationCa
 
 //#region ✅ Order (제품수주)
 const order = new SalOrderCtl();
-router.route('/orders/report').get(order.readReport);
-router.route('/order/:uuid').get(order.read);
-router.route('/order/:uuid/include-details').get(order.readIncludeDetails);
-router.route('/order/:uuid/details').get(order.readDetails);
-router.route('/orders').get(order.read);
-router.route('/orders').post(order.create);
-router.route('/orders').put(order.update);
-router.route('/orders').patch(order.patch);
-router.route('/orders').delete(order.delete);
+router.route('/orders/report').get(salOrderValidation.readReport, validationCallback, order.readReport);
+router.route('/order/:uuid').get(salOrderValidation.readByUuid, validationCallback, order.readByUuid);
+router.route('/order/:uuid/include-details').get(salOrderValidation.readIncludeDetails, validationCallback, order.readIncludeDetails);
+router.route('/order/:uuid/details').get(salOrderValidation.readDetails, validationCallback, order.readDetails);
+router.route('/orders').get(salOrderValidation.read, validationCallback, order.read);
+router.route('/orders').post(salOrderValidation.create, validationCallback, order.create);
+router.route('/orders').put(salOrderValidation.update, validationCallback, order.update);
+router.route('/orders').patch(salOrderValidation.patch, validationCallback, order.patch);
+router.route('/orders').delete(salOrderValidation.delete, validationCallback, order.delete);
 //#endregion
 
 //#region ✅ OrderDetail (제품수주상세)
 const orderDetail = new SalOrderDetailCtl();
-router.route('/order-details/complete').put(orderDetail.updateComplete);
-router.route('/order-detail/:uuid').get(orderDetail.read);
-router.route('/order-details').get(orderDetail.read);
+router.route('/order-details/complete').put(salOrderDetailValidation.updateComplete, validationCallback, orderDetail.updateComplete);
+router.route('/order-detail/:uuid').get(salOrderDetailValidation.readByUuid, validationCallback, orderDetail.readByUuid);
+router.route('/order-details').get(salOrderDetailValidation.read, validationCallback, orderDetail.read);
 //#endregion
 
 //#region ✅ Move (제품입고)

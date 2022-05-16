@@ -114,6 +114,12 @@ class SalOrderDetailRepo {
     return convertReadResult(result);
   };
 
+	// 📒 Fn[readRawById]: Id 를 포함한 Raw Data Read Function
+	public readRawById = async(id: number) => {
+		const result = await this.repo.findOne({ where: { order_detail_id: id } });
+		return convertReadResult(result);
+	};
+	
   // 📒 Fn[readDeliveredWithinPeriod]: 기간 내 납기 완료 및 미완료 건수 Read Function
   public readDeliveredWithinPeriod = async(startDate: string, endDate: string) => {
     const result = await this.sequelize.query(`
@@ -336,6 +342,36 @@ class SalOrderDetailRepo {
    * @returns 합계 금액, 수량 Object
    */
   getTotalQtyAndTotalPrice = async(orderId: number, transaction?: Transaction) => {
+    try {
+      const result = await this.repo.findOne({ 
+        attributes: [
+          [ Sequelize.fn('sum', Sequelize.col('qty')), 'total_qty' ],
+          [ Sequelize.fn('sum', Sequelize.col('total_price')), 'total_price' ]
+        ],
+        where: { order_id: orderId },
+        group: [ 'order_id' ],
+        transaction
+      });
+
+      if (!result) { return result; }
+
+      const totalQty: number = (result as any).dataValues.total_qty;
+      const totalPrice: number = (result as any).dataValues.total_price;
+
+      return { totalQty, totalPrice };
+    } catch (error) {
+      throw error;
+    }
+  }
+
+  // 📒 Fn[getTotals]: 전표단위의 합계 금액, 수량 조회
+  /**
+   * 전표단위의 합계 금액, 수량 조회
+   * @param orderId 전표 ID
+   * @param transaction Transaction
+   * @returns 합계 금액, 수량 Object
+   */
+	getTotals = async(orderId: number, transaction?: Transaction) => {
     try {
       const result = await this.repo.findOne({ 
         attributes: [
