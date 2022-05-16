@@ -1,6 +1,6 @@
 import { Transaction } from "sequelize/types";
 import MatOrderDetailRepo from "../../repositories/mat/order-detail.repository";
-import MatOrderRepo from "../../repositories/mat/Order.repository";
+import MatOrderRepo from "../../repositories/mat/order.repository";
 import StdFactoryRepo from "../../repositories/std/factory.repository";
 import StdMoneyUnitRepo from "../../repositories/std/money-unit.repository";
 import StdUnitRepo from "../../repositories/std/unit.repository";

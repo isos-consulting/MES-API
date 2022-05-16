@@ -1,6 +1,6 @@
 import { Transaction } from "sequelize/types";
 import SalOrderDetailRepo from "../../repositories/sal/order-detail.repository";
-import SalOrderRepo from "../../repositories/sal/Order.repository";
+import SalOrderRepo from "../../repositories/sal/order.repository";
 import StdFactoryRepo from "../../repositories/std/factory.repository";
 import StdMoneyUnitRepo from "../../repositories/std/money-unit.repository";
 import StdProdRepo from "../../repositories/std/prod.repository";
