@@ -21,6 +21,12 @@ const prdOrderValidation = {
     param('uuid', '자재투입UUID')
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'uuid', '자재투입UUID'))
   ],
+  readMultiProcByOrder: [
+    query('start_date', '시작일시').optional({ nullable: true })
+      .isDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'start_date', '시작일시')),
+    query('end_date', '종료일시').optional({ nullable: true })
+      .isDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'end_date', '종료일시')),
+  ],
   create: [
     body('*.factory_uuid', '공장UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'factory_uuid', '공장UUID'))
