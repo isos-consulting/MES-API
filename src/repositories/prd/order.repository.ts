@@ -11,6 +11,7 @@ import ApiResult from '../../interfaces/common/api-result.interface';
 import PrdOrder from '../../models/prd/order.model';
 import IPrdOrder from '../../interfaces/prd/order.interface';
 import { readOrders } from '../../queries/prd/order.query';
+import { readMultiProcByOrder } from '../../queries/prd/multi-proc-by-order.query';
 
 class PrdOrderRepo {
   repo: Repository<PrdOrder>;
@@ -83,6 +84,17 @@ class PrdOrderRepo {
   public readByUuid = async(uuid: string, params?: any) => {
     try {
       const result = await this.sequelize.query(readOrders({ order_uuid: uuid }));
+
+      return convertReadResult(result[0]);
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  // 📒 Fn[read]: 지시기준 Mulit-Process Read Report Function
+  public readMultiProcByOrder = async(params?: any) => {
+    try {
+      const result = await this.sequelize.query(readMultiProcByOrder(params));
 
       return convertReadResult(result[0]);
     } catch (error) {

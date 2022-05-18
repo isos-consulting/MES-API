@@ -10,8 +10,8 @@ const prdOrderValidation = {
     query('sal_order_detail_uuid', '수주상세UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'sal_order_detail_uuid', '수주상세UUID')),
     query('order_state', '지시상태유형')
-    .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'order_state', '지시상태유형'))
-    .isIn([ 'all', 'wait', 'ongoing', 'complete' ]).withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'order_state', '지시상태유형')),
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'order_state', '지시상태유형'))
+      .isIn([ 'all', 'wait', 'ongoing', 'complete' ]).withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'order_state', '지시상태유형')),
     query('start_date', '시작예정 일시').optional({ nullable: true })
       .isDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'start_date', '시작예정 일시')),
     query('end_date', '종료예정 일시').optional({ nullable: true })
@@ -20,6 +20,14 @@ const prdOrderValidation = {
   readByUuid: [
     param('uuid', '자재투입UUID')
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'uuid', '자재투입UUID'))
+  ],
+  readMultiProcByOrder: [
+    query('start_date', '시작일시')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'start_date', '시작일시'))
+      .isDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'start_date', '시작일시')),
+    query('end_date', '종료일시')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'end_date', '종료일시'))
+      .isDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'end_date', '종료일시')),
   ],
   create: [
     body('*.factory_uuid', '공장UUID')

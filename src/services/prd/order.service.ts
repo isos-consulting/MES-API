@@ -104,6 +104,12 @@ class PrdOrderService {
 		catch (error) { throw error; }
   };
 
+  // 📒 Fn[read]: 지시기준 Mulit-Process Read Report Function
+  public readMultiProcByOrder = async (params: any) => {
+    try { return await this.repo.readMultiProcByOrder(params); }
+		catch (error) { throw error; }
+  };
+
   public update = async (datas: IPrdOrder[], uid: number, tran: Transaction) => {
     try { return await this.repo.update(datas, uid, tran); } 
 		catch (error) { throw error; }

@@ -107,7 +107,7 @@ class PrdOrderCtl {
   //#endregion
 
   //#region 🔵 Read Functions
-
+  
   // 📒 Fn[read] (✅ Inheritance): Default Read Function
   public read = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
@@ -146,6 +146,98 @@ class PrdOrderCtl {
       return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
     }
   };
+
+  // 📒 Fn[read]: 지시기준 Mulit-Process Read Report Function
+  public readMultiProcByOrder = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      let result: ApiResult<any> = { count:0, raws: [] };
+      const service = new PrdOrderService(req.tenant.uuid);
+      const params = matchedData(req, { locations: [ 'query', 'params' ] });
+
+      const multiProcRead = await service.readMultiProcByOrder(params);
+
+      // 📌 조회데이터 기준 공정순서 String Array 형태로 전달을 위한 데이터 추출
+      let procNos: any[] = multiProcRead.raws.map((proc: any) => { return String(proc.proc_no); });
+      procNos = [...new Set(procNos)];
+
+      // 📌 지시 기준 데이터를 출력하기 때문에 ID 추출
+      let orderIds: any[] = multiProcRead.raws.map((proc: any) => { return proc.order_id; });
+      orderIds = [...new Set(orderIds)];
+
+      // 📌 지시기준 데이터 Loop
+      orderIds.forEach((orderId: number) => {
+        const raws = multiProcRead.raws.filter((proc: any) => { return proc.order_id == orderId; });
+        
+        let firstIndex: number = 0;
+        let resultParams: any = {};
+        let objProcNm: any = { sort: '공정명' };
+        let objWaitQty: any = { sort: '대기수량' };
+        let objTotalQty: any = { sort: '공정실적' };
+        let objRejectQty: any = { sort: '불량수량' };
+        let objQty: any = { sort: '양품수량' };
+        raws.forEach((raw: any, index: number, raws: any[]) => {
+          objProcNm[raw.proc_no] = raw.proc_nm;                 // 공정명
+          objTotalQty[raw.proc_no] = raw.total_qty;             // 공정실적
+          objRejectQty[raw.proc_no] = raw.reject_qty;           // 불량수량
+          objQty[raw.proc_no] = raw.qty;                        // 양품수량
+
+          // 📌 대기수량 ( 첫 공정: 지시수량 - 생산수량, 나머지 공정: 전 공정 생산수량 - 생산수량 )
+          if(firstIndex !== index) { objWaitQty[raw.proc_no] = raws[index-1].total_qty - raw.total_qty; } 
+          else { 
+            objWaitQty[raw.proc_no] = raw.order_qty - raw.total_qty;
+            
+            // 📌 지시 관련 데이터 셋팅
+            resultParams = {
+              order_no: raw.order_no,
+              reg_date: raw.reg_date,
+              workings_uuid: raw.workings_uuid,
+              workings_cd: raw.workings_cd,
+              workings_nm: raw.workings_nm,
+              prod_uuid: raw.prod_uuid,
+              prod_no: raw.prod_no,
+              prod_nm: raw.prod_nm,
+              uuid: raw.uuid,
+              item_type_cd: raw.item_type_cd,
+              item_type_nm: raw.item_type_nm,
+              prod_type_uuid: raw.prod_type_uuid,
+              prod_type_cd: raw.prod_type_cd,
+              prod_type_nm: raw.prod_type_nm,
+              model_uuid: raw.model_uuid,
+              model_cd: raw.model_cd,
+              model_nm: raw.model_nm,
+              rev: raw.rev,
+              prod_std: raw.prod_std,
+              unit_uuid: raw.unit_uuid,
+              unit_cd: raw.unit_cd,
+              unit_nm: raw.unit_nm,
+              order_qty: raw.order_qty,
+              order_state: raw.order_state,
+            }
+          }
+        });
+
+        // 📌 Return 데이터 셋팅
+        result.raws.push(Object.assign({}, resultParams, objProcNm));
+        result.raws.push(Object.assign({}, resultParams, objWaitQty));
+        result.raws.push(Object.assign({}, resultParams, objTotalQty));
+        result.raws.push(Object.assign({}, resultParams, objRejectQty));
+        result.raws.push(Object.assign({}, resultParams, objQty));
+      })
+
+      return response(
+        res, 
+        { value: { count: result.raws.length, proc_nos: procNos }, raws: result.raws, status: 200, message: { admin_message: '데이터 조회 성공', user_message: '데이터 조회 성공' } },
+        { state_tag: this.stateTag, type: 'SUCCESS', state_no: successState.READ }
+      );
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+      
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
+    }
+  }
 
   //#endregion
 
