@@ -69,6 +69,20 @@ const seedDatas: IStdTenantOpt[] = [
 		created_uid : 1,
 		updated_uid : 1
 	},
+	{
+		tenant_opt_id : 6,
+		tenant_opt_cd : "QMS_INSP_RESULT_FULL",
+		tenant_opt_nm : "검사성적서 결과값 전체등록 여부",
+		value : 0,
+		remark : 
+			`사용안함: 검사 결과값이 시료수 만큼 등록되지 않아도 저장
+			사용: 검사 결과값이 시료수 만큼 전부 등록되어야 저장
+			확인절차적용: 검사 결과값이 시료수 만큼 등록되지 않았을 때 그래도 저장 할 것인가 메세지 출력 후 저장
+			[사용안함: 0, 사용: 1, 확인절차적용: 2]
+			[Default: 사용안함(0)]`,
+		created_uid : 1,
+		updated_uid : 1
+	},
 ]
 
 const baseMigration = new BaseMigration('StdTenantOpt', 'tenant_opt_id', seedDatas);
