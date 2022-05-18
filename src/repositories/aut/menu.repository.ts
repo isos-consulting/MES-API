@@ -13,6 +13,8 @@ import { getSequelize } from '../../utils/getSequelize';
 import ApiResult from '../../interfaces/common/api-result.interface';
 import AutMenuTree from '../../models/aut/menu-tree.model';
 import { readMenuWithPermission } from '../../queries/aut/menu-with-permission.query';
+import deleteMenuTree from '../../queries/aut/delete-menu-tree.query';
+
 
 class AutMenuRepo {
   repo: Repository<AutMenu>;
@@ -54,7 +56,7 @@ class AutMenuRepo {
         );
       });
       const raws = await Promise.all(promises);
-      
+			
 			return { raws, count: raws.length } as ApiResult<any>;
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -163,12 +165,50 @@ class AutMenuRepo {
     return convertReadResult(result);
   };
 
+	// 📒 Fn[getMaxSort]: parentId의 Max sortby 조회
+  /**
+   * parentId의 Max sortby 조회
+   * @param parentId 부모ID
+   * @returns Max sortby
+   */
+	getMaxSort = async(parentId: number) => {
+    try {
+      const result = await this.repo.findOne({ 
+        attributes: [
+          [ Sequelize.fn('max', Sequelize.col('sortby')), 'sortby' ],
+        ],
+        where: { 
+					[Op.and]: [
+						{ parent_id: parentId }
+					]
+				},
+      });
+      if (!(result as any).dataValues.sortby) { return 0; }
+      const maxSortBy: number = (result as any).dataValues.sortby;
+
+      return maxSortBy;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   // 📒 Fn[readMenuWithPermissionByUid]: 사용자 기준 메뉴 및 권한 조회
   public readMenuWithPermissionByUid = async(uid: number) => {
     try {
       const result = await this.sequelize.query(readMenuWithPermission(uid));
 
       return convertReadResult(result[0]);
+    } catch (error) {
+      throw error;
+    }
+  };
+
+	// 📒 Fn[readDeleteById]: 하위 메뉴 uuid read
+	public readDeleteById = async(menuId: number) => {
+		try {
+			const result = await this.sequelize.query(deleteMenuTree(menuId));
+			return convertReadResult(result[0]);
+
     } catch (error) {
       throw error;
     }
@@ -214,6 +254,37 @@ class AutMenuRepo {
     }
   };
 
+	// 📒 Fn[updateIncrementBySort]: parentIdId 를 포함하고 sort가 같거나 높은 Raw sort 변경
+	public updateIncrementBySort = async(body: IAutMenu[], by: number, uid: number, transaction?: Transaction) => {
+		try {
+			const previousRaws = await getPreviousRaws(body, this.repo);
+
+			const promises = body.map((menu: any) => {
+				return this.repo.increment(
+					{
+						sortby: by
+					},
+					{ 
+						where: { 
+							[Op.and]: [
+								{ parent_id: menu.parent_id },
+								Sequelize.where(Sequelize.col('sortby'),'>=', menu.sortby )
+							]
+						},
+						transaction
+					}
+				);
+			});
+
+			await Promise.all(promises);
+
+			await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.AutMenu.getTableName() as string, previousRaws, uid, transaction);
+		} catch (error) {
+			if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
+			throw error;
+		}
+	};
+		
   //#endregion
 
   //#region 🟠 Patch Functions
@@ -262,7 +333,7 @@ class AutMenuRepo {
   public delete = async(body: IAutMenu[], uid: number, transaction?: Transaction) => {
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
-
+			
       const promises = body.map((menu: any) => {
         return this.repo.destroy({ where: { uuid: menu.uuid }, transaction});
       });

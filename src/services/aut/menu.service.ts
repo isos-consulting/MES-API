@@ -60,6 +60,26 @@ class AutMenuService {
 		catch (error) { throw error; }
   };
 
+	public readRawsByUuids = async (uuids: string[]) => {
+    try { return await this.repo.readRawsByUuids(uuids); } 
+		catch (error) { throw error; }
+  };
+	
+	public updateIncrementBySort = async (datas: any[], by: number, uid: number, tran: Transaction) => {
+    try { return await this.repo.updateIncrementBySort(datas, by, uid, tran); } 
+		catch (error) { throw error; }
+  };
+
+	public getMaxSort = async (parentId: number) => {
+    try { return await this.repo.getMaxSort(parentId); } 
+		catch (error) { throw error; }
+  };
+
+	public readDeleteById = async (menuId: number) => {
+    try { return await this.repo.readDeleteById(menuId); } 
+		catch (error) { throw error; }
+  }
+
   public update = async (datas: any[], uid: number, tran: Transaction) => {
     try { return await this.repo.update(datas, uid, tran); } 
 		catch (error) { throw error; }
@@ -77,6 +97,18 @@ class AutMenuService {
 
 	public readMenuWithPermissionByUid = async (params: any) => {
     try { return await this.repo.readMenuWithPermissionByUid(params); } 
+		catch (error) { throw error; }
+  };
+
+	public compareSortby = async (maxSortBy: number, sortBy: number) => {
+    try { 
+			let compareSortby: number = sortBy;
+			
+			if ( maxSortBy < sortBy ) {
+				compareSortby = ++maxSortBy;
+			}
+			return compareSortby; 
+		} 
 		catch (error) { throw error; }
   };
 }

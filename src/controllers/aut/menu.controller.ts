@@ -34,8 +34,17 @@ class AutMenuCtl {
       const datas = await service.convertFk(Object.values(matched));
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
-        result = await service.create(datas, req.user?.uid as number, tran)
-      });
+				// 📌 sort max 값 조회 및 비교
+				const maxSortby = await service.getMaxSort(datas[0].parent_id);
+				datas[0].sortby = await service.compareSortby(maxSortby, datas[0].sortby);
+
+				// 📌 추가할 메뉴 sort 정렬
+				await service.updateIncrementBySort(datas, 1,req.user?.uid as number, tran);
+				// 📌 데이터 추가
+				result = await service.create(datas, req.user?.uid as number, tran);
+				
+				await refreshMaterializedView(req.tenant.uuid, this.treeViewName, tran);
+      }); 
 
       return createApiResult(res, result, 201, '데이터 생성 성공', this.stateTag, successState.CREATE);
     } catch (error) {
@@ -113,11 +122,11 @@ class AutMenuCtl {
       const params = matchedData(req, { locations: [ 'query', 'params' ] });
 
       result = await service.read(params);
-
+			console.log(result);
       return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
     } catch (error) {
       if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
-      
+			
       const dbError = createDatabaseError(error, this.stateTag);
       if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
 
@@ -156,68 +165,20 @@ class AutMenuCtl {
       const matched = matchedData(req, { locations: [ 'body' ] });
       let datas = await service.convertFk(Object.values(matched));
 
-      // 📌 생성할 데이터 구분
-      let createBody: any[] = [];
-      datas.forEach((data: any) => { 
-        if (data.uuid) return;
-        data.parent_id = 0;
-        data.sortby = 1;
-        createBody = [ ...createBody, data ]; 
-      });
-
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
 
-				// 📌 데이터 생성
-				const createResult = await service.update(createBody, req.user?.uid as number, tran)
+				// 📌 변경된 sort max 값 조회 및 비교
+				const maxSortby = await service.getMaxSort(datas[0].parent_id);
+				datas[0].sortby = await service.compareSortby(maxSortby, datas[0].sortby);
 
-				// 📌 입력한 데이터 순서대로 메뉴 정렬
-				let firstMenuId = 0;
-				let secondMenuId = 0;
-
-				let firstLevelIndex = 1;
-				let secondLevelIndex = 1;
-				let thirdLevelIndex = 1;
-				let currentLevel = 1;
-
-				datas = datas.map((data: any) => {
-          if (!data.uuid) {
-            const created = createResult.raws.find(x => x.menu_uri == data.menu_uri);
-            data.menu_id = created.menu_id;
-            data.uuid = created.uuid;
-          }
-
-          switch (data.lv) {
-            case 1:
-              firstMenuId = data.menu_id;
-              data.parent_id = 0;
-
-              currentLevel = 1;
-              data.sortby = firstLevelIndex++;
-              break;
-            case 2:
-              data.parent_id = firstMenuId;
-              secondMenuId = data.menu_id;
-
-              if (currentLevel === 1) { secondLevelIndex = 1; }
-              currentLevel = 2;
-              data.sortby = secondLevelIndex++;
-              break;
-            case 3:
-              data.parent_id = secondMenuId;
-
-              if (currentLevel !== 3) { thirdLevelIndex = 1; }
-              currentLevel = 3;
-              data.sortby = thirdLevelIndex++;
-              break;
-          }
-          return data;
-        });
-
+				// 📌 변경 되기전 sort 조회
+				const standardSortby = (await service.readRawsByUuids([datas[0].uuid])).raws;
+				// 📌 변경 되기전 기준 sort 변경 -
+				await service.updateIncrementBySort(standardSortby, -1,req.user?.uid as number, tran);
+				// 📌 변경된 데이터 기준 sort 변경 +
+				await service.updateIncrementBySort(datas, 1,req.user?.uid as number, tran);
 				// 📌 데이터 수정
-        const updateResult = await service.update(datas, req.user?.uid as number, tran); 
-
-        result.raws = [...createResult.raws, ...updateResult.raws];
-        result.count = createResult.count + updateResult.count;
+        result = await service.update(datas, req.user?.uid as number, tran); 
 
         await refreshMaterializedView(req.tenant.uuid, this.treeViewName, tran);
       });
@@ -271,10 +232,20 @@ class AutMenuCtl {
       let result: ApiResult<any> = { count:0, raws: [] };
       const service = new AutMenuService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
-      const datas = Object.values(matched);
-
+      const datas = await service.convertFk(Object.values(matched));
+			
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
-        result = await service.delete(datas, req.user?.uid as number, tran)
+
+				// 📌 삭제할 Row 데이터 조회
+				const standardSortby = (await service.readRawsByUuids([datas[0].uuid])).raws;
+				// 📌 삭제될 메뉴 sort 정렬
+				await service.updateIncrementBySort(standardSortby, -1, req.user?.uid as number, tran);
+
+				// 📌 삭제될 메뉴 하위 메뉴 조회
+				const deleteData = (await service.readDeleteById(datas[0].menu_id)).raws;
+				// 📌 데이터삭제
+        result = await service.delete(deleteData, req.user?.uid as number, tran);
+
 				await refreshMaterializedView(req.tenant.uuid, this.treeViewName, tran);
       });
 
