@@ -10,6 +10,7 @@ import response from '../../utils/response_new';
 import ApiResult from '../../interfaces/common/api-result.interface';
 import createApiResult from '../../utils/createApiResult_new';
 import { successState } from '../../states/common.state';
+import AdmFileMgmtService from '../../services/adm/file-mgmt.service';
 
 class StdEmpCtl {
   stateTag: string
@@ -29,12 +30,29 @@ class StdEmpCtl {
     try {
       let result: ApiResult<any> = { count:0, raws: [] };
       const service = new StdEmpService(req.tenant.uuid);
+			const fileService = new AdmFileMgmtService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
       const datas = await service.convertFk(Object.values(matched));
 
+			let fileUuids: string[] = [];
+
+      // 📌 파일을 함께 저장하는 경우
+      if (req.headers['file-included'] === 'true') {
+        // 📌 데이터 내에 있는 file 데이터가 Temp S3에 존재하는지 Validation
+        fileUuids = await fileService.validateFileInTempStorage(datas);
+      }
+
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
         result = await service.create(datas, req.user?.uid as number, tran)
+				// 📌 파일을 함께 저장하는 경우
+				if (req.headers['file-included'] === 'true') {
+					const fileDatas = await fileService.getFileDatasByUnique(datas, result.raws, ['emp_cd', 'factory_id'])
+					await fileService.create(fileDatas, req.user?.uid as number, tran);
+        }
       });
+
+			// 📌 Temp S3에 있는 File 데이터를 Real S3로 이동
+      if (fileUuids) { await fileService.moveToRealStorage(fileUuids); }
 
       return createApiResult(res, result, 201, '데이터 생성 성공', this.stateTag , successState.CREATE);
     } catch (error) {
@@ -150,14 +168,24 @@ class StdEmpCtl {
   public delete = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       let result: ApiResult<any> = { count:0, raws: [] };
+			let fileResult: ApiResult<any> = { count:0, raws: [] };
       const service = new StdEmpService(req.tenant.uuid);
+			const fileService = new AdmFileMgmtService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
       const datas = Object.values(matched);
+			const referenceUuids = datas.map(data => data.uuid);
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
         result = await service.delete(datas, req.user?.uid as number, tran)
+				fileResult = await fileService.deleteByReferenceUuids(referenceUuids, req.user?.uid as number, tran);
       });
 
+			// 📌 파일 데이터가 삭제된 경우
+      if (fileResult.count) { 
+        const fileUuids = fileResult.raws.map(raw => raw.uuid);
+        await fileService.deleteFromRealStorage(fileUuids); 
+      }
+			
       return createApiResult(res, result, 200, '데이터 삭제 성공', this.stateTag, successState.DELETE);
     } catch (error) {
       if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }

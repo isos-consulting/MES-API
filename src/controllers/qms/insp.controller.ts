@@ -20,6 +20,7 @@ import QmsInspResultService from '../../services/qms/insp-result.service';
 import MatReceiveDetailService from '../../services/mat/receive-detail.service';
 import OutReceiveDetailService from '../../services/out/receive-detail.service';
 import PrdWorkService from '../../services/prd/work.service';
+import AdmFileMgmtService from '../../services/adm/file-mgmt.service';
 
 class QmsInspCtl {
   stateTag: string;
@@ -41,12 +42,21 @@ class QmsInspCtl {
       const detailService = new QmsInspDetailService(req.tenant.uuid);
       const patternOptService = new AdmPatternOptService(req.tenant.uuid);
       const patternService = new AdmPatternHistoryService(req.tenant.uuid);
+			const fileService = new AdmFileMgmtService(req.tenant.uuid);
 
       const matched = matchedData(req, { locations: [ 'body' ] });
       const data = {
         header: (await service.convertFk(matched.header))[0],
         details: await detailService.convertFk(matched.details),
       }
+
+			let fileUuids: string[] = [];
+
+			// 📌 파일을 함께 저장하는 경우
+			if (req.headers['file-included'] === 'true') {
+				// 📌 데이터 내에 있는 file 데이터가 Temp S3에 존재하는지 Validation
+				fileUuids = await fileService.validateFileInTempStorage(data.header);
+			}
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
         let inspId: number;
@@ -98,6 +108,12 @@ class QmsInspCtl {
           headerResult = await service.create([data.header], req.user?.uid as number, tran);
           inspId = headerResult.raws[0].insp_id;
           maxSeq = 0;
+
+					// 📌 파일관리 저장
+					if (req.headers['file-included'] === 'true') {
+						const fileDatas = await fileService.getFileDatasByUnique(data.header, headerResult.raws, ['insp_no', 'factory_id'])
+						await fileService.create(fileDatas, req.user?.uid as number, tran);
+					}
         } else {
           // 📌 전표 수정
           headerResult = await service.update([data.header], req.user?.uid as number, tran);
@@ -122,6 +138,9 @@ class QmsInspCtl {
 
         result.count += headerResult.count + detailResult.count;
       });
+
+			// 📌 Temp S3에 있는 File 데이터를 Real S3로 이동
+      if (fileUuids) { await fileService.moveToRealStorage(fileUuids); }
 
       return createApiResult(res, result, 201, '데이터 생성 성공', this.stateTag, successState.CREATE);
     } catch (error) {
@@ -739,14 +758,18 @@ class QmsInspCtl {
   public delete = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       let result: ApiResult<any> = { count:0, raws: [] };
+			let fileResult: ApiResult<any> = { count:0, raws: [] };
       const service = new QmsInspService(req.tenant.uuid);
       const detailService = new QmsInspDetailService(req.tenant.uuid);
+			const fileService = new AdmFileMgmtService(req.tenant.uuid);
+			
 
       const matched = matchedData(req, { locations: [ 'body' ] });
       const data = {
         header: (await service.convertFk(matched.header))[0],
         details: await detailService.convertFk(matched.details),
       }
+			const referenceUuids = data.header.map((data: any) => data.uuid);
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
         // 📌 기준서 상세 삭제
@@ -757,6 +780,7 @@ class QmsInspCtl {
         let headerResult: ApiResult<any> = { count: 0, raws: [] };
         if (count == 0) {
           headerResult = await service.delete([data.header], req.user?.uid as number, tran);
+					fileResult = await fileService.deleteByReferenceUuids(referenceUuids, req.user?.uid as number, tran);
         }
 
         result.raws.push({
@@ -766,6 +790,12 @@ class QmsInspCtl {
 
         result.count += headerResult.count + detailResult.count;
       });
+
+			// 📌 파일 데이터가 삭제된 경우
+      if (fileResult.count) { 
+        const fileUuids = fileResult.raws.map(raw => raw.uuid);
+        await fileService.deleteFromRealStorage(fileUuids); 
+      }
   
       return createApiResult(res, result, 200, '데이터 삭제 성공', this.stateTag, successState.DELETE);
     } catch (error) {

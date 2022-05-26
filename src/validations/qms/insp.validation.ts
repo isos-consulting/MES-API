@@ -1,4 +1,4 @@
-import { body, param, query } from 'express-validator';
+import { body, check, param, query } from 'express-validator';
 import { errorState } from '../../states/common.state';
 import createValidationError from '../../utils/createValidationError';
 
@@ -76,6 +76,27 @@ const qmsInspValidation = {
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'contents', '개정내역')),
     body('header.remark', '비고').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'remark', '비고')),
+
+		check('header.files').bail(),
+		body('header.files', '파일정보').optional({ nullable: true })
+			.isArray().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'files', 'files UUID 배열')),
+		body('header.files.*.uuid', '파일상세유형 UUID')
+			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '파일UUID'))
+			.isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '파일UUID')),	
+		body('header.files.*.file_mgmt_detail_type_uuid', '파일상세유형 UUID')
+			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'file_mgmt_detail_type_uuid', '파일상세유형 UUID'))
+			.isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'file_mgmt_detail_type_uuid', '파일상세유형 UUID')),
+		body('header.files.*.file_nm', '파일명')
+			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'file_nm', '파일명'))
+			.isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'file_nm', '파일명')),
+		body('header.files.*.file_extension', '파일확장자')
+			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'file_extension', '파일확장자'))
+			.isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'file_extension', '파일확장자')),
+		body('header.files.*.file_size', '파일용량')
+			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'file_size', '파일용량'))
+			.isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'file_size', '파일용량')),
+		body('header.files.*.remark', '파일상세유형 UUID').optional({ nullable: true })
+			.isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'files', 'files UUID 배열')),
 
     body('details.*.factory_uuid', '공장UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'factory_uuid', '공장UUID'))

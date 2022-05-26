@@ -7,17 +7,20 @@ import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
 import _, { isArray } from 'lodash';
 import createApiError from '../../utils/createApiError';
 import { errorState } from '../../states/common.state';
+import config from '../../configs/config';
 
 class AdmFileMgmtService {
   tenant: string;
   stateTag: string;
   repo: AdmFileMgmtRepo;
   fkIdInfos: getFkIdInfo[];
+	url: string;
 
   constructor(tenant: string) {
     this.tenant = tenant;
     this.stateTag = 'admfileMgmt';
     this.repo = new AdmFileMgmt(tenant);
+		this.url = config.node_env === 'test' ? 'http://localhost:3010' : 'https://was.isos.kr:3010'
 
     this.fkIdInfos = [
       {
@@ -74,7 +77,7 @@ class AdmFileMgmtService {
       await Promise.all(
         uuids.map(uuid => {
           return axios({
-            url: `http://localhost:3002/temp/file/${uuid}/size/1234`,
+            url: `${this.url}/temp/file/${uuid}/size/1234`,
             method: 'GET'
           });
         })
@@ -97,7 +100,7 @@ class AdmFileMgmtService {
       await Promise.all(
         uuids.map(uuid => {
           return axios({
-            url: `http://localhost:3002/tenant/${this.tenant}/file/${uuid}`,
+            url: `${this.url}/tenant/${this.tenant}/file/${uuid}`,
             method: 'GET'
           });
         })
@@ -120,7 +123,7 @@ class AdmFileMgmtService {
       await Promise.all(
         uuids.map(uuid => {
           return axios({
-            url: `http://localhost:3002/tenant/${this.tenant}/file/${uuid}`,
+            url: `${this.url}/tenant/${this.tenant}/file/${uuid}`,
             method: 'POST'
           });
         })
@@ -143,7 +146,7 @@ class AdmFileMgmtService {
       await Promise.all(
         uuids.map(uuid => {
           return axios({
-            url: `http://localhost:3002/tenant/${this.tenant}/file/${uuid}`,
+            url: `${this.url}/tenant/${this.tenant}/file/${uuid}`,
             method: 'DELETE'
           });
         })
@@ -205,7 +208,7 @@ class AdmFileMgmtService {
 			fileUuids = [...fileUuids, ...data.files.map((file: any) => file.uuid)];
 		});
 		await this.isExistInTempStorage(fileUuids);
-		return fileUuids
+		return fileUuids;
 	}
 }
 
