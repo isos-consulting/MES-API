@@ -34,12 +34,18 @@ class AutMenuCtl {
       const datas = await service.convertFk(Object.values(matched));
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
-				// 📌 sort max 값 조회 및 비교
-				const maxSortby = await service.getMaxSort(datas[0].parent_id);
-				datas[0].sortby = await service.compareSortby(maxSortby, datas[0].sortby);
-
+				if (!datas[0].sortby){
+					datas[0].sortby	= (await service.getMaxSort(datas[0].parent_id));
+					datas[0].sortby++;
+				} else {
+						// 📌 sort max 값 조회 및 비교
+					const maxSortby = await service.getMaxSort(datas[0].parent_id);
+					datas[0].sortby = await service.compareSortby(maxSortby, datas[0].sortby);
+				}
+				
 				// 📌 추가할 메뉴 sort 정렬
 				await service.updateIncrementBySort(datas, 1,req.user?.uid as number, tran);
+				
 				// 📌 데이터 추가
 				result = await service.create(datas, req.user?.uid as number, tran);
 				
@@ -167,9 +173,14 @@ class AutMenuCtl {
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
 
-				// 📌 변경된 sort max 값 조회 및 비교
-				const maxSortby = await service.getMaxSort(datas[0].parent_id);
-				datas[0].sortby = await service.compareSortby(maxSortby, datas[0].sortby);
+				if (!datas[0].sortby){
+					datas[0].sortby	= (await service.getMaxSort(datas[0].parent_id));
+					datas[0].sortby++;
+				} else {
+					// 📌 sort max 값 조회 및 비교
+					const maxSortby = await service.getMaxSort(datas[0].parent_id);
+					datas[0].sortby = await service.compareSortby(maxSortby, datas[0].sortby);
+				}
 
 				// 📌 변경 되기전 sort 조회
 				const standardSortby = (await service.readRawsByUuids([datas[0].uuid])).raws;

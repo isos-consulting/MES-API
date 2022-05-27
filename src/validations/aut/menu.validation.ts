@@ -29,8 +29,7 @@ const autMenuValidation = {
 		body('*.parent_uuid', '부모 메뉴UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'parent_uuid', '부모 메뉴UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'parent_uuid', '부모 메뉴UUID')),
-		body('*.sortby', '정렬')
-      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'sortby', '정렬'))
+		body('*.sortby', '정렬').optional({ nullable: true })
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'sortby', '정렬')),
 		body('*.use_fg', '메뉴 사용여부')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'use_fg', '메뉴 사용여부'))
@@ -54,8 +53,7 @@ const autMenuValidation = {
 		body('*.parent_uuid', '부모 메뉴UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'parent_uuid', '부모 메뉴UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'parent_uuid', '부모 메뉴UUID')),
-		body('*.sortby', '정렬')
-      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'sortby', '정렬'))
+		body('*.sortby', '정렬').optional({ nullable: true })
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'sortby', '정렬')),
 		body('*.use_fg', '메뉴 사용여부')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'use_fg', '메뉴 사용여부'))
