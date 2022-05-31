@@ -13,6 +13,7 @@ import { errorState } from "../../states/common.state";
 import IPrdWork from "../../interfaces/prd/work.interface";
 import PrdOrderRoutingRepo from "../../repositories/prd/order-routing.repository";
 import MldMoldRepo from "../../repositories/mld/mold.repository";
+import moment from 'moment';
 
 class PrdWorkRoutingService {
   tenant: string;
@@ -88,8 +89,11 @@ class PrdWorkRoutingService {
           workings_id: orderRouting.workings_id,
           equip_id: orderRouting.equip_id,
           prd_signal_cnt: orderRouting.prd_signal_cnt,
+					start_date: orderRouting.start_date ?? moment(moment.now()).format().toString()
         };
       });
+
+			console.log(routingBody);
 
       return await this.repo.create(routingBody, uid, tran); 
     }
