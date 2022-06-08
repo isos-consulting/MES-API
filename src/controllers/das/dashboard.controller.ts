@@ -1,100 +1,109 @@
-import express = require('express');
-import moment = require('moment');
-import PrdOrderRepo from '../../repositories/prd/order.repository';
-import PrdWorkRepo from '../../repositories/prd/work.repository';
-import QmsInspResultRepo from '../../repositories/qms/insp-result.repository';
-import SalOrderDetailRepo from '../../repositories/sal/order-detail.repository';
-import isNumber from '../../utils/isNumber';
-import response from '../../utils/response';
-import testErrorHandlingHelper from '../../utils/testErrorHandlingHelper';
+import express from 'express';
+import { matchedData } from 'express-validator';
 import config from '../../configs/config';
+import DashboardService from '../../services/das/dashboard.service';
+import createDatabaseError from '../../utils/createDatabaseError';
+import createUnknownError from '../../utils/createUnknownError';
+import isServiceResult from '../../utils/isServiceResult';
+import response from '../../utils/response_new';
+import createApiResult from '../../utils/createApiResult_new';
+import { successState } from '../../states/common.state';
+import ApiResult from '../../interfaces/common/api-result.interface';
 
 class DashboardCtl {
+  stateTag: string
+
   //#region ✅ Constructor
-  constructor() {};
+  constructor() {
+    this.stateTag = 'dashboard'
+  };
   //#endregion
 
-  public readWorkComparedOrder = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+  //#region ✅ CRUD Functions
+
+  //#region 🟢 Create Functions
+  //#endregion
+
+  //#region 🔵 Read Functions
+
+  // 📒 Fn[readOverallStatus] (✅ Inheritance): 종합현황 조회
+  public readOverallStatus = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      const params = { ...req.query, ...req.params, reg_date: moment().format('YYYY-MM-DD') };
-      const datas = (await new PrdOrderRepo(req.tenant.uuid).readWorkComparedOrder(params)).raws[0];
+      let result: ApiResult<any> = { count:0, raws: [] };
+      const service = new DashboardService(req.tenant.uuid);
+      const params = matchedData(req, { locations: [ 'query', 'params' ] });
 
-      let rate = datas?.rate ?? 0;
-      if (rate > 1) rate = 1;
+      // 일별 매입, 매출 금액
+      const byDayRead = await service.readPurchasedSalesByDay(params);
+      const byDayResult = service.getOverallStatusByDayGraph(byDayRead.raws, params.reg_date);
 
-      const result: any[] = [
-        { id: 'completed', label: '완료', value: Number(rate) },
-        { id: 'incompleted', label: '미완료', value: 1 - rate }
-      ];
-  
-      return response(res, isNumber(datas?.rate) ? result : [], {});
-    } catch (e) {
-      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      // 월별 매입, 매출 금액
+      const byMonthRead = await service.readPurchasedSalesByMonth(params);
+      const byMonthResult = service.getOverallStatusByMonthGraph(byMonthRead.raws);
+
+      // 연도별 매입, 매출 금액
+      const byYearRead = await service.readPurchasedSalesByYear(params);
+      const byYearResult = service.getOverallStatusByYearGraph(byYearRead.raws, params.reg_date);
+
+      result.raws.push({
+        byDay: byDayResult,
+        byMonth: byMonthResult,
+        byYear: byYearResult
+      });
+
+      result.count = byDayResult.length + byMonthResult.length + byYearResult.length;
+
+      return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+      
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
     }
   };
 
-  public readPassedInspResult = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+  // 📒 Fn[readRealtimeStatus] (✅ Inheritance): 실시간현황 조회
+  public readRealtimeStatus = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      const datas = (await new QmsInspResultRepo(req.tenant.uuid).readByRegDate(moment().format('YYYY-MM-DD'))).raws;
+      let result: ApiResult<any> = { count:0, raws: [] };
+      const service = new DashboardService(req.tenant.uuid);
+      const params = matchedData(req, { locations: [ 'query', 'params' ] });
 
-      const total = datas.length;
-      const passed = datas.filter(data => data.insp_result_fg).length;
-      const rate = passed / total;
+      const operationRateRead = await service.readFacilityOperationRate(params);
+      const rejectRateRead = await service.readRejectRate(params);
+      const progressRateRead = await service.readPrdProgressRate(params);
 
-      const result: any[] = [
-        { id: 'passed', label: '합격', value: rate ?? 0 },
-        { id: 'rejected', label: '불합격', value: 1 - rate ?? 0 }
-      ];
+      result.raws.push(service.getRealtimeStatusBodyByGraph('설비가동율', operationRateRead.raws[0].rate));
+      result.raws.push(service.getRealtimeStatusBodyByGraph('불량율', rejectRateRead.raws[0].rate));
+      result.raws.push(service.getRealtimeStatusBodyByGraph('생산진척율', progressRateRead.raws[0].rate));
 
-      return response(res, isNumber(rate) ? result : [], {});
-    } catch (e) {
-      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
+      result.count = result.raws.length;
+			
+      return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+      
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
     }
   };
 
-  public readDelayedSalOrder = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    try {
-      const datas = (await new SalOrderDetailRepo(req.tenant.uuid).readCountOfDelayedOrder(moment().format('YYYY-MM-DD'))).raws;
-      const count = datas[0].count ?? 0;
+  //#endregion
 
-      const result: any[] = [
-        { id: 'delayed', label: '납기지연', value: count },
-      ];
-  
-      return response(res, result, {});
-    } catch (e) {
-      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
-    }
-  };
-  
-  public readOperatingRate = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    try {
-      const datas = (await new PrdWorkRepo(req.tenant.uuid).readOperatingRate(moment().format('YYYY-MM-DD'))).raws;
-      const rate = datas[0].rate ?? 0;
+  //#region 🟡 Update Functions
+  //#endregion
 
-      const result: any[] = [
-        { id: 'operating_rate', label: '가동율', value: rate },
-        { id: 'downtime', label: '비가동', value: 1 - rate }
-      ];
+  //#region 🟠 Patch Functions
+  //#endregion
 
-      return response(res, rate != null ? result : [], {});
-    } catch (e) {
-      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
-    }
-  };
-  
-  public readDeliveredInWeek = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    try {
-      const startDate = moment().format('YYYY-MM-DD');
-      const endDate = moment().add(6, 'days').format('YYYY-MM-DD');
+  //#region 🔴 Delete Functions
+  //#endregion
 
-      const datas = (await new SalOrderDetailRepo(req.tenant.uuid).readDeliveredWithinPeriod(startDate, endDate)).raws;
-
-      return response(res, datas, {});
-    } catch (e) {
-      return config.node_env === 'test' ? testErrorHandlingHelper(e, res) : next(e);
-    }
-  };
+  //#endregion
 }
 
 export default DashboardCtl;

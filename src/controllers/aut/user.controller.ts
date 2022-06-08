@@ -264,8 +264,8 @@ class AutUserCtl {
       if (!originPwd) { throw createHttpError(404, '사용자 아이디 또는 비밀번호 불일치'); }
 
       // 📌 Client에서 양방향 crypto.aes 암호화 방식으로 보낸 Password를 복호화 Key를 통하여 Convert한 Password
-      const convertedPwd = decrypt(datas[0].pwd, config.crypto.secret);
-			// const convertedPwd = config.node_env !== 'test' ? decrypt(datas[0].pwd, config.crypto.secret) : datas[0].pwd;
+      // const convertedPwd = decrypt(datas[0].pwd, config.crypto.secret);
+			const convertedPwd = config.node_env !== 'test' ? decrypt(datas[0].pwd, config.crypto.secret) : datas[0].pwd;
 
       // ❗ 비밀번호 불일치 Interlock
       const match = await bcrypt.compare(convertedPwd, originPwd);

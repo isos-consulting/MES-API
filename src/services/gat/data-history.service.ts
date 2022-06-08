@@ -25,14 +25,14 @@ class InvMoveService {
 
 	public parserGraphData = async (datas: any[]) => {
     try { 
-			let reusltSub: any = [];			
+			let resultSub: any = [];			
 			let label: string ='';
 			let data: any ='';
 			let backgroundColor: string ='';
 
 			datas.forEach((values: any) => {
 				if (values.data_map_nm !== label) {
-					reusltSub.push({label, data, backgroundColor });
+					resultSub.push({label, data, backgroundColor });
 					data = [];
 					label = values.data_map_nm
 					backgroundColor = "#" + Math.round(Math.random() * 0xffffff).toString(16);
@@ -40,11 +40,11 @@ class InvMoveService {
 				data.push({x: values.created_at, y: values.value});
 			});
 
-			reusltSub.push({label, data, backgroundColor });
+			resultSub.push({label, data, backgroundColor });
 			
-			const reuslt = reusltSub.filter((values: any) =>{ return (!!values.label) });
+			const result = resultSub.filter((values: any) =>{ return (!!values.label) });
 
-			return reuslt; 
+			return result; 
 		} catch (error) { throw error; }
   };
 }

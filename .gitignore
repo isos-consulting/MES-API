@@ -4,3 +4,4 @@ converage
 swaggers/builds
 private
 .env
+.vscode
