@@ -169,8 +169,10 @@ class PrdWorkService {
   public validateInputQty = async (verifyInput: any, totalProducedQty: number) => {
     Object.keys(verifyInput).forEach((prodId: string) => {
       if (verifyInput[prodId].bom_input_type_id == BOM_INPUT_TYPE.PUSH) {
-        const totalConsumedQty = verifyInput[prodId].qty / verifyInput[prodId].usage;
-
+        let totalConsumedQty = verifyInput[prodId].qty / verifyInput[prodId].usage;
+				totalConsumedQty = +totalConsumedQty.toFixed(6)
+				console.log(totalConsumedQty)
+				console.log(totalProducedQty)
         if (totalProducedQty != totalConsumedQty) { 
           throw createApiError(
             400, 
