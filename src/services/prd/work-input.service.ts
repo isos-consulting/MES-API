@@ -175,7 +175,7 @@ class PrdWorkInputService {
    * @param tran DB Transaction
    * @returns 가용창고가 있을 경우 ID 반환, 없을 경우 Error Throw
    */
-   public getAvailableStoreId = async (tran?: Transaction) => {
+  public getAvailableStoreId = async (tran?: Transaction) => {
     try { 
       const read = await this.stdStoreRepo.readRawAll(tran);
       const availableStore = read.raws.filter(raw => raw.available_store_fg === true);
@@ -204,7 +204,7 @@ class PrdWorkInputService {
    * @param regDate 수불일시
    * @returns 실적부적합 데이터
    */
-   getWorkInputsBody = async (data: any, regDate: string) => {
+  getWorkInputsBody = async (data: any, regDate: string) => {
     const workInputRead = await this.repo.readRawsByWorkId(data.work_id);
     const result = await Promise.all(
       workInputRead.raws.map(async (workInput: any) => {
@@ -282,7 +282,7 @@ class PrdWorkInputService {
    * @param allowMinus 마이너스 재고 허용여부
    * @returns 선입선출이 적용된 투입 데이터
    */
-   getPullInputBody = async (param: IPrdWorkInput, regDate: string, allowMinus: boolean) => {
+  getPullInputBody = async (param: IPrdWorkInput, regDate: string, allowMinus: boolean) => {
     const storeService = new InvStoreService(this.tenant);
     const calculated = await storeService.getCalculatedFifoData(
       {

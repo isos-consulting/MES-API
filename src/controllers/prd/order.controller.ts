@@ -116,7 +116,7 @@ class PrdOrderCtl {
       const params = matchedData(req, { locations: [ 'query', 'params' ] });
 
       result = await service.read(params);
-
+			
       return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
     } catch (error) {
       if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }

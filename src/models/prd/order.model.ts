@@ -142,6 +142,12 @@ export default class PrdOrder extends Model<IPrdOrder> {
   sal_order_detail_id: number;
 
   @Column({
+    comment: '우선순위',
+    type: DataType.INTEGER,
+  })
+  priority: number;
+
+  @Column({
     comment: '비고',
     type: DataType.STRING(250),
   })

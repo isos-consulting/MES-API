@@ -52,24 +52,23 @@ class QmsInspCtl {
 
 			let fileUuids: string[] = [];
 
+			
 			// 📌 파일을 함께 저장하는 경우
 			if (req.headers['file-included'] === 'true') {
 				// 📌 데이터 내에 있는 file 데이터가 Temp S3에 존재하는지 Validation
-				fileUuids = await fileService.validateFileInTempStorage(data.header);
+				fileUuids = await fileService.validateFileInTempStorage([data.header]);
 			}
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
         let inspId: number;
         let maxSeq: number;
         let headerResult: ApiResult<any> = { count: 0, raws: [] };
-        
         // 📌 자재입하의 UUID가 입력되지 않은 경우 자재입하 신규 발행
         if (!data.header.uuid) {
           // 📌 공정검사 기준서 등록시 해당 품목의 생산이 진행중일 경우 기준서 생성 후 즉시 적용 불가
           if(data.header.apply_fg) {
             await service.validateWorkingByProd(data.header);
             data.header.apply_date = data.header.apply_date ? data.header.apply_date : moment(moment.now()).format().toString();
-
             // 📌 해당 품목의 모든 기준서를 비 활성화 상태로 만들기 위한 Body 생성
             const read = await service.read({ 
               factory_uuid:  data.header.factory_uuid,
@@ -111,7 +110,7 @@ class QmsInspCtl {
 
 					// 📌 파일관리 저장
 					if (req.headers['file-included'] === 'true') {
-						const fileDatas = await fileService.getFileDatasByUnique(data.header, headerResult.raws, ['insp_no', 'factory_id'])
+						const fileDatas = await fileService.getFileDatasByUnique([data.header], headerResult.raws, ['insp_no', 'factory_id'])
 						await fileService.create(fileDatas, req.user?.uid as number, tran);
 					}
         } else {

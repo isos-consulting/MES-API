@@ -146,6 +146,7 @@ const readOrders = (
       p_o.complete_fg,
       CASE WHEN p_o.complete_fg = TRUE THEN '마감' ELSE 
       CASE WHEN p_o.work_fg = TRUE THEN '작업중' ELSE '대기' END END AS order_state,
+			p_o.priority as priority,
       p_o.complete_date,
       p_o.remark,
       p_o.created_at,

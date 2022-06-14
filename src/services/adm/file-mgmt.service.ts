@@ -200,7 +200,7 @@ class AdmFileMgmtService {
 	public validateFileInTempStorage = async(datas: any) => {
 		let fileDatas: any[] = [];
     let fileUuids: string[] = [];
-
+		
 		datas
 		.filter((data: any) => data.files && isArray(data.files))
 		.forEach((data: any) => {

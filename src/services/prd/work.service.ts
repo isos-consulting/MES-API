@@ -170,6 +170,7 @@ class PrdWorkService {
     Object.keys(verifyInput).forEach((prodId: string) => {
       if (verifyInput[prodId].bom_input_type_id == BOM_INPUT_TYPE.PUSH) {
         const totalConsumedQty = verifyInput[prodId].qty / verifyInput[prodId].usage;
+
         if (totalProducedQty != totalConsumedQty) { 
           throw createApiError(
             400, 

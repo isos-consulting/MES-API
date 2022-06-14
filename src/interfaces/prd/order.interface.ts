@@ -16,6 +16,7 @@ export default interface IPrdOrder {
   complete_fg?: boolean,
   complete_date?: string | null,
   sal_order_detail_id?: number | null,
+	priority?: number | null,
   remark?: string | null,
   created_at?: Date,
   created_uid?: number,
