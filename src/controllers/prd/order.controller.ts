@@ -182,7 +182,7 @@ class PrdOrderCtl {
           objQty[raw.proc_no] = raw.qty;                        // 양품수량
 
           // 📌 대기수량 ( 첫 공정: 지시수량 - 생산수량, 나머지 공정: 전 공정 생산수량 - 생산수량 )
-          if(firstIndex !== index) { objWaitQty[raw.proc_no] = raws[index-1].total_qty - raw.total_qty; } 
+          if(firstIndex !== index) { objWaitQty[raw.proc_no] = raws[index-1].qty - raw.total_qty; } 
           else { 
             objWaitQty[raw.proc_no] = raw.order_qty - raw.total_qty;
             
