@@ -2,6 +2,7 @@ import { Sequelize, Table, Column, Model, DataType, CreatedAt, UpdatedAt, Belong
 import IStdWorkings from '../../interfaces/std/workings.interface';
 import AutUser from '../aut/user.model';
 import StdFactory from './factory.model';
+import StdWorkerGroup from './worker-group.model';
 
 @Table({
   tableName: 'STD_WORKINGS_TB',
@@ -44,6 +45,14 @@ export default class StdWorkings extends Model<IStdWorkings> {
     allowNull: false,
   })
   workings_nm: string;
+
+  @ForeignKey(() => StdWorkerGroup)
+  @Column({
+    comment: '작업조ID',
+    type: DataType.INTEGER,
+    allowNull: true,
+  })
+  worker_group_id: number;
 
   @CreatedAt
   @Column({
@@ -95,6 +104,9 @@ export default class StdWorkings extends Model<IStdWorkings> {
 
   @BelongsTo(() => StdFactory, { foreignKey: 'factory_id', targetKey: 'factory_id', onDelete: 'restrict', onUpdate: 'cascade' })
   stdFactory: StdFactory;
+
+  @BelongsTo(() => StdWorkerGroup, { foreignKey: 'worker_group_id', targetKey: 'worker_group_id', onDelete: 'restrict', onUpdate: 'cascade' })
+  stdWorkerGroup: StdWorkerGroup;
 
   // HasMany
   //#endregion

@@ -1,5 +1,6 @@
 import { Transaction } from "sequelize/types";
 import StdFactoryRepo from '../../repositories/std/factory.repository';
+import StdWorkerGroupRepo from "../../repositories/std/worker-group.repository";
 import StdWorkingsRepo from '../../repositories/std/workings.repository';
 import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
 
@@ -20,6 +21,12 @@ class StdWorkingsService {
         TRepo: StdFactoryRepo,
         idName: 'factory_id',
         uuidName: 'factory_uuid'
+      },
+      {
+        key: 'worker-group',
+        TRepo: StdWorkerGroupRepo,
+        idName: 'worker_group_id',
+        uuidName: 'worker_group_uuid'
       },
     ];
   }

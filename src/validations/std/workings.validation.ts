@@ -17,6 +17,8 @@ const stdWorkingsValidation = {
 		query('workings_nm', '작업장명')
 			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'workings_nm', '작업장명'))
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'workings_nm', '작업장명')),
+      query('worker_group_uuid', '작업조UUID').optional({ nullable: true })
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'worker_group_uuid', '작업조UUID')),
 	],
 	read: [
 		query('factory_uuid', '공장UUID').optional({ nullable: true })
@@ -37,6 +39,8 @@ const stdWorkingsValidation = {
 		body('*.workings_nm', '작업장명')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'workings_nm', '작업장명'))
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'workings_nm', '작업장명')),
+      body('*.worker_group_uuid', '작업조UUID').optional({ nullable: true })
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'worker_group_uuid', '작업조UUID')),
 	],
   update: [
     body('*.uuid', '작업장UUID')
@@ -48,6 +52,8 @@ const stdWorkingsValidation = {
 		body('*.workings_nm', '작업장명')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'workings_nm', '작업장명'))
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'workings_nm', '작업장명')),
+      body('*.worker_group_uuid', '작업조UUID').optional({ nullable: true })
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'worker_group_uuid', '작업조UUID')),
   ],
   patch: [
     body('*.uuid', '작업장UUID')
@@ -57,6 +63,8 @@ const stdWorkingsValidation = {
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'workings_cd', '작업장코드')),
 		body('*.workings_nm', '작업장명').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'workings_nm', '작업장명')),
+      body('*.worker_group_uuid', '작업조UUID').optional({ nullable: true })
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'worker_group_uuid', '작업조UUID')),
   ],
   delete: [
     body('*.uuid', '작업장UUID')

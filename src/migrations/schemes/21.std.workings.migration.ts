@@ -9,6 +9,7 @@ const seedDatas: IStdWorkings[] = [
 		"factory_id" : 1,
 		"workings_cd" : "001",
 		"workings_nm" : "쇼트라인1",
+		"worker_group_id": 1,
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "27a91b25-3ac9-495e-8123-b0163711f778"
@@ -18,6 +19,7 @@ const seedDatas: IStdWorkings[] = [
 		"factory_id" : 1,
 		"workings_cd" : "002",
 		"workings_nm" : "쇼트라인2",
+		"worker_group_id": 1,
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "2b13692f-dbd1-4033-bcd0-642918430943"
@@ -27,6 +29,7 @@ const seedDatas: IStdWorkings[] = [
 		"factory_id" : 1,
 		"workings_cd" : "003",
 		"workings_nm" : "수동조립1",
+		"worker_group_id": 1,
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "6767cfe6-ee90-4cab-ad36-51e46d9d0da9"
@@ -36,6 +39,7 @@ const seedDatas: IStdWorkings[] = [
 		"factory_id" : 1,
 		"workings_cd" : "004",
 		"workings_nm" : "수동조립2",
+		"worker_group_id": 2,
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "8a2d3fbd-0b26-4cbb-a3eb-237e8b0276b1"
@@ -45,6 +49,7 @@ const seedDatas: IStdWorkings[] = [
 		"factory_id" : 1,
 		"workings_cd" : "005",
 		"workings_nm" : "수동조립3",
+		"worker_group_id": 2,
 		"created_uid" : 1,
 		"updated_uid" : 1,
 		"uuid" : "87eb6d6f-fefc-4443-bc7c-7a685f802716"

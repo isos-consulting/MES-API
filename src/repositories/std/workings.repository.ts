@@ -38,6 +38,7 @@ class StdWorkingsRepo {
             factory_id: workings.factory_id,
             workings_cd: workings.workings_cd,
             workings_nm: workings.workings_nm,
+            worker_group_id: workings.worker_group_id,
             created_uid: uid,
             updated_uid: uid,
           },
@@ -68,6 +69,12 @@ class StdWorkingsRepo {
             required: true, 
             where: { uuid: params.factory_uuid ? params.factory_uuid : { [Op.ne]: null } }
           },
+          { 
+            model: this.sequelize.models.StdWorkerGroup, 
+            attributes: [], 
+            required: false, 
+            where: { uuid: params.worker_group_uuid ? params.worker_group_uuid : { [Op.ne]: null } }
+          },
           { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
@@ -78,6 +85,9 @@ class StdWorkingsRepo {
           [ Sequelize.col('stdFactory.factory_nm'), 'factory_nm' ],
           'workings_cd',
           'workings_nm',
+          [ Sequelize.col('stdWorkerGroup.uuid'), 'worker_group_uuid' ],
+          [ Sequelize.col('stdWorkerGroup.worker_group_cd'), 'worker_group_cd' ],
+          [ Sequelize.col('stdWorkerGroup.worker_group_nm'), 'worker_group_nm' ],
           'created_at',
           [ Sequelize.col('createUser.user_nm'), 'created_nm' ],
           'updated_at',
@@ -98,6 +108,7 @@ class StdWorkingsRepo {
       const result = await this.repo.findOne({ 
         include: [
           { model: this.sequelize.models.StdFactory, attributes: [], required: true },
+          { model: this.sequelize.models.StdWorkerGroup, attributes: [], required: false },
           { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
@@ -108,6 +119,9 @@ class StdWorkingsRepo {
           [ Sequelize.col('stdFactory.factory_nm'), 'factory_nm' ],
           'workings_cd',
           'workings_nm',
+          [ Sequelize.col('stdWorkerGroup.uuid'), 'worker_group_uuid' ],
+          [ Sequelize.col('stdWorkerGroup.worker_group_cd'), 'worker_group_cd' ],
+          [ Sequelize.col('stdWorkerGroup.worker_group_nm'), 'worker_group_nm' ],
           'created_at',
           [ Sequelize.col('createUser.user_nm'), 'created_nm' ],
           'updated_at',
@@ -163,6 +177,7 @@ class StdWorkingsRepo {
           {
             workings_cd: workings.workings_cd ?? null,
             workings_nm: workings.workings_nm ?? null,
+            worker_group_id: workings.worker_group_id ?? null,
             updated_uid: uid,
           } as any,
           { 
@@ -197,6 +212,7 @@ class StdWorkingsRepo {
           {
             workings_cd: workings.workings_cd,
             workings_nm: workings.workings_nm,
+            worker_group_id: workings.worker_group_id,
             updated_uid: uid,
           },
           { 
