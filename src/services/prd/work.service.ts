@@ -171,8 +171,7 @@ class PrdWorkService {
       if (verifyInput[prodId].bom_input_type_id == BOM_INPUT_TYPE.PUSH) {
         let totalConsumedQty = verifyInput[prodId].qty / verifyInput[prodId].usage;
 				totalConsumedQty = +totalConsumedQty.toFixed(6)
-				console.log(totalConsumedQty)
-				console.log(totalProducedQty)
+				
         if (totalProducedQty != totalConsumedQty) { 
           throw createApiError(
             400, 
@@ -210,8 +209,9 @@ class PrdWorkService {
 
     // 📌 부적합수량 처리방법이 합계인지 마지막공정 수량인지 옵션 값 조회
     const isRejectQtyOption = await tenantOptService.getTenantOptValue('PRD_METHOD_REJECT_QTY', tran);
+
     let rejectQty: number;
-    if (Number(isRejectQtyOption) !== PRD_METHOD_REJECT_QTY.SUM) {
+    if (Number(isRejectQtyOption) === PRD_METHOD_REJECT_QTY.SUM) {
       rejectQty = await workRejectRepo.getTotalRejectQtyByWork(data.work_id as number, tran) as number;
     } else { rejectQty = await workRejectRepo.getFinalRejectQtyByWork(data.work_id as number, tran) as number; }
 

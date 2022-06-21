@@ -153,7 +153,7 @@ class InvStoreService {
    * @param tran DB Transaction
    * @returns 창고수불 Result
    */
-   public transactInventory = async (
+  public transactInventory = async (
     datas: any[], 
     type: 'CREATE' | 'UPDATE' | 'DELETE',
     tranOpt: {

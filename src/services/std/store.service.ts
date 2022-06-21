@@ -131,7 +131,7 @@ class StdStoreService {
    * @param tran DB Transaction
    * @returns 검증 성공시 true, 실패시 Error Throw
    */
-   public validateStoreTypeByIds = async (storeIds: number[], storeType: TStoreType, tran?: Transaction) => {
+  public validateStoreTypeByIds = async (storeIds: number[], storeType: TStoreType, tran?: Transaction) => {
     const storeIdSet = new Set(storeIds);
 
     await Promise.all([

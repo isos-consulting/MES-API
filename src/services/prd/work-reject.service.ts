@@ -117,7 +117,7 @@ class PrdWorkRejectService {
    * @param regDate 수불일시
    * @returns 실적부적합 데이터
    */
-   getWorkRejectBody = async (data: any, regDate: string) => {
+  getWorkRejectBody = async (data: any, regDate: string) => {
     const workRejectRead = await this.repo.readRawsByWorkId(data.work_id);
     const result = await Promise.all(
       workRejectRead.raws.map(async (workReject: any) => {

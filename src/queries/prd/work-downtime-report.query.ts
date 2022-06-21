@@ -8,6 +8,19 @@ const readWorkDowntimeReport = (
     factory_uuid?: string,
   }
 ) => {
+
+	let searchQuery: string = '';
+
+	searchQuery
+	if(params.factory_uuid) { searchQuery += ` AND s_f.uuid = '${params.factory_uuid}'`;}
+	if(params.work_start_date && params.work_end_date) { searchQuery += ` AND date(p_w.reg_date) BETWEEN '${params.work_start_date}' AND '${params.work_end_date}'`;}
+	if(params.downtime_start_date && params.downtime_end_date) { searchQuery += ` AND date(p_wd.reg_date) BETWEEN '${params.downtime_start_date}' AND '${params.downtime_end_date}'`;}
+	
+	if (searchQuery.length > 0) {
+    searchQuery = searchQuery.substring(4, searchQuery.length);
+    searchQuery = 'WHERE' + searchQuery;
+  }
+
   const createDowntimeTempTable = `
     CREATE TEMP TABLE temp_downtime(
       work_downtime_id int,
@@ -58,10 +71,7 @@ const readWorkDowntimeReport = (
     JOIN prd_work_routing_tb p_wr ON p_wr.work_routing_id = p_wd.work_routing_id
     LEFT JOIN aut_user_tb a_uc ON a_uc.uid = p_wd.created_uid
     LEFT JOIN aut_user_tb a_uu ON a_uu.uid = p_wd.updated_uid
-    WHERE p_w.complete_fg = TRUE
-    ${params.factory_uuid ? `AND s_f.uuid = '${params.factory_uuid}'` : ''}
-    ${params.work_start_date && params.work_end_date ? `AND date(p_w.reg_date) BETWEEN '${params.work_start_date}' AND '${params.work_end_date}'` : ''};
-    ${params.downtime_start_date && params.downtime_end_date ? `AND date(p_wd.reg_date) BETWEEN '${params.downtime_start_date}' AND '${params.downtime_end_date}'` : ''};
+    ${searchQuery};
   `;
 
   let reportOrderBy: string;

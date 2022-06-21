@@ -216,7 +216,7 @@ class PrdWorkCtl {
           
           // 📌 해당 실적의 작업지시에 진행중인 생산 실적이 없을 경우 작업지시의 생산진행여부(work_fg)를 False로 변경
           const orderResult = await orderService.updateOrderCompleteByOrderId(workResult.raws[0].order_id, req.user?.uid as number, tran);
-          
+					
           // 📌 입고 창고 수불 내역 생성(생산입고)
           const toStoreResult = await inventoryService.transactInventory(
             workResult.raws, 'CREATE', 

@@ -6,6 +6,17 @@ const readWorkRejectReport = (
     factory_uuid?: string,
   }
 ) => {
+	let searchQuery: string = '';
+
+	searchQuery
+	if(params.factory_uuid) { searchQuery += ` AND s_f.uuid = '${params.factory_uuid}'`;}
+	if(params.start_date && params.end_date) { searchQuery += ` AND date(p_w.reg_date) BETWEEN '${params.start_date}' AND '${params.end_date}'`;}
+	
+	if (searchQuery.length > 0) {
+    searchQuery = searchQuery.substring(4, searchQuery.length);
+    searchQuery = 'WHERE' + searchQuery;
+  }
+
   const createWorkRejectTempTable = `
     CREATE TEMP TABLE temp_reject(
       work_reject_id int,
@@ -54,9 +65,7 @@ const readWorkRejectReport = (
     JOIN prd_work_routing_tb p_wrt ON p_wrt.work_routing_id = p_wr.work_routing_id
     LEFT JOIN aut_user_tb a_uc ON a_uc.uid = p_wr.created_uid
     LEFT JOIN aut_user_tb a_uu ON a_uu.uid = p_wr.updated_uid
-    WHERE p_w.complete_fg = TRUE
-    ${params.factory_uuid ? `AND s_f.uuid = '${params.factory_uuid}'` : ''}
-    ${params.start_date && params.end_date ? `AND date(p_w.reg_date) BETWEEN '${params.start_date}' AND '${params.end_date}'` : ''};
+    ${searchQuery};
   `;
 
   let reportOrderBy: string;
