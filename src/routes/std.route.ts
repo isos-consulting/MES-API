@@ -380,6 +380,7 @@ router.route('/tenant-opts').delete(stdTenantOptValidation.delete, validationCal
 //#region ✅ Emp (사원)
 const emp = new StdEmpCtl();
 // router.route('/emps/excel-upload').post(emp.upsertBulkDatasFromExcel);
+router.route('/emps/by-workings').get(stdEmpValidation.readByWorkings, validationCallback, emp.readByWorkings);
 router.route('/emp/:uuid').get(stdEmpValidation.readByUuid, validationCallback, emp.readByUuid);
 router.route('/emps').get(stdEmpValidation.read, validationCallback, emp.read);
 router.route('/emps').post(stdEmpValidation.create, validationCallback, emp.create);

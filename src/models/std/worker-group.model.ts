@@ -1,7 +1,8 @@
-import { Sequelize, Table, Column, Model, DataType, CreatedAt, UpdatedAt, BelongsTo, Unique, ForeignKey } from 'sequelize-typescript'
+import { Sequelize, Table, Column, Model, DataType, CreatedAt, UpdatedAt, BelongsTo, Unique, ForeignKey, HasMany } from 'sequelize-typescript'
 import IStdWorkerGroup from '../../interfaces/std/worker-group.interface';
 import AutUser from '../aut/user.model';
 import StdFactory from './factory.model';
+import StdWorkings from './workings.model';
 
 @Table({
   tableName: 'STD_WORKER_GROUP_TB',
@@ -97,5 +98,7 @@ export default class StdWorkerGroup extends Model<IStdWorkerGroup> {
   stdFactory: StdFactory;
 
   // HasMany
+  @HasMany(() => StdWorkings, { foreignKey: 'worker_group_id' })
+  stdWorkings: StdWorkings[];
   //#endregion
 }

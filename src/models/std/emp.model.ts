@@ -1,8 +1,9 @@
-import { Sequelize, Table, Column, Model, DataType, CreatedAt, UpdatedAt, BelongsTo, Unique, ForeignKey } from 'sequelize-typescript'
+import { Sequelize, Table, Column, Model, DataType, CreatedAt, UpdatedAt, BelongsTo, Unique, ForeignKey, HasMany } from 'sequelize-typescript'
 import IStdEmp from '../../interfaces/std/emp.interface';
 import AutUser from '../aut/user.model';
 import StdDept from './dept.model';
 import StdGrade from './grade.model';
+import StdWorkerGroupEmp from './worker-group-emp.model';
 
 @Table({
   tableName: 'STD_EMP_TB',
@@ -173,5 +174,7 @@ export default class StdEmp extends Model<IStdEmp> {
   stdGrade: StdGrade;
 
   // HasMany
+  @HasMany(() => StdWorkerGroupEmp, { foreignKey: 'emp_id' })
+  stdWorkerGroupEmp: StdWorkerGroupEmp[];
   //#endregion
 }

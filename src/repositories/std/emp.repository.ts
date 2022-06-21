@@ -193,6 +193,68 @@ class StdEmpRepo {
     }
   };
 
+  public readByWorkings = async(workings_uuid: string) => {
+    try {
+      const result = await this.repo.findAll({
+        include: [
+          { model: this.sequelize.models.StdDept, attributes: [], required: false },
+          { model: this.sequelize.models.StdGrade, attributes: [], required: false },
+          { model: this.sequelize.models.AutUser, as: 'autUser', attributes: [], required: false },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+          { 
+            model: this.sequelize.models.StdWorkerGroupEmp, 
+            as: 'stdWorkerGroupEmp',
+            attributes: [],
+            include: [{ 
+              model: this.sequelize.models.StdWorkerGroup, 
+              attributes: [], 
+              include: [{
+                model: this.sequelize.models.StdWorkings,
+                attributes: [],
+                where: { uuid: workings_uuid },
+                required: true,
+              }],
+              required: true 
+            }],
+            required: true 
+          },
+        ],
+        attributes: [
+          [ Sequelize.col('stdEmp.uuid'), 'emp_uuid' ],
+          'emp_cd',
+          'emp_nm',
+          [ Sequelize.col('autUser.uuid'), 'user_uuid' ],
+          [ Sequelize.col('autUser.id'), 'id' ],
+          [ Sequelize.col('stdDept.uuid'), 'dept_uuid' ],
+          [ Sequelize.col('stdDept.dept_cd'), 'dept_cd' ],
+          [ Sequelize.col('stdDept.dept_nm'), 'dept_nm' ],
+          [ Sequelize.col('stdGrade.uuid'), 'grade_uuid' ],
+          [ Sequelize.col('stdGrade.grade_cd'), 'grade_cd' ],
+          [ Sequelize.col('stdGrade.grade_nm'), 'grade_nm' ],
+          'birthday',
+          'addr',
+          'addr_detail',
+          'post',
+          'hp',
+          'enter_date',
+          'leave_date',
+          'worker_fg',
+          'remark',
+          'created_at',
+          [ Sequelize.col('createUser.user_nm'), 'created_nm' ],
+          'updated_at',
+          [ Sequelize.col('updateUser.user_nm'), 'updated_nm' ]
+        ],
+        order: [ 'emp_cd' ],
+      });
+      
+      return convertReadResult(result);
+    } catch (error) {
+      throw error;
+    }
+  }
+
   // 📒 Fn[readRawsByUuids]: Id 를 포함한 Raw Datas Read Function
   public readRawsByUuids = async(uuids: string[]) => {
     const result = await this.repo.findAll({ where: { uuid: { [Op.in]: uuids } } });

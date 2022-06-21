@@ -58,6 +58,11 @@ class StdEmpService {
 		catch (error) { throw error; }
   };
 
+  public readByWorkings = async (workings_uuid: string) => {
+    try { return await this.repo.readByWorkings(workings_uuid); }
+    catch (error) { throw error; }
+  }
+
   public update = async (datas: any[], uid: number, tran: Transaction) => {
     try { return await this.repo.update(datas, uid, tran); } 
 		catch (error) { throw error; }

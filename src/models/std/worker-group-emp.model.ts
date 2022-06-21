@@ -1,5 +1,5 @@
 import { Sequelize, Table, Column, Model, DataType, CreatedAt, UpdatedAt, BelongsTo, Unique, ForeignKey } from 'sequelize-typescript'
-import IStdWorkerGroupWorker from '../../interfaces/std/worker-group-emp.interface';
+import IStdWorkerGroupEmp from '../../interfaces/std/worker-group-emp.interface';
 import AutUser from '../aut/user.model';
 import StdFactory from './factory.model';
 import StdWorkerGroup from './worker-group.model';
@@ -12,7 +12,7 @@ import StdEmp from './emp.model';
   timestamps: true,
   underscored: true,
 })
-export default class StdWorkerGroupWorker extends Model<IStdWorkerGroupWorker> {
+export default class StdWorkerGroupEmp extends Model<IStdWorkerGroupEmp> {
   @Column({
     comment: '작업조-작업자ID',
     primaryKey: true,
