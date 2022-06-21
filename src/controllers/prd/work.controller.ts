@@ -23,6 +23,7 @@ import PrdWorkDowntimeService from '../../services/prd/work-downtime.service';
 import StdTenantOptService from '../../services/std/tenant-opt.service';
 import IPrdWorkInput from '../../interfaces/prd/work-input.interface';
 
+
 class PrdWorkCtl {
   stateTag: string;
   //#region ✅ Constructor
@@ -52,6 +53,10 @@ class PrdWorkCtl {
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
         for await (const data of datas) {
+
+					// 📌 작업시작 시간 Interlock
+					await service.validateWorkDateCheck(data,tran);
+
           // 📌 작업지시 단위 최대 순번 조회
           const maxSeq = await service.getMaxSeq(data.order_id, tran);
           data.seq = maxSeq + 1;
@@ -216,7 +221,7 @@ class PrdWorkCtl {
           
           // 📌 해당 실적의 작업지시에 진행중인 생산 실적이 없을 경우 작업지시의 생산진행여부(work_fg)를 False로 변경
           const orderResult = await orderService.updateOrderCompleteByOrderId(workResult.raws[0].order_id, req.user?.uid as number, tran);
-					
+          
           // 📌 입고 창고 수불 내역 생성(생산입고)
           const toStoreResult = await inventoryService.transactInventory(
             workResult.raws, 'CREATE', 

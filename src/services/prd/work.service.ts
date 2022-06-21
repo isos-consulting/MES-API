@@ -16,9 +16,12 @@ import PrdWorkRejectRepo from "../../repositories/prd/work-reject.repository";
 import StdTenantOptService from "../std/tenant-opt.service";
 import { PRD_METHOD_REJECT_QTY } from "../../types/tenant-opt.type";
 import { BOM_INPUT_TYPE } from "../../types/bom-input-type.type";
+import { PRD_WORK_DATE_CHECK } from '../../types/tenant-opt.type';
 import PrdOrderInputService from "./order-input.service";
 import PrdWorkInputService from "./work-input.service";
 import StdStoreService from "../std/store.service";
+import moment from 'moment';
+import getSubtractTwoDates from '../../utils/getSubtractTwoDates';
 
 class PrdWorkService {
   tenant: string;
@@ -240,6 +243,40 @@ class PrdWorkService {
     workVerifyInput.work = workResult;
     return workVerifyInput;
   }
+
+	public validateWorkDateCheck = async (data: any, tran: Transaction) => {
+		const tenantOptService = new StdTenantOptService(this.tenant);
+
+		// 📌 작업시작 시간 지시일자 기준으로 확인 하는 옵션
+		const isWorkDateChkOption = await tenantOptService.getTenantOptValue('PRD_WORK_DATE_CHECK', tran);
+		const diffDate = getSubtractTwoDates( moment(moment.now()).format('YYYY-MM-DD 00:00:00').toString(),moment(data.reg_date).format('YYYY-MM-DD 00:00:00').toString())
+
+		if (Number(isWorkDateChkOption) === PRD_WORK_DATE_CHECK.CHECK) {
+			if (diffDate !== 0) {
+				throw createApiError(
+					400, 
+					{
+						admin_message: `지시일자: [${data.reg_date}] 현재일자: [${moment(moment.now()).format('YYYY-MM-DD')}]`,
+						user_message: '지시일자와 동일한 날에만 작업시작 가능 합니다.'
+					}, 
+					this.stateTag, 
+					errorState.FAILED_SAVE_TO_RELATED_DATA
+				);
+			}
+		} else if (Number(isWorkDateChkOption) === PRD_WORK_DATE_CHECK.SOME_CHECK) { 
+			if (diffDate < 0) {
+				throw createApiError(
+					400, 
+					{
+						admin_message: `지시일자: [${data.reg_date}] 현재일자: [${moment(moment.now()).format('YYYY-MM-DD')}]`,
+						user_message: '지시일자 이후에만 작업시작 가능 합니다.'
+					}, 
+					this.stateTag, 
+					errorState.FAILED_SAVE_TO_RELATED_DATA
+				);
+			}
+		};
+	}
 }
 
 export default PrdWorkService;
