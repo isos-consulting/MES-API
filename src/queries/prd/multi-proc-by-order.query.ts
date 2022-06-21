@@ -53,16 +53,16 @@ const readMultiProcByOrder = (
       s_u.uuid as unit_uuid,
       s_u.unit_cd,
       s_u.unit_nm,
-      t_o.order_qty, 
+      t_o.order_qty::numeric(19,0) as order_qty, 
       t_o.order_state, 
       p_w.work_id, 
       p_wr.proc_no, 
       s_pc.uuid as proc_uuid,
       s_pc.proc_cd,
       s_pc.proc_nm, 
-      (COALESCE(p_wr.qty,0) + COALESCE(p_wr2.qty,0)) AS total_qty, 
-      COALESCE(p_wr.qty,0) as qty, 
-      COALESCE(p_wr2.qty,0) AS reject_qty
+      (COALESCE(p_wr.qty,0) + COALESCE(p_wr2.qty,0))::numeric(19,0) AS total_qty, 
+      COALESCE(p_wr.qty,0)::numeric(19,0) as qty, 
+      COALESCE(p_wr2.qty,0)::numeric(19,0) AS reject_qty
     FROM temp_order t_o
     JOIN std_workings_tb s_w on s_w.workings_id = t_o.workings_id
     JOIN std_prod_tb s_p ON s_p.prod_id = t_o.prod_id
