@@ -83,6 +83,33 @@ const seedDatas: IStdTenantOpt[] = [
 		created_uid : 1,
 		updated_uid : 1
 	},
+	{
+		tenant_opt_id : 7,
+		tenant_opt_cd : "PRD_INPUT_QTY_CHECK",
+		tenant_opt_nm : "투입수량 확인",
+		value : 1,
+		remark : 
+			`확인안함: 작업종료 시 생산수량과 투입수량을 비교하지 않고 종료 
+			확인: 작업종료 시 생산수량과 투입수량을 비교하여 일치 할 경우에만 작업종료
+			[확인안함: 0, 확인: 1]
+			[Default: 확인안함(1)]`,
+		created_uid : 1,
+		updated_uid : 1
+	},
+	{
+		tenant_opt_id : 8,
+		tenant_opt_cd : "PRD_WORK_DATE_CHECK",
+		tenant_opt_nm : "작업 시작일자 확인",
+		value : 2,
+		remark : 
+			`확인안함: 지시일자와 상관 없이 작업시작 가능 
+			확인: 지시일자와 동일한 날에만 작업시작 가능
+			일부확인: 지시일자 이후에만 작업시작 가능(지시일자 이전에 작업시작 불가능)
+			[확인안함: 0, 확인: 1, 일부확인: 2]
+			[Default: 일부확인(2)]`,
+		created_uid : 1,
+		updated_uid : 1
+	},
 ]
 
 const baseMigration = new BaseMigration('StdTenantOpt', 'tenant_opt_id', seedDatas);
