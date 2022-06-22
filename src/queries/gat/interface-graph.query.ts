@@ -22,7 +22,7 @@ const readInterfaceGraph = (
   //#endregion
 
   //#region 📌 searchQuery
-  searchQuery = `WHERE s_di.monitoring_fg = TRUE`;
+  searchQuery = `WHERE s_di.monitoring_fg = TRUE and s_dm.monitoring_fg = TRUE`;
 	searchQuery += ` AND s_dh.created_at BETWEEN '${params.start_date}' AND '${params.end_date}'`; 
 	searchQuery += ` AND s_f.uuid = '${params.factory_uuid}'`; 
 	searchQuery += ` AND s_di.uuid = '${params.data_item_uuid}'`; 
