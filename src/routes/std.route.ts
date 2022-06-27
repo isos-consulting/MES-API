@@ -91,6 +91,10 @@ import stdVendorPriceValidation from '../validations/std/vendor-price.validation
 import stdWorkerGroupEmpValidation from '../validations/std/worker-group-emp.validation';
 import stdWorkerGroupValidation from '../validations/std/worker-group.validation';
 import stdWorkingsValidation from '../validations/std/workings.validation';
+import StdBarcodeCtl from '../controllers/std/barcode.controller';
+import stdBarcodeValidation from '../validations/std/barcode.validation';
+import StdBarcodeHistoryCtl from '../controllers/std/barcode-history.controller';
+import stdBarcodeHistoryValidation from '../validations/std/barcode-history.validation';
 
 const router = express.Router();
 
@@ -577,6 +581,24 @@ router.route('/companies').delete(stdCompanyValidation.delete, validationCallbac
 //#region ✅ dataMap (인터페이스 설비)
 const dataMap = new StdDataMapCtl();
 router.route('/data-map/report').get(dataMap.readInterfaceMonitoring);
+//#endregion
+
+//#region ✅ barcode (바코드)
+const barcode = new StdBarcodeCtl();
+router.route('/barcode/:uuid').get(stdBarcodeValidation.readByUuid, validationCallback, barcode.readByUuid);
+router.route('/barcodes').get(stdBarcodeValidation.read, validationCallback, barcode.read);
+router.route('/barcodes').post(stdBarcodeValidation.create, validationCallback, barcode.create);
+router.route('/barcodes').put(stdBarcodeValidation.update, validationCallback, barcode.update);
+router.route('/barcodes').patch(stdBarcodeValidation.patch, validationCallback, barcode.patch);
+router.route('/barcodes').delete(stdBarcodeValidation.delete, validationCallback, barcode.delete);
+//#endregion
+
+//#region ✅ barcode-history (바코드 이력)
+const barcodeHistory = new StdBarcodeHistoryCtl();
+router.route('/barcode-history/:uuid').get(stdBarcodeHistoryValidation.readByUuid, validationCallback, barcodeHistory.readByUuid);
+router.route('/barcode-histories').get(stdBarcodeHistoryValidation.read, validationCallback, barcodeHistory.read);
+router.route('/barcode-histories').post(stdBarcodeHistoryValidation.create, validationCallback, barcodeHistory.create);
+router.route('/barcode-histories').delete(stdBarcodeHistoryValidation.delete, validationCallback, barcodeHistory.delete);
 //#endregion
 
 export default router;
