@@ -206,24 +206,24 @@ class StdEmpRepo {
             model: this.sequelize.models.StdWorkerGroupEmp, 
             as: 'stdWorkerGroupEmp',
             attributes: [],
+						required: true,
             include: [{ 
               model: this.sequelize.models.StdWorkerGroup, 
               attributes: [], 
-              include: [{
-                model: this.sequelize.models.StdWorkings,
-                attributes: [],
-                where: { uuid: workings_uuid },
-                required: true,
-              }],
-              required: true 
+							required: true,
+              include: [
+                {model: this.sequelize.models.StdWorkings, attributes: [], where: { uuid: workings_uuid }, required: true }
+							],
             }],
-            required: true 
           },
         ],
         attributes: [
           [ Sequelize.col('stdEmp.uuid'), 'emp_uuid' ],
           'emp_cd',
           'emp_nm',
+					[ Sequelize.col('stdWorkerGroupEmp.stdWorkerGroup.uuid'), 'worker_group_uuid' ],
+					[ Sequelize.col('stdWorkerGroupEmp.stdWorkerGroup.worker_group_cd'), 'worker_group_cd' ],
+					[ Sequelize.col('stdWorkerGroupEmp.stdWorkerGroup.worker_group_nm'), 'worker_group_nm' ],
           [ Sequelize.col('autUser.uuid'), 'user_uuid' ],
           [ Sequelize.col('autUser.id'), 'id' ],
           [ Sequelize.col('stdDept.uuid'), 'dept_uuid' ],
