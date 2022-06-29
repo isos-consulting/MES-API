@@ -81,6 +81,8 @@ const qmsInspResultValidation = {
     body('header.remark', '비고').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'remark', '비고')),
 
+		body('details.*.values', 'valuesArrayCheck').optional({ nullable: true })
+			.isArray().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'values', 'valuesArrayCheck')),
     body('details.*.values.*.sample_no', '시료번호')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'sample_no', '시료번호'))
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'sample_no', '시료번호')),
@@ -123,6 +125,9 @@ const qmsInspResultValidation = {
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'reject_qty', '불합격수량')),
     body('header.remark', '비고').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'remark', '비고')),
+
+		body('details.*.values', 'valuesArrayCheck').optional({ nullable: true })
+			.isArray().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'values', 'valuesArrayCheck')),
     body('details.*.values.*.uuid', '검사성적서 상세 값UUID').optional({ nullable: true })
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '검사성적서 상세 값UUID')),
     body('details.*.values.*.delete_fg', '성적서 상세 값 삭제실행여부').optional({ nullable: true })
@@ -238,6 +243,9 @@ const qmsInspResultValidation = {
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'reject_location_uuid', '부적합 입고위치UUID')),
     body('header.remark', '비고').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'remark', '비고')),
+
+		body('details.*.values', 'valuesArrayCheck').optional({ nullable: true })
+			.isArray().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'values', 'valuesArrayCheck')),
     body('details.*.values.*.sample_no', '시료번호')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'sample_no', '시료번호'))
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'sample_no', '시료번호')),
@@ -272,6 +280,9 @@ const qmsInspResultValidation = {
     body('header.emp_uuid', '검사자 사원UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'emp_uuid', '검사자 사원UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'emp_uuid', '검사자 사원UUID')),
+		body('header.reg_date', '성적서 등록일시')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'reg_date', '성적서 등록일시'))
+      .isISO8601().toDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'reg_date', '성적서 등록일시')),
     body('header.insp_result_fg', '검사성적서 합격여부').optional({ nullable: true })
       .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'insp_result_fg', '검사성적서 합격여부')),
     body('header.insp_qty', '검사수량')
@@ -295,18 +306,19 @@ const qmsInspResultValidation = {
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'reject_location_uuid', '부적합 입고위치UUID')),
     body('header.remark', '비고').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'remark', '비고')),
+
+		body('details.*.values', 'valuesArrayCheck').optional({ nullable: true })
+			.isArray().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'values', 'valuesArrayCheck')),
     body('details.*.values.*.uuid', '검사성적서 상세 값UUID').optional({ nullable: true })
-      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '검사성적서 상세 값UUID')),
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '검사성적서 상세 값UUID')),
     body('details.*.values.*.delete_fg', '성적서 상세 값 삭제실행여부').optional({ nullable: true })
       .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'delete_fg', '성적서 상세 값 삭제실행여부')),
     body('details.*.values.*.sample_no', '시료번호')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'sample_no', '시료번호'))
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'sample_no', '시료번호')),
-    body('details.*.values.*.insp_result_fg', '검사성적서 상세 값 합격여부')
-      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'insp_result_fg', '검사성적서 상세 값 합격여부'))
+    body('details.*.values.*.insp_result_fg', '검사성적서 상세 값 합격여부').optional({ nullable: true })
       .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'insp_result_fg', '검사성적서 상세 값 합격여부')),
-    body('details.*.values.*.insp_value', '검사결과 값')
-      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'insp_value', '검사결과 값'))
+    body('details.*.values.*.insp_value', '검사결과 값').optional({ nullable: true })
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'insp_value', '검사결과 값')),
     body('details.*.uuid', '검사성적서 상세UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '검사성적서 상세UUID'))
@@ -396,6 +408,9 @@ const qmsInspResultValidation = {
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'reject_location_uuid', '부적합 입고위치UUID')),
     body('header.remark', '비고').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'remark', '비고')),
+
+		body('details.*.values', 'valuesArrayCheck').optional({ nullable: true })
+			.isArray().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'values', 'valuesArrayCheck')),
     body('details.*.values.*.sample_no', '시료번호')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'sample_no', '시료번호'))
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'sample_no', '시료번호')),
@@ -455,6 +470,8 @@ const qmsInspResultValidation = {
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'reject_location_uuid', '부적합 입고위치UUID')),
     body('header.remark', '비고').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'remark', '비고')),
+		body('details.*.values', 'valuesArrayCheck').optional({ nullable: true })
+			.isArray().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'values', 'valuesArrayCheck')),
     body('details.*.values.*.uuid', '검사성적서 상세 값UUID').optional({ nullable: true })
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '검사성적서 상세 값UUID')),
     body('details.*.values.*.delete_fg', '성적서 상세 값 삭제실행여부').optional({ nullable: true })

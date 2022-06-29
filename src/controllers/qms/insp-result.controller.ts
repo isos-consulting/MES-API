@@ -1050,7 +1050,7 @@ class QmsInspResultCtl {
             default: break;
           }
         }
-        
+							
         // ✅ 부적합 수량 => 부적합 창고 수불
         let rejectStoreResult: ApiResult<any> = { raws: [], count: 0 };
         let storeParams = [];
@@ -1058,9 +1058,9 @@ class QmsInspResultCtl {
         if (data.header.reject_qty > 0) {
           switch(inspDetailTypeCd) {
             case 'MAT_RECEIVE': 
-              receiveDetailResult = await matReceiveDetailService.readRawByUuid(data.header.receive_detail_uuid);
+              receiveDetailResult = await matReceiveDetailService.readRawById(headerResult.raws[0].insp_reference_id);
               storeParams = [{
-                ...headerResult.raws[0].dataValues,
+                ...headerResult.raws[0],
                 unit_id: receiveDetailResult.raws[0].unit_id,
                 qty: data.header.reject_qty
               }];
@@ -1068,9 +1068,9 @@ class QmsInspResultCtl {
               break;
 
             case 'OUT_RECEIVE': 
-              receiveDetailResult = await outReceiveDetailService.readRawByUuid(data.header.receive_detail_uuid);
+              receiveDetailResult = await outReceiveDetailService.readRawById(headerResult.raws[0].insp_reference_id);
               storeParams = [{
-                ...headerResult.raws[0].dataValues,
+                ...headerResult.raws[0],
                 unit_id: receiveDetailResult.raws[0].unit_id,
                 qty: data.header.reject_qty
               }];
@@ -1079,7 +1079,7 @@ class QmsInspResultCtl {
 
             default: break;
           }
-
+					
           await storeService.validateStoreTypeByIds(rejectStoreBody.map((body: any) => body.to_store_id), 'REJECT', tran);
           rejectStoreResult = await inventoryService.transactInventory(
             rejectStoreBody, 'CREATE', 
