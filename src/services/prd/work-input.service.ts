@@ -233,9 +233,9 @@ class PrdWorkInputService {
     const unitConvertService = new StdUnitConvertService(this.tenant);
     let result: any = { pushBody: [], pullBody: [] };
 
-    const pushArray = data.inputDatas.filter((input: any) => input.bom_input_type_id == BOM_INPUT_TYPE.PUSH);
+    const pushArray = data.inputDatas.filter((input: any) => input.bom_input_type_id == BOM_INPUT_TYPE.PUSH && input.work_input_id !== undefined );
     const pullArray = data.inputDatas.filter((input: any) => input.bom_input_type_id == BOM_INPUT_TYPE.PULL);
-
+	
     const pushResult = await Promise.all(
       pushArray.map(async (typePush: any) => {
         // 📌 품목의 단위와 입고의 단위가 다를 경우 단위변환 진행
@@ -269,7 +269,7 @@ class PrdWorkInputService {
         return await this.getPullInputBody(params, regDate, isMinusStockOption);
       })
     );
-
+		
     result.pushBody = [pushResult[0]];
     result.pullBody = pullResult[0];
     return result;
@@ -320,8 +320,9 @@ class PrdWorkInputService {
 
     // verifyInput 복제  
     let workVerifyInput: any = cloneDeep(verifyInput);
-
+		
     const inputRead = await this.repo.readRawsByWorkId(workId, tran);
+		
     inputRead.raws.forEach((input: any) => {
       if (!verifyInput[input.prod_id]) { 
         throw createApiError(
@@ -360,16 +361,16 @@ class PrdWorkInputService {
       // 투입상세정보 셋팅
       result.inputDatas.push(input);
     });
-
+		
     // pull방식이 아닌 품목값 제거
     inputProdArray.forEach((prod: number) => { delete workVerifyInput[prod]; });
 
     // pull방식으로 투입되는 품목정보 값 셋팅
     result.pullProdIds = Object.keys(workVerifyInput);
-
+		
     // 투입상세정보 셋팅
     Object.keys(workVerifyInput).forEach((key: any) => {
-      workVerifyInput[key].prod_id = key as number;
+			workVerifyInput[key].prod_id = key as number;
       result.inputDatas.push(workVerifyInput[key]);
     })
 

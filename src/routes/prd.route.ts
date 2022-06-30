@@ -121,7 +121,7 @@ router.route('/demands').delete(prdDemandValidation.delete, validationCallback, 
 //#region ✅ Order (작업지시)
 const order = new PrdOrderCtl();
 router.route('/multi-proc-by-orders').get(prdOrderValidation.readMultiProcByOrder, validationCallback, order.readMultiProcByOrder);
-router.route('/orders/complete').put(prdOrderValidation.create, validationCallback, order.updateComplete);
+router.route('/orders/complete').put(prdOrderValidation.updateComplete, validationCallback, order.updateComplete);
 router.route('/orders/worker-group').put(prdOrderValidation.updateWorkerGroup, validationCallback, order.updateWorkerGroup);
 router.route('/order/:uuid').get(prdOrderValidation.readByUuid, validationCallback, order.readByUuid);
 router.route('/orders').get(prdOrderValidation.read, validationCallback, order.read);

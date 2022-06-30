@@ -14,7 +14,7 @@ import { errorState } from "../../states/common.state";
 import PrdWorkRoutingRepo from "../../repositories/prd/work-routing.repository";
 import PrdWorkRejectRepo from "../../repositories/prd/work-reject.repository";
 import StdTenantOptService from "../std/tenant-opt.service";
-import { PRD_METHOD_REJECT_QTY } from "../../types/tenant-opt.type";
+import { PRD_METHOD_REJECT_QTY,  PRD_INPUT_QTY_CHECK } from "../../types/tenant-opt.type";
 import { BOM_INPUT_TYPE } from "../../types/bom-input-type.type";
 import { PRD_WORK_DATE_CHECK } from '../../types/tenant-opt.type';
 import PrdOrderInputService from "./order-input.service";
@@ -233,10 +233,15 @@ class PrdWorkService {
       );
     }
     
-    // ❗ 생산 수량과 투입 수량이 일치하지 않을 경우 Interlock (PUSH 기준)
-    const totalProducedQty = Number(workResult.qty) + Number(workResult.reject_qty);
-    await this.validateInputQty(workVerifyInput.verifyInput, totalProducedQty);
-    
+		// 📌 생산수량과 투입 수량을 비교 하는지 옵션 값 조회
+		const isPrdInputQtyCheckOption = await tenantOptService.getTenantOptValue('PRD_INPUT_QTY_CHECK', tran);
+
+		if (Number(isPrdInputQtyCheckOption) === PRD_INPUT_QTY_CHECK.CHECK) {
+			// ❗ 생산 수량과 투입 수량이 일치하지 않을 경우 Interlock (PUSH 기준)
+			const totalProducedQty = Number(workResult.qty) + Number(workResult.reject_qty);
+			await this.validateInputQty(workVerifyInput.verifyInput, totalProducedQty);
+		}
+		
     // ❗ 가용창고 Interlock
     await stdStoreService.validateStoreTypeByIds(data.to_store_id, 'AVAILABLE', tran);
     

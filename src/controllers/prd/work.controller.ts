@@ -241,27 +241,26 @@ class PrdWorkCtl {
           const isMinusStockOption = await tenantOptService.getTenantOptValue('ALLOW_MINUS_STOCK', tran);
           /**
            * workInputBody 반환 포멧 : { pullBody: [], pushBody: [] }
-           * pullBody  : pull방식 투입 품목 Body
-           * pushBody  : push방식 투입 품목 Body
+           * pullBody  : pull방식 투입 품목 Body (선입선출)
+           * pushBody  : push방식 투입 품목 Body (등록)
            */
 
           const workInputBody = await workInputService.getWorkInputBody(workValidateResult, workResult.raws[0].reg_date, isMinusStockOption);
-          
-          // pull방식 품목들 수불처리 전 create work_input 
-          workValidateResult.pullProdIds.forEach((prodId: number) => {
-            workInputBody.pullBody.forEach((body: IPrdWorkInput) => {
-              body.factory_id = workResult.raws[0].factory_id;
-              body.work_id = workResult.raws[0].work_id;
-              body.c_usage = workValidateResult.verifyInput[prodId].usage;
-              body.unit_id = workValidateResult.verifyInput[prodId].unit_id;
-              body.bom_input_type_id = workValidateResult.verifyInput[prodId].bom_input_type_id;
-            });
-          });
 
-          if (!workInputBody.pullBody) {
+					if (!workInputBody?.pullBody) {
             workInputBody.pullBody = [];
-          }
-          else {
+          } else {
+						// pull방식 품목들 수불처리 전 create work_input 
+						workValidateResult.pullProdIds.forEach((prodId: number) => {
+							workInputBody.pullBody.forEach((body: IPrdWorkInput) => {
+								body.factory_id = workResult.raws[0].factory_id;
+								body.work_id = workResult.raws[0].work_id;
+								body.c_usage = workValidateResult.verifyInput[prodId].usage;
+								body.unit_id = workValidateResult.verifyInput[prodId].unit_id;
+								body.bom_input_type_id = workValidateResult.verifyInput[prodId].bom_input_type_id;
+							});
+						});
+          
             const createWorkInputResult = await workInputService.create(workInputBody.pullBody as IPrdWorkInput[], req.user?.uid as number, tran);
             
             // Create 결과의 work_input_id 수불을 위한 object에 셋팅
@@ -271,18 +270,24 @@ class PrdWorkCtl {
               });
             });
           }
-          
-          const inputStoreResult = await inventoryService.transactInventory(
-            [...workInputBody.pushBody, ...workInputBody.pullBody ], 'CREATE', 
-            { inout: 'FROM', tran_type: 'PRD_INPUT', reg_date: workResult.raws[0].reg_date, tran_id_alias: 'work_input_id' },
-            req.user?.uid as number, tran
-          );
-          
+				
+					let inputStoreResult;
+					workInputBody.pushBody = workInputBody.pushBody.filter(Boolean); 
+					workInputBody.pullBody = workInputBody.pullBody.filter(Boolean); 
+
+					if (workInputBody?.pushBody.length == 0 || workInputBody?.pullBody.length == 0) {
+						inputStoreResult = await inventoryService.transactInventory(
+							[...workInputBody?.pushBody, ...workInputBody?.pullBody ], 'CREATE', 
+							{ inout: 'FROM', tran_type: 'PRD_INPUT', reg_date: workResult.raws[0].reg_date, tran_id_alias: 'work_input_id' },
+							req.user?.uid as number, tran
+						);
+					}
+
           result.raws.push({
             work: workResult.raws,
             order: orderResult.raws,
             toStore: [...toStoreResult.raws, ...rejectStoreResult.raws],
-            fromStore: inputStoreResult.raws,
+            fromStore: inputStoreResult?.raws,
           });
         }
       });

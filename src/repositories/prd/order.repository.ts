@@ -187,7 +187,7 @@ class PrdOrderRepo {
   public updateComplete = async(body: IPrdOrder[], uid: number, transaction?: Transaction) => {
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
-
+			
       const promises = body.map((order: any) => {
         return this.repo.update(
           {

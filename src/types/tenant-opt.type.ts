@@ -6,7 +6,8 @@ type TTenantOpt =
   'PRD_ONGOING_SAVE'          |   // 📌 생산수량 중간저장 사용여부 (미사용: 0, 사용: 1)
   'PRD_ORDER_AUTO_COMPLETE'   |   // 📌 작업지시 자동마감 처리 (사용안함: 0, 지시기준마감: 1, 실적기준마감: 2)
   'OUT_AUTO_PULL'             |   // 📌 외주투입 자동 선입선출 (사용안함: 0, 사용: 1)
-	'PRD_WORK_DATE_CHECK'           // 📌 작업 시작일자 확인 (확인안함: 0, 확인: 1, 일부확인: 2)
+	'PRD_WORK_DATE_CHECK'       |   // 📌 작업 시작일자 확인 (확인안함: 0, 확인: 1, 일부확인: 2)
+	'PRD_INPUT_QTY_CHECK'           // 📌 투입수량 확인 (확인안함: 0, 확인: 1)
 ;
 
 const ALLOW_MINUS_STOCK = { DISABLE: 0, ENABLE: 1 };
@@ -15,6 +16,7 @@ const PRD_ONGOING_SAVE = { DISABLE: 0, ENABLE: 1 };
 const PRD_ORDER_AUTO_COMPLETE = { DISABLE: 0, ORDER_BASE: 1, WORK_BASE: 2 };
 const OUT_AUTO_PULL = { DISABLE: 0, ENABLE: 1 };
 const PRD_WORK_DATE_CHECK = { NO_CHECK: 0, CHECK: 1, SOME_CHECK: 2 };
+const PRD_INPUT_QTY_CHECK = { NO_CHECK: 0, CHECK: 1 };
 
 export default TTenantOpt;
 export { 
@@ -23,5 +25,6 @@ export {
   PRD_ONGOING_SAVE,
   PRD_ORDER_AUTO_COMPLETE,
   OUT_AUTO_PULL,
-	PRD_WORK_DATE_CHECK
+	PRD_WORK_DATE_CHECK,
+	PRD_INPUT_QTY_CHECK
 }
