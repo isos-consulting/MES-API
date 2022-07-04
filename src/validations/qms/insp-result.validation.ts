@@ -473,7 +473,7 @@ const qmsInspResultValidation = {
 		body('details.*.values', 'valuesArrayCheck').optional({ nullable: true })
 			.isArray().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'values', 'valuesArrayCheck')),
     body('details.*.values.*.uuid', '검사성적서 상세 값UUID').optional({ nullable: true })
-      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '검사성적서 상세 값UUID')),
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '검사성적서 상세 값UUID')),
     body('details.*.values.*.delete_fg', '성적서 상세 값 삭제실행여부').optional({ nullable: true })
       .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'delete_fg', '성적서 상세 값 삭제실행여부')),
     body('details.*.values.*.sample_no', '시료번호')
