@@ -228,7 +228,16 @@ const qmsInspResultValidation = {
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'pass_qty', '합격수량')),
     body('header.reject_qty', '불합격수량')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'reject_qty', '불합격수량'))
-      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'reject_qty', '불합격수량')),
+      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'reject_qty', '불합격수량'))
+			.custom((value , {req}) =>{
+				if (value > 0 && req.body.header.reject_uuid === null ){
+					throw createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'reject_uuid', '부적합UUID')
+				}
+				if (value > 0 && req.body.header.reject_store_uuid === null ){
+					throw createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'reject_store_uuid', '부적합 입고창고UUID')
+				}
+				return true;
+			}),
     body('header.reject_uuid', '부적합UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'reject_uuid', '부적합UUID')),
     body('header.to_store_uuid', '입고창고UUID').optional({ nullable: true })
@@ -291,7 +300,16 @@ const qmsInspResultValidation = {
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'pass_qty', '합격수량')),
     body('header.reject_qty', '불합격수량')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'reject_qty', '불합격수량'))
-      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'reject_qty', '불합격수량')),
+      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'reject_qty', '불합격수량'))
+			.custom((value , {req}) =>{
+				if (value > 0 && req.body.header.reject_uuid === null ){
+					throw createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'reject_uuid', '부적합UUID')
+				}
+				if (value > 0 && req.body.header.reject_store_uuid === null ){
+					throw createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'reject_store_uuid', '부적합 입고창고UUID')
+				}
+				return true;
+			}),
     body('header.reject_uuid', '부적합UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'reject_uuid', '부적합UUID')),
     body('header.to_store_uuid', '입고창고UUID').optional({ nullable: true })
@@ -388,7 +406,16 @@ const qmsInspResultValidation = {
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'pass_qty', '합격수량')),
     body('header.reject_qty', '불합격수량')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'reject_qty', '불합격수량'))
-      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'reject_qty', '불합격수량')),
+      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'reject_qty', '불합격수량'))
+			.custom((value , {req}) =>{
+				if (value > 0 && req.body.header.reject_uuid === null ){
+					throw createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'reject_uuid', '부적합UUID')
+				}
+				if (value > 0 && req.body.header.reject_store_uuid === null ){
+					throw createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'reject_store_uuid', '부적합 입고창고UUID')
+				}
+				return true;
+			}),
     body('header.reject_uuid', '부적합UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'reject_uuid', '부적합UUID')),
     body('header.from_store_uuid', '출고창고UUID')
@@ -450,7 +477,16 @@ const qmsInspResultValidation = {
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'pass_qty', '합격수량')),
     body('header.reject_qty', '불합격수량')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'reject_qty', '불합격수량'))
-      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'reject_qty', '불합격수량')),
+      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'reject_qty', '불합격수량'))
+			.custom((value , {req}) =>{
+				if (value > 0 && req.body.header.reject_uuid === null ){
+					throw createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'reject_uuid', '부적합UUID')
+				}
+				if (value > 0 && req.body.header.reject_store_uuid === null ){
+					throw createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'reject_store_uuid', '부적합 입고창고UUID')
+				}
+				return true;
+			}),
     body('header.reject_uuid', '부적합UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'reject_uuid', '부적합UUID')),
     body('header.from_store_uuid', '출고창고UUID')
