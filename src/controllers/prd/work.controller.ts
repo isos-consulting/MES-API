@@ -1,8 +1,10 @@
 import express = require('express');
 import ApiResult from '../../interfaces/common/api-result.interface';
-import QmsInspResultDetailInfoRepo from '../../repositories/qms/insp-result-detail-info.repository';
-import QmsInspResultDetailValueRepo from '../../repositories/qms/insp-result-detail-value.repository';
-import QmsInspResultRepo from '../../repositories/qms/insp-result.repository';
+
+import QmsInspResultDetailInfoService from '../../services/qms/insp-result-detail-info.service';
+import QmsInspResultDetailValueService from '../../services/qms/insp-result-detail-value.service';
+import QmsInspResultService from '../../services/qms/insp-result.service';
+
 import { sequelizes } from '../../utils/getSequelize';
 import PrdWorkService from '../../services/prd/work.service';
 import { matchedData } from 'express-validator';
@@ -410,10 +412,6 @@ class PrdWorkCtl {
   // 📒 Fn[delete] (✅ Inheritance): Default Delete Function
   public delete = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
-      const inspResultRepo = new QmsInspResultRepo(req.tenant.uuid);
-      const inspResultDetailInfoRepo = new QmsInspResultDetailInfoRepo(req.tenant.uuid);
-      const inspResultDetailValueRepo = new QmsInspResultDetailValueRepo(req.tenant.uuid);
-
       let result: ApiResult<any> = { count: 0, raws: [] };
       const service = new PrdWorkService(req.tenant.uuid);
       const workRejectService = new PrdWorkRejectService(req.tenant.uuid);
@@ -423,6 +421,9 @@ class PrdWorkCtl {
       const workDowntimeService = new PrdWorkDowntimeService(req.tenant.uuid);
       const orderService = new PrdOrderService(req.tenant.uuid);
       const inventoryService = new InvStoreService(req.tenant.uuid);
+			const inspResultService = new QmsInspResultService(req.tenant.uuid);
+      const inspResultDetailInfoService = new QmsInspResultDetailInfoService(req.tenant.uuid);
+      const inspResultDetailValueService = new QmsInspResultDetailValueService(req.tenant.uuid);
       // const tenantOptService = new StdTenantOptService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
       let datas = await service.convertFk(Object.values(matched));
@@ -466,34 +467,32 @@ class PrdWorkCtl {
             req.user?.uid as number, tran
           );
           
-          // ❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗ 공정검사 service로 바꿔야함
           // 📌 공정검사 이력 삭제
           let inspHeaderResult: ApiResult<any> = { raws: [], count: 0 };
           let detailInfosResult: ApiResult<any> = { raws: [], count: 0 };
           let detailValuesResult: ApiResult<any> = { raws: [], count: 0 };
 
-          const inspResultRead = await inspResultRepo.readProcByWorkId(data.work_id);
+          const inspResultRead = await inspResultService.readProcByWorkId(data.work_id);
           for await (const inspResult of inspResultRead.raws) {
             // 📌 검사 성적서 상세 값을 삭제하기 위하여 검사 성적서 상세정보 Id 조회
-            const detailInfos = await inspResultDetailInfoRepo.readByResultId(inspResult.insp_result_id);
+            const detailInfos = await inspResultDetailInfoService.readByResultId(inspResult.insp_result_id);
             const detailInfoIds = detailInfos.raws.map((raw: any) => { return raw.insp_result_detail_info_id });
 
             // ✅ 검사성적서상세값 삭제
-            const tempDetailValuesResult = await inspResultDetailValueRepo.deleteByInfoIds(detailInfoIds, req.user?.uid as number, tran);
+            const tempDetailValuesResult = await inspResultDetailValueService.deleteByInfoIds(detailInfoIds, req.user?.uid as number, tran);
             detailValuesResult.raws = [ ...detailValuesResult.raws, ...tempDetailValuesResult.raws ];
             detailValuesResult.count += tempDetailValuesResult.count;
 
             // ✅ 검사성적서상세정보 삭제
-            const tempDetailInfosResult = await inspResultDetailInfoRepo.deleteByResultIds([inspResult.insp_result_id], req.user?.uid as number, tran);
+            const tempDetailInfosResult = await inspResultDetailInfoService.deleteByResultIds([inspResult.insp_result_id], req.user?.uid as number, tran);
             detailInfosResult.raws = [ ...detailInfosResult.raws, ...tempDetailInfosResult.raws ];
             detailInfosResult.count += tempDetailInfosResult.count;
 
             // ✅ 검사성적서 삭제
-            const tempHeaderResult = await inspResultRepo.delete([inspResult], req.user?.uid as number, tran);
+            const tempHeaderResult = await inspResultService.delete([inspResult], req.user?.uid as number, tran);
             inspHeaderResult.raws = [ ...inspHeaderResult.raws, ...tempHeaderResult.raws ];
             inspHeaderResult.count += tempHeaderResult.count;
           }
-          // ❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗❗ 공정검사 service로 바꿔야함
 
           // 📌 생산실적 이력 삭제
           const workResult = await service.delete([data], req.user?.uid as number, tran);
