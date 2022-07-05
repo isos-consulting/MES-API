@@ -16,6 +16,8 @@ import AutGroupValidation from '../validations/aut/group.validation';
 import AutMenuValidation from '../validations/aut/menu.validation';
 import AutMenuTypeValidation from '../validations/aut/menu-type.validation';
 import AutPermissionValidation from '../validations/aut/permission.validation';
+import AutBookmarkCtl from '../controllers/aut/bookmark.controller';
+import autBookmarkValidation from '../validations/aut/bookmark.validation';
 
 const router = express.Router();
 
@@ -83,6 +85,15 @@ router.route('/users').delete(AutUserValidation.delete,validationCallback,user.d
 const userPermission = new AutUserPermissionCtl();
 router.route('/user-permissions').get(AutUserPermissionValidation.read,validationCallback,userPermission.read);
 router.route('/user-permissions').put(AutUserPermissionValidation.update,validationCallback,userPermission.update);
+//#endregion
+
+//#region ✅ Bookmark (사용자별 즐겨찾기)
+const bookmark = new AutBookmarkCtl();
+router.route('/bookmark/:uuid').get(autBookmarkValidation.readByUuid, validationCallback, bookmark.readByUuid);
+router.route('/bookmarks').get(autBookmarkValidation.read, validationCallback, bookmark.read);
+router.route('/bookmarks').post(autBookmarkValidation.create, validationCallback, bookmark.create);
+router.route('/bookmarks').delete(autBookmarkValidation.delete, validationCallback, bookmark.delete);
+router.route('/bookmark/by-menu').delete(autBookmarkValidation.deleteByMenuUuid, validationCallback, bookmark.deleteByMenuUuid);
 //#endregion
 
 export default router;
