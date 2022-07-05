@@ -129,17 +129,15 @@ const qmsInspResultValidation = {
 		body('details.*.values', 'valuesArrayCheck').optional({ nullable: true })
 			.isArray().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'values', 'valuesArrayCheck')),
     body('details.*.values.*.uuid', '검사성적서 상세 값UUID').optional({ nullable: true })
-      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '검사성적서 상세 값UUID')),
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '검사성적서 상세 값UUID')),
     body('details.*.values.*.delete_fg', '성적서 상세 값 삭제실행여부').optional({ nullable: true })
       .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'delete_fg', '성적서 상세 값 삭제실행여부')),
     body('details.*.values.*.sample_no', '시료번호')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'sample_no', '시료번호'))
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'sample_no', '시료번호')),
-    body('details.*.values.*.insp_result_fg', '검사성적서 상세 값 합격여부')
-      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'insp_result_fg', '검사성적서 상세 값 합격여부'))
+    body('details.*.values.*.insp_result_fg', '검사성적서 상세 값 합격여부').optional({ nullable: true })
       .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'insp_result_fg', '검사성적서 상세 값 합격여부')),
-    body('details.*.values.*.insp_value', '검사결과 값')
-      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'insp_value', '검사결과 값'))
+    body('details.*.values.*.insp_value', '검사결과 값').optional({ nullable: true })
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'insp_value', '검사결과 값')),
     body('details.*.uuid', '검사성적서 상세UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '검사성적서 상세UUID'))
