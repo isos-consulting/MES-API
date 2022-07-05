@@ -270,7 +270,7 @@ class PrdWorkService {
 				);
 			}
 		} else if (Number(isWorkDateChkOption) === PRD_WORK_DATE_CHECK.SOME_CHECK) { 
-			if (diffDate > 0) {
+			if (diffDate >= 0) {
 				throw createApiError(
 					400, 
 					{
