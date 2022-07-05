@@ -255,7 +255,8 @@ class PrdWorkService {
 		// 📌 작업시작 시간 지시일자 기준으로 확인 하는 옵션
 		const isWorkDateChkOption = await tenantOptService.getTenantOptValue('PRD_WORK_DATE_CHECK', tran);
 		const diffDate = getSubtractTwoDates( moment(moment.now()).format('YYYY-MM-DD 00:00:00').toString(),moment(data.reg_date).format('YYYY-MM-DD 00:00:00').toString())
-
+		
+		
 		if (Number(isWorkDateChkOption) === PRD_WORK_DATE_CHECK.CHECK) {
 			if (diffDate !== 0) {
 				throw createApiError(
@@ -269,7 +270,7 @@ class PrdWorkService {
 				);
 			}
 		} else if (Number(isWorkDateChkOption) === PRD_WORK_DATE_CHECK.SOME_CHECK) { 
-			if (diffDate < 0) {
+			if (diffDate > 0) {
 				throw createApiError(
 					400, 
 					{
