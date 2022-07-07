@@ -17,5 +17,13 @@ const REQ_TYPE = {
 } as const
 type REQ_TYPE = typeof REQ_TYPE[keyof typeof REQ_TYPE];
 
+/** Login log type */
+const LOGIN_LOG_TYPE = {
+	LOGIN: '001',
+	LOGOUT: '002',
+	ID_FALSE: '900',
+	PASSWORD_FALSE: '901'
+} as const
+type LOGIN_LOG_TYPE = typeof LOGIN_LOG_TYPE[keyof typeof LOGIN_LOG_TYPE];
 
-export {DETAIL_TYPE, REQ_TYPE};
+export {DETAIL_TYPE, REQ_TYPE, LOGIN_LOG_TYPE};

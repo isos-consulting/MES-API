@@ -34,6 +34,7 @@ import admPatternOptValidation from '../validations/adm/pattern-opt.validation';
 import admReworkTypeValidation from '../validations/adm/rework-type.validation';
 import admInspTypeValidation from '../validations/adm/insp-type.validation';
 import admInspHandlingTypeValidation from '../validations/adm/insp-handling-type.validation';
+import AdmLoginLogCtl from '../controllers/adm/login-log.controller';
 
 const router = express.Router();
 
@@ -205,5 +206,13 @@ router.route('/daily-insp-cycles').put(admDailyInspCycleValidation.update, valid
 router.route('/daily-insp-cycles').patch(admDailyInspCycleValidation.patch, validationCallback, dailyInspCycle.patch);
 router.route('/daily-insp-cycles').delete(admDailyInspCycleValidation.delete, validationCallback, dailyInspCycle.delete);
 //#endregion
+
+//#region ✅ LoginLog (로그인 로그)
+const loginLog = new AdmLoginLogCtl();
+router.route('/login-log').get(loginLog.read);
+router.route('/login-log').post(loginLog.create);
+//#endregion
+
+
 
 export default router;

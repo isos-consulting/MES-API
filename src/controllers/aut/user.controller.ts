@@ -16,10 +16,11 @@ import UserWrapper from '../../wrappers/aut/user.wrapper';
 import { refresh, sign } from '../../utils/jwt-util';
 import AutUserCache from '../../caches/aut/user.cache';
 import AutUser from '../../models/aut/user.model';
-import createHttpError from 'http-errors'
 import responseNew from '../../utils/response_new';
 import { userSuccessState } from '../../states/user.state';
-
+import AdmLoginLogService from '../../services/adm/login-log.service';
+import { LOGIN_LOG_TYPE  } from '../../utils/enmType'; 
+import createHttpError from 'http-errors';
 class AutUserCtl {
   stateTag: string
 
@@ -253,15 +254,23 @@ class AutUserCtl {
   public signIn = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       const service = new AutUserService(req.tenant.uuid);
+			const loginLogService = new AdmLoginLogService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
       const datas = Object.values(matched);
 			
-      const user = await service.readById(datas[0].id) as AutUser;
-
+			const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
+			const browser = req.headers['user-agent']
+			const company = req.tenant.uuid
+			const user = await service.readById(datas[0].id) as AutUser;
+			let loginLog = { ...user, ip,	browser, company }
+			
       // 📌 DB에 bcrypt 단방향 암호화 방식으로 저장되어있는 Password
       const originPwd = user?.pwd;
       // ❗ 아이디가 없는 경우 Interlock
-      if (!originPwd) { throw createHttpError(404, '사용자 아이디 또는 비밀번호 불일치'); }
+      if (!originPwd) {
+				await loginLogService.loginLogCreate([loginLog], LOGIN_LOG_TYPE.ID_FALSE)
+				throw createHttpError(404, '사용자 아이디 또는 비밀번호 불일치'); 
+			}
 
       // 📌 Client에서 양방향 crypto.aes 암호화 방식으로 보낸 Password를 복호화 Key를 통하여 Convert한 Password
       const convertedPwd = decrypt(datas[0].pwd, config.crypto.secret);
@@ -269,10 +278,14 @@ class AutUserCtl {
 
       // ❗ 비밀번호 불일치 Interlock
       const match = await bcrypt.compare(convertedPwd, originPwd);
-      if(!match) { throw createHttpError(404, '사용자 아이디 또는 비밀번호 불일치'); }
+      if(!match) { 
+				await loginLogService.loginLogCreate([loginLog], LOGIN_LOG_TYPE.PASSWORD_FALSE)
+				throw createHttpError(404, '사용자 아이디 또는 비밀번호 불일치'); 
+			}
 
       // 로그인 성공시 Cache 에 User 정보 저장
       await new AutUserCache(req.tenant.uuid).create(user);
+			await loginLogService.loginLogCreate([loginLog], LOGIN_LOG_TYPE.LOGIN)
 
       // id, pwd Property 삭제 후 Front 로 전달
       let result = new UserWrapper(user).toWeb() as any;
