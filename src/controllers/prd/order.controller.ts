@@ -218,10 +218,10 @@ class PrdOrderCtl {
 
         // 📌 Return 데이터 셋팅
         result.raws.push(Object.assign({}, resultParams, objProcNm));
-        result.raws.push(Object.assign({}, resultParams, objWaitQty));
         result.raws.push(Object.assign({}, resultParams, objTotalQty));
-        result.raws.push(Object.assign({}, resultParams, objRejectQty));
+        result.raws.push(Object.assign({}, resultParams, objWaitQty));
         result.raws.push(Object.assign({}, resultParams, objQty));
+        result.raws.push(Object.assign({}, resultParams, objRejectQty));
       })
 
       return response(
