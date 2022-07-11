@@ -2,6 +2,9 @@ import { Transaction } from "sequelize/types";
 import AutUserRepo from "../../repositories/aut/user.repository";
 import AutGroupRepo from "../../repositories/aut/group.repository";
 import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
+import AdmCompanyOptService from "../adm/company-opt.service";
+import config from "../../configs/config";
+import encrypt from "../../utils/encrypt";
 
 // Controller에서 해야하는 일은 Data를 정제하는 일을 한다.
 // Service는 정제된 Data를 받아 일정하게 비즈니스로직을 처리하는 일을 한다.
@@ -33,7 +36,20 @@ class AutUserService {
   }
 
   public create = async (datas: any[], uid: number, tran: Transaction) => {
-    try { return await this.repo.create(datas, uid, tran); } 
+    try { 
+      let defaultPwdOpt = await new AdmCompanyOptService(this.tenant).getCompanyOptValue('DEFAULT_PWD', tran);
+      let defaultPwd = defaultPwdOpt.val;
+      
+      if (config.node_env === 'production') {
+        defaultPwd = encrypt(defaultPwd, config.crypto.secret);
+      }
+
+      datas.map(user => {
+        user.pwd = defaultPwd;
+      });
+
+      return await this.repo.create(datas, uid, tran); 
+    } 
 		catch (error) { throw error; }
   }
 
@@ -65,6 +81,21 @@ class AutUserService {
 	public updatePwd = async (datas: any[], uid: number, tran: Transaction) => {
     try { return await this.repo.updatePwd(datas, uid, tran); } 
 		catch (error) { throw error; }
+  }
+
+  public initPwd = async (datas: any[], uid: number, tran: Transaction) => {
+    try { 
+      let defaultPwdOpt = await new AdmCompanyOptService(this.tenant).getCompanyOptValue('DEFAULT_PWD', tran);
+      let defaultPwd = defaultPwdOpt.val;
+      
+      if (config.node_env === 'production') {
+        defaultPwd = encrypt(defaultPwd, config.crypto.secret);
+      }
+
+      datas[0].pwd = defaultPwd;
+      return await this.repo.initPwd(datas, uid, tran); 
+    }
+    catch (error) { throw error; }
   }
 
 	public readById = async (datas: any) => {

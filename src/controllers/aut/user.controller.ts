@@ -171,6 +171,38 @@ class AutUserCtl {
       return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
     }
   };
+  // 📒 Fn[initPwd]: Initialization Pwd Function
+  public initPwd = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+			let result: ApiResult<any> = { count:0, raws: [] };
+      const service = new AutUserService(req.tenant.uuid);
+      const matched = matchedData(req, { locations: [ 'body' ] });
+      const datas = await service.convertFk(Object.values(matched));
+
+			await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
+        result = await service.initPwd(datas, req.user?.uid as number, tran)
+      });
+
+      const cache = new AutUserCache(req.tenant.uuid);
+
+      let tempResult = [];
+      for await (const raw of result.raws) {
+        await cache.create(raw);
+        tempResult.push(new UserWrapper(raw).toWeb());
+      }
+
+      result.raws = tempResult;
+
+      return createApiResult(res, result, 201, '데이터 수정 성공', this.stateTag, successState.UPDATE);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
+    }
+  };
 
   //#endregion
 

@@ -73,6 +73,7 @@ const user = new AutUserCtl();
 // router.route('/user/sign-in').post(user.signIn);
 router.route('/user/sign-in').post(AutUserValidation.signIn, validationCallback,user.signIn);
 router.route('/users/pwd').put(AutUserValidation.updatePwd,validationCallback,user.updatePwd);
+router.route('/user/pwd-init').put(AutUserValidation.initPwd,validationCallback,user.initPwd);
 router.route('/user/:uuid').get(AutUserValidation.readByUuid,validationCallback,user.read);
 router.route('/users/').get(AutUserValidation.read,validationCallback,user.read);
 router.route('/users').post(AutUserValidation.create,validationCallback,user.create);

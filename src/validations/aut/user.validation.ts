@@ -24,6 +24,11 @@ const autUserValidation = {
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'pwd_fg', '패스워드 변경여부'))
       .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'pwd_fg', '패스워드 변경여부')),
   ],
+  initPwd: [
+    body('*.uuid', '사용자UUID')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '사용자UUID'))
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '사용자UUID')),
+  ],
 	read: [
 
 	],

@@ -77,6 +77,7 @@ class AdmCompanyOptRepo {
           'updated_at',
           [ Sequelize.col('updateUser.user_nm'), 'updated_nm' ]
         ],
+        where: { company_opt_cd: params.company_opt_cd ?? { [Op.ne]: null } },
         order: [ 'sortby' ],
       });
 

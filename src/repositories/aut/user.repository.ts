@@ -247,6 +247,36 @@ class AutUserRepo {
     }
   };
 
+  public initPwd = async(body: IAutUser[], uid: number, transaction?: Transaction) => {
+    try {
+      const previousRaws = await getPreviousRaws(body, this.repo);
+
+      const promises = body.map((user: any) => {
+        return this.repo.update(
+          {
+            pwd: user.pwd,
+            pwd_fg: true,
+            updated_uid: uid,
+          } as any,
+          { 
+            where: { uuid: user.uuid },
+            returning: true,
+            individualHooks: true,
+            transaction
+          }
+        );
+      });
+      const raws = await Promise.all(promises);
+
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.AutUser.getTableName() as string, previousRaws, uid, transaction);
+      return convertResult(raws);
+    } catch (error) {
+      if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
+      throw error;
+    }
+
+  }
+
   //#endregion
 
   //#region 🟠 Patch Functions
