@@ -2,9 +2,13 @@ import { Transaction } from "sequelize/types";
 import AutUserRepo from "../../repositories/aut/user.repository";
 import AutGroupRepo from "../../repositories/aut/group.repository";
 import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
-import AdmCompanyOptService from "../adm/company-opt.service";
-import config from "../../configs/config";
-import encrypt from "../../utils/encrypt";
+import encrypt from '../../utils/encrypt';
+import decrypt from '../../utils/decrypt';
+import config from '../../configs/config';
+import * as bcrypt from 'bcrypt'
+import passwordValidation from '../../utils/passwordValidation';
+import createApiError from '../../utils/createApiError';
+import { errorState } from '../../states/common.state';
 
 // Controller에서 해야하는 일은 Data를 정제하는 일을 한다.
 // Service는 정제된 Data를 받아 일정하게 비즈니스로직을 처리하는 일을 한다.
@@ -36,20 +40,7 @@ class AutUserService {
   }
 
   public create = async (datas: any[], uid: number, tran: Transaction) => {
-    try { 
-      let defaultPwdOpt = await new AdmCompanyOptService(this.tenant).getCompanyOptValue('DEFAULT_PWD', tran);
-      let defaultPwd = defaultPwdOpt.val;
-      
-      if (config.node_env === 'production') {
-        defaultPwd = encrypt(defaultPwd, config.crypto.secret);
-      }
-
-      datas.map(user => {
-        user.pwd = defaultPwd;
-      });
-
-      return await this.repo.create(datas, uid, tran); 
-    } 
+    try { return await this.repo.create(datas, uid, tran); } 
 		catch (error) { throw error; }
   }
 
@@ -84,17 +75,7 @@ class AutUserService {
   }
 
   public initPwd = async (datas: any[], uid: number, tran: Transaction) => {
-    try { 
-      let defaultPwdOpt = await new AdmCompanyOptService(this.tenant).getCompanyOptValue('DEFAULT_PWD', tran);
-      let defaultPwd = defaultPwdOpt.val;
-      
-      if (config.node_env === 'production') {
-        defaultPwd = encrypt(defaultPwd, config.crypto.secret);
-      }
-
-      datas[0].pwd = defaultPwd;
-      return await this.repo.initPwd(datas, uid, tran); 
-    }
+    try { return await this.repo.initPwd(datas, uid, tran); }
     catch (error) { throw error; }
   }
 
@@ -102,6 +83,49 @@ class AutUserService {
     try { return await this.repo.readById(datas); } 
 		catch (error) { throw error; }
   }
+
+  public createHashPassword = async (users: any[], Password: string) => {
+    const salt = await bcrypt.genSalt(10);
+
+		const encryptPassword =  encrypt(Password, config.crypto.secret);
+
+    const convertedPwd = decrypt(encryptPassword, config.crypto.secret);
+
+		const hashPassword =await bcrypt.hash(convertedPwd, salt);
+		
+		users.map(async (user:any) => {
+			user.pwd = hashPassword,
+			user.pwd_fg = true
+		});
+		
+    return users;
+  };
+
+	public updateHashPassword = async (users: any) => {
+    const salt = await bcrypt.genSalt(10);
+
+    const convertedPwd = decrypt(users.pwd, config.crypto.secret);
+		// const convertedPwd = users.pwd;
+		if (!await passwordValidation(convertedPwd)) {
+			throw createApiError(
+        400, 
+        {
+          admin_message: `비빌번호가 잘못되었습니다.`,
+          user_message: `비빌번호가 잘못되었습니다.`
+        }, 
+        this.stateTag, 
+        errorState.FAILED_SAVE_TO_RELATED_DATA
+      );
+		};
+
+		const hashPassword =await bcrypt.hash(convertedPwd, salt);
+
+		users.pwd = hashPassword,
+		users.pwd_fg = false
+		
+    return users;
+  };
+
 }
 
 export default AutUserService;

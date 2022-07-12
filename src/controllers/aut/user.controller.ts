@@ -21,6 +21,7 @@ import { userSuccessState } from '../../states/user.state';
 import AdmLoginLogService from '../../services/adm/login-log.service';
 import { LOGIN_LOG_TYPE  } from '../../utils/enmType'; 
 import createHttpError from 'http-errors';
+import AdmCompanyOptService from '../../services/adm/company-opt.service';
 class AutUserCtl {
   stateTag: string
 
@@ -39,10 +40,18 @@ class AutUserCtl {
     try {
       let result: ApiResult<any> = { count:0, raws: [] };
       const service = new AutUserService(req.tenant.uuid);
+			const companyOptService = await new AdmCompanyOptService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
-      const datas = await service.convertFk(Object.values(matched));
-
+      let datas = await service.convertFk(Object.values(matched));
+			
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
+
+				// 초기비밀번호 
+				const defaultPwdOpt = await companyOptService.getCompanyOptValue('DEFAULT_PWD', tran);
+				
+				// 초기비밀번호 암호화 datas setting
+				datas = await service.createHashPassword(datas, defaultPwdOpt);
+
         result = await service.create(datas, req.user?.uid as number, tran)
       });
 
@@ -145,10 +154,12 @@ class AutUserCtl {
 			let result: ApiResult<any> = { count:0, raws: [] };
       const service = new AutUserService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
-      const datas = await service.convertFk(Object.values(matched));
+			let datas = await service.convertFk(Object.values(matched));
 
 			await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
-        result = await service.updatePwd(datas, req.user?.uid as number, tran)
+				// 초기비밀번호 암호화 datas setting
+				datas = await service.updateHashPassword(datas[0]);
+        result = await service.updatePwd([datas], req.user?.uid as number, tran)
       });
 
       const cache = new AutUserCache(req.tenant.uuid);
@@ -176,10 +187,18 @@ class AutUserCtl {
     try {
 			let result: ApiResult<any> = { count:0, raws: [] };
       const service = new AutUserService(req.tenant.uuid);
+			const companyOptService = await new AdmCompanyOptService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
-      const datas = await service.convertFk(Object.values(matched));
+      let datas = await service.convertFk(Object.values(matched));
 
 			await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
+
+				// 초기비밀번호 
+				const defaultPwdOpt = await companyOptService.getCompanyOptValue('DEFAULT_PWD', tran);
+				
+				// 초기비밀번호 암호화 datas setting
+				datas = await service.createHashPassword(datas, defaultPwdOpt);
+
         result = await service.initPwd(datas, req.user?.uid as number, tran)
       });
 

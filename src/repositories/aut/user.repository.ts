@@ -255,7 +255,7 @@ class AutUserRepo {
         return this.repo.update(
           {
             pwd: user.pwd,
-            pwd_fg: true,
+            pwd_fg: user.pwd_fg,
             updated_uid: uid,
           } as any,
           { 

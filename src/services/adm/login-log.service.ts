@@ -42,7 +42,6 @@ class AdmLoginLogService {
 					}
 				})
 			);
-			console.log(result);
 			await this.repo.create(result); 
 		} 
 		catch (error) { throw error; }

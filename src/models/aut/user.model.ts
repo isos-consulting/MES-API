@@ -1,10 +1,6 @@
-import { Sequelize, Table, Column, Model, DataType, CreatedAt, UpdatedAt, ForeignKey, BelongsTo, Unique, BeforeSave } from 'sequelize-typescript'
+import { Sequelize, Table, Column, Model, DataType, CreatedAt, UpdatedAt, ForeignKey, BelongsTo, Unique} from 'sequelize-typescript'
 import IAutUser from '../../interfaces/aut/user.interface';
 import AutGroup from './group.model';
-import encrypt from '../../utils/encrypt';
-import decrypt from '../../utils/decrypt';
-import config from '../../configs/config';
-import * as bcrypt from 'bcrypt'
 
 @Table({
   tableName: 'AUT_USER_TB',
@@ -133,21 +129,6 @@ export default class AutUser extends Model<IAutUser> {
 
   @BelongsTo(() => AutGroup, { foreignKey: 'group_id', targetKey: 'group_id', onDelete: 'restrict', onUpdate: 'cascade' })
   autGroup: AutGroup;
-  //#endregion
-
-  //#region hooks
-  @BeforeSave
-  static hashPassword = async (user: AutUser) => {
-    const salt = await bcrypt.genSalt(10);
-
-    // 개발환경일 경우 postman 에서 비밀번호를 입력하기 위하여 입력된 Password 암호화 진행
-    if (config.node_env === 'development' || 'test') {
-      user.pwd = encrypt(user.pwd, config.crypto.secret);
-    }
-
-    const convertedPwd = decrypt(user.pwd, config.crypto.secret);
-    user.pwd = await bcrypt.hash(convertedPwd, salt);
-  };
   //#endregion
 
   toWeb(): AutUser {

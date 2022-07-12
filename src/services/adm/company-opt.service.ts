@@ -59,7 +59,7 @@ class AdmCompanyOptService {
         );
       }
       
-      return value;
+      return value.val;
     } catch (error) {
       throw error;
     }
