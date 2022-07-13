@@ -1,10 +1,10 @@
 
 // 📌 변경 password 검증
 const passwordValidation = async (password: string) => {
-	let smallLetter = "/([a-z])/g";
-	let number = "/\d/g";
-	let special = "/([!@#$%^&*()_+-*/=])/g";
-	let backslash = "/[^\'\"\\\s]/g";
+	const smallLetter = new RegExp(/([a-z])/)
+	const number = new RegExp(/[0-9]/)
+	const special = new RegExp(/[!@#$%^&*()_+\-=\[\]{};:\\|,.<>\/?]/)
+	const backslash = new RegExp(/([\'\"\\\s])/)
 	
 	let txt = password;
 	let regCount = 0;
@@ -13,13 +13,13 @@ const passwordValidation = async (password: string) => {
 	
 	if (arr.length < 8) { return false; }	
 
-	if (!backslash.match(txt)) { return false; }	
+	if (backslash.test(txt)) { console.log(txt);return false; }	
 
-	if (!smallLetter.match(txt) ) { ++regCount; }
+	if (smallLetter.test(txt) ) { ++regCount; }
 
-	if (!number.match(txt) ) { ++regCount; }
+	if (number.test(txt) ) { ++regCount; }
 
-	if (!special.match(txt) ) { ++regCount; }
+	if (special.test(txt) ) { ++regCount; }
 
 	if (regCount < 2) {return false}
 
