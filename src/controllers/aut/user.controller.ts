@@ -154,8 +154,9 @@ class AutUserCtl {
 			let result: ApiResult<any> = { count:0, raws: [] };
       const service = new AutUserService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
-			let datas = await service.convertFk(Object.values(matched));
-
+			const user = {...req.user,pwd: Object.values(matched)[0].pwd}
+			let datas = await service.convertFk([user]);
+			
 			await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
 				// 초기비밀번호 암호화 datas setting
 				datas = await service.updateHashPassword(datas[0]);
