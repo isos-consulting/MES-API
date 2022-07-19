@@ -13,6 +13,9 @@ import AdmFileMgmtCtl from '../controllers/adm/file-mgmt.controller';
 import AdmFileMgmtTypeCtl from '../controllers/adm/file-mgmt-type.controller';
 import AdmInspHandlingTypeCtl from '../controllers/adm/insp-handling-type.controller';
 import AdmCycleUnitCtl from '../controllers/adm/cycle-unit.controller';
+import AdmExcelFormCtl from '../controllers/adm/excel-form.controller';
+import AdmLoginLogCtl from '../controllers/adm/login-log.controller';
+
 import admInspDetailTypeValidation from '../validations/adm/insp-detail-type.validation';
 import admCycleUnitValidation from '../validations/adm/cycle-unit.validation';
 import AdmDailyInspCycleCtl from '../controllers/adm/daily-insp-cycle.controller';
@@ -34,10 +37,11 @@ import admPatternOptValidation from '../validations/adm/pattern-opt.validation';
 import admReworkTypeValidation from '../validations/adm/rework-type.validation';
 import admInspTypeValidation from '../validations/adm/insp-type.validation';
 import admInspHandlingTypeValidation from '../validations/adm/insp-handling-type.validation';
-import AdmLoginLogCtl from '../controllers/adm/login-log.controller';
 import admLoginLogValidation from '../validations/adm/login-log.validation';
 import AdmMenuFileCtl from '../controllers/adm/menu-file.controller';
 import admMenuFileValidation from '../validations/adm/menu-file.validation';
+import admExcelFormValidation from '../validations/adm/excel-form.validation';
+
 
 const router = express.Router();
 
@@ -208,6 +212,16 @@ router.route('/daily-insp-cycles').post(admDailyInspCycleValidation.create, vali
 router.route('/daily-insp-cycles').put(admDailyInspCycleValidation.update, validationCallback, dailyInspCycle.update);
 router.route('/daily-insp-cycles').patch(admDailyInspCycleValidation.patch, validationCallback, dailyInspCycle.patch);
 router.route('/daily-insp-cycles').delete(admDailyInspCycleValidation.delete, validationCallback, dailyInspCycle.delete);
+//#endregion
+
+//#region ✅ ExcelForm (엑셀 양식)
+const excelForm = new AdmExcelFormCtl();
+router.route('/excel-form/items').get(admExcelFormValidation.readByMenu, validationCallback, excelForm.readByMenu);
+router.route('/excel-forms').get(admExcelFormValidation.read, validationCallback, excelForm.read);
+router.route('/excel-forms').post(admExcelFormValidation.create, validationCallback, excelForm.create);
+router.route('/excel-forms').put(admExcelFormValidation.update, validationCallback, excelForm.update);
+router.route('/excel-forms').patch(admExcelFormValidation.patch, validationCallback, excelForm.patch);
+router.route('/excel-forms').delete(admExcelFormValidation.delete, validationCallback, excelForm.delete);
 //#endregion
 
 //#region ✅ LoginLog (로그인 로그)
