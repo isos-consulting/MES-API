@@ -64,6 +64,13 @@ public create = async(body: IAdmLoginLog[], transaction?: Transaction) => {
           'logged_at',
 					[ Sequelize.col('admLoginLog.uuid'), 'login_log_uuid' ]
         ],
+        where: {
+          [Op.and] : [
+            { logged_at: { [Op.between]: [ params.start_date as any, params.end_date as any ] } },
+            { user_id: params.user_id ? { [Op.like]: `%${params.user_id}%` } : { [Op.ne]: null } },
+            { user_nm: params.user_nm ? { [Op.like]: `%${params.user_nm}%` } : { [Op.ne]: null } }
+          ]
+        },
         order: [ 'logged_at' ],
       });
 
