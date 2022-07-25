@@ -32,9 +32,9 @@ class AdmLoginLogCtl {
       const service = new AdmLoginLogService(req.tenant.uuid);
 			const userService = new AutUserService(req.tenant.uuid);
 			
-			const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-			const browser = req.headers['user-agent']
-			const company = req.tenant.uuid
+			const ip = req.headers['custom-ip'] || req.socket.remoteAddress;
+			const browser = req.headers['custom-browser']
+			const company = req.headers['restrict-access-to-tenants']
 			
 			const user = await userService.readByUuid(req.user?.uuid as string);
 			let loginLog = { ...user.raws[0], ip,	browser, company }

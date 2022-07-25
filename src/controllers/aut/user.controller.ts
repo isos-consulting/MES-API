@@ -310,9 +310,10 @@ class AutUserCtl {
       const matched = matchedData(req, { locations: [ 'body' ] });
       const datas = Object.values(matched);
 			
-			const ip = req.headers['x-forwarded-for'] || req.socket.remoteAddress;
-			const browser = req.headers['user-agent']
-			const company = req.tenant.uuid
+			const ip = req.headers['custom-ip'] || req.socket.remoteAddress;
+			const browser = req.headers['custom-browser']
+			const company = req.headers['restrict-access-to-tenants']
+			
 			const user = await service.readById(datas[0].id) as AutUser;
 			let loginLog = { ...user, ip,	browser, company }
 			
