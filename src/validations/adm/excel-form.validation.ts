@@ -12,6 +12,10 @@ const admExcelFormValidation = {
 		query('excel_form_cd', '파일관리 유형UUID').optional({ nullable: true })
 			.isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'excel_form_cd', '엑셀 양식 코드')),
   ],
+	excelFormDownload: [
+		query('excel_form_cd', '파일관리 유형UUID').optional({ nullable: true })
+			.isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'excel_form_cd', '엑셀 양식 코드')),
+  ],
   create: [
     body('*.menu_uuid', '메뉴UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'menu_uuid', '메뉴UUID'))

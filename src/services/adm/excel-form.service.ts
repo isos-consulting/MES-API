@@ -63,6 +63,13 @@ class AdmExcelFormService {
     try { return await this.repo.delete(datas, uid, tran); } 
 		catch (error) { throw error; }
   }
+
+	public excelFormDownload = async (params: any) => {
+    try { 
+			// return await this.repo.delete(datas, uid, tran); 
+		} 
+		catch (error) { throw error; }
+  }
 }
 
 export default AdmExcelFormService;

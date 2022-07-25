@@ -216,6 +216,7 @@ router.route('/daily-insp-cycles').delete(admDailyInspCycleValidation.delete, va
 
 //#region ✅ ExcelForm (엑셀 양식)
 const excelForm = new AdmExcelFormCtl();
+router.route('/excel-forms/download').get(admExcelFormValidation.excelFormDownload, validationCallback, excelForm.excelFormDownload);
 router.route('/excel-form/items').get(admExcelFormValidation.readByMenu, validationCallback, excelForm.readByMenu);
 router.route('/excel-forms').get(admExcelFormValidation.read, validationCallback, excelForm.read);
 router.route('/excel-forms').post(admExcelFormValidation.create, validationCallback, excelForm.create);
