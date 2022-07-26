@@ -130,6 +130,7 @@ const readWorkReport = (
       s_s.uuid as shift_uuid,
       s_s.shift_nm,
       t_w.reg_date,
+      p_o.reg_date as order_date,
       s_pc.uuid as proc_uuid,
       s_pc.proc_cd,
       s_pc.proc_nm,
