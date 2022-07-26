@@ -66,7 +66,7 @@ class AdmExcelFormService {
 
 	public excelFormDownload = async (params: any) => {
     try { 
-			// return await this.repo.delete(datas, uid, tran); 
+			return await this.repo.read(params); 
 		} 
 		catch (error) { throw error; }
   }

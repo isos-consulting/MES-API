@@ -10,6 +10,7 @@ import response from '../../utils/response_new';
 import createApiResult from '../../utils/createApiResult_new';
 import { successState } from '../../states/common.state';
 import ApiResult from '../../interfaces/common/api-result.interface';
+import { setExcelToResponse } from '../../utils/excelForm';
 
 class AdmExcelFormCtl {
   stateTag: string
@@ -111,23 +112,24 @@ class AdmExcelFormCtl {
 
 	// 📒 Fn[read] (✅ Inheritance): Default Read Function
   public excelFormDownload = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
-    // try {
-    //   let result: ApiResult<any> = { count:0, raws: [] };
-    //   const service = new AdmExcelFormService(req.tenant.uuid);
-    //   const params = matchedData(req, { locations: [ 'query', 'params' ] });
+    try {
+      let result: ApiResult<any> = { count:0, raws: [] };
+      const service = new AdmExcelFormService(req.tenant.uuid);
+      const params = matchedData(req, { locations: [ 'query', 'params' ] });
 
-    //   result = await service.read(params);
-			
-			
-    //   // return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
-    // } catch (error) {
-    //   if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+      result = await service.excelFormDownload(params);
       
-    //   const dbError = createDatabaseError(error, this.stateTag);
-    //   if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+      const excelFile = await setExcelToResponse(res, result, this.stateTag);
 
-    //   return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
-    // }
+      return res.status(200).send(excelFile);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+      
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
+    }
   };
   //#endregion
 
