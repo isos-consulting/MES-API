@@ -68,6 +68,7 @@ class AdmExcelFormRepo {
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
+					[ Sequelize.col('admExcelForm.uuid'), 'excel_form_uuid' ],
 					[ Sequelize.col('autMenu.uuid'), 'menu_uuid' ],
 					[ Sequelize.col('autMenu.menu_nm'), 'menu_nm' ],
           'excel_form_nm',
