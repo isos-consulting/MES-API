@@ -14,7 +14,7 @@ const admExcelFormValidation = {
   ],
 	excelFormDownload: [
 		query('excel_form_cd', '파일관리 유형UUID').optional({ nullable: true })
-         .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'excel_form_cd', '엑셀 양식 코드'))
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'excel_form_cd', '엑셀 양식 코드'))
 			.isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'excel_form_cd', '엑셀 양식 코드')),
   ],
   create: [
@@ -45,6 +45,9 @@ const admExcelFormValidation = {
     body('*.uuid', '엑셀 양식 UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '엑셀 양식 UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '엑셀 양식 UUID')),
+		body('*.menu_uuid', '메뉴 UUID')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'menu_uuid', '메뉴 UUID'))
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'menu_uuid', '메뉴 UUID')),
 		body('*.excel_form_cd', '엑세 양식 코드')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'excel_form_cd', '엑셀 양식 코드'))
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'excel_form_cd', '엑셀 양식 코드')),
@@ -69,6 +72,8 @@ const admExcelFormValidation = {
     body('*.uuid', '엑셀 양식 UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '엑셀 양식 UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '엑셀 양식 UUID')),
+		body('*.menu_uuid', '메뉴 UUID').optional({ nullable: true })
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'menu_uuid', '메뉴 UUID')),
 		body('*.excel_form_cd', '엑세 양식 코드').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'excel_form_cd', '엑셀 양식 코드')),
     body('*.excel_form_nm', '엑셀 양식 명').optional({ nullable: true })
