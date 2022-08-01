@@ -36,6 +36,8 @@ import admInspTypeValidation from '../validations/adm/insp-type.validation';
 import admInspHandlingTypeValidation from '../validations/adm/insp-handling-type.validation';
 import AdmLoginLogCtl from '../controllers/adm/login-log.controller';
 import admLoginLogValidation from '../validations/adm/login-log.validation';
+import AdmMenuFileCtl from '../controllers/adm/menu-file.controller';
+import admMenuFileValidation from '../validations/adm/menu-file.validation';
 
 const router = express.Router();
 
@@ -214,6 +216,14 @@ router.route('/login-log').get(admLoginLogValidation.read, validationCallback, l
 router.route('/login-log').post(loginLog.create);
 //#endregion
 
+//#region ✅ MenuFile (메뉴별 파일관리)
+const menuFile = new AdmMenuFileCtl();
+router.route('/menu-file/:uuid').get(admMenuFileValidation.readByUuid, validationCallback, menuFile.readByUuid);
+router.route('/menu-files').get(admMenuFileValidation.read, validationCallback, menuFile.read);
+router.route('/menu-files').post(admMenuFileValidation.create, validationCallback, menuFile.create);
+router.route('/menu-files').put(admMenuFileValidation.update, validationCallback, menuFile.update);
+router.route('/menu-files').delete(admMenuFileValidation.delete, validationCallback, menuFile.delete);
+//#endregion
 
 
 export default router;
