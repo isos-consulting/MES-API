@@ -4,6 +4,7 @@ import { Repository, Sequelize } from "sequelize-typescript";
 import IAdmMenuFile from "../../interfaces/adm/menu-file.interface";
 import ApiResult from "../../interfaces/common/api-result.interface";
 import AdmMenuFile from "../../models/adm/menu-file.model";
+import { TFileType } from "../../types/file-type.type";
 import convertReadResult from "../../utils/convertReadResult";
 import convertResult from "../../utils/convertResult";
 import getPreviousRaws from "../../utils/getPreviousRaws";
@@ -133,6 +134,44 @@ class AdmMenuFileRepo {
     }
   }
 
+  // 📒 Fn[readByMenuId]: Default Read With MenuId Function
+  public readByMenuId = async (menu_id: string, file_type: TFileType) => {
+    try {
+      const result = await this.repo.findAll({
+        include: [
+          {
+            model: this.sequelize.models.AutMenu,
+            attributes: [],
+            required: true,
+          },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+        ],
+        attributes: [
+          [ Sequelize.col('admMenuFile.uuid'), 'menu_file_uuid' ],
+          [ Sequelize.col('autMenu.uuid'), 'menu_uuid' ],
+          [ Sequelize.col('autMenu.menu_nm'), 'menu_nm' ],
+          'file_type',
+          'file_name',
+          'file_extension',
+          'use_fg',
+          'created_at',
+          [ Sequelize.col('createUser.user_nm'), 'created_nm' ],
+          'updated_at',
+          [ Sequelize.col('updateUser.user_nm'), 'updated_nm' ]
+        ],
+        where: { [Op.and]: [
+          { menu_id },
+          { file_type }
+        ] },
+      });
+
+      return convertReadResult(result);
+    } catch (error) {
+      throw error;
+    }
+  }
+
   // 📒 Fn[readRawsByUuids]: Id 를 포함한 Raw Datas Read Function
   public readRawsByUuids = async(uuids: string[]) => {
     const result = await this.repo.findAll({ where: { uuid: { [Op.in]: uuids } } });
@@ -199,8 +238,8 @@ class AdmMenuFileRepo {
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      const promises = body.map((bookmark: any) => {
-        return this.repo.destroy({ where: { uuid: bookmark.uuid }, transaction});
+      const promises = body.map((menuFile: any) => {
+        return this.repo.destroy({ where: { uuid: menuFile.uuid }, transaction});
       });
       const count = _.sum(await Promise.all(promises));
 

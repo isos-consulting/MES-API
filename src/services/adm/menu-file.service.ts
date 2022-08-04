@@ -1,6 +1,7 @@
 import { Transaction } from "sequelize/types";
 import AdmMenuFileRepo from "../../repositories/adm/menu-file.repository";
 import AutMenuRepo from "../../repositories/aut/menu.repository";
+import { TFileType } from "../../types/file-type.type";
 import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
 
 class AdmMenuFileService {
@@ -41,6 +42,11 @@ class AdmMenuFileService {
 
   public readByUuid = async (uuid: string) => {
     try { return await this.repo.readByUuid(uuid); }
+    catch (error) { throw error; }
+  };
+
+  public readByMenuId = async (menuId: string, fileType: TFileType) => {
+    try { return await this.repo.readByMenuId(menuId, fileType); }
     catch (error) { throw error; }
   };
 

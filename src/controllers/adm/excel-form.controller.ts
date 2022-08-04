@@ -34,7 +34,8 @@ class AdmExcelFormCtl {
       const datas = await service.convertFk(Object.values(matched));
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
-        result = await service.create(datas, req.user?.uid as number, tran)
+        result = await service.create(datas, req.user?.uid as number, tran);
+        await service.handleExcelForm(result, req.user?.uid as number, tran);
       });
 
       return createApiResult(res, result, 201, '데이터 생성 성공', this.stateTag, successState.CREATE);
@@ -144,7 +145,8 @@ class AdmExcelFormCtl {
       const datas = await service.convertFk(Object.values(matched));
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
-        result = await service.update(datas, req.user?.uid as number, tran)
+        result = await service.update(datas, req.user?.uid as number, tran);
+        await service.handleExcelForm(result, req.user?.uid as number, tran);
       });
 
       return createApiResult(res, result, 200, '데이터 수정 성공', this.stateTag, successState.UPDATE);
@@ -199,8 +201,9 @@ class AdmExcelFormCtl {
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
         result = await service.delete(datas, req.user?.uid as number, tran)
+        await service.handleExcelForm(result, req.user?.uid as number, tran);
       });
-
+      
       return createApiResult(res, result, 200, '데이터 삭제 성공', this.stateTag, successState.DELETE);
     } catch (error) {
       if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }

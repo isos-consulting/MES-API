@@ -126,6 +126,41 @@ class AdmExcelFormRepo {
 		}
 	};
 
+  // 📒 Fn[readByMenuId]: MenuId로 불러오기
+  public readByMenuId = async(menu_id: string, transaction?: Transaction) => {
+    try {
+      const result = await this.repo.findAll({ 
+        include: [
+          { model: this.sequelize.models.AutMenu, attributes: [], required: false },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+        ],
+        attributes: [
+					[ Sequelize.col('admExcelForm.uuid'), 'uuid' ],
+					[ Sequelize.col('autMenu.uuid'), 'menu_uuid' ],
+					[ Sequelize.col('autMenu.menu_nm'), 'menu_nm' ],
+          'excel_form_nm',
+          'excel_form_cd',
+					'excel_form_column_nm',
+					'excel_form_column_cd',
+					'excel_form_type',
+					'column_fg',
+					'sortby',
+          'created_at',
+          [ Sequelize.col('createUser.user_nm'), 'created_nm' ],
+          'updated_at',
+          [ Sequelize.col('updateUser.user_nm'), 'updated_nm' ]
+        ],
+				where: { menu_id },
+        order: [ 'excel_form_nm', 'sortby' ],
+        transaction
+      });
+      return convertReadResult(result);
+    } catch (error) {
+      throw error;
+    }
+  };
+
 	// 📒 Fn[readByMenu]: menu 포함 엑셀 양식 데이터
 	public readByMenu = async(params?: any) => {
 		try {
