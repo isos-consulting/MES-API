@@ -256,7 +256,7 @@ class PrdWorkService {
 		const isWorkDateChkOption = await tenantOptService.getTenantOptValue('PRD_WORK_DATE_CHECK', tran);
 		const diffDate = getSubtractTwoDates( moment(moment.now()).format('YYYY-MM-DD 00:00:00').toString(),moment(data.reg_date).format('YYYY-MM-DD 00:00:00').toString())
 		
-		
+		console.log('diffDate',diffDate)
 		if (Number(isWorkDateChkOption) === PRD_WORK_DATE_CHECK.CHECK) {
 			if (diffDate !== 0) {
 				throw createApiError(
@@ -270,7 +270,7 @@ class PrdWorkService {
 				);
 			}
 		} else if (Number(isWorkDateChkOption) === PRD_WORK_DATE_CHECK.SOME_CHECK) { 
-			if (diffDate >= 0) {
+			if (diffDate > 0) {
 				throw createApiError(
 					400, 
 					{
