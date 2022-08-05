@@ -27,6 +27,11 @@ class StdPartnerTypeService {
 		catch (error) { throw error; }
   };
 
+  public readByUniques = async (partnerTypeCds: string[]) => {
+    try { return await this.repo.readRawByUniques(partnerTypeCds);}
+    catch (error) { throw error; }
+  }
+
   public update = async (datas: any[], uid: number, tran: Transaction) => {
     try { return await this.repo.update(datas, uid, tran); } 
 		catch (error) { throw error; }

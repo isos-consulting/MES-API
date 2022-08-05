@@ -2,6 +2,7 @@ import { Transaction } from "sequelize/types";
 import StdPartnerTypeRepo from '../../repositories/std/partner-type.repository';
 import StdPartnerRepo from '../../repositories/std/partner.repository';
 import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
+import StdPartnerTypeService from "./partner-type.service";
 
 class StdPartnerService {
   tenant: string;
@@ -57,6 +58,46 @@ class StdPartnerService {
   public delete = async (datas: any[], uid: number, tran: Transaction) => {
     try { return await this.repo.delete(datas, uid, tran); }
 		catch (error) { throw error; }
+  }
+
+  public excelValidation = async (datas: any[]) => {
+    try {
+      const partnerTypeService = new StdPartnerTypeService(this.tenant);
+      
+      let partnerTypeCds = datas.map(value => value.partner_type_cd);
+      partnerTypeCds = [...new Set(partnerTypeCds)];
+      
+      const partnerTypeDatas = (await partnerTypeService.readByUniques(partnerTypeCds)).raws;
+
+      const partnerCdObject: any = {};
+
+      datas.forEach(data => {
+        const errors = [];
+        const partnerType = partnerTypeDatas.find(element => element.partner_type_cd === data.partner_type_cd);
+        
+        if (!partnerType) {
+          errors.push('partner_type_cd');
+        } else {
+          data['partner_type_uuid'] = partnerType.uuid;
+          data.partner_type_nm = partnerType.partner_type_nm;
+        }
+
+        if (!partnerCdObject[data.partner_cd]) {
+          partnerCdObject[data.partner_cd] = true;
+        } else {
+          errors.push('partner_cd');
+        }
+
+        data['error'] = '';
+        if (errors.length > 0) {
+          data['error'] = `잘못된 데이터입니다 (${[...errors]})`
+        }
+      });
+      
+      return {count: datas.length, raws: datas};
+    } catch (error) {
+      throw error;
+    }
   }
 }
 

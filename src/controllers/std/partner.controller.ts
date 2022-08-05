@@ -90,6 +90,27 @@ class StdPartnerCtl {
     }
   };
 
+  // 📒 Fn[excelValidation] (✅ Inheritance): Default excelValidation Function
+  public excelValidation = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      let result: ApiResult<any> = { count:0, raws: [] };
+      const service = new StdPartnerService(req.tenant.uuid);
+      const matched = matchedData(req, { locations: [ 'body' ] });
+      const datas = Object.values(matched);
+
+      result = await service.excelValidation(datas);
+
+      return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
+    }
+  };
+
   //#region 🟡 Update Functions
 
   // 📒 Fn[update] (✅ Inheritance): Default Update Function

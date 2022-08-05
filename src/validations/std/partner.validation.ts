@@ -44,6 +44,20 @@ const stdPartnerValidation = {
 		body('*.remark', '비고').optional({ nullable: true })
          .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'remark', '비고')),
 	],
+  excelValidation: [
+    body('*.partner_cd', '거래처코드')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'partner_cd', '거래처코드'))
+      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'partner_cd', '거래처코드')),
+    body('*.partner_nm', '거래처명')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'partner_nm', '거래처명'))
+      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'partner_nm', '거래처명')),
+    body('*.partner_type_cd', '거래처유형코드')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'partner_type_cd', '거래처유형코드'))
+      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'partner_type_cd', '거래처유형코드')),
+    body('*.partner_type_nm', '거래처유형명')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'partner_type_nm', '거래처유형명'))
+      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'partner_type_nm', '거래처유형명')),
+  ],
 	read: [
 		query('partner_type_uuid', '거래처유형UUID').optional({ nullable: true })
          .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'partner_type_uuid', '거래처유형UUID')),
