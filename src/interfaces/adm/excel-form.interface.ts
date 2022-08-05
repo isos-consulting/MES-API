@@ -6,6 +6,7 @@ export default interface IAdmExcelForm {
 	excel_form_column_nm?: string,
 	excel_form_column_cd?: string,
 	excel_form_type?: string,
+  reference_menu?: string,
 	column_fg?: boolean | null,
   sortby?: number | null,
   created_at?: Date,

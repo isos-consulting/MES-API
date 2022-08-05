@@ -64,6 +64,13 @@ export default class AdmExcelForm extends Model<IAdmExcelForm> {
   })
   excel_form_type: string;
 
+  @Column({
+    comment: '참조 메뉴',
+    type: DataType.STRING(100),
+    allowNull: true,
+  })
+  reference_menu: string;
+
 	@Column({
     comment: '필수값 여부 (0: 선택, 1: 필수)',
     type: DataType.BOOLEAN,
