@@ -131,7 +131,7 @@ router.route('/partner-types').delete(stdPartnerTypeValidation.delete, validatio
 //#region ✅ Partner (거래처)
 const partner = new StdPartnerCtl();
 // router.route('/partners/excel-upload').post(partner.upsertBulkDatasFromExcel);
-router.route('/partners/excel-validation').get(stdPartnerValidation.excelValidation, validationCallback, partner.excelValidation);
+router.route('/partners/excel-validation').get(partner.excelValidation);
 router.route('/partner/:uuid').get(stdPartnerValidation.readByUuid, validationCallback, partner.readByUuid);
 router.route('/partners').get(stdPartnerValidation.read, validationCallback, partner.read);
 router.route('/partners').post(stdPartnerValidation.create, validationCallback, partner.create);

@@ -10,6 +10,7 @@ import response from '../../utils/response_new';
 import ApiResult from '../../interfaces/common/api-result.interface';
 import createApiResult from '../../utils/createApiResult_new';
 import { successState } from '../../states/common.state';
+import AdmExcelFormService from '../../services/adm/excel-form.service';
 
 class StdPartnerCtl {
   stateTag: string
@@ -95,10 +96,15 @@ class StdPartnerCtl {
     try {
       let result: ApiResult<any> = { count:0, raws: [] };
       const service = new StdPartnerService(req.tenant.uuid);
-      const matched = matchedData(req, { locations: [ 'body' ] });
-      const datas = Object.values(matched);
+      const excelFormSerivce = new AdmExcelFormService(req.tenant.uuid); // excel 컬럼 정보 불러오기 (FE에서 받아오면 필요 없음)
+      const excelFormColumns = (await excelFormSerivce.read({excel_form_cd: 'std_partner'})).raws; // excel 컬럼 정보 불러오기 (FE에서 받아오면 필요 없음)
+      const datas = req.body;
 
-      result = await service.excelValidation(datas);
+      const uniqueColumns = ['partner_cd'];
+
+      // result = await service.excelValidation(datas);
+      result = await service.excelValidation(datas, excelFormColumns, uniqueColumns);
+      // result = await service.checkExcelValidate(datas, excelFormColumns);
 
       return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
     } catch (error) {
