@@ -195,6 +195,12 @@ class StdPartnerRepo {
     return convertReadResult(result);
   };
 
+	// 📒 Fn[readRawAttributes]: 모든 Attributes info Function
+  public readRawAttributes = async() => {
+		const result = this.repo.rawAttributes;
+    return convertReadResult(result);
+  };
+
   //#endregion
 
   //#region 🟡 Update Functions

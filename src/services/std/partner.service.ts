@@ -3,6 +3,8 @@ import StdPartnerTypeRepo from '../../repositories/std/partner-type.repository';
 import StdPartnerRepo from '../../repositories/std/partner.repository';
 import { TDateType } from "../../types/date-type.type";
 import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
+import getFkUuidByCd, { getFkUuidInfo } from "../../utils/getFkUuidByCd";
+import convertToUniqueOrFk from "../../utils/convertToUniqueOrFk";
 import isBoolean from "../../utils/isBoolean";
 import { isDate } from "../../utils/isDateFormat";
 import StdPartnerTypeService from "./partner-type.service";
@@ -23,7 +25,7 @@ class StdPartnerService {
         key: 'partnerType',
         TRepo: StdPartnerTypeRepo,
         idName: 'partner_type_id',
-        uuidName: 'partner_type_uuid'
+        uuidName: 'partner_type_uuid',
       },
     ];
   }
@@ -31,6 +33,19 @@ class StdPartnerService {
   public convertFk = async (datas: any) => {
     // ✅ CUD 연산이 실행되기 전 Fk Table 의 uuid 로 id 를 검색하여 request body 에 삽입하기 위하여 정보 Setting
     return await getFkIdByUuid(this.tenant, datas, this.fkIdInfos);
+  }
+
+	public convertFkUuidByCd = async (datas: any) => {
+		const fkUuidInfos: getFkUuidInfo[] =[
+			{
+        key: 'partnerType',
+        TRepo: StdPartnerTypeRepo,
+        cdName: 'partner_type_cd',
+        uuidName: 'partner_type_uuid',
+      },
+		];
+
+    return await getFkUuidByCd(this.tenant, datas,fkUuidInfos );
   }
 
   public create = async (datas: any[], uid: number, tran: Transaction) => {
@@ -62,6 +77,16 @@ class StdPartnerService {
     try { return await this.repo.delete(datas, uid, tran); }
 		catch (error) { throw error; }
   }
+
+	public readUniqueOrFkColumn = async () => {
+    try { 
+			const attributes = (await this.repo.readRawAttributes()).raws[0]; 
+			const result = convertToUniqueOrFk(attributes);
+
+			return result; 
+		} 
+		catch (error) { throw error; }
+  };
 
   public excelValidation = async (datas: any[], columns: any[], uniqueColumns: string[]) => {
     try {
