@@ -95,6 +95,7 @@ import StdBarcodeCtl from '../controllers/std/barcode.controller';
 import stdBarcodeValidation from '../validations/std/barcode.validation';
 import StdBarcodeHistoryCtl from '../controllers/std/barcode-history.controller';
 import stdBarcodeHistoryValidation from '../validations/std/barcode-history.validation';
+import StdWorkCalendarCtl from '../controllers/std/work-calendar.controller';
 
 const router = express.Router();
 
@@ -600,6 +601,11 @@ router.route('/barcode-history/:uuid').get(stdBarcodeHistoryValidation.readByUui
 router.route('/barcode-histories').get(stdBarcodeHistoryValidation.read, validationCallback, barcodeHistory.read);
 router.route('/barcode-histories').post(stdBarcodeHistoryValidation.create, validationCallback, barcodeHistory.create);
 router.route('/barcode-histories').delete(stdBarcodeHistoryValidation.delete, validationCallback, barcodeHistory.delete);
+//#endregion
+
+//#region ✅ work-calendar (근무 일정)
+const workCalendar = new StdWorkCalendarCtl();
+router.route('/work-calendars').get(workCalendar.read);
 //#endregion
 
 export default router;
