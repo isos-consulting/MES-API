@@ -1,58 +1,39 @@
-import { Sequelize, Table, Column, Model, DataType, CreatedAt, UpdatedAt, BelongsTo, Unique, ForeignKey } from 'sequelize-typescript'
-import IStdWorkings from '../../interfaces/std/workings.interface';
+import { Sequelize, Table, Column, Model, DataType, CreatedAt, BelongsTo, Unique, UpdatedAt } from 'sequelize-typescript'
+import IStdWorktimeType from '../../interfaces/std/worktime-type.interface';
 import AutUser from '../aut/user.model';
-import StdFactory from './factory.model';
-import StdWorkerGroup from './worker-group.model';
 
 @Table({
-  tableName: 'STD_WORKINGS_TB',
-  modelName: 'StdWorkings',
-  comment: '작업장 정보 테이블',
+  tableName: 'STD_WORKTIME_TYPE_TB',
+  modelName: 'StdWorktimeType',
+  comment: '근무유형 테이블',
   timestamps: true,
-  underscored: true, 
+  underscored: true,
 })
-export default class StdWorkings extends Model<IStdWorkings> {
+export default class StdWorktimeType extends Model<IStdWorktimeType> {
   @Column({
-    comment: '작업장ID',
+    comment: '근무유형ID',
     primaryKey: true,
     autoIncrement: true,
     autoIncrementIdentity: true,
     type: DataType.INTEGER,
     allowNull: false,
   })
-  workings_id: number;
+  worktime_type_id: number;
 
-  @Unique('std_workings_tb_factory_id_workings_cd_un')
-  @ForeignKey(() => StdFactory)
+  @Unique('std_worktime_type_tb_worktime_type_cd_un')
   @Column({
-    comment: '공장ID',
-    type: DataType.INTEGER,
-    allowNull: false,
-  })
-  factory_id: number;
-
-  @Unique('std_workings_tb_factory_id_workings_cd_un')
-  @Column({
-    comment: '작업장코드',
+    comment: '근무유형 코드',
     type: DataType.STRING(20),
     allowNull: false,
   })
-  workings_cd: string;
+  worktime_type_cd: string;
 
   @Column({
-    comment: '작업장명',
+    comment: '근무유형명',
     type: DataType.STRING(50),
     allowNull: false,
   })
-  workings_nm: string;
-
-  @ForeignKey(() => StdWorkerGroup)
-  @Column({
-    comment: '작업조ID',
-    type: DataType.INTEGER,
-    allowNull: true,
-  })
-  worker_group_id: number;
+  worktime_type_nm: string;
 
   @CreatedAt
   @Column({
@@ -86,9 +67,9 @@ export default class StdWorkings extends Model<IStdWorkings> {
   })
   updated_uid: number;
 
-  @Unique('std_workings_tb_uuid_un')
+  @Unique('std_worktime_type_tb_uuid_un')
   @Column({
-    comment: '작업장UUID',
+    comment: '근무유형UUID',
     type: DataType.UUID,
     allowNull: false,
     defaultValue: Sequelize.fn('gen_random_uuid')
@@ -101,12 +82,6 @@ export default class StdWorkings extends Model<IStdWorkings> {
   createUser: AutUser;
   @BelongsTo(() => AutUser, { as: 'updateUser', foreignKey: 'updated_uid', targetKey: 'uid', onDelete: 'restrict', onUpdate: 'cascade' })
   updateUser: AutUser;
-
-  @BelongsTo(() => StdFactory, { foreignKey: 'factory_id', targetKey: 'factory_id', onDelete: 'restrict', onUpdate: 'cascade' })
-  stdFactory: StdFactory;
-
-  @BelongsTo(() => StdWorkerGroup, { foreignKey: 'worker_group_id', targetKey: 'worker_group_id', onDelete: 'restrict', onUpdate: 'cascade' })
-  stdWorkerGroup: StdWorkerGroup;
 
   // HasMany
   //#endregion

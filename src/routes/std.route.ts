@@ -95,6 +95,8 @@ import StdBarcodeCtl from '../controllers/std/barcode.controller';
 import stdBarcodeValidation from '../validations/std/barcode.validation';
 import StdBarcodeHistoryCtl from '../controllers/std/barcode-history.controller';
 import stdBarcodeHistoryValidation from '../validations/std/barcode-history.validation';
+import StdWorktimeTypeCtl from '../controllers/std/worktime-type.controller';
+import stdWorktimeTypeValidation from '../validations/std/worktime-type.validation';
 import StdWorkCalendarCtl from '../controllers/std/work-calendar.controller';
 
 const router = express.Router();
@@ -601,6 +603,16 @@ router.route('/barcode-history/:uuid').get(stdBarcodeHistoryValidation.readByUui
 router.route('/barcode-histories').get(stdBarcodeHistoryValidation.read, validationCallback, barcodeHistory.read);
 router.route('/barcode-histories').post(stdBarcodeHistoryValidation.create, validationCallback, barcodeHistory.create);
 router.route('/barcode-histories').delete(stdBarcodeHistoryValidation.delete, validationCallback, barcodeHistory.delete);
+//#endregion
+
+//#region ✅ worktime-type (근무유형)
+const worktimeType = new StdWorktimeTypeCtl();
+router.route('/worktime-type/:uuid').get(stdWorktimeTypeValidation.readByUuid, validationCallback, worktimeType.readByUuid);
+router.route('/worktime-types').get(stdWorktimeTypeValidation.read, validationCallback, worktimeType.read);
+router.route('/worktime-types').post(stdWorktimeTypeValidation.create, validationCallback, worktimeType.create);
+router.route('/worktime-types').put(stdWorktimeTypeValidation.update, validationCallback, worktimeType.update);
+router.route('/worktime-types').patch(stdWorktimeTypeValidation.patch, validationCallback, worktimeType.patch);
+router.route('/worktime-types').delete(stdWorktimeTypeValidation.delete, validationCallback, worktimeType.delete);
 //#endregion
 
 //#region ✅ work-calendar (근무 일정)
