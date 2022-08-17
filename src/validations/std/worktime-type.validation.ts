@@ -2,7 +2,7 @@ import { body, param } from 'express-validator';
 import { errorState } from '../../states/common.state';
 import createValidationError from '../../utils/createValidationError';
 
-const stateTag = 'stdPartnerType';
+const stateTag = 'stdWorktimeType';
 
 const stdWorktimeTypeValidation = {
 	read: [
