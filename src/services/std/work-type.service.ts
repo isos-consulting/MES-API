@@ -1,15 +1,15 @@
 import { Transaction } from "sequelize/types";
-import StdWorktimeTypeRepo from "../../repositories/std/worktime-type.repository";
+import StdWorkTypeRepo from "../../repositories/std/work-type.repository";
 
-class StdWorktimeTypeService {
+class StdWorkTypeService {
   tenant: string;
   stateTag: string;
-  repo: StdWorktimeTypeRepo;
+  repo: StdWorkTypeRepo;
 
   constructor(tenant: string) {
     this.tenant = tenant;
-    this.stateTag = 'stdWorktimeType';
-    this.repo = new StdWorktimeTypeRepo(tenant);
+    this.stateTag = 'stdWorkType';
+    this.repo = new StdWorkTypeRepo(tenant);
   }
 
   public create = async (datas: any[], uid: number, tran: Transaction) => {
@@ -43,4 +43,4 @@ class StdWorktimeTypeService {
   }
 }
 
-export default StdWorktimeTypeService;
+export default StdWorkTypeService;

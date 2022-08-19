@@ -1,39 +1,47 @@
 import { Sequelize, Table, Column, Model, DataType, CreatedAt, BelongsTo, Unique, UpdatedAt } from 'sequelize-typescript'
-import IStdWorktimeType from '../../interfaces/std/worktime-type.interface';
+import IStdWorkType from '../../interfaces/std/work-type.interface';
 import AutUser from '../aut/user.model';
 
 @Table({
-  tableName: 'STD_WORKTIME_TYPE_TB',
-  modelName: 'StdWorktimeType',
-  comment: '근무시간유형 테이블',
+  tableName: 'STD_WORK_TYPE_TB',
+  modelName: 'StdWorkType',
+  comment: '근무유형 테이블',
   timestamps: true,
   underscored: true,
 })
-export default class StdWorktimeType extends Model<IStdWorktimeType> {
+export default class StdWorkType extends Model<IStdWorkType> {
   @Column({
-    comment: '근무시간유형ID',
+    comment: '근무유형ID',
     primaryKey: true,
     autoIncrement: true,
     autoIncrementIdentity: true,
     type: DataType.INTEGER,
     allowNull: false,
   })
-  worktime_type_id: number;
+  work_type_id: number;
 
-  @Unique('std_worktime_type_tb_worktime_type_cd_un')
+  @Unique('std_work_type_tb_work_type_cd_un')
   @Column({
-    comment: '근무시간유형 코드',
+    comment: '근무유형 코드',
     type: DataType.STRING(20),
     allowNull: false,
   })
-  worktime_type_cd: string;
+  work_type_cd: string;
 
   @Column({
-    comment: '근무시간유형명',
+    comment: '근무유형명',
     type: DataType.STRING(50),
     allowNull: false,
   })
-  worktime_type_nm: string;
+  work_type_nm: string;
+
+  @Column({
+    comment: '사용유무',
+    type: DataType.BOOLEAN,
+    defaultValue: true,
+    allowNull: true,
+  })
+  use_fg: boolean;
 
   @CreatedAt
   @Column({

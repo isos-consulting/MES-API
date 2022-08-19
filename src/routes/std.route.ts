@@ -100,6 +100,8 @@ import stdWorktimeTypeValidation from '../validations/std/worktime-type.validati
 import StdWorkCalendarCtl from '../controllers/std/work-calendar.controller';
 import StdWorktimeCtl from '../controllers/std/worktime.controller';
 import stdWorktimeValidation from '../validations/std/worktime.validation';
+import StdWorkTypeCtl from '../controllers/std/work-type.controller';
+import stdWorkTypeValidation from '../validations/std/work-type.validation';
 
 const router = express.Router();
 
@@ -607,7 +609,7 @@ router.route('/barcode-histories').post(stdBarcodeHistoryValidation.create, vali
 router.route('/barcode-histories').delete(stdBarcodeHistoryValidation.delete, validationCallback, barcodeHistory.delete);
 //#endregion
 
-//#region ✅ worktime-type (근무유형)
+//#region ✅ worktime-type (근무시간유형)
 const worktimeType = new StdWorktimeTypeCtl();
 router.route('/worktime-type/:uuid').get(stdWorktimeTypeValidation.readByUuid, validationCallback, worktimeType.readByUuid);
 router.route('/worktime-types').get(stdWorktimeTypeValidation.read, validationCallback, worktimeType.read);
@@ -615,6 +617,16 @@ router.route('/worktime-types').post(stdWorktimeTypeValidation.create, validatio
 router.route('/worktime-types').put(stdWorktimeTypeValidation.update, validationCallback, worktimeType.update);
 router.route('/worktime-types').patch(stdWorktimeTypeValidation.patch, validationCallback, worktimeType.patch);
 router.route('/worktime-types').delete(stdWorktimeTypeValidation.delete, validationCallback, worktimeType.delete);
+//#endregion
+
+//#region ✅ work-type (근무유형)
+const workType = new StdWorkTypeCtl();
+router.route('/work-type/:uuid').get(stdWorkTypeValidation.readByUuid, validationCallback, workType.readByUuid);
+router.route('/work-types').get(stdWorkTypeValidation.read, validationCallback, workType.read);
+router.route('/work-types').post(stdWorkTypeValidation.create, validationCallback, workType.create);
+router.route('/work-types').put(stdWorkTypeValidation.update, validationCallback, workType.update);
+router.route('/work-types').patch(stdWorkTypeValidation.patch, validationCallback, workType.patch);
+router.route('/work-types').delete(stdWorkTypeValidation.delete, validationCallback, workType.delete);
 //#endregion
 
 //#region ✅ worktime (근무시간)
