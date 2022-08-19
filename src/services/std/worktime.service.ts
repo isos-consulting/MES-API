@@ -1,4 +1,5 @@
 import { Transaction } from "sequelize/types";
+import StdWorkTypeRepo from "../../repositories/std/work-type.repository";
 import StdWorktimeTypeRepo from "../../repositories/std/worktime-type.repository";
 import StdWorktimeRepo from "../../repositories/std/worktime.repository";
 import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
@@ -15,6 +16,12 @@ class StdWorktimeService {
     this.repo = new StdWorktimeRepo(tenant);
 
     this.fkIdInfos = [
+      {
+        key: 'workType',
+        TRepo: StdWorkTypeRepo,
+        idName: 'work_type_id',
+        uuidName: 'work_type_uuid'
+      },
       {
         key: 'worktimeType',
         TRepo: StdWorktimeTypeRepo,

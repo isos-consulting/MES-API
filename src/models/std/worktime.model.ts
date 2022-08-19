@@ -1,6 +1,7 @@
 import { Sequelize, Table, Column, Model, DataType, CreatedAt, BelongsTo, Unique, UpdatedAt, ForeignKey } from 'sequelize-typescript'
 import IStdWorktime from '../../interfaces/std/worktime.interface';
 import AutUser from '../aut/user.model';
+import StdWorkType from './work-type.model';
 import StdWorktimeType from './worktime-type.model';
 
 @Table({
@@ -36,21 +37,37 @@ export default class StdWorktime extends Model<IStdWorktime> {
   })
   worktime_nm: string;
 
-  @ForeignKey(() => StdWorktimeType)
+  @ForeignKey(() => StdWorkType)
   @Column({
     comment: '근무유형ID',
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  work_type_id: number;
+
+  @ForeignKey(() => StdWorktimeType)
+  @Column({
+    comment: '근무시간유형ID',
     type: DataType.INTEGER,
     allowNull: false,
   })
   worktime_type_id: number;
 
   @Column({
-    comment: '사용유무',
+    comment: '사용여부',
     type: DataType.BOOLEAN,
     defaultValue: true,
     allowNull: true,
   })
   use_fg: boolean;
+
+  @Column({
+    comment: '휴게시간여부',
+    type: DataType.BOOLEAN,
+    defaultValue: false,
+    allowNull: true,
+  })
+  break_time_fg: boolean;
 
   @Column({
     comment: '근무시작시간',
@@ -116,6 +133,9 @@ export default class StdWorktime extends Model<IStdWorktime> {
 
   @BelongsTo(() => StdWorktimeType, { foreignKey: 'worktime_type_id', targetKey: 'worktime_type_id', onDelete: 'restrict', onUpdate: 'cascade' })
   stdWorktimeType: StdWorktimeType;
+
+  @BelongsTo(() => StdWorkType, { foreignKey: 'work_type_id', targetKey: 'work_type_id', onDelete: 'restrict', onUpdate: 'cascade' })
+  stdWorkType: StdWorkType;
   
   // HasMany
   //#endregion
