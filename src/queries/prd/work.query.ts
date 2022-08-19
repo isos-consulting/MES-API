@@ -165,6 +165,7 @@ const readWorks = (
       s_l.uuid as to_location_uuid,
       s_l.location_cd as to_location_cd,
       s_l.location_nm as to_location_nm,
+			p_o.priority as priority,
       p_o.remark as order_remark,
       p_w.remark,
       p_w.created_at,
