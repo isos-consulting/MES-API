@@ -5,6 +5,7 @@ import { TDateType } from "../../types/date-type.type";
 import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
 import getFkUuidByCd, { getFkUuidInfo } from "../../utils/getFkUuidByCd";
 import convertToUniqueOrFk from "../../utils/convertToUniqueOrFk";
+import checkExcelValidator from "../../utils/checkExcelValidator";
 import isBoolean from "../../utils/isBoolean";
 import { isDate } from "../../utils/isDateFormat";
 import StdPartnerTypeService from "./partner-type.service";
@@ -78,12 +79,21 @@ class StdPartnerService {
 		catch (error) { throw error; }
   }
 
-	public readUniqueOrFkColumn = async () => {
+	public readUniqueOrFkColumn = async (excelColumn: string[]) => {
     try { 
 			const attributes = (await this.repo.readRawAttributes()).raws[0]; 
-			const result = convertToUniqueOrFk(attributes);
-
+			let result = convertToUniqueOrFk(attributes);
+			result.notNull = excelColumn
 			return result; 
+		} 
+		catch (error) { throw error; }
+  };
+
+	public excelValidator = async (datas: any[],unique: any) => {
+    try { 
+			const result = checkExcelValidator(datas, unique, this.repo);
+
+			return result;
 		} 
 		catch (error) { throw error; }
   };

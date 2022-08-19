@@ -96,14 +96,14 @@ class StdPartnerCtl {
     try {
       let result: ApiResult<any> = { count:0, raws: [] };
       const service = new StdPartnerService(req.tenant.uuid);
-      const excelFormService = new AdmExcelFormService(req.tenant.uuid); // excel 컬럼 정보 불러오기 (FE에서 받아오면 필요 없음)
-			const datas = await service.convertFkUuidByCd(Object.values(req.body));;
+			const excelFormService = new AdmExcelFormService(req.tenant.uuid); 
+			let datas = await service.convertFkUuidByCd(Object.values(req.body));
+			datas = await service.convertFk(Object.values(datas));
 
-			const uniqueColumns =  await service.readUniqueOrFkColumn();
+			const excelFormColumns = await excelFormService.readRawByRequire('std_partner'); 
+			const uniqueColumns =  await service.readUniqueOrFkColumn(excelFormColumns);
 			
-			const excelFormColumns = (await excelFormService.read({excel_form_cd: 'std_partner'})).raws; // excel 컬럼 정보 불러오기 (FE에서 받아오면 필요 없음)
-      
-      result = await service.excelValidation(datas, excelFormColumns, uniqueColumns);
+      result = await service.excelValidator(datas, uniqueColumns);
       
       return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
     } catch (error) {
