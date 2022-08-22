@@ -97,11 +97,12 @@ import StdBarcodeHistoryCtl from '../controllers/std/barcode-history.controller'
 import stdBarcodeHistoryValidation from '../validations/std/barcode-history.validation';
 import StdWorktimeTypeCtl from '../controllers/std/worktime-type.controller';
 import stdWorktimeTypeValidation from '../validations/std/worktime-type.validation';
-import StdWorkCalendarCtl from '../controllers/std/work-calendar.controller';
 import StdWorktimeCtl from '../controllers/std/worktime.controller';
 import stdWorktimeValidation from '../validations/std/worktime.validation';
 import StdWorkTypeCtl from '../controllers/std/work-type.controller';
 import stdWorkTypeValidation from '../validations/std/work-type.validation';
+import StdWorkCalendarCtl from '../controllers/std/work-calendar.controller';
+import stdWorkCalendarValidation from '../validations/std/workcalendar.validation';
 
 const router = express.Router();
 
@@ -641,7 +642,12 @@ router.route('/worktimes').delete(stdWorktimeValidation.delete, validationCallba
 
 //#region ✅ work-calendar (근무 일정)
 const workCalendar = new StdWorkCalendarCtl();
-router.route('/work-calendars').get(workCalendar.read);
+router.route('/work-calendar/:uuid').get(stdWorkCalendarValidation.readByUuid, validationCallback, workCalendar.readByUuid);
+router.route('/work-calendars').get(stdWorkCalendarValidation.read, validationCallback, workCalendar.read);
+router.route('/work-calendars').post(stdWorkCalendarValidation.create, validationCallback, workCalendar.create);
+router.route('/work-calendars').put(stdWorkCalendarValidation.update, validationCallback, workCalendar.update);
+router.route('/work-calendars').patch(stdWorkCalendarValidation.patch, validationCallback, workCalendar.patch);
+router.route('/work-calendars').delete(stdWorkCalendarValidation.delete, validationCallback, workCalendar.delete);
 //#endregion
 
 export default router;
