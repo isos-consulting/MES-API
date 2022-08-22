@@ -1,4 +1,4 @@
-import { body, param } from 'express-validator';
+import { body, param, query } from 'express-validator';
 import { errorState } from '../../states/common.state';
 import createValidationError from '../../utils/createValidationError';
 
@@ -6,7 +6,8 @@ const stateTag = 'stdWorkType';
 
 const stdWorkTypeValidation = {
 	read: [
-
+    query('use_fg', '사용여부').optional({ nullable: true })
+      .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'use_fg', '사용여부'))
 	],
   readByUuid: [ 
     param('uuid', '근무유형UUID').optional({ nullable: true })

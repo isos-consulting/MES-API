@@ -75,6 +75,7 @@ class StdWorkTypeRepo {
           'updated_at',
           [ Sequelize.col('updateUser.user_nm'), 'updated_nm' ]
         ],
+        where: { 'use_fg': params.use_fg ?? { [Op.ne] : null } },
         order: [ 'work_type_id' ],
       });
 
