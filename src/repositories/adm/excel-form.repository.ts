@@ -213,6 +213,8 @@ class AdmExcelFormRepo {
 		const result = await this.repo.findAll({ 
 			attributes: [
 				'excel_form_column_cd',
+				'excel_form_column_nm',
+				'excel_form_type',
 			],
 			where: { [Op.and]: [
 				{ excel_form_cd: excel_form_cd  },

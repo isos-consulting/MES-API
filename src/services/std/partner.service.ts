@@ -91,7 +91,7 @@ class StdPartnerService {
 
 	public excelValidator = async (datas: any[],unique: any) => {
     try { 
-			const result = checkExcelValidator(datas, unique, this.repo);
+			const result = await checkExcelValidator(datas, unique, StdPartnerRepo, this.tenant);
 
 			return result;
 		} 

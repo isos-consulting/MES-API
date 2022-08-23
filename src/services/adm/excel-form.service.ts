@@ -59,14 +59,8 @@ class AdmExcelFormService {
 
 	public readRawByRequire = async (excel_form_cd: string) => {
     try { 
-			let result:string[] = [];
-			const datas = await this.repo.readRawByRequire(excel_form_cd); 
-
-			datas.raws.map((data) => {
-				result.push(data['excel_form_column_cd'])
-			})
-			
-			return result;
+			const result = await this.repo.readRawByRequire(excel_form_cd); 
+			return result.raws;
 		} 
 		catch (error) { throw error; }
   };
