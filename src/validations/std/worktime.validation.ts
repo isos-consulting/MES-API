@@ -1,4 +1,4 @@
-import { body, param } from 'express-validator';
+import { body, param, query } from 'express-validator';
 import { errorState } from '../../states/common.state';
 import createValidationError from '../../utils/createValidationError';
 
@@ -6,7 +6,8 @@ const stateTag = 'stdWorktimeType';
 
 const stdWorktimeValidation = {
 	read: [
-
+    query('work_type_uuid', '근무유형UUID').optional({ nullable: true })
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'work_type_uuid', '근무유형UUID')),
 	],
   readByUuid: [ 
     param('uuid', '근무시간UUID').optional({ nullable: true })

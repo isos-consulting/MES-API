@@ -67,7 +67,7 @@ class StdWorktimeRepo {
     try {
       const result = await this.repo.findAll({ 
         include: [
-          { model: this.sequelize.models.StdWorkType, attributes: [], required: true },
+          { model: this.sequelize.models.StdWorkType, attributes: [], where: { uuid: params.work_type_uuid ?? { [Op.ne]: null } }, required: true },
           { model: this.sequelize.models.StdWorktimeType, attributes: [], required: true },
           { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
