@@ -1,8 +1,7 @@
 export default interface IStdWorkCalendar {
   workcalendar_id?: number,
   work_type_id?: number,
-  workcalendar_month?: string,
-  day_no?: number,
+  day_no?: string,
   day_value?: number,
   workcalendar_fg?: boolean,
   created_at?: Date,

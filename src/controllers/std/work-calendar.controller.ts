@@ -33,7 +33,28 @@ class StdWorkCalendarCtl {
       const datas = await service.convertFk(Object.values(matched));
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
-        result = await service.create(datas, req.user?.uid as number, tran)
+        const createDatas: any[] = [];
+        const updateDatas: any[] = [];
+        const deleteDatas: any[] = [];
+
+        datas.forEach((data: any) => {
+          if (typeof data['uuid'] === 'undefined' || data['uuid'] === null) {
+            createDatas.push(data);
+          } else {
+            if (typeof data['work_type_uuid'] === 'undefined' || data['work_type_uuid'] === null || data['work_type_uuid'].length === 0) {
+              deleteDatas.push(data);
+            } else {
+              updateDatas.push(data);
+            }
+          }
+        });
+
+        const createResult: ApiResult<any> = createDatas.length > 0 ? await service.create(createDatas, req.user?.uid as number, tran) : { count: 0, raws: [] };
+        const updateResult: ApiResult<any> = updateDatas.length > 0 ? await service.update(updateDatas, req.user?.uid as number, tran) : { count: 0, raws: [] };
+        const deleteResult: ApiResult<any> = deleteDatas.length > 0 ? await service.delete(deleteDatas, req.user?.uid as number, tran) : { count: 0, raws: [] };
+        
+        result.count = createResult.count + updateResult.count + deleteResult.count;
+        result.raws = [...createResult.raws, ...updateResult.raws, ...deleteResult.raws];
       });
 
       return createApiResult(res, result, 201, '데이터 생성 성공', this.stateTag , successState.CREATE);

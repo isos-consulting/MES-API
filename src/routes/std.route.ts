@@ -102,7 +102,7 @@ import stdWorktimeValidation from '../validations/std/worktime.validation';
 import StdWorkTypeCtl from '../controllers/std/work-type.controller';
 import stdWorkTypeValidation from '../validations/std/work-type.validation';
 import StdWorkCalendarCtl from '../controllers/std/work-calendar.controller';
-import stdWorkCalendarValidation from '../validations/std/workcalendar.validation';
+import stdWorkCalendarValidation from '../validations/std/work-calendar.validation';
 
 const router = express.Router();
 

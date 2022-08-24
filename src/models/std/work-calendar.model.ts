@@ -30,15 +30,8 @@ export default class StdWorkCalendar extends Model<IStdWorkCalendar> {
   work_type_id: number;
 
   @Column({
-    comment: '계획 월',
-    type: DataType.STRING(10),
-    allowNull: false,
-  })
-  workcalendar_month: string;
-
-  @Column({
-    comment: '일자',
-    type: DataType.INTEGER,
+    comment: '날짜',
+    type: DataType.DATEONLY,
     allowNull: false,
   })
   day_no: number;

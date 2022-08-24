@@ -35,7 +35,6 @@ class StdWorkCalendarRepo {
       const promises = body.map((workcalendar: any) => {
         return this.repo.create(
           {
-            workcalendar_month: workcalendar.workcalendar_month,
             work_type_id: workcalendar.work_type_id,
             day_no: workcalendar.day_no,
             day_value: workcalendar.day_value,
@@ -74,7 +73,6 @@ class StdWorkCalendarRepo {
           [ Sequelize.col('stdWorkType.work_type_cd'), 'work_type_cd' ],
           [ Sequelize.col('stdWorkType.work_type_nm'), 'work_type_nm' ],
           [ Sequelize.col('stdWorkType.use_fg'), 'work_type_use_fg' ],
-          'workcalendar_month',
           'day_no',
           'day_value',
           'workcalendar_fg',
@@ -83,6 +81,7 @@ class StdWorkCalendarRepo {
           'updated_at',
           [ Sequelize.col('updateUser.user_nm'), 'updated_nm' ]
         ],
+        where: { day_no: {[Op.between]: [ params?.startDate as any, params?.endDate as any ]} },
         order: [ 'workcalendar_id' ],
       });
 
@@ -160,7 +159,6 @@ class StdWorkCalendarRepo {
       const promises = body.map((workcalendar: any) => {
         return this.repo.update(
           {
-            workcalendar_month: workcalendar.workcalendar_month,
             work_type_id: workcalendar.work_type_id,
             day_no: workcalendar.day_no,
             day_value: workcalendar.day_value,
@@ -197,7 +195,6 @@ class StdWorkCalendarRepo {
       const promises = body.map((workcalendar: any) => {
         return this.repo.update(
           {
-            workcalendar_month: workcalendar?.workcalendar_month,
             work_type_id: workcalendar?.work_type_id,
             day_no: workcalendar?.day_no,
             day_value: workcalendar?.day_value,
