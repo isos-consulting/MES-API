@@ -1,3 +1,4 @@
+import moment from "moment";
 import { Transaction } from "sequelize/types";
 import StdWorkTypeRepo from "../../repositories/std/work-type.repository";
 import StdWorktimeTypeRepo from "../../repositories/std/worktime-type.repository";
@@ -64,6 +65,40 @@ class StdWorktimeService {
   public delete = async (datas: any[], uid: number, tran: Transaction) => {
     try { return await this.repo.delete(datas, uid, tran); }
 		catch (error) { throw error; }
+  }
+
+  public workHours = async (params: any) => {
+    try {
+      params['use_fg'] = true;
+      const result = await this.read(params);
+      
+      if (result.count === 0) {
+        return result;
+      }
+
+      let workMinutes = 0;
+      result.raws.forEach(value => {
+          const startTime = moment(value.start_time, 'HH:mm');
+          const endTime = moment(value.end_time, 'HH:mm');
+
+          const diffMinutes = moment.duration(endTime.diff(startTime)).asMinutes();
+
+          if (value.break_time_fg) {
+            workMinutes -= diffMinutes;
+          } else {
+            workMinutes += diffMinutes;
+          }
+        }
+      );
+
+      const workHours = Math.round(workMinutes / 60 * 100) / 100;
+
+      return {
+        count: 1,
+        raws: [ { work_hours: workHours } ]
+      };
+
+    } catch (error) { throw error; }
   }
 
 }

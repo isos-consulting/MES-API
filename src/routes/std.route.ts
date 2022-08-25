@@ -638,6 +638,7 @@ router.route('/worktimes').post(stdWorktimeValidation.create, validationCallback
 router.route('/worktimes').put(stdWorktimeValidation.update, validationCallback, worktime.update);
 router.route('/worktimes').patch(stdWorktimeValidation.patch, validationCallback, worktime.patch);
 router.route('/worktimes').delete(stdWorktimeValidation.delete, validationCallback, worktime.delete);
+router.route('/worktimes/work-hours').get(stdWorktimeValidation.workHours, validationCallback, worktime.workHours);
 //#endregion
 
 //#region ✅ work-calendar (근무 일정)

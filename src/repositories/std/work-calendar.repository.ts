@@ -81,7 +81,7 @@ class StdWorkCalendarRepo {
           'updated_at',
           [ Sequelize.col('updateUser.user_nm'), 'updated_nm' ]
         ],
-        where: { day_no: {[Op.between]: [ params?.startDate as any, params?.endDate as any ]} },
+        where: { day_no: {[Op.between]: [ params?.start_date as any, params?.end_date as any ]} },
         order: [ 'workcalendar_id' ],
       });
 

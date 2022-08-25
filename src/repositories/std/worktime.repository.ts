@@ -92,6 +92,7 @@ class StdWorktimeRepo {
           'updated_at',
           [ Sequelize.col('updateUser.user_nm'), 'updated_nm' ]
         ],
+        where: { use_fg: params.use_fg ?? { [Op.ne]: null } },
         order: [ 'worktime_id' ],
       });
 

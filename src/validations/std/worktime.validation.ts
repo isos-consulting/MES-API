@@ -8,6 +8,8 @@ const stdWorktimeValidation = {
 	read: [
     query('work_type_uuid', '근무유형UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'work_type_uuid', '근무유형UUID')),
+    query('use_fg', '사용여부').optional({ nullable: true })
+      .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'use_fg', '사용여부')),
 	],
   readByUuid: [ 
     param('uuid', '근무시간UUID').optional({ nullable: true })
@@ -94,6 +96,11 @@ const stdWorktimeValidation = {
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '근무시간UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '근무시간UUID'))
   ],
+  workHours: [
+    query('work_type_uuid', '근무유형UUID')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'work_type_uuid', '근무유형UUID'))
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'work_type_uuid', '근무유형UUID')),
+	],
 };
 
 export default stdWorktimeValidation;
