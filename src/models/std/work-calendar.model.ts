@@ -29,12 +29,13 @@ export default class StdWorkCalendar extends Model<IStdWorkCalendar> {
   })
   work_type_id: number;
 
+  @Unique('std_workcalendar_tb_day_no_un')
   @Column({
     comment: '날짜',
     type: DataType.DATEONLY,
     allowNull: false,
   })
-  day_no: number;
+  day_no: string;
 
   @Column({
     comment: '계획 값',
