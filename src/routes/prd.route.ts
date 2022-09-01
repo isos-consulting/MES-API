@@ -43,14 +43,14 @@ router.route('/works').patch(prdWorkValidation.patch, validationCallback, work.p
 router.route('/works').delete(prdWorkValidation.delete, validationCallback, work.delete);
 //#endregion
 
-//#region ✅ WorkRoutingOrigin (실적-공정기준순서)
+//#region ✅ WorkRoutingOrigin (실적-공정순서기준)
 const workRoutingOrigin = new PrdWorkRoutingOriginCtl();
-router.route('/work-routing/:uuid').get(prdWorkRoutingOriginValidation.readByUuid, validationCallback, workRoutingOrigin.readByUuid);
-router.route('/work-routings').get(prdWorkRoutingOriginValidation.read, validationCallback, workRoutingOrigin.read);
-router.route('/work-routings').post(prdWorkRoutingOriginValidation.create, validationCallback, workRoutingOrigin.create);
-router.route('/work-routings').put(prdWorkRoutingOriginValidation.update, validationCallback, workRoutingOrigin.update);
-router.route('/work-routings').patch(prdWorkRoutingOriginValidation.patch, validationCallback, workRoutingOrigin.patch);
-router.route('/work-routings').delete(prdWorkRoutingOriginValidation.delete, validationCallback, workRoutingOrigin.delete);
+router.route('/work-routing-origin/:uuid').get(prdWorkRoutingOriginValidation.readByUuid, validationCallback, workRoutingOrigin.readByUuid);
+router.route('/work-routing-origins').get(prdWorkRoutingOriginValidation.read, validationCallback, workRoutingOrigin.read);
+router.route('/work-routing-origins').post(prdWorkRoutingOriginValidation.create, validationCallback, workRoutingOrigin.create);
+router.route('/work-routing-origins').put(prdWorkRoutingOriginValidation.update, validationCallback, workRoutingOrigin.update);
+router.route('/work-routing-origins').patch(prdWorkRoutingOriginValidation.patch, validationCallback, workRoutingOrigin.patch);
+router.route('/work-routing-origins').delete(prdWorkRoutingOriginValidation.delete, validationCallback, workRoutingOrigin.delete);
 //#endregion
 
 //#region ✅ WorkRouting (실적-공정순서)
