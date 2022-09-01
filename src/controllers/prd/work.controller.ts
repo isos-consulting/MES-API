@@ -64,6 +64,7 @@ class PrdWorkCtl {
           data.seq = maxSeq + 1;
 
           // 📌 생산실적 데이터 생성
+          service.setLotNo([data]);
           const workResult = await service.create([data], req.user?.uid as number, tran);
           result.count += workResult.count;
           const work = workResult.raws[0];

@@ -254,7 +254,7 @@ class PrdWorkService {
 
 		// 📌 작업시작 시간 지시일자 기준으로 확인 하는 옵션
 		const isWorkDateChkOption = await tenantOptService.getTenantOptValue('PRD_WORK_DATE_CHECK', tran);
-		const diffDate = getSubtractTwoDates( moment(moment.now()).format('YYYY-MM-DD 00:00:00').toString(),moment(data.reg_date).format('YYYY-MM-DD 00:00:00').toString())
+		const diffDate = getSubtractTwoDates( moment(moment.now()).format('YYYY-MM-DD 00:00:00').toString(),moment(data.order_date).format('YYYY-MM-DD 00:00:00').toString())
 		
 		console.log('diffDate',diffDate)
 		if (Number(isWorkDateChkOption) === PRD_WORK_DATE_CHECK.CHECK) {
@@ -262,7 +262,7 @@ class PrdWorkService {
 				throw createApiError(
 					400, 
 					{
-						admin_message: `지시일자: [${data.reg_date}] 현재일자: [${moment(moment.now()).format('YYYY-MM-DD')}]`,
+						admin_message: `지시일자: [${data.order_date}] 현재일자: [${moment(moment.now()).format('YYYY-MM-DD')}]`,
 						user_message: '지시일자와 동일한 날에만 작업시작 가능 합니다.'
 					}, 
 					this.stateTag, 
@@ -274,7 +274,7 @@ class PrdWorkService {
 				throw createApiError(
 					400, 
 					{
-						admin_message: `지시일자: [${data.reg_date}] 현재일자: [${moment(moment.now()).format('YYYY-MM-DD')}]`,
+						admin_message: `지시일자: [${data.order_date}] 현재일자: [${moment(moment.now()).format('YYYY-MM-DD')}]`,
 						user_message: '지시일자 이후에만 작업시작 가능 합니다.'
 					}, 
 					this.stateTag, 
@@ -283,6 +283,12 @@ class PrdWorkService {
 			}
 		};
 	}
+
+  public setLotNo = (datas: any[]) => {
+    datas.forEach((data: any) => {
+      data['lot_no'] = data.order_date?.toString().replace(/[^0-9]/g, '');
+    });
+  }
 }
 
 export default PrdWorkService;
