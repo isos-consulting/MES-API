@@ -10,7 +10,9 @@ import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
 import IPrdWork from "../../interfaces/prd/work.interface";
 import PrdOrderRoutingRepo from "../../repositories/prd/order-routing.repository";
 import MldMoldRepo from "../../repositories/mld/mold.repository";
-
+import getSubtractTwoDates from "../../utils/getSubtractTwoDates";
+import createApiError from "../../utils/createApiError";
+import { errorState } from "../../states/common.state";
 
 class PrdWorkRoutingOriginService {
   tenant: string;
@@ -125,6 +127,33 @@ class PrdWorkRoutingOriginService {
     try { return await this.repo.deleteByWorkId(workId, uid, tran); }
     catch (error) { throw error; }
   };
+
+	public validateDateDiff = (datas: any[]) => {
+    try {
+      const result = datas.map((data: any) => {
+        // 📌 발생일시 데이터 검증
+        if (data.start_date && data.end_date) {
+          const occurTime = getSubtractTwoDates(data.start_date, data.end_date);
+          if (occurTime < 0) { 
+            throw createApiError(
+              400, 
+              {
+                admin_message: `잘못된 작업시작일시(start_date) 및 작업종료일시(end_date)가 입력되었습니다. [${data.start_date}, ${data.end_date}]`, 
+                user_message: `잘못된 작업시작일시(${data.start_date}) 및 작업종료일시(${data.end_date})가 입력되었습니다.`
+              }, 
+              this.stateTag, 
+              errorState.INVALID_DIFF_DATE
+            );
+          }
+        }
+        return data;
+      });
+
+      return result;
+    } catch (error) {
+      throw error;
+    }
+  }
 
 }
 

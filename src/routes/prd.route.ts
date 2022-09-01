@@ -10,6 +10,7 @@ import PrdWorkCtl from '../controllers/prd/work.controller';
 import PrdWorkInputCtl from '../controllers/prd/work-input.controller';
 import PrdWorkWorkerCtl from '../controllers/prd/work-worker.controller';
 import PrdWorkRoutingCtl from '../controllers/prd/work-routing.controller';
+import PrdWorkRoutingOriginCtl from '../controllers/prd/work-routing-origin.controller';
 import PrdWorkRejectCtl from '../controllers/prd/work-reject.controller';
 import PrdWorkDowntimeCtl from '../controllers/prd/work-downtime.controller';
 import prdOrderInputValidation from '../validations/prd/order-input.validation';
@@ -21,6 +22,7 @@ import prdWorkInputValidation from '../validations/prd/work-input.validation';
 import prdWorkWorkerValidation from '../validations/prd/work-worker.validation';
 import prdWorkDowntimeValidation from '../validations/prd/work-downtime.validation';
 import prdWorkRoutingValidation from '../validations/prd/work-routing.validation';
+import prdWorkRoutingOriginValidation from '../validations/prd/work-routing-origin.validation';
 import prdWorkRejectValidation from '../validations/prd/work-reject.validation';
 import prdWorkValidation from '../validations/prd/work.validation';
 import prdReturnValidation from '../validations/prd/return.validation';
@@ -39,6 +41,16 @@ router.route('/works').post(prdWorkValidation.create, validationCallback, work.c
 router.route('/works').put(prdWorkValidation.update, validationCallback, work.update);
 router.route('/works').patch(prdWorkValidation.patch, validationCallback, work.patch);
 router.route('/works').delete(prdWorkValidation.delete, validationCallback, work.delete);
+//#endregion
+
+//#region ✅ WorkRoutingOrigin (실적-공정기준순서)
+const workRoutingOrigin = new PrdWorkRoutingOriginCtl();
+router.route('/work-routing/:uuid').get(prdWorkRoutingOriginValidation.readByUuid, validationCallback, workRoutingOrigin.readByUuid);
+router.route('/work-routings').get(prdWorkRoutingOriginValidation.read, validationCallback, workRoutingOrigin.read);
+router.route('/work-routings').post(prdWorkRoutingOriginValidation.create, validationCallback, workRoutingOrigin.create);
+router.route('/work-routings').put(prdWorkRoutingOriginValidation.update, validationCallback, workRoutingOrigin.update);
+router.route('/work-routings').patch(prdWorkRoutingOriginValidation.patch, validationCallback, workRoutingOrigin.patch);
+router.route('/work-routings').delete(prdWorkRoutingOriginValidation.delete, validationCallback, workRoutingOrigin.delete);
 //#endregion
 
 //#region ✅ WorkRouting (실적-공정순서)
