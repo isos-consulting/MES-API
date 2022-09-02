@@ -93,6 +93,77 @@ class PrdWorkRoutingRepo {
       throw error;
     }
   };
+
+  // 📒 Fn[readByUuid]: Default Read With Uuid Function
+  public readByWorkRoutingOriginUuid = async(workRoutingOriginUuid: string, params?: any) => {
+    try {
+      const result = await this.repo.findAll({ 
+        include: [
+          { 
+            model: this.sequelize.models.StdFactory, 
+            attributes: [], 
+            required: true,
+          },
+          { 
+            model: this.sequelize.models.PrdWork,
+            attributes: [], 
+            required: true,
+          },
+          { 
+            model: this.sequelize.models.PrdWorkRoutingOrigin,
+            attributes: [], 
+            required: true,
+            where: { uuid: workRoutingOriginUuid }
+          },
+          { model: this.sequelize.models.StdProc, attributes: [], required: true },
+          { model: this.sequelize.models.StdWorkings, attributes: [], required: true },
+          { model: this.sequelize.models.StdEquip, attributes: [], required: false },
+          { model: this.sequelize.models.MldMold, attributes: [], required: false },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+        ],
+        attributes: [
+          [ Sequelize.col('prdWorkRoutingOrigin.uuid'), 'work_routing_origin_uuid' ],
+          [ Sequelize.col('stdFactory.uuid'), 'factory_uuid' ],
+          [ Sequelize.col('stdFactory.factory_cd'), 'factory_cd' ],
+          [ Sequelize.col('stdFactory.factory_nm'), 'factory_nm' ],
+          [ Sequelize.col('prdWork.uuid'), 'work_uuid' ],
+          [ Sequelize.col('prdWorkRoutingOrigin.uuid'), 'work_routing_origin_uuid' ],
+          [ Sequelize.col('stdProc.uuid'), 'proc_uuid' ],
+          [ Sequelize.col('stdProc.proc_cd'), 'proc_cd' ],
+          [ Sequelize.col('stdProc.proc_nm'), 'proc_nm' ],
+          'proc_no',
+          [ Sequelize.col('stdWorkings.uuid'), 'workings_uuid' ],
+          [ Sequelize.col('stdWorkings.workings_cd'), 'workings_cd' ],
+          [ Sequelize.col('stdWorkings.workings_nm'), 'workings_nm' ],
+          [ Sequelize.col('stdEquip.uuid'), 'equip_uuid' ],
+          [ Sequelize.col('stdEquip.equip_cd'), 'equip_cd' ],
+          [ Sequelize.col('stdEquip.equip_nm'), 'equip_nm' ],
+          [ Sequelize.col('mldMold.uuid'), 'mold_uuid' ],
+          [ Sequelize.col('mldMold.mold_cd'), 'mold_cd' ],
+          [ Sequelize.col('mldMold.mold_nm'), 'mold_nm' ],
+          'mold_cavity',
+          'qty',
+          'start_date',
+          'end_date',
+          'ongoing_fg',
+          'complete_fg',
+          'prd_signal_cnt',
+          'start_signal_val',
+          'remark',
+          'created_at',
+          [ Sequelize.col('createUser.user_nm'), 'created_nm' ],
+          'updated_at',
+          [ Sequelize.col('updateUser.user_nm'), 'updated_nm' ]
+        ],
+        order: [ 'factory_id', 'work_id', 'proc_no' ]
+      });
+
+      return convertReadResult(result);
+    } catch (error) {
+      throw error;
+    }
+  };
   
   // // 📒 Fn[read]: Default Read Function
   // public read = async(params?: any) => {

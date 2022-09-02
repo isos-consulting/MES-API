@@ -54,6 +54,29 @@ class PrdWorkRoutingCtl {
     }
   };
 
+  // 📒 Fn[startWork] start-work function (공정별 작업 시작)
+  public startWork = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    // try {
+    //   let result: ApiResult<any> = { count:0, raws: [] };
+    //   const service = new prdWorkRoutingOriginService(req.tenant.uuid);
+    //   const matched = matchedData(req, { locations: [ 'body' ] });
+    //   let uuid = Object.values(matched)[0].uuid;
+      
+    //   await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
+    //     result = await service.startWork(uuid, req.user?.uid as number, tran)
+    //   });
+
+    //   return createApiResult(res, result, 201, '데이터 생성 성공', this.stateTag , successState.CREATE);
+    // } catch (error) {
+    //   if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+
+    //   const dbError = createDatabaseError(error, this.stateTag);
+    //   if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+    //   return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
+    // }
+  };
+
   //#endregion
 
   //#region 🔵 Read Functions

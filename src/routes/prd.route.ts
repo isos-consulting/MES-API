@@ -45,6 +45,7 @@ router.route('/works').delete(prdWorkValidation.delete, validationCallback, work
 
 //#region ✅ WorkRoutingOrigin (실적-공정순서기준)
 const workRoutingOrigin = new PrdWorkRoutingOriginCtl();
+router.route('/work-routing-origins/start-work').post(prdWorkRoutingOriginValidation.startWork, validationCallback, workRoutingOrigin.create);
 router.route('/work-routing-origin/:uuid').get(prdWorkRoutingOriginValidation.readByUuid, validationCallback, workRoutingOrigin.readByUuid);
 router.route('/work-routing-origins').get(prdWorkRoutingOriginValidation.read, validationCallback, workRoutingOrigin.read);
 router.route('/work-routing-origins').post(prdWorkRoutingOriginValidation.create, validationCallback, workRoutingOrigin.create);
