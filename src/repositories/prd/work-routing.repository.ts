@@ -38,6 +38,7 @@ class PrdWorkRoutingRepo {
           {
             factory_id: workRouting.factory_id,
             work_id: workRouting.work_id,
+            work_routing_origin_id: workRouting.work_routing_origin_id,
             proc_id: workRouting.proc_id,
             proc_no: workRouting.proc_no,
             workings_id: workRouting.workings_id,
@@ -51,6 +52,7 @@ class PrdWorkRoutingRepo {
             ongoing_fg: workRouting.ongoing_fg,
             prd_signal_cnt: workRouting.prd_signal_cnt,
             start_signal_val: workRouting.start_signal_val,
+            complete_fg: workRouting.complete_fg,
             remark: workRouting.remark,
             created_uid: uid,
             updated_uid: uid,
@@ -260,6 +262,7 @@ class PrdWorkRoutingRepo {
         return this.repo.update(
           {
             workings_id: workRouting.workings_id ?? null,
+            work_routing_origin_id: workRouting.work_routing_origin_id ?? null,
             equip_id: workRouting.equip_id ?? null,
             mold_id: workRouting.mold_id ?? null,
             mold_cavity: workRouting.mold_cavity ?? null,
@@ -270,6 +273,7 @@ class PrdWorkRoutingRepo {
             ongoing_fg: workRouting.ongoing_fg ?? null,
             prd_signal_cnt: workRouting.prd_signal_cnt ?? null,
             start_signal_val: workRouting.start_signal_val ?? null,
+            complete_fg: workRouting.complete_fg ?? null,
             remark: workRouting.remark ?? null,
             updated_uid: uid,
           } as any,
@@ -304,6 +308,7 @@ class PrdWorkRoutingRepo {
         return this.repo.update(
           {
             workings_id: workRouting.workings_id,
+            work_routing_origin_id: workRouting.work_routing_origin_id,
             equip_id: workRouting.equip_id,
             mold_id: workRouting.mold_id,
             mold_cavity: workRouting.mold_cavity,
@@ -314,6 +319,7 @@ class PrdWorkRoutingRepo {
             ongoing_fg: workRouting.ongoing_fg,
             prd_signal_cnt: workRouting.prd_signal_cnt,
             start_signal_val: workRouting.start_signal_val,
+            complete_fg: workRouting.complete_fg,
             remark: workRouting.remark,
             updated_uid: uid,
           },

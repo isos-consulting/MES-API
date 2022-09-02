@@ -100,6 +100,28 @@ class PrdWorkRoutingService {
     }
   };
 
+  public createByWorkRoutingOrigin = async (data: IPrdWork[], uid: number, tran: Transaction) => {
+    try { 
+      const routingBody: IPrdWorkRouting[] = data.map((workRoutingOrigin: any) => {
+        return {
+          factory_id: workRoutingOrigin.factory_id,
+          work_id: workRoutingOrigin.work_id,
+          proc_id: workRoutingOrigin.proc_id,
+          proc_no: workRoutingOrigin.proc_no,
+          workings_id: workRoutingOrigin.workings_id,
+          equip_id: workRoutingOrigin.equip_id,
+          prd_signal_cnt: workRoutingOrigin.prd_signal_cnt,
+          work_routing_origin_id: workRoutingOrigin.work_routing_origin_id,
+        };
+      });
+
+      return await this.repo.create(routingBody, uid, tran); 
+    }
+		catch (error) { 
+      throw error; 
+    }
+  };
+
   public read = async (params: any) => {
     try { return await this.repo.read(params); }
 		catch (error) { throw error; }

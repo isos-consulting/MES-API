@@ -7,6 +7,7 @@ import StdProc from '../std/proc.model';
 import StdWorkings from '../std/workings.model';
 import PrdWork from './work.model';
 import MldMold from '../mld/mold.model';
+import PrdWorkRoutingOrigin from './work-routing-origin.model';
 
 @Table({
   tableName: 'PRD_WORK_ROUTING_TB',
@@ -42,6 +43,14 @@ export default class PrdWorkRouting extends Model<IPrdWorkRouting> {
     allowNull: false,
   })
   work_id: number;
+
+  @ForeignKey(() => PrdWorkRoutingOrigin)
+  @Column({
+    comment: '공정순서 정보ID',
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  work_routing_origin_id: number;
 
   @Unique('prd_work_routing_tb_work_id_proc_id_proc_no_un')
   @ForeignKey(() => StdProc)
@@ -97,6 +106,7 @@ export default class PrdWorkRouting extends Model<IPrdWorkRouting> {
   @Column({
     comment: '시작일시',
     type: 'timestamp',
+    defaultValue: Sequelize.fn('now')
   })
   start_date: string;
 
@@ -129,6 +139,14 @@ export default class PrdWorkRouting extends Model<IPrdWorkRouting> {
     type: DataType.DECIMAL(19,6),
   })
   start_signal_val: number;
+
+  @Column({
+    comment: '완료 여부',
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  complete_fg: boolean;
 
   @Column({
     comment: '비고',
@@ -189,6 +207,9 @@ export default class PrdWorkRouting extends Model<IPrdWorkRouting> {
 
   @BelongsTo(() => PrdWork, { foreignKey: 'work_id', targetKey: 'work_id', onDelete: 'restrict', onUpdate: 'cascade' })
   prdWork: PrdWork;
+
+  @BelongsTo(() => PrdWorkRoutingOrigin, { foreignKey: 'work_routing_origin_id', targetKey: 'work_routing_origin_id', onDelete: 'restrict', onUpdate: 'cascade' })
+  prdWorkRoutingOrigin: PrdWorkRoutingOrigin;
 
   @BelongsTo(() => StdProc, { foreignKey: 'proc_id', targetKey: 'proc_id', onDelete: 'restrict', onUpdate: 'cascade' })
   stdProc: StdProc;

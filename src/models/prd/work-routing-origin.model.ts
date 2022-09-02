@@ -15,7 +15,7 @@ import MldMold from '../mld/mold.model';
   timestamps: true,
   underscored: true,
 })
-export default class PrdWorkRouting extends Model<IPrdWorkRoutingOrigin> {
+export default class PrdWorkRoutingOrigin extends Model<IPrdWorkRoutingOrigin> {
   @Column({
     comment: '실적 공정순서 기준ID',
     primaryKey: true,

@@ -185,8 +185,8 @@ class PrdWorkRoutingOriginRepo {
     return convertReadResult(result);
   };
 
-  // 📒 Fn[readRawsByOrderId]: 작업지시의 Id를 이용하여 Raw Data Read Function
-  public readRawsByOrderId = async(workId: string, transaction?: Transaction) => {
+  // 📒 Fn[readRawsByWorkId]: 생산실적의 Id를 이용하여 Raw Data Read Function
+  public readRawsByWorkId = async(workId: number, transaction?: Transaction) => {
     const result = await this.repo.findAll({ where: { work_id: workId }, transaction });
     return convertReadResult(result);
   };

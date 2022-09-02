@@ -1,5 +1,6 @@
 export default interface IPrdWorkRouting { // 공정 순서(실적)
   work_routing_id?: number,
+  work_routing_origin_id?: number,
   factory_id?: number,
   work_id?: number,
   proc_id?: number,
@@ -15,6 +16,7 @@ export default interface IPrdWorkRouting { // 공정 순서(실적)
   ongoing_fg?: boolean | null,
   prd_signal_cnt?: number | null,
   start_signal_val ?: number | null,
+  complete_fg?: boolean,
   remark?: string | null,
   created_at?: Date,
   created_uid?: number,
