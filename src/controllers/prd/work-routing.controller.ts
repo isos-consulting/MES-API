@@ -158,6 +158,11 @@ class PrdWorkRoutingCtl {
       datas = service.validateDateDiff(datas);
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
+				//✅실적 공정 작업종료시 complete_fg = true 로 입력, end_date 없으면 현제 날짜
+				datas.map((value: any) => { 
+					value.complete_fg = true
+					value.end_date = value.end_date ?? moment(moment.now()).format().toString()
+				});
         result = await service.patch(datas, req.user?.uid as number, tran)
       });
 
