@@ -119,6 +119,33 @@ const prdWorkRoutingValidation = {
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '공정순서UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'uuid', '공정순서UUID'))
   ],
+	updateComplete: [
+    body('*.uuid', '공정순서UUID')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '공정순서UUID'))
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '공정순서UUID')),
+    body('*.workings_uuid', '작업장UUID').optional({ nullable: true })
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'workings_uuid', '작업장UUID')),
+    body('*.equip_uuid', '설비UUID').optional({ nullable: true })
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'equip_uuid', '설비UUID')),
+    body('*.mold_uuid', '금형UUID').optional({ nullable: true })
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'mold_uuid', '금형UUID')),
+    body('*.mold_cavity', '금형Cavity').optional({ nullable: true })
+      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'mold_cavity', '금형Cavity')),
+    body('*.qty', '생산수량').optional({ nullable: true })
+      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'qty', '생산수량')),
+    body('*.start_date', '시작일시').optional({ nullable: true })
+      .isISO8601().toDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'start_date', '시작일시')),
+    body('*.end_date', '종료일시').optional({ nullable: true })
+      .isISO8601().toDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'end_date', '종료일시')),
+    body('*.ongoing_fg', '생산중인 공정 여부').optional({ nullable: true })
+      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'ongoing_fg', '생산중인 공정 여부')),
+    body('*.prd_signal_cnt', '생산카운트 신호 수').optional({ nullable: true })
+      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'prd_signal_cnt', '생산카운트 신호 수')),
+    body('*.start_signal_val', '생산카운트 시작 값').optional({ nullable: true })
+      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'start_signal_val', '생산카운트 시작 값')),
+    body('*.remark', '비고').optional({ nullable: true })
+      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'remark', '비고')),
+  ],
 };
 
 export default prdWorkRoutingValidation;

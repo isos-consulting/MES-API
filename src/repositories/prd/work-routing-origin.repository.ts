@@ -191,6 +191,33 @@ class PrdWorkRoutingOriginRepo {
     return convertReadResult(result);
   };
 
+	// 📒 Fn[getMaxProcNo]: 실적 공정순서 마지막 순번 조회
+  /**
+   * 작업지시단위의 Max Sequence 조회
+   * @param workId 실적 ID
+   * @param transaction Transaction
+   * @returns Max Proc No
+   */
+		getMaxProcNo = async(workId: number, transaction?: Transaction) => {
+    try {
+      const result = await this.repo.findOne({ 
+        attributes: [
+          [ Sequelize.fn('max', Sequelize.col('proc_no')), 'proc_no' ],
+        ],
+        where: { work_id: workId },
+        group: [ 'work_id' ],
+        transaction
+      });
+
+      if (!result) { return 0; }
+      const maxProcNo: number = (result as any).dataValues.proc_no;
+
+      return maxProcNo;
+    } catch (error) {
+      throw error;
+    }
+  }
+
   //#endregion
 
   //#region 🟡 Update Functions

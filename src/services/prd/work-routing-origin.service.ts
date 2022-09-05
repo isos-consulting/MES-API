@@ -128,6 +128,11 @@ class PrdWorkRoutingOriginService {
     catch (error) { throw error; }
   };
 
+	public getMaxProcNo = async (workId: number, tran: Transaction) => {
+    try { return await this.repo.getMaxProcNo(workId, tran); }
+    catch (error) { throw error; }
+  };
+
 	public validateDateDiff = (datas: any[]) => {
     try {
       const result = datas.map((data: any) => {

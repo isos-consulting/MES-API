@@ -244,12 +244,16 @@ class PrdWorkCtl {
           // 📌 해당 실적의 작업지시에 진행중인 생산 실적이 없을 경우 작업지시의 생산진행여부(work_fg)를 False로 변경
           const orderResult = await orderService.updateOrderCompleteByOrderId(workResult.raws[0].order_id, req.user?.uid as number, tran);
           
+					/**
+					 * @todo 입고 창고 수불 내역 work-routing 에서 마지막 공정에서 진행 이상 없을시 주석 삭제 필요
+					 */
+
           // 📌 입고 창고 수불 내역 생성(생산입고)
-          const toStoreResult = await inventoryService.transactInventory(
-            workResult.raws, 'CREATE', 
-            { inout: 'TO', tran_type: 'PRD_OUTPUT', reg_date: workResult.raws[0].reg_date, tran_id_alias: 'work_id' },
-            req.user?.uid as number, tran
-          );
+          // const toStoreResult = await inventoryService.transactInventory(
+          //   workResult.raws, 'CREATE', 
+          //   { inout: 'TO', tran_type: 'PRD_OUTPUT', reg_date: workResult.raws[0].reg_date, tran_id_alias: 'work_id' },
+          //   req.user?.uid as number, tran
+          // );
           
           // 📌 부적합 수량에 의한 창고 수불 내역 생성
           const rejectBody = await workRejectService.getWorkRejectBody(workResult.raws[0], workResult.raws[0].reg_date);
@@ -308,7 +312,8 @@ class PrdWorkCtl {
           result.raws.push({
             work: workResult.raws,
             order: orderResult.raws,
-            toStore: [...toStoreResult.raws, ...rejectStoreResult.raws],
+            // toStore: [...toStoreResult.raws, ...rejectStoreResult.raws],
+						toStore: rejectStoreResult.raws,
             fromStore: inputStoreResult?.raws,
           });
         }

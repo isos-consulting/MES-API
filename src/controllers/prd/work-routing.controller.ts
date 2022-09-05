@@ -6,7 +6,9 @@ import createUnknownError from '../../utils/createUnknownError';
 import isServiceResult from '../../utils/isServiceResult';
 import response from '../../utils/response_new';
 import prdWorkRoutingService from '../../services/prd/work-routing.service';
+import prdWorkRoutingOriginService from '../../services/prd/work-routing-origin.service';
 import prdWorkService from '../../services/prd/work.service';
+import InvStoreService from '../../services/inv/store.service';
 import config from '../../configs/config';
 import { matchedData } from 'express-validator';
 import { sequelizes } from '../../utils/getSequelize';
@@ -158,15 +160,70 @@ class PrdWorkRoutingCtl {
       datas = service.validateDateDiff(datas);
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
+        result = await service.patch(datas, req.user?.uid as number, tran)
+      });
+
+      return createApiResult(res, result, 200, '데이터 수정 성공', this.stateTag, successState.PATCH);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
+    }
+  };
+
+	
+  // 📒 Fn[updateComplete]: 생산공정 실적 종료
+  public updateComplete = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      let result: ApiResult<any> = { count: 0, raws: [] };
+      const service = new prdWorkRoutingService(req.tenant.uuid);
+			const workService = new prdWorkService(req.tenant.uuid);
+			const workRoutingOriginService = new prdWorkRoutingOriginService(req.tenant.uuid);      
+      const inventoryService = new InvStoreService(req.tenant.uuid);      
+      const matched = matchedData(req, { locations: [ 'body' ] });
+      let datas = await service.convertFk(Object.values(matched));
+
+			// 📌 생산실적이 완료상태일 경우 데이터 생성 불가
+      // 📌 Work Status Interlock
+      await workService.validateWorkStatus(datas.map((data: any) => data.work_id));
+      // 📌 Date Diff Interlock
+      datas = service.validateDateDiff(datas);
+
+      await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
+
 				//✅실적 공정 작업종료시 complete_fg = true 로 입력, end_date 없으면 현제 날짜
 				datas.map((value: any) => { 
 					value.complete_fg = true
 					value.end_date = value.end_date ?? moment(moment.now()).format().toString()
 				});
-        result = await service.patch(datas, req.user?.uid as number, tran)
-      });
 
-      return createApiResult(res, result, 200, '데이터 수정 성공', this.stateTag, successState.PATCH);
+				//✅실적 공정순서 기준 마지막 공정 
+				const maxProcNo = workRoutingOriginService.getMaxProcNo(datas.work_id, tran)
+
+				//✅실적 공정 작업완료 
+        const workRoutingResult = await service.patch(datas, req.user?.uid as number, tran)
+
+				let toStoreResult;
+				if (maxProcNo === datas.proc_no){
+					// 📌 입고 창고 수불 내역 생성(생산입고)
+					toStoreResult = await inventoryService.transactInventory(
+						workRoutingResult.raws, 'CREATE', 
+						{ inout: 'TO', tran_type: 'PRD_OUTPUT', reg_date: workRoutingResult.raws[0].reg_date, tran_id_alias: 'work_routing_id' },
+						req.user?.uid as number, tran
+					);
+				}
+			
+				result.raws.push({
+					workRouting: workRoutingResult.raws,
+					toStore: toStoreResult?.raws ?? null,
+				});
+      });
+      
+
+      return createApiResult(res, result, 200, '데이터 수정 성공', this.stateTag, successState.UPDATE);
     } catch (error) {
       if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
 
