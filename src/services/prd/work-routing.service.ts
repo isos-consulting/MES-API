@@ -1,6 +1,7 @@
 import { Transaction } from "sequelize/types";
 import IPrdWorkRouting from "../../interfaces/prd/work-routing.interface";
 import PrdWorkRepo from '../../repositories/prd/work.repository';
+import PrdWorkRoutingOriginRepo from '../../repositories/prd/work-routing-origin.repository';
 import PrdWorkRoutingRepo from "../../repositories/prd/work-routing.repository";
 import StdEquipRepo from '../../repositories/std/equip.repository';
 import StdFactoryRepo from '../../repositories/std/factory.repository';
@@ -32,11 +33,26 @@ class PrdWorkRoutingService {
         idName: 'factory_id',
         uuidName: 'factory_uuid'
       },
+			/**
+			 * @todo PrdWorkRepo 인데 order_id 뭐지?
+			 */
       {
         key: 'order',
         TRepo: PrdWorkRepo,
         idName: 'order_id',
         uuidName: 'order_uuid'
+      },
+			{
+        key: 'work',
+        TRepo: PrdWorkRepo,
+        idName: 'work_id',
+        uuidName: 'work_uuid'
+      },
+			{
+        key: 'work_routing_origin',
+        TRepo: PrdWorkRoutingOriginRepo,
+        idName: 'work_routing_origin_id',
+        uuidName: 'work_routing_origin_uuid'
       },
       {
         key: 'proc',

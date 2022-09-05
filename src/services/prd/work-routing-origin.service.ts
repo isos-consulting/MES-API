@@ -13,7 +13,6 @@ import MldMoldRepo from "../../repositories/mld/mold.repository";
 import getSubtractTwoDates from "../../utils/getSubtractTwoDates";
 import createApiError from "../../utils/createApiError";
 import { errorState } from "../../states/common.state";
-import PrdWorkRoutingService from "./work-routing.service";
 
 class PrdWorkRoutingOriginService {
   tenant: string;

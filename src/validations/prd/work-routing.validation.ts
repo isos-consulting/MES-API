@@ -15,10 +15,17 @@ const prdWorkRoutingValidation = {
     param('uuid', '공정순서UUID')
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'uuid', '공정순서UUID'))
   ],
+
+	/**
+	 * @todo proc_uuid, proc_no -> work_routing_origin_uuid에 엮여 있으므로 추후에 빼야함
+	 */
   create: [
     body('*.factory_uuid', '공장UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'factory_uuid', '공장UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'factory_uuid', '공장UUID')),
+		body('*.work_routing_origin_uuid', '실적 공정순서 기준UUID')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'work_routing_origin_uuid', '실적 공정순서 기준UUID'))
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'work_routing_origin_uuid', '실적 공정순서 기준UUID')),
     body('*.work_uuid', '실적UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'work_uuid', '실적UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'work_uuid', '실적UUID')),

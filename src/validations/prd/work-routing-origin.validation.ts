@@ -5,11 +5,6 @@ import createValidationError from '../../utils/createValidationError';
 const stateTag = 'prdWorkRoutingOrigin';
 
 const prdWorkRoutingOriginValidation = {
-  startWork: [
-    body('*.uuid', '공정순서UUID')
-      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '공정순서UUID'))
-      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '공정순서UUID')),
-  ],
   read: [
     query('factory_uuid', '공장UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'factory_uuid', '공장UUID')),

@@ -11,6 +11,7 @@ import config from '../../configs/config';
 import { matchedData } from 'express-validator';
 import { sequelizes } from '../../utils/getSequelize';
 import { successState } from '../../states/common.state';
+import moment from 'moment';
 
 class PrdWorkRoutingCtl {
   stateTag: string
@@ -39,7 +40,13 @@ class PrdWorkRoutingCtl {
       // 📌 Date Diff Interlock
       datas = service.validateDateDiff(datas);
       
-      await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
+      await sequelizes[req.tenant.uuid].transaction(async(tran: any) => {
+				//✅실적 공정 작업시작시 complete_fg = false 로 입력, start_date 없으면 현제 날짜
+				datas.map((value: any) => { 
+					value.complete_fg = false
+					value.start_date = value.start_date ?? moment(moment.now()).format().toString()
+				});
+				console.log(datas)
         result = await service.create(datas, req.user?.uid as number, tran)
       });
 
