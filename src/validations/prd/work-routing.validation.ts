@@ -10,15 +10,14 @@ const prdWorkRoutingValidation = {
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'factory_uuid', '공장UUID')),
     query('work_uuid', '실적UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'work_uuid', '실적UUID')),
+    query('work_routing_origin_uuid', '공정순서기준UUID').optional({ nullable: true })
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'work_routing_origin_uuid', '공정순서기준UUID')),
+    query('complete_fg', '완료여부').optional({ nullable: true })
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'complete_fg', '완료여부'))
   ],
   readByUuid: [
     param('uuid', '공정순서UUID')
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'uuid', '공정순서UUID'))
-  ],
-  readByWorkRoutingOrigin: [
-    query('work_routing_origin_uuid', '공정순서기준UUID')
-      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'work_routing_origin_uuid', '공정순서기준UUID'))
-      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'work_routing_origin_uuid', '공정순서기준UUID'))
   ],
 
 	/**
