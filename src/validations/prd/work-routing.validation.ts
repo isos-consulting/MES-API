@@ -13,7 +13,7 @@ const prdWorkRoutingValidation = {
     query('work_routing_origin_uuid', '공정순서기준UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'work_routing_origin_uuid', '공정순서기준UUID')),
     query('complete_fg', '완료여부').optional({ nullable: true })
-      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'complete_fg', '완료여부'))
+      .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'complete_fg', '완료여부'))
   ],
   readByUuid: [
     param('uuid', '공정순서UUID')
