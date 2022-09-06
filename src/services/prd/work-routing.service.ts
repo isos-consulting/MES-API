@@ -148,6 +148,14 @@ class PrdWorkRoutingService {
 		catch (error) { throw error; }
   };
 
+  public readByWorkRoutingOriginUuid = async (params: any) => {
+    try { 
+      params['complete_fg'] = false;
+      return await this.repo.readByWorkRoutingOriginUuid(params);
+    } 
+		catch (error) { throw error; }
+  };
+
   public update = async (datas: IPrdWorkRouting[], uid: number, tran: Transaction) => {
     try { return await this.repo.update(datas, uid, tran); } 
 		catch (error) { throw error; }

@@ -15,6 +15,11 @@ const prdWorkRoutingValidation = {
     param('uuid', '공정순서UUID')
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'uuid', '공정순서UUID'))
   ],
+  readByWorkRoutingOrigin: [
+    query('work_routing_origin_uuid', '공정순서기준UUID')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'work_routing_origin_uuid', '공정순서기준UUID'))
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'work_routing_origin_uuid', '공정순서기준UUID'))
+  ],
 
 	/**
 	 * @todo proc_uuid, proc_no -> work_routing_origin_uuid에 엮여 있으므로 추후에 빼야함

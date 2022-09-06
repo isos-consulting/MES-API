@@ -95,7 +95,7 @@ class PrdWorkRoutingRepo {
   };
 
   // 📒 Fn[readByUuid]: Default Read With Uuid Function
-  public readByWorkRoutingOriginUuid = async(workRoutingOriginUuid: string, params?: any) => {
+  public readByWorkRoutingOriginUuid = async(params: any) => {
     try {
       const result = await this.repo.findAll({ 
         include: [
@@ -113,7 +113,7 @@ class PrdWorkRoutingRepo {
             model: this.sequelize.models.PrdWorkRoutingOrigin,
             attributes: [], 
             required: true,
-            where: { uuid: workRoutingOriginUuid }
+            where: { uuid: params.work_routing_origin_uuid ?? { [Op.ne]: null } }
           },
           { model: this.sequelize.models.StdProc, attributes: [], required: true },
           { model: this.sequelize.models.StdWorkings, attributes: [], required: true },
@@ -123,7 +123,7 @@ class PrdWorkRoutingRepo {
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
-          [ Sequelize.col('prdWorkRoutingOrigin.uuid'), 'work_routing_origin_uuid' ],
+          [ Sequelize.col('prdWorkRouting.uuid'), 'work_routing_uuid' ],
           [ Sequelize.col('stdFactory.uuid'), 'factory_uuid' ],
           [ Sequelize.col('stdFactory.factory_cd'), 'factory_cd' ],
           [ Sequelize.col('stdFactory.factory_nm'), 'factory_nm' ],
@@ -156,6 +156,7 @@ class PrdWorkRoutingRepo {
           'updated_at',
           [ Sequelize.col('updateUser.user_nm'), 'updated_nm' ]
         ],
+        where: { complete_fg: params.complete_fg ?? { [Op.ne]: null } },
         order: [ 'factory_id', 'work_id', 'proc_no' ]
       });
 
