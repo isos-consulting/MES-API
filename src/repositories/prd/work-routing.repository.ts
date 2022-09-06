@@ -165,6 +165,51 @@ class PrdWorkRoutingRepo {
       throw error;
     }
   };
+
+  // 📒 Fn[readOngoing]: 진행 중인 work-routing 데이터를 불러옴
+  public readOngoing = async(params: any) => {
+    try {
+      const result = await this.repo.findAll({ 
+        include: [
+          { 
+            model: this.sequelize.models.StdFactory, 
+            attributes: [], 
+            required: true,
+          },
+          { 
+            model: this.sequelize.models.PrdWork,
+            attributes: [], 
+            required: true,
+            where: { uuid: params.work_uuid ?? { [Op.ne]: null } }
+          },
+          { 
+            model: this.sequelize.models.PrdWorkRoutingOrigin,
+            attributes: [], 
+            required: true,
+            where: { uuid: params.work_routing_origin_uuid ?? { [Op.ne]: null } }
+          },
+          { model: this.sequelize.models.StdProc, attributes: [], required: true },
+          { model: this.sequelize.models.StdWorkings, attributes: [], required: true },
+          { model: this.sequelize.models.StdEquip, attributes: [], required: false },
+          { model: this.sequelize.models.MldMold, attributes: [], required: false },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+        ],
+        attributes: [
+          [ Sequelize.col('prdWorkRouting.uuid'), 'work_routing_uuid' ],
+          [ Sequelize.col('prdWorkRoutingOrigin.uuid'), 'work_routing_origin_uuid' ],
+          'complete_fg',
+          'proc_no',
+        ],
+        where: { complete_fg: false },
+        order: [ 'proc_no' ]
+      });
+
+      return convertReadResult(result);
+    } catch (error) {
+      throw error;
+    }
+  };
   
   // // 📒 Fn[read]: Default Read Function
   // public read = async(params?: any) => {

@@ -13,6 +13,7 @@ import MldMoldRepo from "../../repositories/mld/mold.repository";
 import getSubtractTwoDates from "../../utils/getSubtractTwoDates";
 import createApiError from "../../utils/createApiError";
 import { errorState } from "../../states/common.state";
+import PrdWorkRoutingService from "./work-routing.service";
 
 class PrdWorkRoutingOriginService {
   tenant: string;
@@ -99,7 +100,24 @@ class PrdWorkRoutingOriginService {
   };
 
   public read = async (params: any) => {
-    try { return await this.repo.read(params); }
+    try { 
+      const workRoutingService = new PrdWorkRoutingService(this.tenant);
+
+      const workRoutingOriginResults = await this.repo.read(params);
+      const workRoutingResults = [ ...new Set((await workRoutingService.readOngoing(params)).raws) ];
+
+      workRoutingOriginResults.raws.forEach(data => {
+        const uuidIndex = workRoutingResults.findIndex(value => value.work_routing_origin_uuid === data.uuid);
+        if (uuidIndex > -1) {
+          workRoutingResults.splice(uuidIndex, 1);
+          data['ongoing_fg'] = true;
+        } else {
+          data['ongoing_fg'] = false;
+        }
+      });
+
+      return workRoutingOriginResults 
+    }
 		catch (error) { throw error; }
   };
   

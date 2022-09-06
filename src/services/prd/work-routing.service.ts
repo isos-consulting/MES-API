@@ -156,6 +156,11 @@ class PrdWorkRoutingService {
 		catch (error) { throw error; }
   };
 
+  public readOngoing = async (params: any) => {
+    try { return await this.repo.readOngoing(params); } 
+		catch (error) { throw error; }
+  };
+
   public update = async (datas: IPrdWorkRouting[], uid: number, tran: Transaction) => {
     try { return await this.repo.update(datas, uid, tran); } 
 		catch (error) { throw error; }

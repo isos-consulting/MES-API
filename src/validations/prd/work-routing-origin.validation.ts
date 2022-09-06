@@ -8,7 +8,8 @@ const prdWorkRoutingOriginValidation = {
   read: [
     query('factory_uuid', '공장UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'factory_uuid', '공장UUID')),
-    query('work_uuid', '실적UUID').optional({ nullable: true })
+    query('work_uuid', '실적UUID')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'work_uuid', '실적UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'work_uuid', '실적UUID')),
   ],
   readByUuid: [
