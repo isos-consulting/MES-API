@@ -107,7 +107,7 @@ class PrdWorkRoutingOriginService {
       const workRoutingResults = [ ...new Set((await workRoutingService.readOngoing(params)).raws) ];
 
       workRoutingOriginResults.raws.forEach(data => {
-        const uuidIndex = workRoutingResults.findIndex(value => value.work_routing_origin_uuid === data.uuid);
+        const uuidIndex = workRoutingResults.findIndex(value => value.work_routing_origin_uuid === data.work_routing_origin_uuid);
         if (uuidIndex > -1) {
           workRoutingResults.splice(uuidIndex, 1);
           data['ongoing_fg'] = true;
