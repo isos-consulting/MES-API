@@ -201,7 +201,7 @@ class PrdWorkRoutingCtl {
 				});
 
 				//✅실적 공정순서 기준 마지막 공정 
-				const maxProcNo = workRoutingOriginService.getMaxProcNo(datas.work_id, tran)
+				const maxProcNo = workRoutingOriginService.getMaxProcNo(datas[0].work_id, tran)
 
 				//✅실적 공정 작업완료 
         const workRoutingResult = await service.patch(datas, req.user?.uid as number, tran)
