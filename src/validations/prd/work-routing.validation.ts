@@ -58,8 +58,6 @@ const prdWorkRoutingValidation = {
       .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'ongoing_fg', '생산중인 공정 여부')),
     body('*.prd_signal_cnt', '생산카운트 신호 수').optional({ nullable: true })
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'prd_signal_cnt', '생산카운트 신호 수')),
-    body('*.start_signal_val', '생산카운트 시작 값').optional({ nullable: true })
-      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'start_signal_val', '생산카운트 시작 값')),
     body('*.remark', '비고').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'remark', '비고')),
   ],
@@ -89,8 +87,6 @@ const prdWorkRoutingValidation = {
       .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'ongoing_fg', '생산중인 공정 여부')),
     body('*.prd_signal_cnt', '생산카운트 신호 수').optional({ nullable: true })
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'prd_signal_cnt', '생산카운트 신호 수')),
-    body('*.start_signal_val', '생산카운트 시작 값').optional({ nullable: true })
-      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'start_signal_val', '생산카운트 시작 값')),
     body('*.remark', '비고').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'remark', '비고')),
   ],
@@ -118,8 +114,6 @@ const prdWorkRoutingValidation = {
       .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'ongoing_fg', '생산중인 공정 여부')),
     body('*.prd_signal_cnt', '생산카운트 신호 수').optional({ nullable: true })
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'prd_signal_cnt', '생산카운트 신호 수')),
-    body('*.start_signal_val', '생산카운트 시작 값').optional({ nullable: true })
-      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'start_signal_val', '생산카운트 시작 값')),
     body('*.remark', '비고').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'remark', '비고')),
   ],
@@ -153,8 +147,6 @@ const prdWorkRoutingValidation = {
       .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'ongoing_fg', '생산중인 공정 여부')),
     body('*.prd_signal_cnt', '생산카운트 신호 수').optional({ nullable: true })
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'prd_signal_cnt', '생산카운트 신호 수')),
-    body('*.start_signal_val', '생산카운트 시작 값').optional({ nullable: true })
-      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'start_signal_val', '생산카운트 시작 값')),
     body('*.remark', '비고').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'remark', '비고')),
   ],
