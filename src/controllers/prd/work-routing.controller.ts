@@ -211,7 +211,7 @@ class PrdWorkRoutingCtl {
 					// 📌 입고 창고 수불 내역 생성(생산입고)
 					toStoreResult = await inventoryService.transactInventory(
 						workRoutingResult.raws, 'CREATE', 
-						{ inout: 'TO', tran_type: 'PRD_OUTPUT', reg_date: workRoutingResult.raws[0].reg_date, tran_id_alias: 'work_routing_id' },
+						{ inout: 'TO', tran_type: 'PRD_OUTPUT', reg_date: workRoutingResult.raws[0].end_date, tran_id_alias: 'work_routing_id' },
 						req.user?.uid as number, tran
 					);
 				}
