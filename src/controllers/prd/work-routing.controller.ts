@@ -48,7 +48,7 @@ class PrdWorkRoutingCtl {
 					value.complete_fg = false
 					value.start_date = value.start_date ?? moment(moment.now()).format().toString()
 				});
-				console.log(datas)
+
         result = await service.create(datas, req.user?.uid as number, tran)
       });
 
