@@ -228,6 +228,10 @@ class PrdWorkCtl {
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
         for await (const data of datas) {
+
+
+					// 📌 진행중인 공정 분할 실적 validation check
+
           // 📌 생산실적 완료 전 검증작업(투입수량, 생산수량, 가용창고 등)
           /**
            * workValidateResult 반환 포멧 : { verifyInput: {}, pullProdIds: [], inputDatas: [], work: {}}
