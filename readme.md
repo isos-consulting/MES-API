@@ -375,7 +375,7 @@ firstValue: number;
 ###
 ### Header
 - 인증(Authentication; 특정 identity 제공)과 권한 부여(authorization; 특정 action 허용) 두 가지 목적으로 사용됩니다. 
-- ISO에서는 authorization(refresh token, access token) - Bearer, Environment(production, development, test), service-type(iso), restrict-access-to-tenants(테넌트인증) 속성을 사용 합니다.
+- ISO에서는 authorization(refresh token, access token) - Bearer, Environment(production, development, test), service-type(iso), restrict-access-to-tenants(테넌트인증), file-included(파일첨부 여부) 속성을 사용 합니다.
 ###
 ### Path
 - 엔드포인트의 일부로 Resource를 식별하고 싶을 때 사용 합니다.
