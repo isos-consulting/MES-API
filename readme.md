@@ -369,3 +369,26 @@ firstValue: number;
 // 주석을 입력합니다. // O
 //주석을 입력합니다. // X
 ```
+## 7️⃣ API(End-Point) Parameter Creation Convention
+### Parameter Type
+- Header, Path Query, Body
+###
+### Header
+- 인증(Authentication; 특정 identity 제공)과 권한 부여(authorization; 특정 action 허용) 두 가지 목적으로 사용됩니다. 
+- ISO에서는 authorization(refresh token, access token) - Bearer, Environment(production, development, test), service-type(iso), restrict-access-to-tenants(테넌트인증) 속성을 사용 합니다.
+###
+### Path
+- 엔드포인트의 일부로 Resource를 식별하고 싶을 때 사용 합니다.
+- ISO에서는 Resource를 Database Table을 기준으로 하고 있으며 uuid를 기준으로 Resource를 단일 조회 할 때 주로 사용 합니다.
+- Header, Detail로 구성된 테이블의 경우 Header Resource를 기준으로 Detail Resource를 조회 할 때 사용 합니다.
+- ex /std/factory/:uuid, /qms/insp/:uuid/include-details 등
+###
+### Query
+- 엔드포인트에서 물음표 뒤에 사용하는 Type으로 정렬이나 필터링을 할 때 사용 합니다.
+- ISO에서는 Front-End 관점이 아닌 Database 관점에서 정렬이나 필터링을 할 때 사용 합니다.
+- ex /std/emp?emp_status (all, incumbent, retiree)
+###
+### Body
+- Request Body 파라미터 입니다.
+- ISO에서는 Post, Put, Patch, Delete Method를 호출 할 때 사용하고 Data Format은 JSON을 사용 합니다.
+
