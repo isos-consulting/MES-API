@@ -11,7 +11,7 @@ const readWorkRoutings = (
   if (params.work_uuid) { searchQuery += ` AND p_w.uuid = '${params.work_uuid}'`; }
   if (params.factory_uuid) { searchQuery += ` AND s_f.uuid = '${params.factory_uuid}'`; }
   if (params.uuid) { searchQuery += ` AND p_wr.uuid = '${params.uuid}'`; }
-  if (params.complete_fg) { searchQuery += ` AND p_wr.complete_fg = '${params.complete_fg}'`; }
+  if (typeof params.complete_fg !== 'undefined') { searchQuery += ` AND p_wr.complete_fg = '${params.complete_fg}'`; }
   if (params.work_routing_origin_uuid) { searchQuery += ` AND p_wro.uuid = '${params.work_routing_origin_uuid}'`; }
   
   if (searchQuery.length > 0) {
