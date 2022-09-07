@@ -300,7 +300,7 @@ class PrdWorkRejectRepo {
    * @param transaction Transaction
    * @returns 전표단위의 상세전표 개수
    */
-   getTotalRejectQtyByWork = async(workId: number, transaction?: Transaction) => {
+  getTotalRejectQtyByWork = async(workId: number, transaction?: Transaction) => {
     try {
       const result = await this.repo.findOne({ 
         attributes: [

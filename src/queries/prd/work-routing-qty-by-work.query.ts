@@ -8,7 +8,11 @@ const readFinalQtyByWork = (workId?: number) => {
       FROM prd_work_routing_tb
       WHERE work_id = ${workId}
     )
-    SELECT qty FROM complete WHERE rn = 1;
+    SELECT 
+			sum(qty) as qty
+		FROM complete 
+		WHERE rn = 1
+		GROUP BY work_id;
   `;
 
   return query;

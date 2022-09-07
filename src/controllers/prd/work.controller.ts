@@ -218,6 +218,7 @@ class PrdWorkCtl {
     try {
       let result: ApiResult<any> = { count: 0, raws: [] };
       const service = new PrdWorkService(req.tenant.uuid);
+			const workRoutingService = new PrdWorkRoutingService(req.tenant.uuid);
       const orderService = new PrdOrderService(req.tenant.uuid);
       const workInputService = new PrdWorkInputService(req.tenant.uuid);
       const workRejectService = new PrdWorkRejectService(req.tenant.uuid);
@@ -231,7 +232,9 @@ class PrdWorkCtl {
 
 
 					// 📌 진행중인 공정 분할 실적 validation check
+					await workRoutingService.validateWorkRoutingStatus(data.work_uuid);
 
+					
           // 📌 생산실적 완료 전 검증작업(투입수량, 생산수량, 가용창고 등)
           /**
            * workValidateResult 반환 포멧 : { verifyInput: {}, pullProdIds: [], inputDatas: [], work: {}}
@@ -247,17 +250,6 @@ class PrdWorkCtl {
           
           // 📌 해당 실적의 작업지시에 진행중인 생산 실적이 없을 경우 작업지시의 생산진행여부(work_fg)를 False로 변경
           const orderResult = await orderService.updateOrderCompleteByOrderId(workResult.raws[0].order_id, req.user?.uid as number, tran);
-          
-					/**
-					 * @todo 입고 창고 수불 내역 work-routing 에서 마지막 공정에서 진행 이상 없을시 주석 삭제 필요
-					 */
-
-          // 📌 입고 창고 수불 내역 생성(생산입고)
-          // const toStoreResult = await inventoryService.transactInventory(
-          //   workResult.raws, 'CREATE', 
-          //   { inout: 'TO', tran_type: 'PRD_OUTPUT', reg_date: workResult.raws[0].reg_date, tran_id_alias: 'work_id' },
-          //   req.user?.uid as number, tran
-          // );
           
           // 📌 부적합 수량에 의한 창고 수불 내역 생성
           const rejectBody = await workRejectService.getWorkRejectBody(workResult.raws[0], workResult.raws[0].reg_date);
@@ -277,6 +269,7 @@ class PrdWorkCtl {
 
           const workInputBody = await workInputService.getWorkInputBody(workValidateResult, workResult.raws[0].reg_date, isMinusStockOption);
 
+					let inputStoreResult;
 					if (!workInputBody?.pullBody) {
             workInputBody.pullBody = [];
           } else {
@@ -299,19 +292,15 @@ class PrdWorkCtl {
                 if(input.prod_id == body.prod_id && input.lot_no == body.lot_no) { body.work_input_id = input.work_input_id; }
               });
             });
-          }
-				
-					let inputStoreResult;
-					workInputBody.pushBody = workInputBody.pushBody.filter(Boolean); 
-					workInputBody.pullBody = workInputBody.pullBody.filter(Boolean); 
 
-					if (workInputBody?.pushBody.length == 0 || workInputBody?.pullBody.length == 0) {
+						// workInputBody.pullBody = workInputBody.pullBody.filter(Boolean); 
+
 						inputStoreResult = await inventoryService.transactInventory(
-							[...workInputBody?.pushBody, ...workInputBody?.pullBody ], 'CREATE', 
+							workInputBody?.pullBody, 'CREATE', 
 							{ inout: 'FROM', tran_type: 'PRD_INPUT', reg_date: workResult.raws[0].reg_date, tran_id_alias: 'work_input_id' },
 							req.user?.uid as number, tran
 						);
-					}
+          }
 
           result.raws.push({
             work: workResult.raws,

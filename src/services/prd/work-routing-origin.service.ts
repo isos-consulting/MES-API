@@ -177,12 +177,6 @@ class PrdWorkRoutingOriginService {
       throw error;
     }
   }
-
-  public startWork = (uuid: string, uid: number, tran: Transaction) => {
-    // const workRoutingService = new PrdWorkRoutingService(this.tenant);
-
-  }
-
 }
 
 export default PrdWorkRoutingOriginService;
