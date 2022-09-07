@@ -126,6 +126,10 @@ class PrdWorkRoutingCtl {
       datas = service.validateDateDiff(datas);
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
+        datas.forEach((value: any) => { 
+					value.complete_fg = false;
+				});
+
         result = await service.update(datas, req.user?.uid as number, tran)
       });
 
@@ -160,6 +164,10 @@ class PrdWorkRoutingCtl {
       datas = service.validateDateDiff(datas);
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
+        datas.forEach((value: any) => { 
+					value.complete_fg = false;
+				});
+
         result = await service.patch(datas, req.user?.uid as number, tran)
       });
 
