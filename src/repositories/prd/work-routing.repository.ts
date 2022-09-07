@@ -124,13 +124,9 @@ class PrdWorkRoutingRepo {
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
-          [ Sequelize.col('prdWorkRouting.uuid'), 'work_routing_uuid' ],
           [ Sequelize.col('prdWorkRoutingOrigin.uuid'), 'work_routing_origin_uuid' ],
-          'complete_fg',
-          'proc_no',
         ],
-        where: { complete_fg: false },
-        order: [ 'proc_no' ]
+        where: { complete_fg: false }
       });
 
       return convertReadResult(result);
