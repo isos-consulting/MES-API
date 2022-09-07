@@ -275,6 +275,12 @@ class PrdWorkRoutingRepo {
     return convertReadResult(result);
   };
 
+	// 📒 Fn[readRawsByWorkId]: 실적의 Id를 이용하여 Raw Data Read Function
+  public readRawsByWorkId = async(workId: string, transaction?: Transaction) => {
+    const result = await this.repo.findAll({ where: { work_id: workId }, transaction });
+    return convertReadResult(result);
+  };
+
   // 📒 Fn[getFinalQtyByWork]: 생산실적 기준 마지막 공정순서 생산수량 조회
   public getFinalQtyByWork = async(workId?: number) => {
     try {

@@ -9,10 +9,11 @@ const readFinalRejectQtyByWork = (workId?: number) => {
       WHERE work_id = ${workId}
     )
     SELECT 
-      COALESCE(p_wr.qty,0) AS qty
+			sum(COALESCE(p_wr.qty,0)) AS qty
     FROM work_reject wr
     LEFT JOIN prd_work_reject_tb p_wr ON p_wr.work_routing_id = wr.work_routing_id
-    WHERE wr.rn = 1;
+    WHERE wr.rn = 1
+		GROUP BY wr.work_routing_id;
   `;
 
   return query;
