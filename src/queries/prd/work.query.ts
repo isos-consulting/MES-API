@@ -13,7 +13,7 @@ const readWorks = (
   }) => {
   let searchQuery: string = '';
 
-  // if (params.work_uuid) { searchQuery += ` AND p_w.uuid = '${params.work_uuid}'`; }
+  if (params.work_uuid) { searchQuery += ` AND p_w.uuid = '${params.work_uuid}'`; }
   // if (params.order_uuid) { searchQuery += ` AND p_o.uuid = '${params.order_uuid}'`; }
   if (params.factory_uuid) { searchQuery += ` AND s_f.uuid = '${params.factory_uuid}'`; }
   // if (params.prod_uuid) { searchQuery += ` AND s_p.uuid = '${params.prod_uuid}'`; }
