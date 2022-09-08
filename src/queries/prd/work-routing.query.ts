@@ -2,6 +2,8 @@ const readWorkRoutings = (
   params: {
     factory_uuid?: string,
     work_uuid?: string,
+    complete_fg?: boolean,
+    work_routing_origin_uuid?: string,
     uuid?: string
   }) => {
   let searchQuery: string = '';
@@ -9,6 +11,8 @@ const readWorkRoutings = (
   if (params.work_uuid) { searchQuery += ` AND p_w.uuid = '${params.work_uuid}'`; }
   if (params.factory_uuid) { searchQuery += ` AND s_f.uuid = '${params.factory_uuid}'`; }
   if (params.uuid) { searchQuery += ` AND p_wr.uuid = '${params.uuid}'`; }
+  if (typeof params.complete_fg !== 'undefined') { searchQuery += ` AND p_wr.complete_fg = '${params.complete_fg}'`; }
+  if (params.work_routing_origin_uuid) { searchQuery += ` AND p_wro.uuid = '${params.work_routing_origin_uuid}'`; }
   
   if (searchQuery.length > 0) {
     searchQuery = searchQuery.substring(4, searchQuery.length);
@@ -44,6 +48,7 @@ const readWorkRoutings = (
     SELECT
       p_wr.uuid as work_routing_uuid,
       p_wr.work_id,
+      p_wro.uuid as work_routing_origin_uuid,
       s_f.uuid AS factory_uuid,
       s_f.factory_cd,
       s_f.factory_nm,
@@ -70,6 +75,7 @@ const readWorkRoutings = (
       p_wr.ongoing_fg,
       p_wr.prd_signal_cnt,
       p_wr.start_signal_val,
+      p_wr.complete_fg,
       t_w.emp_nm,
       p_wr.remark,
       p_wr.created_at,
@@ -80,6 +86,7 @@ const readWorkRoutings = (
       a_uu.user_nm as updated_nm,
       p_wr.uuid
     FROM prd_work_routing_tb p_wr
+    JOIN prd_work_routing_origin_tb p_wro ON p_wr.work_routing_origin_id = p_wro.work_routing_origin_id
     JOIN prd_work_tb p_w ON p_w.work_id = p_wr.work_id 
     JOIN std_factory_tb s_f ON s_f.factory_id = p_wr.factory_id 
     JOIN std_workings_tb s_w ON s_w.workings_id = p_wr.workings_id 

@@ -24,6 +24,7 @@ import PrdWorkRejectService from '../../services/prd/work-reject.service';
 import PrdWorkDowntimeService from '../../services/prd/work-downtime.service';
 import StdTenantOptService from '../../services/std/tenant-opt.service';
 import IPrdWorkInput from '../../interfaces/prd/work-input.interface';
+import PrdWorkRoutingOriginService from '../../services/prd/work-routing-origin.service';
 
 
 class PrdWorkCtl {
@@ -46,12 +47,17 @@ class PrdWorkCtl {
       const orderService = new PrdOrderService(req.tenant.uuid);
       // const workWorkerService = new PrdWorkWorkerService(req.tenant.uuid);
       const workRoutingService = new PrdWorkRoutingService(req.tenant.uuid);
+      const workRoutingOriginService = new PrdWorkRoutingOriginService(req.tenant.uuid);
+      const tenantOptService = new StdTenantOptService(req.tenant.uuid);
       const matched = matchedData(req, { locations: ['body'] });
 
       let datas = await service.convertFk(Object.values(matched));
-
+      
       // ❗ 작업지시가 마감되어 있는 경우 Interlock
       await orderService.validateIsCompleted(datas.map((data: any) => data.order_uuid));
+
+      // 공정별 다중 실적 여부 옵션 조회
+      const multiWorkOpt = await tenantOptService.getTenantOptValue('PRD_MULTI_WORK_BY_PROC');
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
         for await (const data of datas) {
@@ -77,14 +83,27 @@ class PrdWorkCtl {
           // result.count += workerResult.count;
 
           // 📌 작업지시의 공정순서 정보 기준 초기 데이터 생성
-          const routingResult = await workRoutingService.createByOrderRouting(work, req.user?.uid as number, tran);
+          const routingOriginResult = await workRoutingOriginService.createByOrderRouting(work, req.user?.uid as number, tran);
+          result.count += routingOriginResult.count;
+        
+          // 옵션 값에 따라 첫 공정만 or 모든 공정을 work_routing_tb에 투입
+          let routingOriginResultData;
+          if (multiWorkOpt) {
+            // 공정별 멀티 작업실적 (첫 공정)
+            routingOriginResultData = [routingOriginResult.raws[0]];
+          } else {
+            // 공정별 단일 작업실적 (모든 공정))
+            routingOriginResultData = routingOriginResult.raws;            
+          }
+          const routingResult = await workRoutingService.createByWorkRoutingOrigin(routingOriginResultData, req.user?.uid as number, tran);
           result.count += routingResult.count;
 
           result.raws.push({
             work: work,
             order: orderResult.raws,
             // worker: workerResult.raws,
-            routing: routingResult.raws
+            routing_origin: routingOriginResult.raws,
+            routing: routingResult.raws 
           });
         }
       });
@@ -199,6 +218,7 @@ class PrdWorkCtl {
     try {
       let result: ApiResult<any> = { count: 0, raws: [] };
       const service = new PrdWorkService(req.tenant.uuid);
+			const workRoutingService = new PrdWorkRoutingService(req.tenant.uuid);
       const orderService = new PrdOrderService(req.tenant.uuid);
       const workInputService = new PrdWorkInputService(req.tenant.uuid);
       const workRejectService = new PrdWorkRejectService(req.tenant.uuid);
@@ -209,6 +229,12 @@ class PrdWorkCtl {
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
         for await (const data of datas) {
+
+
+					// 📌 진행중인 공정 분할 실적 validation check
+					await workRoutingService.validateWorkRoutingStatus(data.work_id);
+
+					
           // 📌 생산실적 완료 전 검증작업(투입수량, 생산수량, 가용창고 등)
           /**
            * workValidateResult 반환 포멧 : { verifyInput: {}, pullProdIds: [], inputDatas: [], work: {}}
@@ -224,13 +250,6 @@ class PrdWorkCtl {
           
           // 📌 해당 실적의 작업지시에 진행중인 생산 실적이 없을 경우 작업지시의 생산진행여부(work_fg)를 False로 변경
           const orderResult = await orderService.updateOrderCompleteByOrderId(workResult.raws[0].order_id, req.user?.uid as number, tran);
-          
-          // 📌 입고 창고 수불 내역 생성(생산입고)
-          const toStoreResult = await inventoryService.transactInventory(
-            workResult.raws, 'CREATE', 
-            { inout: 'TO', tran_type: 'PRD_OUTPUT', reg_date: workResult.raws[0].reg_date, tran_id_alias: 'work_id' },
-            req.user?.uid as number, tran
-          );
           
           // 📌 부적합 수량에 의한 창고 수불 내역 생성
           const rejectBody = await workRejectService.getWorkRejectBody(workResult.raws[0], workResult.raws[0].reg_date);
@@ -250,6 +269,7 @@ class PrdWorkCtl {
 
           const workInputBody = await workInputService.getWorkInputBody(workValidateResult, workResult.raws[0].reg_date, isMinusStockOption);
 
+					let inputStoreResult;
 					if (!workInputBody?.pullBody) {
             workInputBody.pullBody = [];
           } else {
@@ -272,24 +292,20 @@ class PrdWorkCtl {
                 if(input.prod_id == body.prod_id && input.lot_no == body.lot_no) { body.work_input_id = input.work_input_id; }
               });
             });
-          }
-				
-					let inputStoreResult;
-					workInputBody.pushBody = workInputBody.pushBody.filter(Boolean); 
-					workInputBody.pullBody = workInputBody.pullBody.filter(Boolean); 
 
-					if (workInputBody?.pushBody.length == 0 || workInputBody?.pullBody.length == 0) {
+						// workInputBody.pullBody = workInputBody.pullBody.filter(Boolean); 
+
 						inputStoreResult = await inventoryService.transactInventory(
-							[...workInputBody?.pushBody, ...workInputBody?.pullBody ], 'CREATE', 
+							workInputBody?.pullBody, 'CREATE', 
 							{ inout: 'FROM', tran_type: 'PRD_INPUT', reg_date: workResult.raws[0].reg_date, tran_id_alias: 'work_input_id' },
 							req.user?.uid as number, tran
 						);
-					}
+          }
 
           result.raws.push({
             work: workResult.raws,
             order: orderResult.raws,
-            toStore: [...toStoreResult.raws, ...rejectStoreResult.raws],
+						toStore: rejectStoreResult.raws,
             fromStore: inputStoreResult?.raws,
           });
         }

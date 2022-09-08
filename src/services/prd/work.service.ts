@@ -126,6 +126,11 @@ class PrdWorkService {
 		catch (error) { throw error; }
   };
 
+	public readRawByIds = async (workId: number[]) => {
+    try { return await this.repo.readRawByIds(workId); }
+		catch (error) { throw error; }
+  };
+
   public update = async (datas: IPrdWork[], uid: number, tran: Transaction) => {
     try { return await this.repo.update(datas, uid, tran); } 
 		catch (error) { throw error; }

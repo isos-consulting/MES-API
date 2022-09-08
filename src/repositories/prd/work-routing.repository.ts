@@ -38,6 +38,7 @@ class PrdWorkRoutingRepo {
           {
             factory_id: workRouting.factory_id,
             work_id: workRouting.work_id,
+            work_routing_origin_id: workRouting.work_routing_origin_id,
             proc_id: workRouting.proc_id,
             proc_no: workRouting.proc_no,
             workings_id: workRouting.workings_id,
@@ -50,7 +51,7 @@ class PrdWorkRoutingRepo {
             work_time: workRouting.work_time,
             ongoing_fg: workRouting.ongoing_fg,
             prd_signal_cnt: workRouting.prd_signal_cnt,
-            start_signal_val: workRouting.start_signal_val,
+            complete_fg: workRouting.complete_fg,
             remark: workRouting.remark,
             created_uid: uid,
             updated_uid: uid,
@@ -87,6 +88,47 @@ class PrdWorkRoutingRepo {
       const result = await this.sequelize.query(readWorkRoutings({ uuid: uuid }));
 
       return convertReadResult(result[0]);
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  // 📒 Fn[readOngoing]: 진행 중인 work-routing 데이터를 불러옴
+  public readOngoing = async(params: any) => {
+    try {
+      const result = await this.repo.findAll({ 
+        include: [
+          { 
+            model: this.sequelize.models.StdFactory, 
+            attributes: [], 
+            required: true,
+          },
+          { 
+            model: this.sequelize.models.PrdWork,
+            attributes: [], 
+            required: true,
+            where: { uuid: params.work_uuid ?? { [Op.ne]: null } }
+          },
+          { 
+            model: this.sequelize.models.PrdWorkRoutingOrigin,
+            attributes: [], 
+            required: true,
+            where: { uuid: params.work_routing_origin_uuid ?? { [Op.ne]: null } }
+          },
+          { model: this.sequelize.models.StdProc, attributes: [], required: true },
+          { model: this.sequelize.models.StdWorkings, attributes: [], required: true },
+          { model: this.sequelize.models.StdEquip, attributes: [], required: false },
+          { model: this.sequelize.models.MldMold, attributes: [], required: false },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+        ],
+        attributes: [
+          [ Sequelize.col('prdWorkRoutingOrigin.uuid'), 'work_routing_origin_uuid' ],
+        ],
+        where: { complete_fg: false }
+      });
+
+      return convertReadResult(result);
     } catch (error) {
       throw error;
     }
@@ -232,6 +274,12 @@ class PrdWorkRoutingRepo {
     return convertReadResult(result);
   };
 
+	// 📒 Fn[readRawsByWorkId]: 실적의 Id를 이용하여 Raw Data Read Function
+  public readRawsByWorkId = async(workId: string, transaction?: Transaction) => {
+    const result = await this.repo.findAll({ where: { work_id: workId }, transaction });
+    return convertReadResult(result);
+  };
+
   // 📒 Fn[getFinalQtyByWork]: 생산실적 기준 마지막 공정순서 생산수량 조회
   public getFinalQtyByWork = async(workId?: number) => {
     try {
@@ -260,6 +308,7 @@ class PrdWorkRoutingRepo {
         return this.repo.update(
           {
             workings_id: workRouting.workings_id ?? null,
+            work_routing_origin_id: workRouting.work_routing_origin_id ?? null,
             equip_id: workRouting.equip_id ?? null,
             mold_id: workRouting.mold_id ?? null,
             mold_cavity: workRouting.mold_cavity ?? null,
@@ -269,7 +318,7 @@ class PrdWorkRoutingRepo {
             work_time: workRouting.work_time ?? null,
             ongoing_fg: workRouting.ongoing_fg ?? null,
             prd_signal_cnt: workRouting.prd_signal_cnt ?? null,
-            start_signal_val: workRouting.start_signal_val ?? null,
+            complete_fg: workRouting.complete_fg ?? null,
             remark: workRouting.remark ?? null,
             updated_uid: uid,
           } as any,
@@ -304,6 +353,7 @@ class PrdWorkRoutingRepo {
         return this.repo.update(
           {
             workings_id: workRouting.workings_id,
+            work_routing_origin_id: workRouting.work_routing_origin_id,
             equip_id: workRouting.equip_id,
             mold_id: workRouting.mold_id,
             mold_cavity: workRouting.mold_cavity,
@@ -313,7 +363,7 @@ class PrdWorkRoutingRepo {
             work_time: workRouting.work_time,
             ongoing_fg: workRouting.ongoing_fg,
             prd_signal_cnt: workRouting.prd_signal_cnt,
-            start_signal_val: workRouting.start_signal_val,
+            complete_fg: workRouting.complete_fg,
             remark: workRouting.remark,
             updated_uid: uid,
           },

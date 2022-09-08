@@ -251,8 +251,8 @@ class PrdWorkRejectRepo {
         [ Sequelize.col('PrdWork.prod_id'), 'prod_id' ],
         [ Sequelize.col('prdWork.lot_no'), 'lot_no' ],
         [ Sequelize.col('prdWorkReject.qty'), 'qty' ],
-        [ Sequelize.col('PrdWork.to_store_id'), 'to_store_id' ],
-        [ Sequelize.col('PrdWork.to_location_id'), 'to_location_id' ],
+        [ Sequelize.col('prdWorkReject.to_store_id'), 'to_store_id' ],
+        [ Sequelize.col('prdWorkReject.to_location_id'), 'to_location_id' ],
       ], 
       where: { work_id: workId }, transaction });
     return convertReadResult(result);
@@ -300,7 +300,7 @@ class PrdWorkRejectRepo {
    * @param transaction Transaction
    * @returns 전표단위의 상세전표 개수
    */
-   getTotalRejectQtyByWork = async(workId: number, transaction?: Transaction) => {
+  getTotalRejectQtyByWork = async(workId: number, transaction?: Transaction) => {
     try {
       const result = await this.repo.findOne({ 
         attributes: [
