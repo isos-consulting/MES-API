@@ -305,7 +305,6 @@ class PrdWorkCtl {
           result.raws.push({
             work: workResult.raws,
             order: orderResult.raws,
-            // toStore: [...toStoreResult.raws, ...rejectStoreResult.raws],
 						toStore: rejectStoreResult.raws,
             fromStore: inputStoreResult?.raws,
           });

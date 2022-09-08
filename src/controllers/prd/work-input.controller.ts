@@ -11,6 +11,8 @@ import { successState } from '../../states/common.state';
 import { sequelizes } from '../../utils/getSequelize';
 import prdWorkInputService from '../../services/prd/work-input.service';
 import prdWorkService from '../../services/prd/work.service';
+import InvStoreService from '../../services/inv/store.service';
+import moment from 'moment';
 
 class PrdWorkInputCtl {
   stateTag: string;
@@ -30,6 +32,7 @@ class PrdWorkInputCtl {
       let result: ApiResult<any> = { count:0, raws: [] };
       const service = new prdWorkInputService(req.tenant.uuid);
       const workService = new prdWorkService(req.tenant.uuid);
+			const inventoryService = new InvStoreService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
       let datas = await service.convertFk(Object.values(matched));
 
@@ -39,6 +42,12 @@ class PrdWorkInputCtl {
       
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
         result = await service.create(datas, req.user?.uid as number, tran)
+				
+				await inventoryService.transactInventory(
+					result.raws, 'CREATE', 
+					{ inout: 'FROM', tran_type: 'PRD_INPUT', reg_date: moment(moment.now()).format().toString(), tran_id_alias: 'work_input_id' },
+					req.user?.uid as number, tran
+				);
       });
 
       return createApiResult(res, result, 201, '데이터 생성 성공', this.stateTag , successState.CREATE);
@@ -124,6 +133,7 @@ class PrdWorkInputCtl {
       let result: ApiResult<any> = { count: 0, raws: [] };
       const service = new prdWorkInputService(req.tenant.uuid);
       const workService = new prdWorkService(req.tenant.uuid);
+			const inventoryService = new InvStoreService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
       let datas = await service.convertFk(Object.values(matched));
 
@@ -133,6 +143,12 @@ class PrdWorkInputCtl {
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
         result = await service.update(datas, req.user?.uid as number, tran)
+
+				await inventoryService.transactInventory(
+					result.raws, 'UPDATE', 
+					{ inout: 'FROM', tran_type: 'PRD_INPUT', tran_id_alias: 'work_input_id' },
+					req.user?.uid as number, tran
+				);
       });
 
       return createApiResult(res, result, 200, '데이터 수정 성공', this.stateTag, successState.UPDATE);
@@ -156,6 +172,7 @@ class PrdWorkInputCtl {
       let result: ApiResult<any> = { count:0, raws: [] };
       const service = new prdWorkInputService(req.tenant.uuid);
       const workService = new prdWorkService(req.tenant.uuid);
+			const inventoryService = new InvStoreService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
       let datas = await service.convertFk(Object.values(matched));
 
@@ -165,6 +182,12 @@ class PrdWorkInputCtl {
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
         result = await service.patch(datas, req.user?.uid as number, tran)
+
+				await inventoryService.transactInventory(
+					result.raws, 'UPDATE', 
+					{ inout: 'FROM', tran_type: 'PRD_INPUT', tran_id_alias: 'work_input_id' },
+					req.user?.uid as number, tran
+				);
       });
 
       return createApiResult(res, result, 200, '데이터 수정 성공', this.stateTag, successState.PATCH);
@@ -188,6 +211,7 @@ class PrdWorkInputCtl {
       let result: ApiResult<any> = { count:0, raws: [] };
       const service = new prdWorkInputService(req.tenant.uuid);
       const workService = new prdWorkService(req.tenant.uuid);
+			const inventoryService = new InvStoreService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
       let datas = Object.values(matched);
 
@@ -197,6 +221,12 @@ class PrdWorkInputCtl {
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
         result = await service.delete(datas, req.user?.uid as number, tran)
+
+				await inventoryService.transactInventory(
+					result.raws, 'DELETE', 
+					{ inout: 'FROM', tran_type: 'PRD_INPUT', tran_id_alias: 'work_input_id' },
+					req.user?.uid as number, tran
+				);
       });
 
       return createApiResult(res, result, 200, '데이터 삭제 성공', this.stateTag, successState.DELETE);
