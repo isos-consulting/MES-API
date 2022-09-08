@@ -232,7 +232,7 @@ class PrdWorkCtl {
 
 
 					// 📌 진행중인 공정 분할 실적 validation check
-					await workRoutingService.validateWorkRoutingStatus(data.work_uuid);
+					await workRoutingService.validateWorkRoutingStatus(data.work_id);
 
 					
           // 📌 생산실적 완료 전 검증작업(투입수량, 생산수량, 가용창고 등)

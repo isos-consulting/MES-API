@@ -12,15 +12,18 @@ const readWorkInputGroup = (
     CREATE INDEX ON temp_final_routing(work_id);
     WITH complete AS
     (
-      SELECT 
-        p_wr.work_id, p_wr.work_routing_id, coalesce(p_wr.qty,0) as qty, COALESCE(p_wrt.qty, 0) AS reject_qty,
-        rank() over(PARTITION BY p_wr.work_id ORDER BY p_wr.proc_no DESC) AS rn
-      FROM prd_work_routing_tb p_wr
-      LEFT JOIN prd_work_reject_tb p_wrt ON p_wrt.work_routing_id = p_wr.work_routing_id
-      WHERE p_wr.work_id = workId
+			SELECT t1.work_id, sum(t1.qty) as qty, sum(reject_qty) AS reject_qty, t1.rn
+			FROM(
+				SELECT 
+					p_wr.work_id, p_wr.work_routing_id, coalesce(p_wr.qty,0) as qty, COALESCE(p_wrt.qty, 0) AS reject_qty,
+					rank() over(PARTITION BY p_wr.work_id ORDER BY p_wr.proc_no DESC) AS rn
+				FROM prd_work_routing_tb p_wr
+				LEFT JOIN prd_work_reject_tb p_wrt ON p_wrt.work_routing_id = p_wr.work_routing_id
+				WHERE p_wr.work_id = workId)T1
+			GROUP BY work_id,t1.rn
     )
     INSERT INTO temp_final_routing
-    SELECT work_id, work_routing_id, qty, reject_qty FROM complete WHERE rn = 1;
+    SELECT work_id, qty, reject_qty FROM complete WHERE rn = 1;
       
     -- 📌 전체공정순서의 불량수량 합계를 가져 올 임시테이블 생성
     CREATE TEMP TABLE temp_reject_sum(work_id int, reject_qty numeric);

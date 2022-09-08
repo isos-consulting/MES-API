@@ -200,8 +200,8 @@ class PrdWorkRoutingService {
     }
   }
 
-	public validateWorkRoutingStatus = async (uuid: string) => {
-    const workRoutingRead = await this.repo.readRawsByWorkId(uuid);
+	public validateWorkRoutingStatus = async (workId: string) => {
+    const workRoutingRead = await this.repo.readRawsByWorkId(workId);
     workRoutingRead.raws.forEach((work_routing: any) => { 
       if (!work_routing.complete_fg) {
         throw createApiError(

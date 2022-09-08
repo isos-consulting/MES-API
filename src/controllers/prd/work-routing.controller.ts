@@ -209,13 +209,23 @@ class PrdWorkRoutingCtl {
 				});
 
 				//✅실적 공정순서 기준 마지막 공정 
-				const maxProcNo = workRoutingOriginService.getMaxProcNo(datas[0].work_id, tran)
+				const maxProcNo = await workRoutingOriginService.getMaxProcNo(datas[0].work_id, tran)
 
 				//✅실적 공정 작업완료 
         const workRoutingResult = await service.patch(datas, req.user?.uid as number, tran)
 
+				//✅실적 조회
+        const workRead = await workService.readRawByIds([workRoutingResult.raws[0].work_id]);
+				
+				//✅실적 조회
+				Object.keys(workRead.raws[0]).forEach((value: any) => {
+					if(!workRoutingResult.raws[0][value]){
+						workRoutingResult.raws[0][value] = workRead.raws[0][value]
+					}
+				});
+
 				let toStoreResult;
-				if (maxProcNo === datas.proc_no){
+				if (maxProcNo === workRoutingResult.raws[0].proc_no){
 					// 📌 입고 창고 수불 내역 생성(생산입고)
 					toStoreResult = await inventoryService.transactInventory(
 						workRoutingResult.raws, 'CREATE', 
