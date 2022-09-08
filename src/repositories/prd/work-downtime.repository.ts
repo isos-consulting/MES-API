@@ -404,7 +404,7 @@ class PrdWorkDowntimeRepo {
    * @param transaction Transaction
    * @returns 시간이 겹치는 데이터 개수
    */
-  getCountDuplicatedTime = async(startDate: string, endDate: string, equipId?: number, transaction?: Transaction) => {
+  getCountDuplicatedTime = async(startDate: string, endDate: string, equipId?: number, workRoutingId?: number, transaction?: Transaction) => {
     try {
       const result = await this.repo.findOne({ 
         attributes: [
@@ -412,7 +412,8 @@ class PrdWorkDowntimeRepo {
         ],
         where: { 
           [Op.and]: [
-            { equip_id: equipId },
+            equipId ? { equip_id: equipId } : {},
+            workRoutingId ? { work_routing_id : workRoutingId } : {},
             {
               [Op.or]: [
                 { start_date: { [Op.between]: [ startDate as any, endDate as any ]}},

@@ -68,7 +68,7 @@ class PrdWorkDowntimeService {
 
       for await (const data of datas) {
         // 📌 Date Duplicated Interlock
-        this.validateDuplicatedTime(data, tran);
+        await this.validateDuplicatedTime(data, tran);
 
         const tempResult = await this.repo.create([data], uid, tran); 
         result.raws = [...result.raws, ...tempResult.raws];
@@ -169,7 +169,7 @@ class PrdWorkDowntimeService {
   }
 
   private validateDuplicatedTime = async (data: IPrdWorkDowntime, tran: Transaction) => {
-    const count = await this.repo.getCountDuplicatedTime(data.start_date as string, data.end_date as string, data.equip_id as number, tran);
+    const count = await this.repo.getCountDuplicatedTime(data.start_date as string, data.end_date as string, data.equip_id as number, data.work_routing_id as number, tran);
     if (count > 0) {
       throw createApiError(
         400, 
