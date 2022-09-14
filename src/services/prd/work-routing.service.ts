@@ -216,6 +216,23 @@ class PrdWorkRoutingService {
       }
     });
   };
+
+	public validateWorkRoutingProcStatus = async (workId: number, procId: number) => {
+    const workRoutingRead = await this.repo.readRawsByWorkIdAndProcId(workId,procId);
+    workRoutingRead.raws.forEach((workRouting: any) => { 
+      if (!workRouting.complete_fg) {
+        throw createApiError(
+          400, 
+          { 
+            admin_message: `공정번호 [${workRouting.proc_no}]는 진행중인 상태 이므로 데이터 저장이 불가능합니다.`,
+            user_message: '이미 진행 중인 공정은 데이터 저장을 할 수 없습니다.'
+          }, 
+          this.stateTag, 
+          errorState.FAILED_SAVE_TO_RELATED_DATA
+        );
+      }
+    });
+  }
 }
 
 export default PrdWorkRoutingService;

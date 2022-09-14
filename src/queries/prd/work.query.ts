@@ -34,7 +34,7 @@ const readWorks = (
 		CREATE INDEX ON temp_work_routing_proc(work_id);
 
 		INSERT INTO temp_work_routing_proc
-		SELECT p_w.work_id, COALESCE(p_wr.proc_id, p_wro.proc_id) AS proc_id
+		SELECT DISTINCT p_w.work_id, COALESCE(p_wr.proc_id, p_wro.proc_id) AS proc_id
 		FROM prd_work_tb p_w 
 		JOIN std_factory_tb s_f ON s_f.factory_id = p_w.factory_id 
 		LEFT JOIN (	SELECT p_wr.work_id, p_wr.proc_id 

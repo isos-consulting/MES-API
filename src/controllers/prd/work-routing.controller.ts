@@ -41,6 +41,9 @@ class PrdWorkRoutingCtl {
       await workService.validateWorkStatus(datas.map((data: any) => data.work_id));
       // 📌 Date Diff Interlock
       datas = service.validateDateDiff(datas);
+			
+			// 📌 생산실적이 해당 공정이 진행 중인 상태일때 데이터 생성 불가
+      await service.validateWorkRoutingProcStatus(datas[0].work_id,datas[0].proc_id);
       
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => {
 				//✅실적 공정 작업시작시 complete_fg = false 로 입력, start_date 없으면 현제 날짜
