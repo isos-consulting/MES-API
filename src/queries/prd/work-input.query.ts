@@ -36,10 +36,10 @@ const readWorkInputs = (
     CREATE TEMP TABLE temp_reject_sum(work_id int, reject_qty numeric);
     CREATE INDEX ON temp_reject_sum(work_id);
     INSERT INTO temp_reject_sum
-    SELECT work_routing_id, sum(qty) AS qty
+    SELECT work_id, sum(qty) AS qty
     FROM prd_work_reject_tb
     WHERE work_id = workId
-    GROUP BY work_routing_id;
+    GROUP BY work_id;
 
     -- 📌 work_input 임시테이블 생성
     CREATE TEMP TABLE temp_work_input (

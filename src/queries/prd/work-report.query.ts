@@ -18,7 +18,7 @@ const readWorkReport = (
     (
       SELECT 
         p_wr.factory_id, p_wr.work_id, p_wr.proc_id, p_wr.equip_id, p_wr.mold_id, p_wr.mold_cavity, p_wr.start_date, p_wr.end_date, 0::numeric as qty,
-        rank() over(PARTITION BY p_wr.factory_id, p_wr.work_id ORDER BY p_wr.proc_no DESC) AS rn
+        rank() over(PARTITION BY p_wr.factory_id, p_wr.work_id ORDER BY p_wr.proc_no DESC, p_wr.end_date DESC) AS rn
       FROM prd_work_routing_tb p_wr
       JOIN prd_work_tb p_w ON p_w.work_id = p_wr.work_id 
       WHERE p_w.complete_fg = TRUE 
@@ -40,7 +40,7 @@ const readWorkReport = (
     (
       SELECT 
         p_wr.factory_id, p_wr.work_id, p_wr.proc_id, p_wr.equip_id, p_wr.mold_id, p_wr.mold_cavity, p_wr.start_date, p_wr.end_date, 0::numeric as qty,
-        rank() over(PARTITION BY p_wr.factory_id, p_wr.work_id ORDER BY p_wr.proc_no ASC) AS rn
+        rank() over(PARTITION BY p_wr.factory_id, p_wr.work_id ORDER BY p_wr.proc_no ASC, p_wr.start_date asc) AS rn
       FROM prd_work_routing_tb p_wr
       JOIN prd_work_tb p_w ON p_w.work_id = p_wr.work_id 
       WHERE p_w.complete_fg = TRUE 

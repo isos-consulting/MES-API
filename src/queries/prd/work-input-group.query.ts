@@ -8,7 +8,7 @@ const readWorkInputGroup = (
   //#region 📌 실적-자재 투입내역 임시테이블 생성
   const createInputTempTable = `
     -- 📌 마지막공정의 양품, 불량수량 가져 올 임시테이블 생성
-    CREATE TEMP TABLE temp_final_routing (work_id int, work_routing_id int, qty NUMERIC, reject_qty NUMERIC);
+    CREATE TEMP TABLE temp_final_routing (work_id int, qty NUMERIC, reject_qty NUMERIC);
     CREATE INDEX ON temp_final_routing(work_id);
     WITH complete AS
     (
@@ -29,10 +29,10 @@ const readWorkInputGroup = (
     CREATE TEMP TABLE temp_reject_sum(work_id int, reject_qty numeric);
     CREATE INDEX ON temp_reject_sum(work_id);
     INSERT INTO temp_reject_sum
-    SELECT work_routing_id, sum(qty) AS qty
+    SELECT work_id, sum(qty) AS qty
     FROM prd_work_reject_tb
     WHERE work_id = workId
-    GROUP BY work_routing_id;
+    GROUP BY work_id;
 
     -- 📌 work_input 임시테이블 생성
     CREATE TEMP TABLE temp_work_input (
