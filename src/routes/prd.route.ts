@@ -55,6 +55,7 @@ router.route('/work-routing-origins').delete(prdWorkRoutingOriginValidation.dele
 
 //#region ✅ WorkRouting (실적-공정순서)
 const workRouting = new PrdWorkRoutingCtl();
+router.route('/work-routings/cancel-complete').put(prdWorkRoutingValidation.updateCancelComplete, validationCallback, workRouting.updateCancelComplete);
 router.route('/work-routings/complete').patch(prdWorkRoutingValidation.updateComplete, validationCallback, workRouting.updateComplete);
 router.route('/work-routing/:uuid').get(prdWorkRoutingValidation.readByUuid, validationCallback, workRouting.readByUuid);
 router.route('/work-routings').get(prdWorkRoutingValidation.read, validationCallback, workRouting.read);

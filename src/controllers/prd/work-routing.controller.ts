@@ -253,7 +253,47 @@ class PrdWorkRoutingCtl {
 
       return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
     }
-  }
+  };
+
+	// 📒 Fn[updateCancelComplete] 분할 생산 실적 완료 취소
+	public updateCancelComplete = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+		try {
+			let result: ApiResult<any> = { count:0, raws: [] };
+			const service = new prdWorkRoutingService(req.tenant.uuid);
+			const workService = new prdWorkService(req.tenant.uuid);
+			const matched = matchedData(req, { locations: [ 'body' ] });
+			let datas = await service.convertFk(Object.values(matched));
+			
+			await sequelizes[req.tenant.uuid].transaction(async(tran: any) => {
+				const readRouting = (await service.readRawByUuid(datas[0].uuid)).raws
+				
+				// 📌 생산실적이 완료상태일 경우 데이터 생성 불가
+				// 📌 Work Status Interlock
+				await workService.validateWorkStatus(readRouting.map((data: any) => data.work_id));
+				// 📌 Date Diff Interlock
+				service.validateDateDiff(readRouting);
+				
+				// 📌 생산실적이 해당 공정이 진행 중인 상태일때 데이터 생성 불가
+				await service.validateWorkRoutingProcStatus(readRouting[0].work_id, readRouting[0].proc_id);
+
+				//✅분할 실적 완료 취소 시 complete_fg = false 로 입력
+				readRouting.map((value: any) => { 
+					value.complete_fg = false
+				});
+
+				result = await service.update(readRouting, req.user?.uid as number, tran)
+			});
+
+      return createApiResult(res, result, 200, '데이터 수정 성공', this.stateTag, successState.UPDATE);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
+    }
+  };
 
   //#endregion
 

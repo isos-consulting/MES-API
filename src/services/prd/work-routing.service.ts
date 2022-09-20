@@ -148,6 +148,11 @@ class PrdWorkRoutingService {
 		catch (error) { throw error; }
   };
 
+	public readRawByUuid = async (uuid: string) => {
+    try { return await this.repo.readRawByUuid(uuid); } 
+		catch (error) { throw error; }
+  };
+
   public readOngoing = async (params: any) => {
     try { return await this.repo.readOngoing(params); } 
 		catch (error) { throw error; }

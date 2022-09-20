@@ -150,6 +150,11 @@ const prdWorkRoutingValidation = {
     body('*.remark', '비고').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'remark', '비고')),
   ],
+	updateCancelComplete: [
+    body('*.uuid', '공정순서UUID')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '공정순서UUID'))
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '공정순서UUID')),
+  ],
 };
 
 export default prdWorkRoutingValidation;
