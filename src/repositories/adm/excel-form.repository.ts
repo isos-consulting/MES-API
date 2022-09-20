@@ -64,7 +64,7 @@ class AdmExcelFormRepo {
     try {
       const result = await this.repo.findAll({ 
         include: [
-          { model: this.sequelize.models.AutMenu, attributes: [], required: false },
+          { model: this.sequelize.models.AutMenu, attributes: [], required: true, where: { uuid: params.menu_uuid ? params.menu_uuid: { [Op.ne]: null } } },
           { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
