@@ -56,13 +56,13 @@ const readMultiProcByOrder = (
       t_o.order_qty::numeric(19,0) as order_qty, 
       t_o.order_state, 
       p_w.work_id, 
-      p_wr.proc_no, 
-      s_pc.uuid as proc_uuid,
-      s_pc.proc_cd,
-      s_pc.proc_nm, 
-      (COALESCE(p_wr.qty,0) + COALESCE(p_wr2.qty,0))::numeric(19,0) AS total_qty, 
-      COALESCE(p_wr.qty,0)::numeric(19,0) as qty, 
-      COALESCE(p_wr2.qty,0)::numeric(19,0) AS reject_qty
+      p_wr.proc_no,
+      p_wr.proc_uuid as proc_uuid,
+      p_wr.proc_cd,
+      p_wr.proc_nm,
+      p_wr.total_qty AS total_qty,
+      p_wr.qty as qty,
+      p_wr.reject_qty AS reject_qty
     FROM temp_order t_o
     JOIN std_workings_tb s_w on s_w.workings_id = t_o.workings_id
     JOIN std_prod_tb s_p ON s_p.prod_id = t_o.prod_id
@@ -71,11 +71,21 @@ const readMultiProcByOrder = (
     LEFT JOIN std_model_tb s_m ON s_m.model_id = s_p.model_id
     LEFT JOIN std_unit_tb s_u ON s_u.unit_id = s_p.unit_id
     JOIN prd_work_tb p_w ON p_w.order_id = t_o.order_id
-    JOIN prd_work_routing_tb p_wr ON p_wr.work_id = p_w.work_id 
-    JOIN std_proc_tb s_pc ON s_pc.proc_id = p_wr.proc_id 
-    LEFT JOIN (	SELECT work_routing_id, sum(qty) AS qty
-                FROM prd_work_reject_tb 
-                GROUP BY work_routing_id ) p_wr2 ON p_wr2.work_routing_id = p_wr.work_routing_id
+    JOIN (SELECT 
+						p_wr.work_id, 
+						p_wr.proc_no,
+						s_pc.uuid as proc_uuid,
+						s_pc.proc_cd,
+						s_pc.proc_nm,
+						(sum(COALESCE(p_wr.qty,0)) + sum(COALESCE(p_wr2.qty,0)))::numeric(19,0) AS total_qty,
+						sum(COALESCE(p_wr.qty,0))::numeric(19,0) as qty,
+						sum(COALESCE(p_wr2.qty,0))::numeric(19,0) AS reject_qty
+			FROM prd_work_routing_tb p_wr 
+			JOIN std_proc_tb s_pc ON s_pc.proc_id = p_wr.proc_id
+			LEFT JOIN ( SELECT work_routing_id, sum(qty) AS qty
+									FROM prd_work_reject_tb
+									GROUP BY work_routing_id ) p_wr2 ON p_wr2.work_routing_id = p_wr.work_routing_id
+			GROUP BY p_wr.work_id, p_wr.proc_no, s_pc.uuid , s_pc.proc_cd, s_pc.proc_nm) p_wr ON p_wr.work_id = p_w.work_id
     ORDER BY t_o.reg_date, t_o.order_id, p_wr.proc_no;
   `;
   //#endregion
