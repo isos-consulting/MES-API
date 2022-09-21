@@ -9,6 +9,7 @@ import checkExcelValidator from "../../utils/checkExcelValidator";
 import isBoolean from "../../utils/isBoolean";
 import { isDate } from "../../utils/isDateFormat";
 import StdPartnerTypeService from "./partner-type.service";
+import fkInfos from "../../types/fk-info.type";
 
 class StdPartnerService {
   tenant: string;
@@ -38,15 +39,10 @@ class StdPartnerService {
 
 	public convertFkUuidByCd = async (datas: any) => {
 		const fkUuidInfos: getFkUuidInfo[] =[
-			{
-        key: 'partnerType',
-        TRepo: StdPartnerTypeRepo,
-        cdName: 'partner_type_cd',
-        uuidName: 'partner_type_uuid',
-      },
+      fkInfos.partner_type
 		];
 
-    return await getFkUuidByCd(this.tenant, datas,fkUuidInfos );
+    return await getFkUuidByCd(this.tenant, datas, fkUuidInfos);
   }
 
   public create = async (datas: any[], uid: number, tran: Transaction) => {
@@ -82,8 +78,10 @@ class StdPartnerService {
 	public readUniqueOrFkColumn = async (excelColumn: string[]) => {
     try { 
 			const attributes = (await this.repo.readRawAttributes()).raws[0]; 
+      console.log(attributes);
 			let result = convertToUniqueOrFk(attributes);
-			result.notNull = excelColumn
+			result.notNull = excelColumn.filter((value: any) => value.column_fg);
+      result['columns'] = excelColumn;
 			return result; 
 		} 
 		catch (error) { throw error; }

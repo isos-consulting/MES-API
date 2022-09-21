@@ -1,40 +1,29 @@
+import TColumnType from "../types/column-type.type";
+import { TDateType } from "../types/date-type.type";
+import isBoolean from "./isBoolean";
+import { isDate } from "./isDateFormat";
+import isNumber from "./isNumber";
 
-
-
-const checkExcelValidator = async(checkData: any, Unique: any, TReop: any, tenant: string) => {
-	
-	console.log(Unique)
-
-	checkData.forEach((data: any) => {
-			data.error = [];
-	});
-
+const checkExcelValidator = async(checkData: any, excelFormColumns: any, repo: any, tenant: string) => {
 	//NotEmpty check
-	checkData = notEmptyCheck(checkData, Unique);
+	checkData = notEmptyCheck(checkData, excelFormColumns.notNull);
 
 	//Duplication check
-	checkData = await duplicationCheck(checkData, Unique.unique, TReop, tenant);
+	checkData = await duplicationCheck(checkData, excelFormColumns.unique, repo, tenant);
 
-	console.log(checkData)
+	checkData = typeCheck(checkData, excelFormColumns.columns);
+	
   return checkData;
 }
 
 //NotEmpty check
-function notEmptyCheck(datas:any[], unique:any) {
+function notEmptyCheck(datas:any[], notNull:any) {
 	try { 	
-		unique.notNull.forEach((value:string) => {
+		notNull.forEach((value: any) => {
 			datas.forEach((data: any) => {
-				if ( data[value] === undefined || data[value] === null ) {
-					data.error.push(`${value} 빈값입니다.`) 
-				}
-			})
-		});
-
-		unique.fk.forEach((value:string) => {
-			datas.forEach((data: any) => {
-				if ( data[value] === undefined || data[value] === null ) {
-					data.error.push(`${value} 빈값입니다.`) 
-				}
+				if ( data[value['excel_form_column_cd']] === undefined || data[value['excel_form_column_cd']] === null ) {
+					data.error.push(`${value['excel_form_column_nm']} 빈 값 입니다.`) 
+				} 
 			})
 		});
 	
@@ -73,5 +62,55 @@ async function duplicationCheck(datas:any[], unique:string[], repo:any, tenant: 
 	}
 	catch (error) { throw error; }
 };
+
+// todo create type check method
+function typeCheck(datas:any[], columns: any[]) {
+	datas.forEach((data: any) => {
+		columns.forEach((column: any) => {
+			const value = data[column.excel_form_column_cd];
+			
+			if (value !== undefined && value !== null) {
+				let checkTypeMethod: (value: any) => boolean;
+				switch (column.excel_form_type) {
+					case TColumnType.BOOLEAN:
+						checkTypeMethod = isBoolean;
+						break;
+
+					case TColumnType.DATE:
+						checkTypeMethod = (value: any) => {
+							return isDate(value, TDateType.DATE);
+						};
+						break;
+
+					case TColumnType.DATE_TIME:
+						checkTypeMethod = (value: any) => {
+							return isDate(value, TDateType.DATE_TIME);
+						};
+						break;
+
+					case TColumnType.TIME:
+						checkTypeMethod = (value: any) => {
+							return isDate(value, TDateType.TIME);
+						};
+						break;
+
+					case TColumnType.NUMBER:
+						checkTypeMethod = isNumber
+
+					default:
+						checkTypeMethod = (value: any) => {
+							return true;
+						}
+				}
+				
+				if (!checkTypeMethod(value)) {
+					data.error.push(`${column['excel_form_column_nm']} 형식에 맞지 않는 값 입니다.`)
+				}
+			}
+		});
+	});
+
+	return datas;
+}
 
 export default checkExcelValidator;

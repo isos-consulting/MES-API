@@ -208,17 +208,17 @@ class AdmExcelFormRepo {
 		return convertReadResult(result);
 	};
 
-	// 📒 Fn[readRawByRequire]: 필수 입력값
-	public readRawByRequire = async(excel_form_cd: string ) => {
+	// 📒 Fn[readRawByCd]: 필수 입력값
+	public readRawByCd = async(excel_form_cd: string ) => {
 		const result = await this.repo.findAll({ 
 			attributes: [
 				'excel_form_column_cd',
 				'excel_form_column_nm',
 				'excel_form_type',
+        'column_fg'
 			],
 			where: { [Op.and]: [
 				{ excel_form_cd: excel_form_cd  },
-				{ column_fg: true }
 			] }, 
 		});
 		return convertReadResult(result);

@@ -12,6 +12,7 @@ type getFkUuidInfo = {
   key: string,
   uuidName: string,
 	cdName: string,
+  cdColumnName: string,
   TRepo: any,
 }
 
@@ -56,7 +57,12 @@ const getFkUuidByCd = async(tenant: string, body: any, info?: getFkUuidInfo[]) =
   // 📌 req.body cd 에 매칭 되는 uuid Setting
   body = body.map((data: any) => {
     helpers.forEach((helper) => {
-      if (data[helper.info.cdName]) { data[helper.info.uuidName] = helper.map.get(data[helper.info.cdName]) }
+      if (data[helper.info.cdName]) { 
+        data[helper.info.uuidName] = helper.map.get(data[helper.info.cdName]);
+        if (!helper.map.get(data[helper.info.cdName])) {
+          data.error.push(`${helper.info.cdColumnName} 잘못된 값입니다.`) 
+        }
+      }
     })
 
     return data;

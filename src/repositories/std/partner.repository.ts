@@ -10,6 +10,7 @@ import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
 import ApiResult from '../../interfaces/common/api-result.interface';
+import getRawAttributes from '../../utils/getRawAttributes';
 
 class StdPartnerRepo {
   repo: Repository<StdPartner>;
@@ -203,7 +204,7 @@ class StdPartnerRepo {
 
 	// 📒 Fn[readRawAttributes]: 모든 Attributes info Function
   public readRawAttributes = async() => {
-		const result = this.repo.rawAttributes;
+    const result = getRawAttributes(this.repo);
     return convertReadResult(result);
   };
 

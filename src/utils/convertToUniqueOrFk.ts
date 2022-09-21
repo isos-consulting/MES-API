@@ -16,6 +16,10 @@ const convertToUniqueOrFk = (_raws: any) => {
 	if (_raws['updated_at']) {delete _raws['updated_at']}
 	if (_raws['updated_uid']) {delete _raws['updated_uid']}
 
+	// const keys = Object.keys(_raws).filter((key: string) => {
+	// 	return !(key === 'uuid' || key === 'created_at' || key === 'created_uid' || key === 'updated_at' || key === 'updated_uid')
+	// })
+
   Object.keys(_raws).forEach((key: string)=> { 
 		if (_raws[key].unique !== undefined ) {
 			result.unique.push(key)

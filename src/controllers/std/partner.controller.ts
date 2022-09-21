@@ -11,6 +11,7 @@ import ApiResult from '../../interfaces/common/api-result.interface';
 import createApiResult from '../../utils/createApiResult_new';
 import { successState } from '../../states/common.state';
 import AdmExcelFormService from '../../services/adm/excel-form.service';
+import { setExcelValidationEmptyError } from '../../utils/setExcelValidationEmptyError';
 
 class StdPartnerCtl {
   stateTag: string
@@ -97,14 +98,18 @@ class StdPartnerCtl {
       let result: ApiResult<any> = { count:0, raws: [] };
       const service = new StdPartnerService(req.tenant.uuid);
 			const excelFormService = new AdmExcelFormService(req.tenant.uuid); 
-			let datas = await service.convertFkUuidByCd(Object.values(req.body));
+
+      let datas = setExcelValidationEmptyError(Object.values(req.body));
+			datas = await service.convertFkUuidByCd(datas);
 			datas = await service.convertFk(Object.values(datas));
 
-			const excelFormColumns = await excelFormService.readRawByRequire('std_partner'); 
+			const excelFormColumns = await excelFormService.readRawByCd('std_partner'); 
 			const uniqueColumns =  await service.readUniqueOrFkColumn(excelFormColumns);
 			
-      result = await service.excelValidator(datas, uniqueColumns);
+      const raws = await service.excelValidator(datas, uniqueColumns);
       
+      result = { count: raws.length, raws }
+
       return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
     } catch (error) {
       if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
