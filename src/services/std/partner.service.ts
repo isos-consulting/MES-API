@@ -78,7 +78,6 @@ class StdPartnerService {
 	public readUniqueOrFkColumn = async (excelColumn: string[]) => {
     try { 
 			const attributes = (await this.repo.readRawAttributes()).raws[0]; 
-      console.log(attributes);
 			let result = convertToUniqueOrFk(attributes);
 			result.notNull = excelColumn.filter((value: any) => value.column_fg);
       result['columns'] = excelColumn;

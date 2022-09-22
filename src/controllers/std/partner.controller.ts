@@ -101,7 +101,6 @@ class StdPartnerCtl {
 
       let datas = setExcelValidationEmptyError(Object.values(req.body));
 			datas = await service.convertFkUuidByCd(datas);
-			datas = await service.convertFk(Object.values(datas));
 
 			const excelFormColumns = await excelFormService.readRawByCd('std_partner'); 
 			const uniqueColumns =  await service.readUniqueOrFkColumn(excelFormColumns);
