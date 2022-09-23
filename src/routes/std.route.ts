@@ -103,6 +103,8 @@ import StdWorkTypeCtl from '../controllers/std/work-type.controller';
 import stdWorkTypeValidation from '../validations/std/work-type.validation';
 import StdWorkCalendarCtl from '../controllers/std/work-calendar.controller';
 import stdWorkCalendarValidation from '../validations/std/work-calendar.validation';
+import StdExcelValidationCtl from '../controllers/std/excel-validation.controller';
+import stdExcelValidationValidation from '../validations/std/excel-validation.validation';
 
 const router = express.Router();
 
@@ -649,6 +651,11 @@ router.route('/work-calendars').post(stdWorkCalendarValidation.create, validatio
 router.route('/work-calendars').put(stdWorkCalendarValidation.update, validationCallback, workCalendar.update);
 router.route('/work-calendars').patch(stdWorkCalendarValidation.patch, validationCallback, workCalendar.patch);
 router.route('/work-calendars').delete(stdWorkCalendarValidation.delete, validationCallback, workCalendar.delete);
+//#endregion
+
+//#region ✅ work-calendar (근무 일정)
+const excelValidation = new StdExcelValidationCtl();
+router.route('/excel-validation').post(stdExcelValidationValidation.excelValidation, validationCallback, excelValidation.excelValidation);
 //#endregion
 
 export default router;
