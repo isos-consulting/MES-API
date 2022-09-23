@@ -32,8 +32,6 @@ class AdmLoginLogCtl {
       const service = new AdmLoginLogService(req.tenant.uuid);
 			const userService = new AutUserService(req.tenant.uuid);
 			
-			// const ip = req.headers['user-ip'] || req.socket.remoteAddress;
-			// const browser = req.headers['custom-browser']
 			const ip = req.headers['user-ip'] 
 			const browser = req.headers['user-browser']
 			const company = req.headers['restrict-access-to-tenants']
