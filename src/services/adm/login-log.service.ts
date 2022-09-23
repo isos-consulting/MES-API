@@ -35,7 +35,7 @@ class AdmLoginLogService {
 					return {
 						state_cd: type,
 						user_id: loginLog.id,
-						company_cd: this.tenant,
+						company_cd: loginLog.company_cd,
             user_nm: loginLog.user_nm,
 						ip_address: loginLog.ip,
 						browser: loginLog.browser,

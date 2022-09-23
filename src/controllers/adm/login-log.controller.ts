@@ -10,6 +10,7 @@ import createApiResult from '../../utils/createApiResult_new';
 import { successState } from '../../states/common.state';
 import ApiResult from '../../interfaces/common/api-result.interface';
 import AutUserService from '../../services/aut/user.service';
+import AdmCompanyOptService from '../../services/adm/company-opt.service';
 import { LOGIN_LOG_TYPE } from '../../utils/enmType';
 
 class AdmLoginLogCtl {
@@ -30,6 +31,7 @@ class AdmLoginLogCtl {
     try {
 			let result: ApiResult<any> = { count:0, raws: [] };
       const service = new AdmLoginLogService(req.tenant.uuid);
+			const companyOptService = await new AdmCompanyOptService(req.tenant.uuid);
 			const userService = new AutUserService(req.tenant.uuid);
 			
 			const ip = req.headers['user-ip'] 
@@ -37,7 +39,11 @@ class AdmLoginLogCtl {
 			const company = req.headers['restrict-access-to-tenants']
 			
 			const user = await userService.readByUuid(req.user?.uuid as string);
-			let loginLog = { ...user.raws[0], ip,	browser, company }
+
+			// 회사 코드
+			const company_cd = await companyOptService.getCompanyOptValue('LOGIN_LOG_COMPANY_CD');
+
+			let loginLog = { ...user.raws[0], company_cd, ip,	browser, company }
 			await service.loginLogCreate([loginLog], LOGIN_LOG_TYPE.LOGOUT)
 
       return createApiResult(res, result, 200, '데이터 생성 성공', this.stateTag, successState.READ);

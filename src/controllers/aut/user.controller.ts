@@ -306,16 +306,19 @@ class AutUserCtl {
   public signIn = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       const service = new AutUserService(req.tenant.uuid);
+			const companyOptService = await new AdmCompanyOptService(req.tenant.uuid);
 			const loginLogService = new AdmLoginLogService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
       const datas = Object.values(matched);
 			
 			const ip = req.headers['user-ip'] 
 			const browser = req.headers['user-browser']
-			const company = req.headers['restrict-access-to-tenants']
+
+			// 회사 코드
+			const company_cd = await companyOptService.getCompanyOptValue('LOGIN_LOG_COMPANY_CD');
 			
 			const user = await service.readById(datas[0].id) as AutUser;
-			let loginLog = { ...user, ip,	browser, company }
+			let loginLog = { ...user, ip,	browser, company_cd }
 			
       // 📌 DB에 bcrypt 단방향 암호화 방식으로 저장되어있는 Password
       const originPwd = user?.pwd;
