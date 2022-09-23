@@ -8,7 +8,7 @@
 const convertToUniqueOrFk = (_raws: any) => {
   if (!_raws) { _raws = {}; }
 
-	let result: any = { unique: [], fk: [] ,notNull: []};
+	let result: any = { unique: [], fk: [] ,notNull: [], columns: []};
 
 	if (_raws['uuid']) {delete _raws['uuid']}
 	if (_raws['created_at']) {delete _raws['created_at']}
