@@ -11,9 +11,14 @@ const prdWorkPlanMonthValidation = {
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'uuid', '월 생산 계획UUID'))
   ],
   read: [
+		query('factory_uuid', '공장UUID')
+			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'factory_uuid', '공장UUID'))	
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'factory_uuid', '공장UUID')),
     query('work_plan_month', '계획 월')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'work_plan_month', '계획 월'))
       .isISO8601().toDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'work_plan_month', '계획 월')),
+		query('order_fg', '계획불러오기').optional({ nullable: true })
+      .isBoolean().toBoolean(false).withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'order_fg', '계획불러오기')),
   ],
   create: [
     body('*.workings_uuid', '작업장UUID')

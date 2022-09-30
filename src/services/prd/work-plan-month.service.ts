@@ -2,6 +2,7 @@ import { Transaction } from "sequelize/types";
 import StdWorkingsRepo from '../../repositories/std/workings.repository';
 import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
 import StdProdRepo from "../../repositories/std/prod.repository";
+import StdFactoryRepo from "../../repositories/std/factory.repository";
 import PrdWorkPlanMonthRepo from "../../repositories/prd/work-plan-month.repository";
 import IPrdWorkPlanMonth from "../../interfaces/prd/work-plan-month.interface";
 
@@ -28,7 +29,13 @@ class PrdWorkPlanMonthService {
         TRepo: StdWorkingsRepo,
         idName: 'workings_id',
         uuidName: 'workings_uuid'
-      }
+      },
+			{
+        key: 'factory',
+        TRepo: StdFactoryRepo,
+        idName: 'factory_id',
+        uuidName: 'factory_uuid'
+      },
     ];
   }
 

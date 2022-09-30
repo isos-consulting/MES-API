@@ -1,17 +1,17 @@
+import moment from 'moment';
+
 const readWorkPlanMonths = (
   params: {
     work_plan_month?: string,
     order_fg: boolean,
     factory_uuid?: string,
-    work_plan_month_uuid?: string,
   }) => {
   let searchQuery: string = '';
-
-  if (params.work_plan_month_uuid) { searchQuery += ` AND p_wpm.uuid = '${params.work_plan_month_uuid}'`; }
-  if (params.work_plan_month) { searchQuery += ` AND p_wpm.work_plan_month = '${params.work_plan_month}'`; }  
+	
+	if (params.work_plan_month) { searchQuery += ` AND to_char(p_wpm.work_plan_month, 'YYYY-MM') = '${moment(params.work_plan_month).format('YYYY-MM')}'`; }  
   if (params.factory_uuid) { searchQuery += ` AND s_f.uuid = '${params.factory_uuid}'`; }
   if (params.order_fg) { searchQuery += ` AND ((p_wpm.work_plan_month_qty > COALESCE(p_o.qty, 0))) `; }
-
+	
   if (searchQuery.length > 0) {
     searchQuery = searchQuery.substring(4, searchQuery.length);
     searchQuery = 'WHERE' + searchQuery;
@@ -19,7 +19,7 @@ const readWorkPlanMonths = (
 
   //#region 📒 Main Query
   const query = `
-	  SELECT
+		SELECT
       p_wpm.uuid as work_plan_month_uuid,
       s_f.uuid as factory_uuid, 
       s_f.factory_cd,

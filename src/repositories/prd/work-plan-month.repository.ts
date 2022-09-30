@@ -63,8 +63,8 @@ class PrdWorkPlanMonthRepo {
   public read = async(params?: any) => {
     try {
       const result = await this.sequelize.query(readWorkPlanMonths(params));
-
-      return convertReadResult(result);
+			
+      return convertReadResult(result[0]);
     } catch (error) {
       throw error;
     }
