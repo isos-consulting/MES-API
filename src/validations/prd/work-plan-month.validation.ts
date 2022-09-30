@@ -9,7 +9,6 @@ const prdWorkPlanMonthValidation = {
     param('uuid', '월 생산 계획UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '월 생산 계획UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'uuid', '월 생산 계획UUID'))
-
   ],
   read: [
     query('work_plan_month', '계획 월')
