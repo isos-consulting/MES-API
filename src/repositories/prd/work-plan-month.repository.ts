@@ -64,7 +64,16 @@ class PrdWorkPlanMonthRepo {
     try {
       const result = await this.repo.findAll({ 
         include: [
-          { model: this.sequelize.models.StdProd, attributes: [], required: true },
+          { 
+            model: this.sequelize.models.StdProd, 
+            include: [
+              { model: this.sequelize.models.StdProdType, attributes: [], as: 'stdProdType', required: true },
+              { model: this.sequelize.models.StdItemType, attributes: [], as: 'stdItemType', required: true },
+              { model: this.sequelize.models.StdModel, attributes: [], as: 'stdModel', required: true },
+            ],
+            attributes: [], 
+            required: true
+          },
           { model: this.sequelize.models.StdWorkings, attributes: [], required: true },
           { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
@@ -74,10 +83,21 @@ class PrdWorkPlanMonthRepo {
           [ Sequelize.col('stdProd.uuid'), 'prod_uuid' ],
           [ Sequelize.col('stdProd.prod_no'), 'prod_no' ],
           [ Sequelize.col('stdProd.prod_nm'), 'prod_nm' ],
+          [ Sequelize.col('stdProd.rev'), 'rev' ],
+          [ Sequelize.col('stdProd.prod_std'), 'prod_std' ],
+          [ Sequelize.col('stdProd.stdItemType.uuid'), 'item_type_uuid' ],
+          [ Sequelize.col('stdProd.stdItemType.item_type_cd'), 'item_type_cd' ],
+          [ Sequelize.col('stdProd.stdItemType.item_type_nm'), 'item_type_nm' ],
+          [ Sequelize.col('stdProd.stdProdType.uuid'), 'prod_type_uuid' ],
+          [ Sequelize.col('stdProd.stdProdType.prod_type_cd'), 'prod_type_cd' ],
+          [ Sequelize.col('stdProd.stdProdType.prod_type_nm'), 'prod_type_nm' ],
+          [ Sequelize.col('stdProd.stdModel.uuid'), 'model_uuid' ],
+          [ Sequelize.col('stdProd.stdModel.model_cd'), 'model_cd' ],
+          [ Sequelize.col('stdProd.stdModel.model_nm'), 'model_nm' ],
           [ Sequelize.col('stdWorkings.uuid'), 'workings_uuid' ],
           [ Sequelize.col('stdWorkings.workings_cd'), 'workings_cd' ],
           [ Sequelize.col('stdWorkings.workings_nm'), 'workings_nm' ],
-          'work_plan_month',
+          [ Sequelize.col(`to_char(prdWorkPlanMonth.work_plan_month, 'YYYY-MM')`), 'work_plan_month' ],
           'work_plan_month_qty',
           'created_at',
           [ Sequelize.col('createUser.user_nm'), 'created_nm' ],
@@ -99,7 +119,16 @@ class PrdWorkPlanMonthRepo {
     try {
       const result = await this.repo.findAll({ 
         include: [
-          { model: this.sequelize.models.StdProd, attributes: [], required: true },
+          { 
+            model: this.sequelize.models.StdProd, 
+            include: [
+              { model: this.sequelize.models.StdProdType, attributes: [], as: 'stdProdType', required: true },
+              { model: this.sequelize.models.StdItemType, attributes: [], as: 'stdItemType', required: true },
+              { model: this.sequelize.models.StdModel, attributes: [], as: 'stdModel', required: true },
+            ],
+            attributes: [], 
+            required: true
+          },
           { model: this.sequelize.models.StdWorkings, attributes: [], required: true },
           { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
@@ -109,10 +138,21 @@ class PrdWorkPlanMonthRepo {
           [ Sequelize.col('stdProd.uuid'), 'prod_uuid' ],
           [ Sequelize.col('stdProd.prod_no'), 'prod_no' ],
           [ Sequelize.col('stdProd.prod_nm'), 'prod_nm' ],
+          [ Sequelize.col('stdProd.rev'), 'rev' ],
+          [ Sequelize.col('stdProd.prod_std'), 'prod_std' ],
+          [ Sequelize.col('stdProd.stdItemType.uuid'), 'item_type_uuid' ],
+          [ Sequelize.col('stdProd.stdItemType.item_type_cd'), 'item_type_cd' ],
+          [ Sequelize.col('stdProd.stdItemType.item_type_nm'), 'item_type_nm' ],
+          [ Sequelize.col('stdProd.stdProdType.uuid'), 'prod_type_uuid' ],
+          [ Sequelize.col('stdProd.stdProdType.prod_type_cd'), 'prod_type_cd' ],
+          [ Sequelize.col('stdProd.stdProdType.prod_type_nm'), 'prod_type_nm' ],
+          [ Sequelize.col('stdProd.stdModel.uuid'), 'model_uuid' ],
+          [ Sequelize.col('stdProd.stdModel.model_cd'), 'model_cd' ],
+          [ Sequelize.col('stdProd.stdModel.model_nm'), 'model_nm' ],
           [ Sequelize.col('stdWorkings.uuid'), 'workings_uuid' ],
           [ Sequelize.col('stdWorkings.workings_cd'), 'workings_cd' ],
           [ Sequelize.col('stdWorkings.workings_nm'), 'workings_nm' ],
-          'work_plan_month',
+          [ Sequelize.col(`to_char(prdWorkPlanMonth.work_plan_month, 'YYYY-MM')`), 'work_plan_month' ],
           'work_plan_month_qty',
           'created_at',
           [ Sequelize.col('createUser.user_nm'), 'created_nm' ],
