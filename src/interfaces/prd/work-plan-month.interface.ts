@@ -1,5 +1,6 @@
 export default interface IPrdWorkPlanMonth {
   work_plan_month_id?: number,
+  factory_id?: number,
   prod_id?: number,
   workings_id?: number,
   work_plan_month?: Date,

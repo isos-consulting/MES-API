@@ -1,6 +1,7 @@
 import { Sequelize, Table, Column, Model, DataType, CreatedAt, UpdatedAt, BelongsTo, Unique, ForeignKey } from 'sequelize-typescript'
 import IPrdWorkPlanMonth from '../../interfaces/prd/work-plan-month.interface';
 import AutUser from '../aut/user.model';
+import StdFactory from '../std/factory.model';
 import StdProd from '../std/prod.model';
 import StdWorkings from '../std/workings.model';
 
@@ -21,6 +22,14 @@ export default class PrdWorkPlanMonth extends Model<IPrdWorkPlanMonth> {
     allowNull: false,
   })
   work_plan_month_id: number;
+
+  @ForeignKey(() => StdFactory)
+  @Column({
+    comment: '공장ID',
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  factory_id: number;
 
   @ForeignKey(() => StdWorkings)
   @Column({
@@ -101,6 +110,9 @@ export default class PrdWorkPlanMonth extends Model<IPrdWorkPlanMonth> {
   @BelongsTo(() => AutUser, { as: 'updateUser', foreignKey: 'updated_uid', targetKey: 'uid', onDelete: 'restrict', onUpdate: 'cascade' })
   updateUser: AutUser;
 
+  @BelongsTo(() => StdFactory, { foreignKey: 'factory_id', targetKey: 'factory_id', onDelete: 'restrict', onUpdate: 'cascade' })
+  stdFactory: StdFactory;
+  
   @BelongsTo(() => StdWorkings, { foreignKey: 'workings_id', targetKey: 'workings_id', onDelete: 'restrict', onUpdate: 'cascade' })
   stdWorkings: StdWorkings;
 

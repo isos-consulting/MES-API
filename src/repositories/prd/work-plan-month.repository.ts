@@ -8,9 +8,9 @@ import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
 import ApiResult from '../../interfaces/common/api-result.interface';
-import { readWorkReport } from '../../queries/prd/work-report.query';
 import PrdWorkPlanMonth from '../../models/prd/work-plan-month.model';
 import IPrdWorkPlanMonth from '../../interfaces/prd/work-plan-month.interface';
+import { readWorkPlanMonths } from '../../queries/prd/work-plan-month.query';
 
 class PrdWorkPlanMonthRepo {
   repo: Repository<PrdWorkPlanMonth>;
@@ -35,6 +35,7 @@ class PrdWorkPlanMonthRepo {
       const promises = body.map((workPlanMonth: any) => {
         return this.repo.create(
           {
+            factory_id: workPlanMonth.factory_id,
             prod_id: workPlanMonth.prod_id, 
             workings_id: workPlanMonth.workings_id,
             work_plan_month: workPlanMonth.work_plan_month,
@@ -59,54 +60,9 @@ class PrdWorkPlanMonthRepo {
   //#region 🔵 Read Functions
   
   // 📒 Fn[read]: Default Read Function
-  // 📒 Fn[read]: Default Read Function
   public read = async(params?: any) => {
     try {
-      const result = await this.repo.findAll({ 
-        include: [
-          { 
-            model: this.sequelize.models.StdProd, 
-            include: [
-              { model: this.sequelize.models.StdProdType, attributes: [], as: 'stdProdType', required: true },
-              { model: this.sequelize.models.StdItemType, attributes: [], as: 'stdItemType', required: true },
-              { model: this.sequelize.models.StdModel, attributes: [], as: 'stdModel', required: true },
-            ],
-            attributes: [], 
-            required: true
-          },
-          { model: this.sequelize.models.StdWorkings, attributes: [], required: true },
-          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
-          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
-        ],
-        attributes: [
-          [ Sequelize.col('prdWorkPlanMonth.uuid'), 'work_plan_month_uuid' ],
-          [ Sequelize.col('stdProd.uuid'), 'prod_uuid' ],
-          [ Sequelize.col('stdProd.prod_no'), 'prod_no' ],
-          [ Sequelize.col('stdProd.prod_nm'), 'prod_nm' ],
-          [ Sequelize.col('stdProd.rev'), 'rev' ],
-          [ Sequelize.col('stdProd.prod_std'), 'prod_std' ],
-          [ Sequelize.col('stdProd.stdItemType.uuid'), 'item_type_uuid' ],
-          [ Sequelize.col('stdProd.stdItemType.item_type_cd'), 'item_type_cd' ],
-          [ Sequelize.col('stdProd.stdItemType.item_type_nm'), 'item_type_nm' ],
-          [ Sequelize.col('stdProd.stdProdType.uuid'), 'prod_type_uuid' ],
-          [ Sequelize.col('stdProd.stdProdType.prod_type_cd'), 'prod_type_cd' ],
-          [ Sequelize.col('stdProd.stdProdType.prod_type_nm'), 'prod_type_nm' ],
-          [ Sequelize.col('stdProd.stdModel.uuid'), 'model_uuid' ],
-          [ Sequelize.col('stdProd.stdModel.model_cd'), 'model_cd' ],
-          [ Sequelize.col('stdProd.stdModel.model_nm'), 'model_nm' ],
-          [ Sequelize.col('stdWorkings.uuid'), 'workings_uuid' ],
-          [ Sequelize.col('stdWorkings.workings_cd'), 'workings_cd' ],
-          [ Sequelize.col('stdWorkings.workings_nm'), 'workings_nm' ],
-          [ Sequelize.col(`to_char(prdWorkPlanMonth.work_plan_month, 'YYYY-MM')`), 'work_plan_month' ],
-          'work_plan_month_qty',
-          'created_at',
-          [ Sequelize.col('createUser.user_nm'), 'created_nm' ],
-          'updated_at',
-          [ Sequelize.col('updateUser.user_nm'), 'updated_nm' ]
-        ],
-        where: { work_plan_month: params.work_plan_month },
-        order: [ Sequelize.col('stdProd.prod_id') ]
-      });
+      const result = await this.sequelize.query(readWorkPlanMonths(params));
 
       return convertReadResult(result);
     } catch (error) {
@@ -168,16 +124,6 @@ class PrdWorkPlanMonthRepo {
     }
   };
 
-  // 📒 Fn[readReport]: Read Order Repot Function
-  public readReport = async(params?: any) => {
-    try {
-      const result = await this.sequelize.query(readWorkReport(params));
-      return convertReadResult(result[0]);
-    } catch (error) {
-      throw error;
-    }
-  };
-
   // 📒 Fn[readRawByUuid]: Id 를 포함한 Raw Data Read Function
   public readRawByUuid = async(uuid: string) => {
     const result = await this.repo.findOne({ where: { uuid } });
@@ -202,6 +148,7 @@ class PrdWorkPlanMonthRepo {
       const promises = body.map((workPlanMonth: any) => {
         return this.repo.update(
           {
+            factory_id: workPlanMonth.factory_id ?? null,
             prod_id: workPlanMonth.prod_id ?? null,
             workings_id: workPlanMonth.workings_id ?? null,
             work_plan_month: workPlanMonth.work_plan_month ?? null,
@@ -238,6 +185,7 @@ class PrdWorkPlanMonthRepo {
       const promises = body.map((workPlanMonth: any) => {
         return this.repo.update(
           {
+            factory_id: workPlanMonth.factory_id,
             prod_id: workPlanMonth.prod_id,
             workings_id: workPlanMonth.workings_id,
             work_plan_month: workPlanMonth.work_plan_month,
