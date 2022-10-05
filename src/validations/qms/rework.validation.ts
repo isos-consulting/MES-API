@@ -102,6 +102,9 @@ const matReceiveValidation = {
 		body('*.reject_uuid', '부적합항목UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'reject_uuid', '부적합항목UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'reject_uuid', '부적합항목UUID')),
+    body('*.rework_type_uuid', '재작업 유형UUID')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'rework_type_uuid', '재작업 유형UUID'))
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'rework_type_uuid', '재작업 유형UUID')),
 		body('*.qty', '부적합품판정 수량')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'qty', '부적합품판정 수량'))
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'qty', '부적합품판정 수량')),
