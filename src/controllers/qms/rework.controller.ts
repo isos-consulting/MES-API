@@ -287,7 +287,8 @@ class QmsReworkCtl {
       const datas = await service.convertFk(Object.values(matched));
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
-        	// 📌 재작업 내역 생성
+				for (let data of datas) {
+					// 📌 재작업 내역 생성
 					const rework = await service.readRawById(data.rework_id); 
 					const reworkTypeCd = await reworkTypeService.readRawById(rework.raws[0].rework_type_id);
 					let fromStoreResult: ApiResult<any> = { raws: [], count: 0 };
@@ -356,8 +357,9 @@ class QmsReworkCtl {
 						disassemble: disassembleResult.raws,
 						disassembleStore: [...detailStoreResult_incom.raws, ...detailStoreResult_return.raws],
 					});
-	
+
 					result.count += reworkResult.count + fromStoreResult.count + toStoreResult.count + disassembleResult.count + disassembleResult.count + detailStoreResult_return.count;
+				}
       });
 
       return createApiResult(res, result, 200, '데이터 삭제 성공', this.stateTag, successState.DELETE);
