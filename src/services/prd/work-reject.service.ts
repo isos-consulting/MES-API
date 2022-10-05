@@ -125,6 +125,7 @@ class PrdWorkRejectService {
           work_reject_id: workReject.work_reject_id,
           factory_id: workReject.factory_id,
           prod_id: workReject.prod_id,
+          reject_id: workReject.reject_id,
           reg_date: regDate,
           lot_no: workReject.lot_no,
           qty: workReject.qty,

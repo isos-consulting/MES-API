@@ -248,6 +248,7 @@ class PrdWorkRejectRepo {
       attributes: [
         [ Sequelize.col('prdWorkReject.work_reject_id'), 'work_reject_id' ],
         [ Sequelize.col('prdWorkReject.factory_id'), 'factory_id' ],
+        [ Sequelize.col('prdWorkReject.reject_id'), 'reject_id' ],
         [ Sequelize.col('PrdWork.prod_id'), 'prod_id' ],
         [ Sequelize.col('prdWork.lot_no'), 'lot_no' ],
         [ Sequelize.col('prdWorkReject.qty'), 'qty' ],

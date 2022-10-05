@@ -28,6 +28,7 @@ const getStoreBody = (params: {
       store_id: data[storeAlias],
       location_id: data[locationAlias],
       prod_id: data.prod_id,
+      reject_id: data.reject_id,
       lot_no: data.lot_no,
       qty: data[qtyAlias],
       partner_id: params.partner_id
