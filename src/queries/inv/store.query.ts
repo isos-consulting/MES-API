@@ -241,6 +241,9 @@ const readStocks = (
       s_r.uuid as reject_uuid,
       s_r.reject_cd,
       s_r.reject_nm,
+      s_rt.uuid as reject_type_uuid,
+      s_rt.reject_type_cd,
+      s_rt.reject_type_nm,
       t_s.lot_no,
       t_s.qty,
       s_s.uuid as store_uuid,
@@ -273,6 +276,7 @@ const readStocks = (
     LEFT JOIN std_money_unit_tb s_mu ON s_mu.money_unit_id = t_s.money_unit_id
     LEFT JOIN std_price_type_tb s_pty ON s_pty.price_type_id = t_s.price_type_id
     LEFT JOIN std_reject_tb s_r ON s_r.reject_id = t_s.reject_id
+    LEFT JOIN std_reject_type_tb s_rt ON s_rt.reject_type_id = s_r.reject_type_id
     ${searchQuery}
     ORDER BY t_s.prod_id, t_s.lot_no;
   `;
