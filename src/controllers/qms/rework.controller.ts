@@ -288,7 +288,7 @@ class QmsReworkCtl {
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
         	// 📌 재작업 내역 생성
-					const rework = await service.readRawById(datas.rework_type_id);
+					const rework = await service.readRawById(data.rework_id); 
 					const reworkTypeCd = await reworkTypeService.readRawById(rework.raws[0].rework_type_id);
 					let fromStoreResult: ApiResult<any> = { raws: [], count: 0 };
 					let toStoreResult: ApiResult<any> = { raws: [], count: 0 };
