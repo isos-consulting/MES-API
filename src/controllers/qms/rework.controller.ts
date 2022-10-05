@@ -48,31 +48,31 @@ class QmsReworkCtl {
 					case 'REWORK':
 						fromStoreResult = await inventoryService.transactInventory(
 							reworkResult.raws, 'CREATE', 
-							{ inout: 'FROM', tran_type: 'QMS_REWORK', reg_date: '', tran_id_alias: 'rework_id' },
+							{ inout: 'FROM', tran_type: 'QMS_REWORK', store_alias: 'from_store_id',tran_id_alias: 'rework_id' },
 							req.user?.uid as number, tran
 						);
 						toStoreResult = await inventoryService.transactInventory(
 							reworkResult.raws, 'CREATE', 
-							{ inout: 'TO', tran_type: 'QMS_REWORK', reg_date: '', tran_id_alias: 'rework_id' },
+							{ inout: 'TO', tran_type: 'QMS_REWORK', store_alias: 'to_store_id', tran_id_alias: 'rework_id' },
 							req.user?.uid as number, tran
 						);
 						break;
 					case 'DISPOSAL':
 						fromStoreResult = await inventoryService.transactInventory(
 							reworkResult.raws, 'CREATE', 
-							{ inout: 'FROM', tran_type: 'QMS_DISPOSAL', reg_date: '', tran_id_alias: 'rework_id' },
+							{ inout: 'FROM', tran_type: 'QMS_DISPOSAL', store_alias: 'from_store_id', tran_id_alias: 'rework_id' },
 							req.user?.uid as number, tran
 						);
 						break;
 					case 'RETURN':
 						fromStoreResult = await inventoryService.transactInventory(
 							reworkResult.raws, 'CREATE', 
-							{ inout: 'FROM', tran_type: 'QMS_RETURN', reg_date: '', tran_id_alias: 'rework_id' },
+							{ inout: 'FROM', tran_type: 'QMS_RETURN', store_alias: 'from_store_id', tran_id_alias: 'rework_id' },
 							req.user?.uid as number, tran
 						);
 						toStoreResult = await inventoryService.transactInventory(
 							reworkResult.raws, 'CREATE', 
-							{ inout: 'TO', tran_type: 'QMS_RETURN', reg_date: '', tran_id_alias: 'rework_id' },
+							{ inout: 'TO', tran_type: 'QMS_RETURN', store_alias: 'to_store_id', tran_id_alias: 'rework_id' },
 							req.user?.uid as number, tran
 						);
 						break;
