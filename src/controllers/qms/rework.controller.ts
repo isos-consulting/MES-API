@@ -147,7 +147,7 @@ class QmsReworkCtl {
 				// 📌 창고 수불
 				const storeResult = await inventoryService.transactInventory(
 					headerResult.raws, 'CREATE', 
-					{ inout: 'FROM', tran_type: 'QMS_DISASSEMBLE', reg_date: '', tran_id_alias: 'rework_id' },
+					{ inout: 'FROM', tran_type: 'QMS_DISASSEMBLE', tran_id_alias: 'rework_id' },
 					req.user?.uid as number, tran
 				);
 
