@@ -117,7 +117,7 @@ class QmsReworkCtl {
 			const reworkTypeService = new AdmReworkTypeService(req.tenant.uuid);
 			const inventoryService = new InvStoreService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
-      const data = {
+			const data = {
         header: (await service.convertFk(matched.header))[0],
         details: await reworkDisassembleService.convertFk(matched.details),
       }
@@ -155,17 +155,17 @@ class QmsReworkCtl {
 				const detailResult = await reworkDisassembleService.create(data.details, req.user?.uid as number, tran);
 				
 				// 📌 분해 후 입고 창고 수불 내역 생성
-				const detailResult_incom = detailResult.raws.filter((raws: any) => raws.income_qyt > 0)
-				const detailResult_return = detailResult.raws.filter((raws: any) => raws.return_qty > 0)
+				const detailResultIncome = detailResult.raws.filter((raws: any) => raws.income_qty > 0)
+				const detailResultResult = detailResult.raws.filter((raws: any) => raws.return_qty > 0)
 
-				const detailStoreResult_incom = await inventoryService.transactInventory(
-					detailResult_incom, 'CREATE', 
-					{ inout: 'TO', tran_type: 'QMS_DISASSEMBLE_INCOME', reg_date: regDate, tran_id_alias: 'rework_disassemble_id' },
+				const detailStoreResultIncome = await inventoryService.transactInventory(
+					detailResultIncome, 'CREATE', 
+					{ inout: 'TO', tran_type: 'QMS_DISASSEMBLE_INCOME', qty_alias: 'income_qty', store_alias: 'income_store_id', reg_date: regDate, tran_id_alias: 'rework_disassemble_id' },
 					req.user?.uid as number, tran
 				);
-				const detailStoreResult_return = await inventoryService.transactInventory(
-					detailResult_return, 'CREATE', 
-					{ inout: 'TO', tran_type: 'QMS_DISASSEMBLE_RETURN', reg_date: regDate, tran_id_alias: 'rework_disassemble_id' },
+				const detailStoreResultReturn = await inventoryService.transactInventory(
+					detailResultResult, 'CREATE', 
+					{ inout: 'TO', tran_type: 'QMS_DISASSEMBLE_RETURN', qty_alias: 'return_qty', store_alias: 'return_store_id', reg_date: regDate, tran_id_alias: 'rework_disassemble_id' },
 					req.user?.uid as number, tran
 				);
 
@@ -175,10 +175,10 @@ class QmsReworkCtl {
 						details: detailResult.raws,
 					},
 					store: storeResult.raws,
-					disassembleStore: [...detailStoreResult_incom.raws, ...detailStoreResult_return.raws]
+					disassembleStore: [...detailStoreResultIncome.raws, ...detailStoreResultReturn.raws]
 				});
 
-				result.count += headerResult.count + detailResult.count + storeResult.count + detailStoreResult_incom.count + detailStoreResult_return.count;
+				result.count += headerResult.count + detailResult.count + storeResult.count + detailStoreResultIncome.count + detailStoreResultReturn.count;
       });
 
       return createApiResult(res, result, 201, '데이터 생성 성공', this.stateTag , successState.CREATE);
