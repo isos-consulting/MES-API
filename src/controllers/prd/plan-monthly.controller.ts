@@ -9,13 +9,13 @@ import config from '../../configs/config';
 import { matchedData } from 'express-validator';
 import { sequelizes } from '../../utils/getSequelize';
 import { successState } from '../../states/common.state';
-import PrdWorkPlanMonthService from '../../services/prd/work-plan-month.service';
+import PrdPlanMonthlyService from '../../services/prd/plan-monthly.service';
 
-class PrdWorkPlanMonthCtl {
+class PrdPlanMonthlyCtl {
   stateTag: string
   //#region ✅ Constructor
   constructor() {
-    this.stateTag = 'prdWorkPlanMonth';
+    this.stateTag = 'prdPlanMonthly';
   };
   //#endregion
 
@@ -27,7 +27,7 @@ class PrdWorkPlanMonthCtl {
   public create = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       let result: ApiResult<any> = { count:0, raws: [] };
-      const service = new PrdWorkPlanMonthService(req.tenant.uuid);
+      const service = new PrdPlanMonthlyService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
       let datas = await service.convertFk(Object.values(matched));
       
@@ -56,7 +56,7 @@ class PrdWorkPlanMonthCtl {
   public read = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       let result: ApiResult<any> = { count:0, raws: [] };
-      const service = new PrdWorkPlanMonthService(req.tenant.uuid);
+      const service = new PrdPlanMonthlyService(req.tenant.uuid);
       const params = matchedData(req, { locations: [ 'query', 'params' ] });
 
       result = await service.read(params);
@@ -76,7 +76,7 @@ class PrdWorkPlanMonthCtl {
   public readByUuid = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       let result: ApiResult<any> = { count:0, raws: [] };
-      const service = new PrdWorkPlanMonthService(req.tenant.uuid);
+      const service = new PrdPlanMonthlyService(req.tenant.uuid);
 
       result = await service.readByUuid(req.params.uuid);
 
@@ -99,7 +99,7 @@ class PrdWorkPlanMonthCtl {
   public update = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       let result: ApiResult<any> = { count: 0, raws: [] };
-      const service = new PrdWorkPlanMonthService(req.tenant.uuid);
+      const service = new PrdPlanMonthlyService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
       let datas = await service.convertFk(Object.values(matched));
 
@@ -126,7 +126,7 @@ class PrdWorkPlanMonthCtl {
   public patch = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       let result: ApiResult<any> = { count:0, raws: [] };
-      const service = new PrdWorkPlanMonthService(req.tenant.uuid);
+      const service = new PrdPlanMonthlyService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
       let datas = await service.convertFk(Object.values(matched));
 
@@ -153,7 +153,7 @@ class PrdWorkPlanMonthCtl {
   public delete = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {
       let result: ApiResult<any> = { count:0, raws: [] };
-      const service = new PrdWorkPlanMonthService(req.tenant.uuid);
+      const service = new PrdPlanMonthlyService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
       let datas = Object.values(matched);
 
@@ -177,4 +177,4 @@ class PrdWorkPlanMonthCtl {
   //#endregion
 }
 
-export default PrdWorkPlanMonthCtl;
+export default PrdPlanMonthlyCtl;

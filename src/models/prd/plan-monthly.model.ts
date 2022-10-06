@@ -1,27 +1,27 @@
 import { Sequelize, Table, Column, Model, DataType, CreatedAt, UpdatedAt, BelongsTo, Unique, ForeignKey } from 'sequelize-typescript'
-import IPrdWorkPlanMonth from '../../interfaces/prd/work-plan-month.interface';
+import IPrdPlanMonthly from '../../interfaces/prd/plan-monthly.interface';
 import AutUser from '../aut/user.model';
 import StdFactory from '../std/factory.model';
 import StdProd from '../std/prod.model';
 import StdWorkings from '../std/workings.model';
 
 @Table({
-  tableName: 'PRD_WORK_PLAN_MONTH_TB',
-  modelName: 'PrdWorkPlanMonth',
+  tableName: 'PRD_PLAN_MONTHLY_TB',
+  modelName: 'PrdPlanMonthly',
   comment: '월별 생산계획 테이블',
   timestamps: true,
   underscored: true,
 })
-export default class PrdWorkPlanMonth extends Model<IPrdWorkPlanMonth> {
+export default class PrdPlanMonthly extends Model<IPrdPlanMonthly> {
   @Column({
-    comment: '월별생산계획ID',
+    comment: '월 생산계획ID',
     primaryKey: true,
     autoIncrement: true,
     autoIncrementIdentity: true,
     type: DataType.INTEGER,
     allowNull: false,
   })
-  work_plan_month_id: number;
+  plan_monthly_id: number;
 
   @ForeignKey(() => StdFactory)
   @Column({
@@ -48,19 +48,19 @@ export default class PrdWorkPlanMonth extends Model<IPrdWorkPlanMonth> {
   prod_id: number;
 
   @Column({
-    comment: '월별 계획 수량',
+    comment: '월 계획 수량',
     type: DataType.DECIMAL(19, 6),
     allowNull: false,
     defaultValue: 0,
   })
-  work_plan_month_qty: number;
+  plan_monthly_qty: number;
 
   @Column({
     comment: '계획 월',
     type: DataType.DATE,
     allowNull: false,
   })
-  work_plan_month: Date;
+  plan_month: Date;
 
   @CreatedAt
   @Column({
@@ -94,7 +94,7 @@ export default class PrdWorkPlanMonth extends Model<IPrdWorkPlanMonth> {
   })
   updated_uid: number;
 
-  @Unique('prd_work_tb_uuid_un')
+  @Unique('prd_plan_monthly_uuid_un')
   @Column({
     comment: '실적UUID',
     type: DataType.UUID,

@@ -8,7 +8,7 @@ import StdProdRepo from '../../repositories/std/prod.repository';
 import StdShiftRepo from '../../repositories/std/shift.repository';
 import StdWorkerGroupRepo from '../../repositories/std/worker-group.repository';
 import StdWorkingsRepo from '../../repositories/std/workings.repository';
-import PrdWorkPlanMonthRepo from '../../repositories/prd/work-plan-month.repository';
+// import PrdWorkPlanMonthRepo from '../../repositories/prd/work-plan-month.repository';
 import { errorState } from "../../states/common.state";
 import createApiError from "../../utils/createApiError";
 import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
@@ -75,13 +75,13 @@ class PrdOrderService {
         idAlias: 'sal_order_detail_id',
         idName: 'order_detail_id',
         uuidName: 'sal_order_detail_uuid'
-      },
-			{
-        key: 'prdWorkPlanMonth',
-        TRepo: PrdWorkPlanMonthRepo,
-        idName: 'work_plan_month_id',
-        uuidName: 'work_plan_month_uuid'
       }
+			// {
+      //   key: 'prdWorkPlanMonth',
+      //   TRepo: PrdWorkPlanMonthRepo,
+      //   idName: 'work_plan_month_id',
+      //   uuidName: 'work_plan_month_uuid'
+      // }
     ];
   }
 

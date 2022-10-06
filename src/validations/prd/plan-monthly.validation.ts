@@ -2,9 +2,9 @@ import { param, query, body } from 'express-validator';
 import { errorState } from '../../states/common.state';
 import createValidationError from '../../utils/createValidationError';
 
-const stateTag = 'prdWork';
+const stateTag = 'prdPlanMonthly';
 
-const prdWorkPlanMonthValidation = {    
+const prdPlanMonthlyValidation = {    
   readByUuid: [
     param('uuid', '월 생산 계획UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '월 생산 계획UUID'))
@@ -14,11 +14,11 @@ const prdWorkPlanMonthValidation = {
 		query('factory_uuid', '공장UUID')
 			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'factory_uuid', '공장UUID'))	
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'factory_uuid', '공장UUID')),
-    query('work_plan_month', '계획 월')
-      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'work_plan_month', '계획 월'))
-      .isISO8601().toDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'work_plan_month', '계획 월')),
-		query('order_fg', '계획불러오기').optional({ nullable: true })
-      .isBoolean().toBoolean(false).withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'order_fg', '계획불러오기')),
+    query('plan_month', '계획 월')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'plan_month', '계획 월'))
+      .isISO8601().toDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'plan_month', '계획 월')),
+		query('wait_task_fg', '잔여지시 불러오기').optional({ nullable: true })
+      .isBoolean().toBoolean(false).withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'wait_task_fg', '잔여지시 불러오기')),
   ],
   create: [
     body('*.workings_uuid', '작업장UUID')
@@ -27,12 +27,12 @@ const prdWorkPlanMonthValidation = {
     body('*.prod_uuid', '품목UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'prod_uuid', '품목UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'prod_uuid', '품목UUID')), 
-    body('*.work_plan_month', '계획 월')
-      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'work_plan_month', '계획 월'))
-      .isISO8601().toDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'work_plan_month', '계획 월')),
-    body('*.work_plan_month_qty', '월 계획 수량')
-      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'work_plan_month_qty', '월 계획 수량'))
-      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'work_plan_month_qty', '월 계획 수량')),
+    body('*.plan_month', '계획 월')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'plan_month', '계획 월'))
+      .isISO8601().toDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'plan_month', '계획 월')),
+    body('*.plan_monthly_qty', '월 계획 수량')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'plan_monthly_qty', '월 계획 수량'))
+      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'plan_monthly_qty', '월 계획 수량')),
   ],
   update: [
     body('*.uuid', '월생산계획UUID')
@@ -44,12 +44,12 @@ const prdWorkPlanMonthValidation = {
     body('*.prod_uuid', '품목UUID')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'prod_uuid', '품목UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'prod_uuid', '품목UUID')), 
-    body('*.work_plan_month', '계획 월')
-      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'work_plan_month', '계획 월'))
-      .isISO8601().toDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'work_plan_month', '계획 월')),
-    body('*.work_plan_month_qty', '월 계획 수량')
-      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'work_plan_month_qty', '월 계획 수량'))
-      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'work_plan_month_qty', '월 계획 수량')),
+    body('*.plan_month', '계획 월')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'plan_month', '계획 월'))
+      .isISO8601().toDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'plan_month', '계획 월')),
+    body('*.plan_monthly_qty', '월 계획 수량')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'plan_monthly_qty', '월 계획 수량'))
+      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'plan_monthly_qty', '월 계획 수량')),
   ],
   patch: [
     body('*.uuid', '월생산계획UUID')
@@ -61,12 +61,12 @@ const prdWorkPlanMonthValidation = {
     body('*.prod_uuid', '품목UUID').optional({ nullable: true })
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'prod_uuid', '품목UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'prod_uuid', '품목UUID')), 
-    body('*.work_plan_month', '계획 월').optional({ nullable: true })
-      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'work_plan_month', '계획 월'))
-      .isISO8601().toDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'work_plan_month', '계획 월')),
-    body('*.work_plan_month_qty', '월 계획 수량').optional({ nullable: true })
-      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'work_plan_month_qty', '월 계획 수량'))
-      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'work_plan_month_qty', '월 계획 수량')),
+    body('*.plan_month', '계획 월').optional({ nullable: true })
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'plan_month', '계획 월'))
+      .isISO8601().toDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'plan_month', '계획 월')),
+    body('*.plan_monthly_qty', '월 계획 수량').optional({ nullable: true })
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'plan_monthly_qty', '월 계획 수량'))
+      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'plan_monthly_qty', '월 계획 수량')),
   ],
   delete: [
     body('*.uuid', '월생산계획UUID')
@@ -75,4 +75,4 @@ const prdWorkPlanMonthValidation = {
   ]
 };
 
-export default prdWorkPlanMonthValidation;
+export default prdPlanMonthlyValidation;
