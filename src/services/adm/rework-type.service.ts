@@ -32,6 +32,11 @@ class AdmReworkTypeService {
     catch (error) { throw error; }
   };
 
+  public readRawByCd = async (rework_type_cd: string) => {
+    try { return await this.repo.readRawByUnique({ rework_type_cd }); } 
+    catch (error) { throw error; }
+  };
+
   public update = async (datas: any[], uid: number, tran: Transaction) => {
     try { return await this.repo.update(datas, uid, tran); } 
     catch (error) { throw error; }

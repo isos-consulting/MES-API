@@ -114,12 +114,17 @@ class QmsReworkCtl {
       let result: ApiResult<any> = { count:0, raws: [] };
       const service = new QmsReworkService(req.tenant.uuid);
 			const reworkDisassembleService = new QmsReworkDisassembleService(req.tenant.uuid);
+			const reworkTypeService = new AdmReworkTypeService(req.tenant.uuid);
 			const inventoryService = new InvStoreService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
       const data = {
         header: (await service.convertFk(matched.header))[0],
         details: await reworkDisassembleService.convertFk(matched.details),
       }
+
+			const reworkTypeId = await reworkTypeService.readRawByCd('DISASSEMBLE');
+			data.header['rework_type_id'] = reworkTypeId.raws[0]['rework_type_id'];
+			
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
 				let reworkId: number;
 				let regDate: string;
