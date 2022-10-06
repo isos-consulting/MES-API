@@ -40,44 +40,54 @@ class QmsReworkCtl {
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
 				// 📌 재작업 내역 생성
         const reworkResult = await service.create(datas, req.user?.uid as number, tran)
-				const reworkTypeCd = await reworkTypeService.readRawById(reworkResult.raws[0].rework_type_id);
 				let fromStoreResult: ApiResult<any> = { raws: [], count: 0 };
         let toStoreResult: ApiResult<any> = { raws: [], count: 0 };
 
-				switch (reworkTypeCd.raws[0].rework_type_cd) {
-					case 'REWORK':
-						fromStoreResult = await inventoryService.transactInventory(
-							reworkResult.raws, 'CREATE', 
-							{ inout: 'FROM', tran_type: 'QMS_REWORK', store_alias: 'from_store_id',tran_id_alias: 'rework_id' },
-							req.user?.uid as number, tran
-						);
-						toStoreResult = await inventoryService.transactInventory(
-							reworkResult.raws, 'CREATE', 
-							{ inout: 'TO', tran_type: 'QMS_REWORK', store_alias: 'to_store_id', tran_id_alias: 'rework_id' },
-							req.user?.uid as number, tran
-						);
-						break;
-					case 'DISPOSAL':
-						fromStoreResult = await inventoryService.transactInventory(
-							reworkResult.raws, 'CREATE', 
-							{ inout: 'FROM', tran_type: 'QMS_DISPOSAL', store_alias: 'from_store_id', tran_id_alias: 'rework_id' },
-							req.user?.uid as number, tran
-						);
-						break;
-					case 'RETURN':
-						fromStoreResult = await inventoryService.transactInventory(
-							reworkResult.raws, 'CREATE', 
-							{ inout: 'FROM', tran_type: 'QMS_RETURN', store_alias: 'from_store_id', tran_id_alias: 'rework_id' },
-							req.user?.uid as number, tran
-						);
-						toStoreResult = await inventoryService.transactInventory(
-							reworkResult.raws, 'CREATE', 
-							{ inout: 'TO', tran_type: 'QMS_RETURN', store_alias: 'to_store_id', tran_id_alias: 'rework_id' },
-							req.user?.uid as number, tran
-						);
-						break;
-				};
+				for (let rework of reworkResult.raws) {
+					let tempFromStoreResult: ApiResult<any> = { raws: [], count: 0 };
+					let tempToStoreResult: ApiResult<any> = { raws: [], count: 0 };
+					
+					const reworkTypeCd = await reworkTypeService.readRawById(rework.rework_type_id);
+					switch (reworkTypeCd.raws[0].rework_type_cd) {
+						case 'REWORK':
+							tempFromStoreResult = await inventoryService.transactInventory(
+								[ rework ], 'CREATE', 
+								{ inout: 'FROM', tran_type: 'QMS_REWORK', store_alias: 'from_store_id',tran_id_alias: 'rework_id' },
+								req.user?.uid as number, tran
+							);
+							tempToStoreResult = await inventoryService.transactInventory(
+								[ rework ], 'CREATE', 
+								{ inout: 'TO', tran_type: 'QMS_REWORK', store_alias: 'to_store_id', tran_id_alias: 'rework_id' },
+								req.user?.uid as number, tran
+							);
+							break;
+						case 'DISPOSAL':
+							tempFromStoreResult = await inventoryService.transactInventory(
+								[ rework ], 'CREATE', 
+								{ inout: 'FROM', tran_type: 'QMS_DISPOSAL', store_alias: 'from_store_id', tran_id_alias: 'rework_id' },
+								req.user?.uid as number, tran
+							);
+							break;
+						case 'RETURN':
+							tempFromStoreResult = await inventoryService.transactInventory(
+								[ rework ], 'CREATE', 
+								{ inout: 'FROM', tran_type: 'QMS_RETURN', store_alias: 'from_store_id', tran_id_alias: 'rework_id' },
+								req.user?.uid as number, tran
+							);
+							tempToStoreResult = await inventoryService.transactInventory(
+								[ rework ], 'CREATE', 
+								{ inout: 'TO', tran_type: 'QMS_RETURN', store_alias: 'to_store_id', tran_id_alias: 'rework_id' },
+								req.user?.uid as number, tran
+							);
+							break;
+					};
+					fromStoreResult.raws.push(tempFromStoreResult.raws);
+					toStoreResult.raws.push(tempToStoreResult.raws);
 
+					fromStoreResult.count += tempFromStoreResult.count;
+					toStoreResult.count += tempToStoreResult.count;
+				}
+				
 				result.raws.push({
 					rework: reworkResult.raws,
 					fromStore: fromStoreResult.raws,
