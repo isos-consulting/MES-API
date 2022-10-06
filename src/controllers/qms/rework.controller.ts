@@ -81,8 +81,8 @@ class QmsReworkCtl {
 							);
 							break;
 					};
-					fromStoreResult.raws.push(tempFromStoreResult.raws);
-					toStoreResult.raws.push(tempToStoreResult.raws);
+					fromStoreResult.raws = [ ...fromStoreResult.raws, ...tempFromStoreResult.raws ];
+					toStoreResult.raws = [ ...toStoreResult.raws, ...tempToStoreResult.raws ];
 
 					fromStoreResult.count += tempFromStoreResult.count;
 					toStoreResult.count += tempToStoreResult.count;
@@ -302,79 +302,98 @@ class QmsReworkCtl {
       const datas = await service.convertFk(Object.values(matched));
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
+				let reworkIds: string[] = [];
+				let fromStoreResult: ApiResult<any> = { raws: [], count: 0 };
+				let toStoreResult: ApiResult<any> = { raws: [], count: 0 };
+
 				for (let data of datas) {
-					// 📌 재작업 내역 생성
+					let tempFromStoreResult: ApiResult<any> = { raws: [], count: 0 };
+					let tempToStoreResult: ApiResult<any> = { raws: [], count: 0 };
+
+					// 📌 재작업 내역 조회
 					const rework = await service.readRawById(data.rework_id); 
 					const reworkTypeCd = await reworkTypeService.readRawById(rework.raws[0].rework_type_id);
-					let fromStoreResult: ApiResult<any> = { raws: [], count: 0 };
-					let toStoreResult: ApiResult<any> = { raws: [], count: 0 };
-					let reworkIds: string[] = [];
-
+					
 					switch (reworkTypeCd.raws[0].rework_type_cd) {
 						case 'REWORK':
-							fromStoreResult = await inventoryService.transactInventory(
+							tempFromStoreResult = await inventoryService.transactInventory(
 								rework.raws, 'DELETE', 
 								{ inout: 'FROM', tran_type: 'QMS_REWORK', reg_date: '', tran_id_alias: 'rework_id' },
 								req.user?.uid as number, tran
 							);
-							toStoreResult = await inventoryService.transactInventory(
+							tempToStoreResult = await inventoryService.transactInventory(
 								rework.raws, 'DELETE', 
 								{ inout: 'TO', tran_type: 'QMS_REWORK', reg_date: '', tran_id_alias: 'rework_id' },
 								req.user?.uid as number, tran
 							);
 							break;
 						case 'DISPOSAL':
-							fromStoreResult = await inventoryService.transactInventory(
+							tempFromStoreResult = await inventoryService.transactInventory(
 								rework.raws, 'DELETE', 
 								{ inout: 'FROM', tran_type: 'QMS_DISPOSAL', reg_date: '', tran_id_alias: 'rework_id' },
 								req.user?.uid as number, tran
 							);
 							break;
 						case 'RETURN':
-							fromStoreResult = await inventoryService.transactInventory(
+							tempFromStoreResult = await inventoryService.transactInventory(
 								rework.raws, 'DELETE', 
 								{ inout: 'FROM', tran_type: 'QMS_RETURN', reg_date: '', tran_id_alias: 'rework_id' },
 								req.user?.uid as number, tran
 							);
-							toStoreResult = await inventoryService.transactInventory(
+							tempToStoreResult = await inventoryService.transactInventory(
 								rework.raws, 'DELETE', 
 								{ inout: 'TO', tran_type: 'QMS_RETURN', reg_date: '', tran_id_alias: 'rework_id' },
 								req.user?.uid as number, tran
 							);
 							break;
+						case 'DISASSEMBLE':
+							// 📌 창고 수불
+							tempFromStoreResult = await inventoryService.transactInventory(
+								rework.raws, 'DELETE', 
+								{ inout: 'FROM', tran_type: 'QMS_DISASSEMBLE', tran_id_alias: 'rework_id' },
+								req.user?.uid as number, tran
+							);
+							reworkIds.push(data.rework_id);
+							break;
 					};
 
-					const disassembleRaws = await reworkDisassembleService.readRawsByReworkIds(reworkIds);
-					// 📌 분해 후 입고 창고 수불 내역 생성
-					const detailResult_incom = disassembleRaws.raws.filter((raws: any) => raws.income_qyt > 0)
-					const detailResult_return = disassembleRaws.raws.filter((raws: any) => raws.return_qty > 0)
-
-					const detailStoreResult_incom = await inventoryService.transactInventory(
-						detailResult_incom, 'DELETE', 
-						{ inout: 'TO', tran_type: 'QMS_DISASSEMBLE_INCOME', reg_date: '', tran_id_alias: 'rework_disassemble_id' },
-						req.user?.uid as number, tran
-					);
-					const detailStoreResult_return = await inventoryService.transactInventory(
-						detailResult_return, 'DELETE', 
-						{ inout: 'TO', tran_type: 'QMS_DISASSEMBLE_RETURN', reg_date: '', tran_id_alias: 'rework_disassemble_id' },
-						req.user?.uid as number, tran
-					);
-
-					const disassembleResult = await reworkDisassembleService.delete(disassembleRaws.raws, req.user?.uid as number, tran);
-
-					// 📌 재작업 내역 삭제
-					const reworkResult = await service.delete(datas, req.user?.uid as number, tran);
-
-					result.raws.push({
-						rework: reworkResult.raws,
-						fromStore: fromStoreResult.raws,
-						toStore: toStoreResult.raws,
-						disassemble: disassembleResult.raws,
-						disassembleStore: [...detailStoreResult_incom.raws, ...detailStoreResult_return.raws],
-					});
-
-					result.count += reworkResult.count + fromStoreResult.count + toStoreResult.count + disassembleResult.count + disassembleResult.count + detailStoreResult_return.count;
+					fromStoreResult.raws = [ ...fromStoreResult.raws, ...tempFromStoreResult.raws ];
+					toStoreResult.raws = [ ...toStoreResult.raws, ...tempToStoreResult.raws ];
+					
+					fromStoreResult.count += tempFromStoreResult.count;
+					toStoreResult.count += tempToStoreResult.count;
 				}
+
+				const disassembleRaws = await reworkDisassembleService.readRawsByReworkIds(reworkIds);
+				// 📌 분해 후 입고 창고 수불 내역 생성
+				const detailResultIncome = disassembleRaws.raws.filter((raws: any) => raws.income_qty > 0)
+				const detailResultReturn = disassembleRaws.raws.filter((raws: any) => raws.return_qty > 0)
+
+				const detailStoreResultIncome = await inventoryService.transactInventory(
+					detailResultIncome, 'DELETE', 
+					{ inout: 'TO', tran_type: 'QMS_DISASSEMBLE_INCOME', reg_date: '', tran_id_alias: 'rework_disassemble_id' },
+					req.user?.uid as number, tran
+				);
+				const detailStoreResultReturn = await inventoryService.transactInventory(
+					detailResultReturn, 'DELETE', 
+					{ inout: 'TO', tran_type: 'QMS_DISASSEMBLE_RETURN', reg_date: '', tran_id_alias: 'rework_disassemble_id' },
+					req.user?.uid as number, tran
+				);
+
+				const disassembleResult = await reworkDisassembleService.delete(disassembleRaws.raws, req.user?.uid as number, tran);
+
+				// 📌 재작업 내역 삭제
+				const reworkResult = await service.delete(datas, req.user?.uid as number, tran);
+
+				result.raws.push({
+					rework: reworkResult.raws,
+					fromStore: fromStoreResult.raws,
+					toStore: toStoreResult.raws,
+					disassemble: disassembleResult.raws,
+					disassembleStore: [...detailStoreResultIncome.raws, ...detailStoreResultReturn.raws],
+				});
+
+				result.count += reworkResult.count + fromStoreResult.count + toStoreResult.count + disassembleResult.count + detailStoreResultIncome.count + detailStoreResultReturn.count;
       });
 
       return createApiResult(res, result, 200, '데이터 삭제 성공', this.stateTag, successState.DELETE);
