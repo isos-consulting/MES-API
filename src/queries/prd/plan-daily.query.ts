@@ -21,6 +21,7 @@ const readPlanDaily = (
   const query = `
 		SELECT
       p_pdt.uuid as plan_daily_uuid,
+			p_pmt.uuid as plan_monthly_uuid,
       s_f.uuid as factory_uuid, 
       s_f.factory_cd,
       s_f.factory_nm,
@@ -57,6 +58,7 @@ const readPlanDaily = (
     LEFT JOIN std_model_tb s_m ON s_m.model_id = s_p.model_id 
     LEFT JOIN aut_user_tb a_uc ON a_uc.uid = p_pdt.created_uid
     LEFT JOIN aut_user_tb a_uu ON a_uu.uid = p_pdt.updated_uid
+		LEFT JOIN prd_plan_monthly_tb p_pmt ON p_pmt.plan_monthly_id = p_pdt.plan_monthly_id
     LEFT JOIN (
       SELECT p_ot.plan_daily_id, SUM(p_ot.qty) as qty
       FROM prd_order_tb p_ot

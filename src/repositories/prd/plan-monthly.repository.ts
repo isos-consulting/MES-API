@@ -136,6 +136,12 @@ class PrdPlanMonthlyRepo {
     return convertReadResult(result);
   };
 
+	// 📒 Fn[readRawsByUuids]: Id 를 포함한 Raw Datas Read Function
+  public readRawsByUuids = async(uuids: string[]) => {
+    const result = await this.repo.findAll({ where: { uuid: { [Op.in]: uuids } } });
+    return convertReadResult(result);
+  };
+
   //#endregion
 
   //#region 🟡 Update Functions
