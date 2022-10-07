@@ -6,9 +6,9 @@ const stateTag = 'prdPlanDaily';
 
 const prdPlanDailyValidation = {    
   readByUuid: [
-    param('uuid', '월 생산 계획UUID')
-      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '월 생산 계획UUID'))
-      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'uuid', '월 생산 계획UUID'))
+    param('uuid', '일 생산 계획UUID')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '일 생산 계획UUID'))
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'uuid', '일 생산 계획UUID'))
   ],
   read: [
 		query('factory_uuid', '공장UUID')
@@ -33,7 +33,7 @@ const prdPlanDailyValidation = {
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'prod_uuid', '품목UUID'))
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'prod_uuid', '품목UUID')), 
     body('*.plan_day', '계획 일')
-      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'plan_day', '계획 일'))
+		.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'plan_day', '계획 일'))
       .isISO8601().toDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'plan_day', '계획 일')),
     body('*.plan_daily_qty', '일 계획 수량')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'plan_daily_qty', '일 계획 수량'))
@@ -62,9 +62,9 @@ const prdPlanDailyValidation = {
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'plan_daily_qty', '일 계획 수량')),
   ],
   patch: [
-    body('*.uuid', '월생산계획UUID')
-      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '월생산계획UUID'))
-      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '월생산계획UUID')),
+    body('*.uuid', '일생산계획UUID')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '일생산계획UUID'))
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '일생산계획UUID')),
 		body('*.plan_monthly_uuid', '월 생산계획 UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'plan_monthly_uuid', '월 생산계획 UUID')),
 		body('*.factory_uuid', '공장UUID').optional({ nullable: true })
@@ -79,9 +79,9 @@ const prdPlanDailyValidation = {
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'plan_daily_qty', '일 계획 수량')),
   ],
   delete: [
-    body('*.uuid', '월생산계획UUID')
-      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '월생산계획UUID'))
-      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '월생산계획UUID')),
+    body('*.uuid', '일생산계획UUID')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '일생산계획UUID'))
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '일생산계획UUID')),
   ]
 };
 
