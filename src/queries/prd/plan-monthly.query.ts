@@ -64,7 +64,7 @@ const readPlanMonthly = (
       GROUP BY p_pdt.plan_monthly_id
     ) p_pdt ON p_pdt.plan_monthly_id = p_pmt.plan_monthly_id
 		${searchQuery}
-    ORDER BY p_wpm.work_plan_month_id;
+    ORDER BY p_pmt.plan_monthly_id;
   `;
   //#endregion
 

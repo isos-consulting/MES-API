@@ -114,12 +114,12 @@ router.route('/work-workers').delete(prdWorkWorkerValidation.delete, validationC
 
 //#region ✅ planMonthly (월 생산계획)
 const planMonthly = new PrdPlanMonthlyCtl();
-router.route('/work-plan-month/:uuid').get(planMonthlyValidation.readByUuid, validationCallback, planMonthly.readByUuid);
-router.route('/work-plan-months').get(planMonthlyValidation.read, validationCallback, planMonthly.read);
-router.route('/work-plan-months').post(planMonthlyValidation.create, validationCallback, planMonthly.create);
-router.route('/work-plan-months').put(planMonthlyValidation.update, validationCallback, planMonthly.update);
-router.route('/work-plan-months').patch(planMonthlyValidation.patch, validationCallback, planMonthly.patch);
-router.route('/work-plan-months').delete(planMonthlyValidation.delete, validationCallback, planMonthly.delete);
+router.route('/plan-month/:uuid').get(planMonthlyValidation.readByUuid, validationCallback, planMonthly.readByUuid);
+router.route('/plan-monthly').get(planMonthlyValidation.read, validationCallback, planMonthly.read);
+router.route('/plan-monthly').post(planMonthlyValidation.create, validationCallback, planMonthly.create);
+router.route('/plan-monthly').put(planMonthlyValidation.update, validationCallback, planMonthly.update);
+router.route('/plan-monthly').patch(planMonthlyValidation.patch, validationCallback, planMonthly.patch);
+router.route('/plan-monthly').delete(planMonthlyValidation.delete, validationCallback, planMonthly.delete);
 //#endregion
 
 //#region ✅ planMonthly (월 생산계획)
