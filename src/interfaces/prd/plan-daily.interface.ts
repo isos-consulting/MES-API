@@ -1,10 +1,11 @@
-export default interface IPrdWorkPlanMonth {
-  work_plan_month_id?: number,
+export default interface IPrdPlanDaily {
+  plan_daily_id?: number,
+	plan_monthly_id?: number | null,
   factory_id?: number,
   prod_id?: number,
   workings_id?: number,
-  work_plan_month?: Date,
-  work_plan_month_qty?: number,
+  plan_day?: Date,
+  plan_daily_qty?: number,
   created_at?: Date,
   created_uid?: number,
   updated_at?: Date,

@@ -8,12 +8,12 @@ import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
 import ApiResult from '../../interfaces/common/api-result.interface';
-import PrdWorkPlanMonth from '../../models/prd/work-plan-month.model';
-import IPrdWorkPlanMonth from '../../interfaces/prd/work-plan-month.interface';
-import { readWorkPlanMonths } from '../../queries/prd/work-plan-month.query';
+import PrdPlanDaily from '../../models/prd/plan-daily.model';
+import IPrdPlanDaily from '../../interfaces/prd/plan-daily.interface';
+import { readPlanDaily } from '../../queries/prd/plan-daily.query';
 
-class PrdWorkPlanMonthRepo {
-  repo: Repository<PrdWorkPlanMonth>;
+class PrdPlanDailyRepo {
+  repo: Repository<PrdPlanDaily>;
   sequelize: Sequelize;
   tenant: string;
 
@@ -21,7 +21,7 @@ class PrdWorkPlanMonthRepo {
   constructor(tenant: string) {
     this.tenant = tenant;
     this.sequelize = getSequelize(tenant);
-    this.repo = this.sequelize.getRepository(PrdWorkPlanMonth);
+    this.repo = this.sequelize.getRepository(PrdPlanDaily);
   }
   //#endregion
 
@@ -30,16 +30,17 @@ class PrdWorkPlanMonthRepo {
   //#region 🟢 Create Functions
 
   // 📒 Fn[create]: Default Create Function
-  public create = async(body: IPrdWorkPlanMonth[], uid: number, transaction?: Transaction) => {
+  public create = async(body: IPrdPlanDaily[], uid: number, transaction?: Transaction) => {
     try {
-      const promises = body.map((workPlanMonth: any) => {
+      const promises = body.map((planDaily: any) => {
         return this.repo.create(
           {
-            factory_id: workPlanMonth.factory_id,
-            prod_id: workPlanMonth.prod_id, 
-            workings_id: workPlanMonth.workings_id,
-            work_plan_month: workPlanMonth.work_plan_month,
-            work_plan_month_qty: workPlanMonth.work_plan_month_qty,
+						plan_monthly_id: planDaily.plan_monthly_id,
+            factory_id: planDaily.factory_id,
+            prod_id: planDaily.prod_id, 
+            workings_id: planDaily.workings_id,
+            plan_day: planDaily.plan_day,
+            plan_daily_qty: planDaily.plan_daily_qty,
             created_uid: uid,
             updated_uid: uid,
           },
@@ -62,7 +63,7 @@ class PrdWorkPlanMonthRepo {
   // 📒 Fn[read]: Default Read Function
   public read = async(params?: any) => {
     try {
-      const result = await this.sequelize.query(readWorkPlanMonths(params));
+      const result = await this.sequelize.query(readPlanDaily(params));
 			
       return convertReadResult(result[0]);
     } catch (error) {
@@ -90,7 +91,7 @@ class PrdWorkPlanMonthRepo {
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
         ],
         attributes: [
-          [ Sequelize.col('prdWorkPlanMonth.uuid'), 'work_plan_month_uuid' ],
+          [ Sequelize.col('PrdPlanDaily.uuid'), 'plan_daily_uuid' ],
           [ Sequelize.col('stdProd.uuid'), 'prod_uuid' ],
           [ Sequelize.col('stdProd.prod_no'), 'prod_no' ],
           [ Sequelize.col('stdProd.prod_nm'), 'prod_nm' ],
@@ -108,8 +109,8 @@ class PrdWorkPlanMonthRepo {
           [ Sequelize.col('stdWorkings.uuid'), 'workings_uuid' ],
           [ Sequelize.col('stdWorkings.workings_cd'), 'workings_cd' ],
           [ Sequelize.col('stdWorkings.workings_nm'), 'workings_nm' ],
-          [ Sequelize.col(`to_char(prdWorkPlanMonth.work_plan_month, 'YYYY-MM')`), 'work_plan_month' ],
-          'work_plan_month_qty',
+          'plan_day',
+          'plan_monthly_qty',
           'created_at',
           [ Sequelize.col('createUser.user_nm'), 'created_nm' ],
           'updated_at',
@@ -132,31 +133,38 @@ class PrdWorkPlanMonthRepo {
 
   // 📒 Fn[readRawByIds]: Id 를 포함한 Raw Datas Read Function
   public readRawByIds = async(ids: number[]) => {
-    const result = await this.repo.findAll({ where: { work_plan_month_id: { [Op.in]: ids } } });
+    const result = await this.repo.findAll({ where: { plan_daily_id: { [Op.in]: ids } } });
     return convertReadResult(result);
   };
+
+	// 📒 Fn[readRawsByUuids]: Id 를 포함한 Raw Datas Read Function
+	public readRawsByUuids = async(uuids: string[]) => {
+		const result = await this.repo.findAll({ where: { uuid: { [Op.in]: uuids } } });
+		return convertReadResult(result);
+	};
 
   //#endregion
 
   //#region 🟡 Update Functions
   
   // 📒 Fn[update]: Default Update Function
-  public update = async(body: IPrdWorkPlanMonth[], uid: number, transaction?: Transaction) => {
+  public update = async(body: IPrdPlanDaily[], uid: number, transaction?: Transaction) => {
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      const promises = body.map((workPlanMonth: any) => {
+      const promises = body.map((planDaily: any) => {
         return this.repo.update(
           {
-            factory_id: workPlanMonth.factory_id ?? null,
-            prod_id: workPlanMonth.prod_id ?? null,
-            workings_id: workPlanMonth.workings_id ?? null,
-            work_plan_month: workPlanMonth.work_plan_month ?? null,
-            work_plan_month_qty: workPlanMonth.work_plan_month_qty ?? null,
+						plan_monthly_id: planDaily.plan_monthly_id ?? null,
+            factory_id: planDaily.factory_id ?? null,
+            prod_id: planDaily.prod_id ?? null,
+            workings_id: planDaily.workings_id ?? null,
+            plan_day: planDaily.plan_day ?? null,
+            plan_daily_qty: planDaily.plan_daily_qty ?? null,
             updated_uid: uid,
           } as any,
           { 
-            where: { uuid: workPlanMonth.uuid },
+            where: { uuid: planDaily.uuid },
             returning: true,
             individualHooks: true,
             transaction
@@ -165,7 +173,7 @@ class PrdWorkPlanMonthRepo {
       });
       const raws = await Promise.all(promises);
 
-      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.PrdWork.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.PrdPlanDaily.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -178,22 +186,23 @@ class PrdWorkPlanMonthRepo {
   //#region 🟠 Patch Functions
   
   // 📒 Fn[patch]: Default Patch Function
-  public patch = async(body: IPrdWorkPlanMonth[], uid: number, transaction?: Transaction) => {
+  public patch = async(body: IPrdPlanDaily[], uid: number, transaction?: Transaction) => {
     try {
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      const promises = body.map((workPlanMonth: any) => {
+      const promises = body.map((planDaily: any) => {
         return this.repo.update(
           {
-            factory_id: workPlanMonth.factory_id,
-            prod_id: workPlanMonth.prod_id,
-            workings_id: workPlanMonth.workings_id,
-            work_plan_month: workPlanMonth.work_plan_month,
-            work_plan_month_qty: workPlanMonth.work_plan_month_qty,
+						plan_monthly_id: planDaily.plan_monthly_id,
+            factory_id: planDaily.factory_id,
+            prod_id: planDaily.prod_id,
+            workings_id: planDaily.workings_id,
+            plan_day: planDaily.plan_day,
+            plan_daily_qty: planDaily.plan_daily_qty,
             updated_uid: uid,
           },
           { 
-            where: { uuid: workPlanMonth.uuid },
+            where: { uuid: planDaily.uuid },
             returning: true,
             individualHooks: true,
             transaction
@@ -202,7 +211,7 @@ class PrdWorkPlanMonthRepo {
       });
       const raws = await Promise.all(promises);
 
-      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.PrdWork.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.PrdPlanDaily.getTableName() as string, previousRaws, uid, transaction);
       return convertResult(raws);
     } catch (error) {
       if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
@@ -215,16 +224,16 @@ class PrdWorkPlanMonthRepo {
   //#region 🔴 Delete Functions
   
   // 📒 Fn[delete]: Default Delete Function
-  public delete = async(body: IPrdWorkPlanMonth[], uid: number, transaction?: Transaction) => {
+  public delete = async(body: IPrdPlanDaily[], uid: number, transaction?: Transaction) => {
     try {      
       const previousRaws = await getPreviousRaws(body, this.repo);
 
-      const promises = body.map((workPlanMonth: any) => {
-        return this.repo.destroy({ where: { uuid: workPlanMonth.uuid }, transaction});
+      const promises = body.map((planDaily: any) => {
+        return this.repo.destroy({ where: { uuid: planDaily.uuid }, transaction});
       });
       const count = _.sum(await Promise.all(promises));
 
-      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.PrdWork.getTableName() as string, previousRaws, uid, transaction);
+      await new AdmLogRepo(this.tenant).create('delete', this.sequelize.models.PrdPlanDaily.getTableName() as string, previousRaws, uid, transaction);
       return { count, raws: previousRaws };
     } catch (error) {
       throw error;
@@ -236,4 +245,4 @@ class PrdWorkPlanMonthRepo {
   //#endregion
 }
 
-export default PrdWorkPlanMonthRepo;
+export default PrdPlanDailyRepo;

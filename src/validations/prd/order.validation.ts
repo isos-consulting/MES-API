@@ -61,8 +61,8 @@ const prdOrderValidation = {
       .isISO8601().toDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'end_date', '종료예정 일시')),
     body('*.sal_order_detail_uuid', '수주상세UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'sal_order_detail_uuid', '수주상세UUID')),
-			body('*.work_plan_month_uuid', '월 생산계획UUID').optional({ nullable: true })
-      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'work_plan_month_uuid', '월 생산계획UUID')),
+			body('*.plan_daily_uuid', '일 생산계획UUID').optional({ nullable: true })
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'plan_daily_uuid', '일 생산계획UUID')),
 		body('*.priority', '우선순위').optional({ nullable: true })
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'priority', '우선순위')),
     body('*.remark', '비고').optional({ nullable: true })

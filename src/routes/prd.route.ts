@@ -27,8 +27,10 @@ import prdWorkRejectValidation from '../validations/prd/work-reject.validation';
 import prdWorkValidation from '../validations/prd/work.validation';
 import prdReturnValidation from '../validations/prd/return.validation';
 import prdDemandValidation from '../validations/prd/demand.validation';
-import PrdWorkPlanMonthCtl from '../controllers/prd/work-plan-month.controller';
-import prdWorkPlanMonthValidation from '../validations/prd/work-plan-month.validation';
+import PrdPlanMonthlyCtl from '../controllers/prd/plan-monthly.controller';
+import planMonthlyValidation from '../validations/prd/plan-monthly.validation';
+import PrdPlanDailyCtl from '../controllers/prd/plan-daily.controller';
+import prdPlanDailyValidation from '../validations/prd/plan-daily.validation';
 
 const router = express.Router();
 
@@ -112,15 +114,25 @@ router.route('/work-workers').patch(prdWorkWorkerValidation.patch, validationCal
 router.route('/work-workers').delete(prdWorkWorkerValidation.delete, validationCallback, workWorker.delete);
 //#endregion
 
-//#region ✅ WorkRoutingOrigin (실적-공정순서기준)
-const workPlanMonth = new PrdWorkPlanMonthCtl();
-router.route('/work-plan-month/:uuid').get(prdWorkPlanMonthValidation.readByUuid, validationCallback, workPlanMonth.readByUuid);
-router.route('/work-plan-months').get(prdWorkPlanMonthValidation.read, validationCallback, workPlanMonth.read);
-router.route('/work-plan-months').post(prdWorkPlanMonthValidation.create, validationCallback, workPlanMonth.create);
-router.route('/work-plan-months').put(prdWorkPlanMonthValidation.update, validationCallback, workPlanMonth.update);
-router.route('/work-plan-months').patch(prdWorkPlanMonthValidation.patch, validationCallback, workPlanMonth.patch);
-router.route('/work-plan-months').delete(prdWorkPlanMonthValidation.delete, validationCallback, workPlanMonth.delete);
+//#region ✅ planMonthly (월 생산계획)
+const planMonthly = new PrdPlanMonthlyCtl();
+router.route('/plan-month/:uuid').get(planMonthlyValidation.readByUuid, validationCallback, planMonthly.readByUuid);
+router.route('/plan-monthly').get(planMonthlyValidation.read, validationCallback, planMonthly.read);
+router.route('/plan-monthly').post(planMonthlyValidation.create, validationCallback, planMonthly.create);
+router.route('/plan-monthly').put(planMonthlyValidation.update, validationCallback, planMonthly.update);
+router.route('/plan-monthly').patch(planMonthlyValidation.patch, validationCallback, planMonthly.patch);
+router.route('/plan-monthly').delete(planMonthlyValidation.delete, validationCallback, planMonthly.delete);
 //#endregion
+
+// #region ✅ planMonthly (일 생산계획)
+const planDaily = new PrdPlanDailyCtl();
+router.route('/plan-day/:uuid').get(prdPlanDailyValidation.readByUuid, validationCallback, planDaily.readByUuid);
+router.route('/plan-daily').get(prdPlanDailyValidation.read, validationCallback, planDaily.read);
+router.route('/plan-daily').post(prdPlanDailyValidation.create, validationCallback, planDaily.create);
+router.route('/plan-daily').put(prdPlanDailyValidation.update, validationCallback, planDaily.update);
+router.route('/plan-daily').patch(prdPlanDailyValidation.patch, validationCallback, planDaily.patch);
+router.route('/plan-daily').delete(prdPlanDailyValidation.delete, validationCallback, planDaily.delete);
+// #endregion
 
 //#region ✅ Return (자재반납)
 const returnCtl = new PrdReturnCtl();
