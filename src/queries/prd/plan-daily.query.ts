@@ -2,12 +2,15 @@ import moment from 'moment';
 
 const readPlanDaily = (
   params: {
+		start_date?: string,
+		end_date?: string,
     plan_month?: string,
     wait_task_fg: boolean,
     factory_uuid?: string,
   }) => {
   let searchQuery: string = '';
 	
+	if (params.start_date && params.end_date) { searchQuery += ` AND date(p_pdt.plan_day) BETWEEN '${params.start_date}' AND '${params.end_date}'`;}
 	if (params.plan_month) { searchQuery += ` AND to_char(p_pdt.plan_day, 'YYYY-MM') = '${moment(params.plan_month).format('YYYY-MM')}'`; }  
   if (params.factory_uuid) { searchQuery += ` AND s_f.uuid = '${params.factory_uuid}'`; }
   if (params.wait_task_fg) { searchQuery += ` AND ((p_pdt.plan_daily_qty > COALESCE(p_ot.qty, 0))) `; }
