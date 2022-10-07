@@ -2,7 +2,7 @@ import { Sequelize, Table, Column, Model, DataType, CreatedAt, UpdatedAt, Belong
 import IPrdOrder from '../../interfaces/prd/order.interface';
 import AutUser from '../aut/user.model';
 import SalOrderDetail from '../sal/order-detail.model';
-// import PrdWorkPlanMonth from './work-plan-month.model';
+import PrdPlanDaily from './plan-daily.model';
 import StdFactory from '../std/factory.model';
 import StdProd from '../std/prod.model';
 import StdShift from '../std/shift.model';
@@ -142,12 +142,12 @@ export default class PrdOrder extends Model<IPrdOrder> {
   })
   sal_order_detail_id: number;
 
-	// @ForeignKey(() => PrdWorkPlanMonth)
-  // @Column({
-  //   comment: '월 생산계획ID',
-  //   type: DataType.INTEGER,
-  // })
-  // work_plan_month_id: number;
+	@ForeignKey(() => PrdPlanDaily)
+  @Column({
+    comment: '일 생산계획ID',
+    type: DataType.INTEGER,
+  })
+  plan_daily_id: number;
 
   @Column({
     comment: '우선순위',
@@ -227,8 +227,8 @@ export default class PrdOrder extends Model<IPrdOrder> {
   @BelongsTo(() => SalOrderDetail, { foreignKey: 'sal_order_detail_id', targetKey: 'order_detail_id', onDelete: 'restrict', onUpdate: 'cascade' })
   salOrderDetail: SalOrderDetail;
 
-	// @BelongsTo(() => PrdWorkPlanMonth, { foreignKey: 'work_plan_month_id', targetKey: 'work_plan_month_id', onDelete: 'restrict', onUpdate: 'cascade' })
-	// prdWorkPlanMonth: PrdWorkPlanMonth;
+	@BelongsTo(() => PrdPlanDaily, { foreignKey: 'plan_daily_id', targetKey: 'plan_daily_id', onDelete: 'restrict', onUpdate: 'cascade' })
+	prdWorkPlanMonth: PrdPlanDaily;
   // HasMany
   //#endregion
 }

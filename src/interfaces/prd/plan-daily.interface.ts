@@ -1,6 +1,6 @@
 export default interface IPrdPlanDaily {
   plan_daily_id?: number,
-	plan_monthly_id?: number,
+	plan_monthly_id?: number | null,
   factory_id?: number,
   prod_id?: number,
   workings_id?: number,

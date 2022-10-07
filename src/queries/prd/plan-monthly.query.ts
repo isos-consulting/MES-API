@@ -10,7 +10,7 @@ const readPlanMonthly = (
 	
 	if (params.plan_month) { searchQuery += ` AND to_char(p_pmt.plan_month, 'YYYY-MM') = '${moment(params.plan_month).format('YYYY-MM')}'`; }  
   if (params.factory_uuid) { searchQuery += ` AND s_f.uuid = '${params.factory_uuid}'`; }
-  if (params.wait_task_fg) { searchQuery += ` AND ((p_wpm.plan_monthly_qty > COALESCE(p_pdt.qty, 0))) `; }
+  if (params.wait_task_fg) { searchQuery += ` AND ((p_pmt.plan_monthly_qty > COALESCE(p_pdt.qty, 0))) `; }
 	
   if (searchQuery.length > 0) {
     searchQuery = searchQuery.substring(4, searchQuery.length);

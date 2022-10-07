@@ -49,7 +49,7 @@ class PrdOrderRepo {
             start_date: order.start_date,
             end_date: order.end_date,
             sal_order_detail_id: order.sal_order_detail_id,
-						work_plan_month_id: order.work_plan_month_id,
+						plan_daily_id: order.plan_daily_id,
 						priority: order.priority,
             remark: order.remark,
             created_uid: uid,
