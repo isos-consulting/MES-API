@@ -216,7 +216,7 @@ class PrdWorkRoutingCtl {
 
 				//✅실적 공정 작업완료 
         const workRoutingResult = await service.patch(datas, req.user?.uid as number, tran)
-
+    
 				//✅실적 조회
         const workRead = await workService.readRawByIds([workRoutingResult.raws[0].work_id]);
 				
@@ -261,6 +261,8 @@ class PrdWorkRoutingCtl {
 			let result: ApiResult<any> = { count:0, raws: [] };
 			const service = new prdWorkRoutingService(req.tenant.uuid);
 			const workService = new prdWorkService(req.tenant.uuid);
+			const workRoutingOriginService = new prdWorkRoutingOriginService(req.tenant.uuid);      
+			const inventoryService = new InvStoreService(req.tenant.uuid);      
 			const matched = matchedData(req, { locations: [ 'body' ] });
 			let datas = await service.convertFk(Object.values(matched));
 			
@@ -281,7 +283,25 @@ class PrdWorkRoutingCtl {
 					value.complete_fg = false
 				});
 
-				result = await service.update(readRouting, req.user?.uid as number, tran)
+				const workRoutingResult = await service.update(readRouting, req.user?.uid as number, tran)
+
+				//✅실적 공정순서 기준 마지막 공정 
+				const maxProcNo = await workRoutingOriginService.getMaxProcNo(workRoutingResult.raws[0].work_id, tran)
+
+				let StoreResult;
+				if (maxProcNo === workRoutingResult.raws[0].proc_no){
+					// 📌 입고 창고 수불 내역 삭제(생산입고)
+					StoreResult = await inventoryService.transactInventory(
+						workRoutingResult.raws, 'DELETE', 
+						{ inout: 'TO', tran_type: 'PRD_OUTPUT', reg_date: workRoutingResult.raws[0].end_date, tran_id_alias: 'work_routing_id' },
+						req.user?.uid as number, tran
+					);
+				}
+
+				result.raws.push({
+					workRouting: workRoutingResult.raws,
+					toStore: StoreResult?.raws ?? null,
+				});
 			});
 
       return createApiResult(res, result, 200, '데이터 수정 성공', this.stateTag, successState.UPDATE);
