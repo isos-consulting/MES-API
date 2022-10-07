@@ -38,6 +38,9 @@ const readPlanMonthly = (
       s_m.model_nm,
       s_p.rev,
       s_p.prod_std,
+			s_u.uuid as unit_uuid,
+      s_u.unit_cd,
+      s_u.unit_nm,
       p_pmt.plan_monthly_qty,
       to_char(p_pmt.plan_month, 'YYYY-MM') as plan_month,
       CASE WHEN (p_pmt.plan_monthly_qty - COALESCE(p_pdt.qty,0)) < 0 THEN 0 ELSE p_pmt.plan_monthly_qty - COALESCE(p_pdt.qty,0) END AS balance,  
@@ -55,6 +58,7 @@ const readPlanMonthly = (
     LEFT JOIN std_item_type_tb s_it ON s_it.item_type_id = s_p.item_type_id
     LEFT JOIN std_prod_type_tb s_pt ON s_pt.prod_type_id = s_p.prod_type_id
     LEFT JOIN std_model_tb s_m ON s_m.model_id = s_p.model_id 
+		LEFT JOIN std_unit_tb s_u ON s_u.unit_id = s_p.unit_id
     LEFT JOIN aut_user_tb a_uc ON a_uc.uid = p_pmt.created_uid
     LEFT JOIN aut_user_tb a_uu ON a_uu.uid = p_pmt.updated_uid
     LEFT JOIN (

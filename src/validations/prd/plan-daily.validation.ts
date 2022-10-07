@@ -17,9 +17,9 @@ const prdPlanDailyValidation = {
     query('plan_month', '계획 월').optional({ nullable: true })
       .isISO8601().toDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'plan_month', '계획 월')),
 		query('start_date', '계획 시작일').optional({ nullable: true })
-      .isISO8601().toDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'start_date', '계획 시작일')),
+      .isDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'start_date', '계획 시작일')),
 		query('end_date', '계획 종료일').optional({ nullable: true })
-      .isISO8601().toDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'end_date', '계획 종료일')),
+      .isDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'end_date', '계획 종료일')),
 		query('wait_task_fg', '잔여지시 불러오기').optional({ nullable: true })
       .isBoolean().toBoolean(false).withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'wait_task_fg', '잔여지시 불러오기')),
   ],
