@@ -29,6 +29,8 @@ import prdReturnValidation from '../validations/prd/return.validation';
 import prdDemandValidation from '../validations/prd/demand.validation';
 import PrdPlanMonthlyCtl from '../controllers/prd/plan-monthly.controller';
 import planMonthlyValidation from '../validations/prd/plan-monthly.validation';
+import PrdPlanDailyCtl from '../controllers/prd/plan-daily.controller';
+import prdPlanDailyValidation from '../validations/prd/plan-daily.validation';
 
 const router = express.Router();
 
@@ -122,15 +124,15 @@ router.route('/plan-monthly').patch(planMonthlyValidation.patch, validationCallb
 router.route('/plan-monthly').delete(planMonthlyValidation.delete, validationCallback, planMonthly.delete);
 //#endregion
 
-//#region ✅ planMonthly (월 생산계획)
-// const planMonthly = new PrdPlanMonthlyCtl();
-// router.route('/work-plan-month/:uuid').get(planMonthlyValidation.readByUuid, validationCallback, planMonthly.readByUuid);
-// router.route('/work-plan-months').get(planMonthlyValidation.read, validationCallback, planMonthly.read);
-// router.route('/work-plan-months').post(planMonthlyValidation.create, validationCallback, planMonthly.create);
-// router.route('/work-plan-months').put(planMonthlyValidation.update, validationCallback, planMonthly.update);
-// router.route('/work-plan-months').patch(planMonthlyValidation.patch, validationCallback, planMonthly.patch);
-// router.route('/work-plan-months').delete(planMonthlyValidation.delete, validationCallback, planMonthly.delete);
-//#endregion
+// #region ✅ planMonthly (일 생산계획)
+const planDaily = new PrdPlanDailyCtl();
+router.route('/plan-day/:uuid').get(prdPlanDailyValidation.readByUuid, validationCallback, planDaily.readByUuid);
+router.route('/plan-daily').get(prdPlanDailyValidation.read, validationCallback, planDaily.read);
+router.route('/plan-daily').post(prdPlanDailyValidation.create, validationCallback, planDaily.create);
+router.route('/plan-daily').put(prdPlanDailyValidation.update, validationCallback, planDaily.update);
+router.route('/plan-daily').patch(prdPlanDailyValidation.patch, validationCallback, planDaily.patch);
+router.route('/plan-daily').delete(prdPlanDailyValidation.delete, validationCallback, planDaily.delete);
+// #endregion
 
 //#region ✅ Return (자재반납)
 const returnCtl = new PrdReturnCtl();

@@ -1,25 +1,33 @@
 import { Sequelize, Table, Column, Model, DataType, CreatedAt, UpdatedAt, BelongsTo, Unique, ForeignKey } from 'sequelize-typescript'
-import IPrdPlanMonthly from '../../interfaces/prd/plan-monthly.interface';
+import IPrdPlanDaily from '../../interfaces/prd/plan-daily.interface';
 import AutUser from '../aut/user.model';
+import PrdPlanMonthly from './plan-monthly.model';
 import StdFactory from '../std/factory.model';
 import StdProd from '../std/prod.model';
 import StdWorkings from '../std/workings.model';
 
 @Table({
-  tableName: 'PRD_PLAN_MONTHLY_TB',
-  modelName: 'PrdPlanMonthly',
-  comment: '월별 생산계획 테이블',
+  tableName: 'PRD_PLAN_DAILY_TB',
+  modelName: 'PrdPlanDaily',
+  comment: '일별 생산계획 테이블',
   timestamps: true,
   underscored: true,
 })
-export default class PrdPlanMonthly extends Model<IPrdPlanMonthly> {
+export default class PrdPlanDaily extends Model<IPrdPlanDaily> {
   @Column({
-    comment: '월 생산계획ID',
+    comment: '일 생산계획ID',
     primaryKey: true,
     autoIncrement: true,
     autoIncrementIdentity: true,
     type: DataType.INTEGER,
     allowNull: false,
+  })
+  plan_daily_id: number;
+
+	@ForeignKey(() => PrdPlanMonthly)
+  @Column({
+    comment: '월 생산계획ID',
+    type: DataType.INTEGER,
   })
   plan_monthly_id: number;
 
@@ -48,19 +56,19 @@ export default class PrdPlanMonthly extends Model<IPrdPlanMonthly> {
   prod_id: number;
 
   @Column({
-    comment: '월 계획 수량',
+    comment: '일 계획 수량',
     type: DataType.DECIMAL(19, 6),
     allowNull: false,
     defaultValue: 0,
   })
-  plan_monthly_qty: number;
+  plan_daily_qty: number;
 
   @Column({
-    comment: '계획 월',
+    comment: '계획 일',
     type: DataType.DATE,
     allowNull: false,
   })
-  plan_month: Date;
+  plan_day: Date;
 
   @CreatedAt
   @Column({
@@ -94,9 +102,9 @@ export default class PrdPlanMonthly extends Model<IPrdPlanMonthly> {
   })
   updated_uid: number;
 
-  @Unique('prd_plan_monthly_uuid_un')
+  @Unique('prd_plan_daily_uuid_un')
   @Column({
-    comment: '월생산계획UUID',
+    comment: '일 생산계획UUID',
     type: DataType.UUID,
     allowNull: false,
     defaultValue: Sequelize.fn('gen_random_uuid')
@@ -109,6 +117,9 @@ export default class PrdPlanMonthly extends Model<IPrdPlanMonthly> {
   createUser: AutUser;
   @BelongsTo(() => AutUser, { as: 'updateUser', foreignKey: 'updated_uid', targetKey: 'uid', onDelete: 'restrict', onUpdate: 'cascade' })
   updateUser: AutUser;
+
+	@BelongsTo(() => PrdPlanMonthly, { foreignKey: 'plan_monthly_id', targetKey: 'plan_monthly_id', onDelete: 'restrict', onUpdate: 'cascade' })
+  prdPlanMonthly: PrdPlanMonthly;
 
   @BelongsTo(() => StdFactory, { foreignKey: 'factory_id', targetKey: 'factory_id', onDelete: 'restrict', onUpdate: 'cascade' })
   stdFactory: StdFactory;

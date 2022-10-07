@@ -1,21 +1,24 @@
 import { Transaction } from "sequelize/types";
 import StdWorkingsRepo from '../../repositories/std/workings.repository';
 import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
+
 import StdProdRepo from "../../repositories/std/prod.repository";
 import StdFactoryRepo from "../../repositories/std/factory.repository";
 import PrdPlanMonthlyRepo from "../../repositories/prd/plan-monthly.repository";
-import IPrdPlanMonthly from "../../interfaces/prd/plan-monthly.interface";
 
-class PrdPlanMonthlyService {
+import PrdPlanDailyRepo from "../../repositories/prd/plan-daily.repository";
+import IPrdPlanDaily from "../../interfaces/prd/plan-daily.interface";
+
+class PrdPlanDailyService {
   tenant: string;
   stateTag: string;
-  repo: PrdPlanMonthlyRepo;
+  repo: PrdPlanDailyRepo;
   fkIdInfos: getFkIdInfo[];
 
   constructor(tenant: string) {
     this.tenant = tenant;
-    this.stateTag = 'prdPlanMonthly';
-    this.repo = new PrdPlanMonthlyRepo(tenant);
+    this.stateTag = 'prdPlanDaily';
+    this.repo = new PrdPlanDailyRepo(tenant);
 
     this.fkIdInfos = [
       {
@@ -36,6 +39,12 @@ class PrdPlanMonthlyService {
         idName: 'factory_id',
         uuidName: 'factory_uuid'
       },
+			{
+        key: 'planMonthly',
+        TRepo: PrdPlanMonthlyRepo,
+        idName: 'plan_monthly_id',
+        uuidName: 'plan_monthly_uuid'
+      },
     ];
   }
 
@@ -44,7 +53,7 @@ class PrdPlanMonthlyService {
     return await getFkIdByUuid(this.tenant, datas, this.fkIdInfos);
   };
 
-  public create = async (datas: IPrdPlanMonthly[], uid: number, tran: Transaction) => {
+  public create = async (datas: IPrdPlanDaily[], uid: number, tran: Transaction) => {
     try { return await this.repo.create(datas, uid, tran); }
 		catch (error) { throw error; }
   };
@@ -59,20 +68,20 @@ class PrdPlanMonthlyService {
 		catch (error) { throw error; }
   };
 
-  public update = async (datas: IPrdPlanMonthly[], uid: number, tran: Transaction) => {
+  public update = async (datas: IPrdPlanDaily[], uid: number, tran: Transaction) => {
     try { return await this.repo.update(datas, uid, tran); } 
 		catch (error) { throw error; }
   }
 
-  public patch = async (datas: IPrdPlanMonthly[], uid: number, tran: Transaction) => {
+  public patch = async (datas: IPrdPlanDaily[], uid: number, tran: Transaction) => {
     try { return await this.repo.patch(datas, uid, tran) }
 		catch (error) { throw error; }
   }
 
-  public delete = async (datas: IPrdPlanMonthly[], uid: number, tran: Transaction) => {
+  public delete = async (datas: IPrdPlanDaily[], uid: number, tran: Transaction) => {
     try { return await this.repo.delete(datas, uid, tran); }
 		catch (error) { throw error; }
   }
 }
 
-export default PrdPlanMonthlyService;
+export default PrdPlanDailyService;
