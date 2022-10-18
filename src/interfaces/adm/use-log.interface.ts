@@ -1,0 +1,15 @@
+export default interface IAdmUseLog {
+  log_id?: number,
+	company_cd?: string,
+	log_info?: string,
+	log_tag?: string,
+	id?: string,
+	user_nm?: string,
+	log_caption?: string,
+	log_action?: string,
+	ip_address?: string,
+	browser?: string,
+	os?: string,
+  create_at?: string,
+  uuid?: string,
+}
