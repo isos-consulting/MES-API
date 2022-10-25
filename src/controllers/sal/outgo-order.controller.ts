@@ -339,7 +339,7 @@ class SalOutgoOrderCtl {
         // 📌 전표 내 상세전표 데이터 개수 조회
         //    상세전표개수가 0개일 경우 (전표데이터 삭제)
         //    상세전표개수가 1개 이상일 경우 (전표데이터 합계 데이터 계산)
-        const count = await detailService.getCountInHeader(data.header.order_id, tran);
+        const count = await detailService.getCountInHeader(data.header.outgo_order_id, tran);
         let headerResult: ApiResult<any>;
         if (count == 0) {
           headerResult = await service.delete([data.header], req.user?.uid as number, tran);
