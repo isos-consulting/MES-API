@@ -49,6 +49,23 @@ const readWorks = (
 		${searchQuery};
   `;
 
+
+
+  let searchQuery2: string = '';
+
+  if (params.work_uuid) { searchQuery2 += ` AND p_w.uuid = '${params.work_uuid}'`; }
+  // if (params.order_uuid) { searchQuery2 += ` AND p_o.uuid = '${params.order_uuid}'`; }
+  if (params.factory_uuid) { searchQuery2 += ` AND s_f.uuid = '${params.factory_uuid}'`; }
+  if (params.prod_uuid) { searchQuery2 += ` AND s_p.uuid = '${params.prod_uuid}'`; }
+  if (params.complete_fg != null) { searchQuery2 += ` AND p_w.complete_fg = ${params.complete_fg}`; }
+  if (params.start_date && params.end_date) { searchQuery2 += ` AND date(p_w.reg_date) BETWEEN '${params.start_date}' AND '${params.end_date}'`; }
+
+  if (searchQuery2.length > 0) {
+    searchQuery2 = searchQuery2.substring(4, searchQuery2.length);
+    searchQuery2 = 'WHERE' + searchQuery2;
+  }
+
+
   //#region 📒 Main Query
   const createQuery = `
 	-- 작업실적 메인 조회 쿼리
@@ -122,7 +139,7 @@ const readWorks = (
 		LEFT JOIN std_location_tb s_l ON s_l.location_id = p_w.to_location_id
 		LEFT JOIN aut_user_tb a_uc ON a_uc.uid = p_w.created_uid
 		LEFT JOIN aut_user_tb a_uu ON a_uu.uid = p_w.updated_uid
-		${searchQuery}
+		${searchQuery2}
 		ORDER BY p_w.reg_date;
   `;
 

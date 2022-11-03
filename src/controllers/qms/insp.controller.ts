@@ -768,8 +768,9 @@ class QmsInspCtl {
         header: (await service.convertFk(matched.header))[0],
         details: await detailService.convertFk(matched.details),
       }
-			const referenceUuids = data.header.map((data: any) => data.uuid);
-
+			// const referenceUuids = data.header.map((data: any) => data.uuid);
+			const referenceUuids = [data.header.uuid];
+			
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
         // 📌 기준서 상세 삭제
         const detailResult = await detailService.delete(data.details, req.user?.uid as number, tran);
