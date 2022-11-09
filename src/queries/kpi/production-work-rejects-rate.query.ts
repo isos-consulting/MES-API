@@ -1,4 +1,4 @@
-const readStoreIndividualHistory = (
+const readWorkRejectsRate = (
   params: {
     start_date: string,
     end_date: string,
@@ -170,4 +170,4 @@ const readStoreIndividualHistory = (
   return query;
 }
 
-export { readStoreIndividualHistory }
+export { readWorkRejectsRate }

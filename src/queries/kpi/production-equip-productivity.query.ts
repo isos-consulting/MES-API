@@ -70,8 +70,9 @@ const readEquipProductivity = (
   const readEquipProductivityQuery = `
 		SELECT 
 			s_w.workings_nm AS workings_nm,
-			CASE WHEN coalesce(t_e.holding_equip_cnt, 0) = 0 THEN 0 ELSE CAST(COALESCE(t_we.work_equip_cnt, 0) AS decimal) / holding_equip_cnt  END AS equip_operation_rate,
-			CASE WHEN coalesce(t_we.work_equip_cnt, 0) = 0 THEN 0 ELSE CAST(COALESCE(t_we.work_min, 0) AS decimal) / (t_we.work_equip_cnt * 8) END AS equip_work_rate
+			s_w.workings_cd AS workings_cd,
+			CASE WHEN coalesce(t_e.holding_equip_cnt, 0) = 0 THEN 0 ELSE CAST(COALESCE(t_we.work_equip_cnt, 0) AS decimal) / holding_equip_cnt  END AS equip_operation_rate, --설비 운영율
+			CASE WHEN coalesce(t_we.work_equip_cnt, 0) = 0 THEN 0 ELSE CAST(COALESCE(t_we.work_min, 0) AS decimal) / (t_we.work_equip_cnt * 8) END AS equip_work_rate -- 설비 가동율
 		FROM std_workings_tb s_w 
 		LEFT JOIN temp_equip t_e ON t_e.workings_id = s_w.workings_id 
 		LEFT JOIN temp_work_equip t_we ON t_we.workings_id = s_w.workings_id

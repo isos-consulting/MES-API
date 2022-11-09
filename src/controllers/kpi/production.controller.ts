@@ -29,11 +29,11 @@ class KpiProductionCtl {
       const params = matchedData(req, { locations: [ 'query', 'params' ] });
 
 			const datas = await service.readEquipProductivity(params); 
-			const convertData = await service.convertToPivot(datas.raws); 
+			const convertData = await service.convertToPivotOfEquipProductivity(datas.raws); 
 
-			throw 'aaa'
-      result = await service.readEquipProductivity(convertData);
-
+      result.raws.push(convertData);
+			result.count = result.raws.length;
+			
       return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
     } catch (error) {
       if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
@@ -52,7 +52,13 @@ class KpiProductionCtl {
 			const service = new KpiProductionService(req.tenant.uuid);
 			const params = matchedData(req, { locations: [ 'query', 'params' ] });
 
-			result = await service.readEquipProductivity(params);
+			const datas = await service.readDowntime(params); 
+			const convertData = await service.convertToPivotOfDowntime(datas.raws); 
+
+      result.raws.push(convertData);
+			result.count = result.raws.length;
+
+			
 
 			return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
 		} catch (error) {
@@ -72,7 +78,7 @@ class KpiProductionCtl {
 			const service = new KpiProductionService(req.tenant.uuid);
 			const params = matchedData(req, { locations: [ 'query', 'params' ] });
 
-			result = await service.readEquipProductivity(params);
+			result = await service.readWorkPlanAchievementRate(params);
 
 			return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
 		} catch (error) {
@@ -92,7 +98,7 @@ class KpiProductionCtl {
 			const service = new KpiProductionService(req.tenant.uuid);
 			const params = matchedData(req, { locations: [ 'query', 'params' ] });
 
-			result = await service.readEquipProductivity(params);
+			result = await service.readWorkerProductivity(params);
 
 			return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
 		} catch (error) {
@@ -112,7 +118,7 @@ class KpiProductionCtl {
 			const service = new KpiProductionService(req.tenant.uuid);
 			const params = matchedData(req, { locations: [ 'query', 'params' ] });
 
-			result = await service.readEquipProductivity(params);
+			result = await service.readWorkRejectsRate(params);
 
 			return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
 		} catch (error) {
