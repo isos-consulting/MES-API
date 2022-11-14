@@ -2,7 +2,7 @@ const readEquipProductivity = (
   params: {
     start_date: string,
     end_date: string,
-    workings_uuid?: string
+    workings_uuid?: string[]
   }) => {
 	let searchQuery: string = '';
 
@@ -59,7 +59,12 @@ const readEquipProductivity = (
   //#endregion
 
 	//#region 📌 searchQuery
-	if (params.workings_uuid) { searchQuery += ` AND s_w.uuid = '${params.workings_uuid}'`; }  
+	if (params.workings_uuid) { 
+		const workingsUuid = params.workings_uuid.map(uuid => {
+			return `'${uuid}'`
+		});
+		searchQuery += ` AND s_w.uuid IN (${workingsUuid})`;
+	}  
 	if (searchQuery.length > 0) {
 		searchQuery = searchQuery.substring(4, searchQuery.length);
 		searchQuery = 'WHERE' + searchQuery;
