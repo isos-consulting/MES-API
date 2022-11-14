@@ -63,6 +63,26 @@ class KpiProductionService {
 		} 
 		catch (error) { throw error; }
   };
+
+	public convertToPivotOfProductivity = async (datas: any[]) => {
+    try { 
+			const workingsNm = [...new Set(datas.map(value => value.workings_nm))];
+
+			let convertPivotDatas: any[] = []
+			workingsNm.forEach((workingsNmValue) => {
+				let object: any = {workings_nm: workingsNmValue};
+				datas.forEach((dataValue) => {
+					if (workingsNmValue === dataValue.workings_nm ) {
+							object[dataValue.proc_nm] = dataValue.productivity
+					}
+				})
+				convertPivotDatas.push(object);
+			})
+
+			return convertPivotDatas;
+		} 
+		catch (error) { throw error; }
+  };
 };
 
 export default KpiProductionService;

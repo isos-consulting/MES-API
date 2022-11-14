@@ -58,8 +58,6 @@ class KpiProductionCtl {
       result.raws.push(convertData);
 			result.count = result.raws.length;
 
-			
-
 			return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
 		} catch (error) {
 			if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
@@ -98,7 +96,11 @@ class KpiProductionCtl {
 			const service = new KpiProductionService(req.tenant.uuid);
 			const params = matchedData(req, { locations: [ 'query', 'params' ] });
 
-			result = await service.readWorkerProductivity(params);
+			const datas = await service.readWorkerProductivity(params); 
+			const convertData = await service.convertToPivotOfProductivity(datas.raws); 
+
+      result.raws.push(convertData);
+			result.count = result.raws.length;
 
 			return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
 		} catch (error) {
