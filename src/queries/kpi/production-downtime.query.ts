@@ -49,8 +49,8 @@ const readDowntime = (
 			s_w.workings_nm ,
 			coalesce(t_d.work_min,0) AS work_min
 		FROM std_workings_tb s_w
-		LEFT JOIN temp_downtime t_d ON t_d.workings_id = s_w.workings_id;
-		${searchQuery}
+		LEFT JOIN temp_downtime t_d ON t_d.workings_id = s_w.workings_id
+		${searchQuery};
   `;
   //#endregion
 
