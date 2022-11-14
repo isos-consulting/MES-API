@@ -31,7 +31,7 @@ class KpiProductionCtl {
 			const datas = await service.readEquipProductivity(params); 
 			const convertData = await service.convertToPivotOfEquipProductivity(datas.raws); 
 
-      result.raws.push(convertData);
+      result.raws.push(...convertData);
 			result.count = result.raws.length;
 			
       return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
@@ -55,7 +55,7 @@ class KpiProductionCtl {
 			const datas = await service.readDowntime(params); 
 			const convertData = await service.convertToPivotOfDowntime(datas.raws); 
 
-      result.raws.push(convertData);
+      result.raws.push(...convertData);
 			result.count = result.raws.length;
 
 			return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
@@ -99,7 +99,7 @@ class KpiProductionCtl {
 			const datas = await service.readWorkerProductivity(params); 
 			const convertData = await service.convertToPivotOfProductivity(datas.raws); 
 
-      result.raws.push(convertData);
+      result.raws.push(...convertData);
 			result.count = result.raws.length;
 
 			return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
