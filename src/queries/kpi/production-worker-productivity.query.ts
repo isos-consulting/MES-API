@@ -23,7 +23,7 @@ const readWorkerProductivity = (params: {
 			SUM(COALESCE (p_wr.qty,0)) qty, 
 			SUM(DATE_PART('hour', end_date - start_date) * 60 + DATE_PART('minute', end_date - start_date )) work_min
 		FROM prd_work_routing_tb p_wr 
-		WHERE p_wr.start_date BETWEEN '${params.start_date}' AND '${params.end_date}' AND p_wr.equip_id IS NOT NULL 
+		WHERE p_wr.start_date BETWEEN '${params.start_date}' AND '${params.end_date}' 
 		GROUP BY p_wr.workings_id , p_wr.proc_id;
   `;
   //#endregion
