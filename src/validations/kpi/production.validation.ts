@@ -27,8 +27,8 @@ const kpiProductionValidation = {
   ],
 	readWorkPlanAchievementRate: [
     query('reg_date', '시작일자')
-      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'start_date', '기준 시작일자'))
-      .isDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'start_date', '기준 시작일자'))
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'reg_date', '시작일자'))
+      .isDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'reg_date', '시작일자'))
   ],
 	readWorkerProductivity: [
     query('start_date', '시작일자')
