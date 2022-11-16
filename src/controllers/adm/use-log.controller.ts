@@ -43,6 +43,7 @@ class AdmUseLogCtl {
 			const company_cd = await companyOptService.getCompanyOptValue('LOGIN_LOG_COMPANY_CD');
 
 			let loginLog = { ...user.raws[0], ...datas[0], company_cd, ip,	browser }
+			console.log(loginLog)
 			await service.loginLogCreate([loginLog])
 
       return createApiResult(res, result, 200, '데이터 생성 성공', this.stateTag, successState.READ);
