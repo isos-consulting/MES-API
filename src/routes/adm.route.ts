@@ -15,6 +15,7 @@ import AdmInspHandlingTypeCtl from '../controllers/adm/insp-handling-type.contro
 import AdmCycleUnitCtl from '../controllers/adm/cycle-unit.controller';
 import AdmExcelFormCtl from '../controllers/adm/excel-form.controller';
 import AdmLoginLogCtl from '../controllers/adm/login-log.controller';
+import AdmUseLogCtl from '../controllers/adm/use-log.controller';
 
 import admInspDetailTypeValidation from '../validations/adm/insp-detail-type.validation';
 import admCycleUnitValidation from '../validations/adm/cycle-unit.validation';
@@ -38,6 +39,7 @@ import admReworkTypeValidation from '../validations/adm/rework-type.validation';
 import admInspTypeValidation from '../validations/adm/insp-type.validation';
 import admInspHandlingTypeValidation from '../validations/adm/insp-handling-type.validation';
 import admLoginLogValidation from '../validations/adm/login-log.validation';
+import admUseLogValidation from '../validations/adm/use-log.validation';
 import AdmMenuFileCtl from '../controllers/adm/menu-file.controller';
 import admMenuFileValidation from '../validations/adm/menu-file.validation';
 import admExcelFormValidation from '../validations/adm/excel-form.validation';
@@ -230,6 +232,12 @@ const loginLog = new AdmLoginLogCtl();
 router.route('/login-log').get(admLoginLogValidation.read, validationCallback, loginLog.read);
 router.route('/login-log').post(loginLog.create);
 //#endregion
+
+//#region ✅ LoginLog (로그인 사용 로그)
+const useLog = new AdmUseLogCtl();
+router.route('/use-log').post(admUseLogValidation.create, validationCallback, useLog.create);
+//#endregion
+
 
 //#region ✅ MenuFile (메뉴별 파일관리)
 const menuFile = new AdmMenuFileCtl();
