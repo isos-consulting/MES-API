@@ -1,153 +1,136 @@
+import moment from 'moment';
+
 const readWorkRejectsRate = (
   params: {
-    start_date: string,
-    end_date: string,
-    factory_uuid: string,
-    store_uuid: string,
+    reg_date: string
   }) => {
+
+	const reg_date = moment(params.reg_date).format('YYYYMMDD')
+	const year = moment(reg_date).format('YYYY')
+
   //#region 📌 임시테이블 생성
   const createTempTable = `
-    CREATE TEMP TABLE temp_store(
-      reg_date timestamptz,
-      factory_id int,
-      prod_id int,
-      reject_id int,
-      lot_no varchar(25),
-      store_id int,
-      location_id int,
-      tran_type_id int,
-      inout_val int,
-      basic_stock numeric(19,6),
-      in_qty numeric(19,6),
-      out_qty numeric(19,6),
-      update_qty numeric(19,6),
-      created_at timestamptz,
-      created_uid int,
-      updated_at timestamptz,
-      updated_uid int
+    CREATE TEMP TABLE temp_table(
+      proc_id int,
+      work_qty_month01 numeric(19,6),
+			work_qty_month02 numeric(19,6),
+			work_qty_month03 numeric(19,6),
+			work_qty_month04 numeric(19,6),
+			work_qty_month05 numeric(19,6),
+			work_qty_month06 numeric(19,6),
+			work_qty_month07 numeric(19,6),
+			work_qty_month08 numeric(19,6),
+			work_qty_month09 numeric(19,6),
+			work_qty_month10 numeric(19,6),
+			work_qty_month11 numeric(19,6),
+			work_qty_month12 numeric(19,6),
+			reject_qty_month01 numeric(19,6),
+			reject_qty_month02 numeric(19,6),
+			reject_qty_month03 numeric(19,6),
+			reject_qty_month04 numeric(19,6),
+			reject_qty_month05 numeric(19,6),
+			reject_qty_month06 numeric(19,6),
+			reject_qty_month07 numeric(19,6),
+			reject_qty_month08 numeric(19,6),
+			reject_qty_month09 numeric(19,6),
+			reject_qty_month10 numeric(19,6),
+			reject_qty_month11 numeric(19,6),
+			reject_qty_month12 numeric(19,6)
     );
-    CREATE INDEX ON temp_store(factory_id);
-    CREATE INDEX ON temp_store(prod_id);
-    CREATE INDEX ON temp_store(reject_id);
-    CREATE INDEX ON temp_store(store_id);
-    CREATE INDEX ON temp_store(location_id);
+    CREATE INDEX ON temp_table(proc_id);
   `;
   //#endregion
 
   //#region 📌 임시테이블 데이터 삽입
-  const insertToTempTable = `
-    INSERT INTO temp_store
-    SELECT 	
-      i_s.reg_date,
-      i_s.factory_id,
-      i_s.prod_id,
-      i_s.reject_id,
-      i_s.lot_no,
-      i_s.store_id,
-      i_s.location_id,
-      i_s.tran_type_id,
-      CASE WHEN i_s.inout_fg = TRUE THEN 1 ELSE 0 END,
-      COALESCE(b_s.qty,0),
-      CASE WHEN a_tt.tran_type_cd = 'INVENTORY' THEN 0 ELSE CASE WHEN i_s.inout_fg = TRUE THEN i_s.qty ELSE 0 END END,
-      CASE WHEN a_tt.tran_type_cd = 'INVENTORY' THEN 0 ELSE CASE WHEN i_s.inout_fg = TRUE THEN 0 ELSE i_s.qty END END,
-      CASE WHEN a_tt.tran_type_cd <> 'INVENTORY' THEN 0 ELSE CASE WHEN i_s.inout_fg = TRUE THEN i_s.qty ELSE (i_s.qty * -1) END END,
-      i_s.created_at,
-      i_s.created_uid,
-      i_s.updated_at,
-      i_s.updated_uid
-    FROM inv_store_tb i_s
-    JOIN std_factory_tb s_f ON s_f.factory_id = i_s.factory_id
-    JOIN std_store_tb s_s ON s_s.store_id = i_s.store_id
-    JOIN adm_tran_type_tb a_tt ON a_tt.tran_type_id = i_s.tran_type_id
-    LEFT JOIN (	
-      SELECT 	
-        i_s.factory_id, i_s.prod_id, i_s.reject_id, i_s.lot_no, i_s.store_id, i_s.location_id,
-        sum(CASE WHEN i_s.inout_fg = FALSE THEN COALESCE(i_s.qty,0) * -1 ELSE COALESCE(i_s.qty,0) END) AS qty
-      FROM inv_store_tb i_s
-      WHERE date(i_s.reg_date) <= '${params.start_date}'
-      GROUP BY i_s.factory_id, i_s.prod_id, i_s.reject_id, i_s.lot_no, i_s.store_id, i_s.location_id
-    ) b_s ON b_s.factory_id = i_s.factory_id 
-          AND b_s.store_id = i_s.store_id
-          AND b_s.prod_id = i_s.prod_id
-          AND b_s.lot_no = i_s.lot_no
-          AND COALESCE(b_s.reject_id,0) = COALESCE(i_s.reject_id,0)
-          AND COALESCE(b_s.location_id,0) = COALESCE(i_s.location_id,0)
-    WHERE date(i_s.reg_date) BETWEEN '${params.start_date}' AND '${params.end_date}'
-    AND s_f.uuid = '${params.factory_uuid}'
-    AND s_s.uuid = '${params.store_uuid}';
+  const insertTempTable = `
+    INSERT INTO temp_table
+		SELECT 
+			p_wr.proc_id 
+			, sum(CASE WHEN to_char(p_wr.start_date ,'YYYY-MM') = '${year}' ||'-01' THEN COALESCE(p_wr.qty,0) + COALESCE(p_rj.reject_qty,0) END) AS work_qty_month01 
+			, sum(CASE WHEN to_char(p_wr.start_date ,'YYYY-MM') = '${year}' ||'-02' THEN COALESCE(p_wr.qty,0) + COALESCE(p_rj.reject_qty,0) END) AS work_qty_month02
+			, sum(CASE WHEN to_char(p_wr.start_date ,'YYYY-MM') = '${year}' ||'-03' THEN COALESCE(p_wr.qty,0) + COALESCE(p_rj.reject_qty,0) END) AS work_qty_month03
+			, sum(CASE WHEN to_char(p_wr.start_date ,'YYYY-MM') = '${year}' ||'-04' THEN COALESCE(p_wr.qty,0) + COALESCE(p_rj.reject_qty,0) END) AS work_qty_month04
+			, sum(CASE WHEN to_char(p_wr.start_date ,'YYYY-MM') = '${year}' ||'-05' THEN COALESCE(p_wr.qty,0) + COALESCE(p_rj.reject_qty,0) END) AS work_qty_month05
+			, sum(CASE WHEN to_char(p_wr.start_date ,'YYYY-MM') = '${year}' ||'-06' THEN COALESCE(p_wr.qty,0) + COALESCE(p_rj.reject_qty,0) END) AS work_qty_month06
+			, sum(CASE WHEN to_char(p_wr.start_date ,'YYYY-MM') = '${year}' ||'-07' THEN COALESCE(p_wr.qty,0) + COALESCE(p_rj.reject_qty,0) END) AS work_qty_month07
+			, sum(CASE WHEN to_char(p_wr.start_date ,'YYYY-MM') = '${year}' ||'-08' THEN COALESCE(p_wr.qty,0) + COALESCE(p_rj.reject_qty,0) END) AS work_qty_month08
+			, sum(CASE WHEN to_char(p_wr.start_date ,'YYYY-MM') = '${year}' ||'-09' THEN COALESCE(p_wr.qty,0) + COALESCE(p_rj.reject_qty,0) END) AS work_qty_month09
+			, sum(CASE WHEN to_char(p_wr.start_date ,'YYYY-MM') = '${year}' ||'-10' THEN COALESCE(p_wr.qty,0) + COALESCE(p_rj.reject_qty,0) END) AS work_qty_month10
+			, sum(CASE WHEN to_char(p_wr.start_date ,'YYYY-MM') = '${year}' ||'-11' THEN COALESCE(p_wr.qty,0) + COALESCE(p_rj.reject_qty,0) END) AS work_qty_month11
+			, sum(CASE WHEN to_char(p_wr.start_date ,'YYYY-MM') = '${year}' ||'-12' THEN COALESCE(p_wr.qty,0) + COALESCE(p_rj.reject_qty,0) END) AS work_qty_month12
+			, sum(CASE WHEN to_char(p_wr.start_date ,'YYYY-MM') = '${year}' ||'-01' THEN COALESCE(p_rj.reject_qty,0) END) AS reject_qty_month01
+			, sum(CASE WHEN to_char(p_wr.start_date ,'YYYY-MM') = '${year}' ||'-02' THEN COALESCE(p_rj.reject_qty,0) END) AS reject_qty_month02
+			, sum(CASE WHEN to_char(p_wr.start_date ,'YYYY-MM') = '${year}' ||'-03' THEN COALESCE(p_rj.reject_qty,0) END) AS reject_qty_month03
+			, sum(CASE WHEN to_char(p_wr.start_date ,'YYYY-MM') = '${year}' ||'-04' THEN COALESCE(p_rj.reject_qty,0) END) AS reject_qty_month04
+			, sum(CASE WHEN to_char(p_wr.start_date ,'YYYY-MM') = '${year}' ||'-05' THEN COALESCE(p_rj.reject_qty,0) END) AS reject_qty_month05
+			, sum(CASE WHEN to_char(p_wr.start_date ,'YYYY-MM') = '${year}' ||'-06' THEN COALESCE(p_rj.reject_qty,0) END) AS reject_qty_month06
+			, sum(CASE WHEN to_char(p_wr.start_date ,'YYYY-MM') = '${year}' ||'-07' THEN COALESCE(p_rj.reject_qty,0) END) AS reject_qty_month07
+			, sum(CASE WHEN to_char(p_wr.start_date ,'YYYY-MM') = '${year}' ||'-08' THEN COALESCE(p_rj.reject_qty,0) END) AS reject_qty_month08
+			, sum(CASE WHEN to_char(p_wr.start_date ,'YYYY-MM') = '${year}' ||'-09' THEN COALESCE(p_rj.reject_qty,0) END) AS reject_qty_month09
+			, sum(CASE WHEN to_char(p_wr.start_date ,'YYYY-MM') = '${year}' ||'-10' THEN COALESCE(p_rj.reject_qty,0) END) AS reject_qty_month10
+			, sum(CASE WHEN to_char(p_wr.start_date ,'YYYY-MM') = '${year}' ||'-11' THEN COALESCE(p_rj.reject_qty,0) END) AS reject_qty_month11
+			, sum(CASE WHEN to_char(p_wr.start_date ,'YYYY-MM') = '${year}' ||'-12' THEN COALESCE(p_rj.reject_qty,0) END) AS reject_qty_month12
+		FROM prd_work_tb p_w
+		JOIN prd_work_routing_tb p_wr ON p_w.work_id = p_wr.work_id
+		LEFT JOIN (SELECT work_routing_id, sum(qty) reject_qty FROM prd_work_reject_tb GROUP BY work_routing_id) p_rj ON p_rj.work_routing_id  = p_wr.work_routing_id 
+		WHERE date_part('year', p_wr.start_date) = '${year}'
+		GROUP BY p_wr.proc_id;
   `;
+
   //#endregion
 
   //#region 📌 추가 테이블 Join 및 조회
-  // 📌 Filtering 되어있는 재고 정보에 추가 테이블 Join 하여 조회
-  const readHistory = `
-    SELECT 
-      t_s.reg_date,
-      s_f.uuid as factory_uuid,
-      s_f.factory_cd,
-      s_f.factory_nm,
-      s_p.uuid as prod_uuid,
-      s_p.prod_no,
-      s_p.prod_nm,
-      s_it.uuid as item_type_uuid,
-      s_it.item_type_cd,
-      s_it.item_type_nm,
-      s_pt.uuid as prod_type_uuid,
-      s_pt.prod_type_cd,
-      s_pt.prod_type_nm,
-      s_m.uuid as model_uuid,
-      s_m.model_cd,
-      s_m.model_nm,
-      s_p.rev,
-      s_p.prod_std,
-      s_u.uuid as unit_uuid,
-      s_u.unit_cd,
-      s_u.unit_nm,
-      s_r.uuid as reject_uuid,
-      s_r.reject_cd,
-      s_r.reject_nm,
-      t_s.lot_no,
-      s_s.uuid as store_uuid,
-      s_s.store_cd,
-      s_s.store_nm,
-      s_l.uuid as location_uuid,
-      s_l.location_cd,
-      s_l.location_nm,
-      a_tt.uuid as tran_type_uuid,
-      a_tt.tran_type_cd,
-      a_tt.tran_type_nm,
-      t_s.basic_stock,
-      t_s.in_qty,
-      t_s.out_qty,
-      t_s.update_qty,
-      COALESCE(t_s.basic_stock,0) + (sum(t_s.in_qty - t_s.out_qty + t_s.update_qty) OVER (PARTITION BY t_s.prod_id, t_s.lot_no ORDER BY t_s.reg_date, t_s.created_at, t_s.inout_val)) as final_stock,
-      t_s.created_at,
-      t_s.created_uid,
-      a_uc.user_nm as created_nm,
-      t_s.updated_at,
-      t_s.updated_uid,
-      a_uu.user_nm as updated_nm
-    FROM temp_store t_s
-    JOIN std_factory_tb s_f ON s_f.factory_id = t_s.factory_id
-    JOIN adm_tran_type_tb a_tt ON a_tt.tran_type_id = t_s.tran_type_id
-    JOIN std_prod_tb s_p ON s_p.prod_id = t_s.prod_id
-    LEFT JOIN std_item_type_tb s_it ON s_it.item_type_id = s_p.item_type_id
-    LEFT JOIN std_prod_type_tb s_pt ON s_pt.prod_type_id = s_p.prod_type_id
-    LEFT JOIN std_model_tb s_m ON s_m.model_id = s_p.model_id
-    LEFT JOIN std_unit_tb s_u ON s_u.unit_id = s_p.unit_id
-    LEFT JOIN std_store_tb s_s ON s_s.store_id = t_s.store_id
-    LEFT JOIN std_location_tb s_l ON s_l.location_id = t_s.location_id
-    LEFT JOIN std_reject_tb s_r ON s_r.reject_id = t_s.reject_id
-    LEFT JOIN aut_user_tb a_uc ON a_uc.uid = t_s.created_uid
-    LEFT JOIN aut_user_tb a_uu ON a_uu.uid = t_s.updated_uid
-    ORDER BY t_s.prod_id, t_s.lot_no, t_s.reg_date, t_s.created_at, t_s.inout_val;
+  // 📌 Filtering 되어있는 정보에 추가 테이블 Join 하여 조회
+  const readQuery = `
+	SELECT 
+		s_p.proc_cd 
+		,s_p.proc_nm 
+		,COALESCE(work_qty.work_qty_month01,0) AS work_qty_month01 
+		,COALESCE(work_qty.reject_qty_month01,0) AS reject_qty_month01
+		,CASE WHEN COALESCE(work_qty.work_qty_month01,0) = 0 THEN 0 ELSE COALESCE(work_qty.reject_qty_month01,0)/COALESCE(work_qty.work_qty_month01,0) END rate_month01   
+		,COALESCE(work_qty.work_qty_month02,0) AS work_qty_month02
+		,COALESCE(work_qty.reject_qty_month02,0) AS reject_qty_month02
+		,CASE WHEN COALESCE(work_qty.work_qty_month02,0) = 0 THEN 0 ELSE COALESCE(work_qty.reject_qty_month02,0)/COALESCE(work_qty.work_qty_month02,0) END rate_month02   
+		,COALESCE(work_qty.work_qty_month03,0) AS work_qty_month03
+		,COALESCE(work_qty.reject_qty_month03,0) AS reject_qty_month03
+		,CASE WHEN COALESCE(work_qty.work_qty_month03,0) = 0 THEN 0 ELSE COALESCE(work_qty.reject_qty_month03,0)/COALESCE(work_qty.work_qty_month03,0) END rate_month03   
+		,COALESCE(work_qty.work_qty_month04,0) AS work_qty_month04
+		,COALESCE(work_qty.reject_qty_month04,0) AS reject_qty_month04
+		,CASE WHEN COALESCE(work_qty.work_qty_month04,0) = 0 THEN 0 ELSE COALESCE(work_qty.reject_qty_month04,0)/COALESCE(work_qty.work_qty_month04,0) END rate_month04   
+		,COALESCE(work_qty.work_qty_month05,0) AS work_qty_month05
+		,COALESCE(work_qty.reject_qty_month05,0) AS reject_qty_month05
+		,CASE WHEN COALESCE(work_qty.work_qty_month05,0) = 0 THEN 0 ELSE COALESCE(work_qty.reject_qty_month05,0)/COALESCE(work_qty.work_qty_month05,0) END rate_month05   
+		,COALESCE(work_qty.work_qty_month06,0) AS work_qty_month06
+		,COALESCE(work_qty.reject_qty_month06,0) AS reject_qty_month06
+		,CASE WHEN COALESCE(work_qty.work_qty_month06,0) = 0 THEN 0 ELSE COALESCE(work_qty.reject_qty_month06,0)/COALESCE(work_qty.work_qty_month06,0) END rate_month06   
+		,COALESCE(work_qty.work_qty_month07,0) AS work_qty_month07
+		,COALESCE(work_qty.reject_qty_month07,0) AS reject_qty_month07
+		,CASE WHEN COALESCE(work_qty.work_qty_month07,0) = 0 THEN 0 ELSE COALESCE(work_qty.reject_qty_month07,0)/COALESCE(work_qty.work_qty_month07,0) END rate_month07   
+		,COALESCE(work_qty.work_qty_month08,0) AS work_qty_month08
+		,COALESCE(work_qty.reject_qty_month08,0) AS reject_qty_month08
+		,CASE WHEN COALESCE(work_qty.work_qty_month08,0) = 0 THEN 0 ELSE COALESCE(work_qty.reject_qty_month08,0)/COALESCE(work_qty.work_qty_month08,0) END rate_month08   
+		,COALESCE(work_qty.work_qty_month09,0) AS work_qty_month09
+		,COALESCE(work_qty.reject_qty_month09,0) AS reject_qty_month09
+		,CASE WHEN COALESCE(work_qty.work_qty_month09,0) = 0 THEN 0 ELSE COALESCE(work_qty.reject_qty_month09,0)/COALESCE(work_qty.work_qty_month09,0) END rate_month09   
+		,COALESCE(work_qty.work_qty_month10,0) AS work_qty_month10
+		,COALESCE(work_qty.reject_qty_month10,0) AS reject_qty_month10
+		,CASE WHEN COALESCE(work_qty.work_qty_month10,0) = 0 THEN 0 ELSE COALESCE(work_qty.reject_qty_month10,0)/COALESCE(work_qty.work_qty_month10,0) END rate_month10   
+		,COALESCE(work_qty.work_qty_month11,0) AS work_qty_month11
+		,COALESCE(work_qty.reject_qty_month11,0) AS reject_qty_month11
+		,CASE WHEN COALESCE(work_qty.work_qty_month11,0) = 0 THEN 0 ELSE COALESCE(work_qty.reject_qty_month11,0)/COALESCE(work_qty.work_qty_month11,0) END rate_month11   
+		,COALESCE(work_qty.work_qty_month12,0) AS work_qty_month12
+		,COALESCE(work_qty.reject_qty_month12,0) AS reject_qty_month12
+		,CASE WHEN COALESCE(work_qty.work_qty_month12,0) = 0 THEN 0 ELSE COALESCE(work_qty.reject_qty_month12,0)/COALESCE(work_qty.work_qty_month12,0) END rate_month12   
+	FROM std_proc_tb s_p
+	LEFT JOIN temp_table work_qty ON work_qty.proc_id = s_p.proc_id 
+	ORDER BY s_p.proc_nm;
   `;
   //#endregion
 
   //#region 📌 임시테이블 Drop
   // 📌 생성된 임시테이블(Temp Table) 삭제(Drop)
   const dropTempTableQuery = `
-    DROP TABLE temp_store;
+    DROP TABLE temp_table;
   `;
   //#endregion
 
@@ -156,11 +139,11 @@ const readWorkRejectsRate = (
     -- 임시테이블 생성
     ${createTempTable}
 
-    -- 수불 데이터 임시테이블로 삽입
-    ${insertToTempTable}
+    -- 임시테이블 데이터 insert
+    ${insertTempTable}
 
-    -- Filtering 되어있는 수불 정보에 추가 테이블 Join 하여 조회
-    ${readHistory}
+    -- Filtering 되어있는 정보에 추가 테이블 Join 하여 조회
+    ${readQuery}
 
     -- 생성된 임시테이블(Temp Table) 삭제(Drop)
     ${dropTempTableQuery}

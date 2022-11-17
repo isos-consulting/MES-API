@@ -2,7 +2,7 @@ const readDowntime = (
   params: {
     start_date: string,
     end_date: string,
-    workings_uuid?: string
+    workings_uuid?: string[]
   }) => {
 	let searchQuery: string = '';
 
@@ -30,7 +30,11 @@ const readDowntime = (
   //#endregion
 
 	//#region 📌 searchQuery
-	if (params.workings_uuid) { searchQuery += ` AND s_w.uuid = '${params.workings_uuid}'`; }  
+	if (params.workings_uuid) { 		
+    const workingsUuid = params.workings_uuid.map(uuid => {
+    return `'${uuid}'`
+  });
+  searchQuery += ` AND s_w.uuid IN (${workingsUuid})`; }  
 	if (searchQuery.length > 0) {
 		searchQuery = searchQuery.substring(4, searchQuery.length);
 		searchQuery = 'WHERE' + searchQuery;
@@ -45,8 +49,8 @@ const readDowntime = (
 			s_w.workings_nm ,
 			coalesce(t_d.work_min,0) AS work_min
 		FROM std_workings_tb s_w
-		LEFT JOIN temp_downtime t_d ON t_d.workings_id = s_w.workings_id;
-		${searchQuery}
+		LEFT JOIN temp_downtime t_d ON t_d.workings_id = s_w.workings_id
+		${searchQuery};
   `;
   //#endregion
 
