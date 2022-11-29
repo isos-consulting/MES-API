@@ -35,6 +35,7 @@ class StdProdRepo {
         return this.repo.create(
           {
             prod_no: prod.prod_no,
+            prod_no_pre: prod.prod_no_pre,
             prod_nm: prod.prod_nm,
             item_type_id: prod.item_type_id,
             prod_type_id: prod.prod_type_id,
@@ -109,6 +110,7 @@ class StdProdRepo {
         attributes: [
           [ Sequelize.col('stdProd.uuid'), 'prod_uuid' ],
           'prod_no',
+          'prod_no_pre',
           'prod_nm',
           [ Sequelize.col('stdItemType.uuid'), 'item_type_uuid' ],
           [ Sequelize.col('stdItemType.item_type_cd'), 'item_type_cd' ],
@@ -205,6 +207,7 @@ class StdProdRepo {
         attributes: [
           [ Sequelize.col('stdProd.uuid'), 'prod_uuid' ],
           'prod_no',
+          'prod_no_pre',
           'prod_nm',
           [ Sequelize.col('stdItemType.uuid'), 'item_type_uuid' ],
           [ Sequelize.col('stdItemType.item_type_cd'), 'item_type_cd' ],
@@ -318,6 +321,7 @@ class StdProdRepo {
         return this.repo.update(
           {
             prod_no: prod.prod_no ?? null,
+            prod_no_pre: prod.prod_no_pre ?? null,
             prod_nm: prod.prod_nm ?? null,
             item_type_id: prod.item_type_id ?? null,
             prod_type_id: prod.prod_type_id ?? null,
@@ -386,6 +390,7 @@ class StdProdRepo {
         return this.repo.update(
           {
             prod_no: prod.prod_no,
+            prod_no_pre: prod.prod_no_pre,
             prod_nm: prod.prod_nm,
             item_type_id: prod.item_type_id,
             prod_type_id: prod.prod_type_id,

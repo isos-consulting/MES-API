@@ -1,6 +1,7 @@
 export default interface IStdProd {
   prod_id?: number,
   prod_no?: string,
+  prod_no_pre?: string,
   prod_nm?: string,
   item_type_id?: number,
   prod_type_id?: number | null,

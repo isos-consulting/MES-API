@@ -37,6 +37,13 @@ export default class StdProd extends Model<IStdProd> {
   prod_no: string;
 
   @Column({
+    comment: '구품번',
+    type: DataType.STRING(50),
+    allowNull: true,
+  })
+  prod_no_pre: string;
+
+  @Column({
     comment: '품목명',
     type: DataType.STRING(100),
     allowNull: false,

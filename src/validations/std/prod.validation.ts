@@ -121,6 +121,8 @@ const stdProdValidation = {
 		body('*.prod_no', '품번')
 			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'prod_no', '품번'))
 			.isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'prod_no', '품번')),
+		body('*.prod_no_pre', '구품번').optional({ nullable: true })
+			.isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'prod_no_pre', '구품번')),
 		body('*.prod_nm', '품목명')
 			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'prod_nm', '품목명'))
 			.isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'prod_nm', '품목명')),
@@ -232,6 +234,8 @@ const stdProdValidation = {
 		body('*.prod_no', '품번')
 			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'prod_no', '품번'))
 			.isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'prod_no', '품번')),
+		body('*.prod_no_pre', '구품번').optional({ nullable: true })
+			.isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'prod_no_pre', '구품번')),
 		body('*.prod_nm', '품목명')
 			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'prod_nm', '품목명'))
 			.isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'prod_nm', '품목명')),
@@ -322,6 +326,8 @@ const stdProdValidation = {
 			.isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'uuid', '품목UUID')),
 		body('*.prod_no', '품번').optional({ nullable: true })
 			.isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'prod_no', '품번')),
+		body('*.prod_no_pre', '구품번').optional({ nullable: true })
+			.isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'prod_no_pre', '구품번')),
 		body('*.prod_nm', '품목명').optional({ nullable: true })
 			.isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'prod_nm', '품목명')),
 		body('*.item_type_uuid', '품목유형UUID').optional({ nullable: true })
