@@ -7,6 +7,8 @@ import invMoveValidation from '../validations/inv/move.validation';
 import validationCallback from '../utils/validationCallback';
 import invStockRejectValidation from '../validations/inv/stock-reject.validation';
 import invStoreValidation from '../validations/inv/store.validation';
+import InvEcerpCtl from '../controllers/inv/ecerp.controller';
+import invEcerpValidation from '../validations/inv/ecerp.validation';
 
 const router = express.Router();
 
@@ -44,6 +46,16 @@ router.route('/moves').post(invMoveValidation.create, validationCallback, move.c
 router.route('/moves').put(invMoveValidation.update, validationCallback, move.update);
 router.route('/moves').patch(invMoveValidation.patch, validationCallback, move.patch);
 router.route('/moves').delete(invMoveValidation.delete, validationCallback, move.delete);
+//#endregion
+
+//#region ✅ ECERP (ERP 연동)
+const ecerp = new InvEcerpCtl();
+router.route('/ecerp/:uuid').get(invEcerpValidation.readByUuid, validationCallback, ecerp.readByUuid);
+router.route('/ecerps').get(invEcerpValidation.read, validationCallback, ecerp.read);
+router.route('/ecerps').post(invEcerpValidation.create, validationCallback, ecerp.create);
+router.route('/ecerps').put(invEcerpValidation.update, validationCallback, ecerp.update);
+router.route('/ecerps').patch(invEcerpValidation.patch, validationCallback, ecerp.patch);
+router.route('/ecerps').delete(invEcerpValidation.delete, validationCallback, ecerp.delete);
 //#endregion
 
 export default router;
