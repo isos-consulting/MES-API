@@ -12,6 +12,7 @@ type getFkUuidInfo = {
   key: string,
   uuidName: string,
 	cdName: string,
+  cdAlias?: string,
   cdColumnName: string,
   TRepo: any,
 }
@@ -20,14 +21,14 @@ type getFkUuidInfo = {
   * 🟣 Fk Table 의 cd 로 uuid 를 검색하여 request body 에 삽입
   * @param body Request Body
   */
-const getFkUuidByCd = async(tenant: string, body: any, info?: getFkUuidInfo[]) => {
+const getFkUuidByCd = async(tenant: string, body: any, infos?: getFkUuidInfo[]) => {
   body = checkArray(body);
-  if (!info) { return body; }
+  if (!infos) { return body; }
 
   const helpers: Map<string, getFkIdHelper> = new Map<string, getFkIdHelper>();
 
   // 📌 fk cd => uuid 로 변환하기 위한 정보 초기값 Setting
-  info.forEach((info) => {
+  infos.forEach((info) => {
     helpers.set(info.key, {
       info: info,
       set: new Set<string>(),
@@ -38,7 +39,7 @@ const getFkUuidByCd = async(tenant: string, body: any, info?: getFkUuidInfo[]) =
 
   body.forEach((data: any) => {
     helpers.forEach((helper) => {
-      if (data[helper.info.cdName]) { helper.set.add(data[helper.info.cdName]); }
+      if (data[helper.info.cdAlias ?? helper.info.cdName]) { helper.set.add(data[helper.info.cdAlias ?? helper.info.cdName]); }
     })
   })
 
@@ -57,9 +58,9 @@ const getFkUuidByCd = async(tenant: string, body: any, info?: getFkUuidInfo[]) =
   // 📌 req.body cd 에 매칭 되는 uuid Setting
   body = body.map((data: any) => {
     helpers.forEach((helper) => {
-      if (data[helper.info.cdName]) { 
-        data[helper.info.uuidName] = helper.map.get(data[helper.info.cdName]);
-        if (!helper.map.get(data[helper.info.cdName])) {
+      if (data[helper.info.cdAlias ?? helper.info.cdName]) { 
+        data[helper.info.uuidName] = helper.map.get(data[helper.info.cdAlias ?? helper.info.cdName]);
+        if (!helper.map.get(data[helper.info.cdAlias ?? helper.info.cdName])) {
           data.error.push(`${helper.info.cdColumnName} 잘못된 값입니다.`) 
         }
       }

@@ -126,6 +126,12 @@ class StdUnitRepo {
     return convertReadResult(result);
   };
 
+  // 📒 Fn[readRawByUniques]: Unique Key를 통하여 Raw Datas Read Function
+  public readRawByUniques = async(unitNms: string[]) => {
+    const result = await this.repo.findAll({ where: { unit_nm: { [Op.in]: unitNms } } });
+    return convertReadResult(result);
+  };
+
   //#endregion
 
   //#region 🟡 Update Functions

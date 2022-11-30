@@ -196,6 +196,12 @@ class StdPartnerRepo {
     return convertReadResult(result);
   };
 
+  // 📒 Fn[readRawByUniques]: Unique Key를 통하여 Raw Datas Read Function
+  public readRawByUniques = async(partnerCds: string[]) => {
+    const result = await this.repo.findAll({ where: { partner_cd: { [Op.in]: partnerCds } } });
+    return convertReadResult(result);
+  };
+
 	// 📒 Fn[readRawByUnique]: Unique Key를 통하여 Raw Data Read Function
   public readRawByUniqueArray = async(params: string[]) => {
     const result = await this.repo.findAll({ where: { partner_cd: {[Op.in]: params}} });

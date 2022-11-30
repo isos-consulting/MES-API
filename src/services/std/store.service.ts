@@ -132,11 +132,11 @@ class StdStoreService {
    * @returns 검증 성공시 true, 실패시 Error Throw
    */
   public validateStoreTypeByIds = async (storeIds: number[], storeType: TStoreType, tran?: Transaction) => {
-    const storeIdSet = new Set(storeIds);
-
-    await Promise.all([
+    const storeIdSet = [...new Set(storeIds)];
+    
+    await Promise.all(
       // 📌 입고창고가 가용창고가 아닌 경우에 대한 Valdation
-      storeIdSet.forEach(async (id) => {
+      storeIdSet.map(async (id) => {
         const validated = await this.validateStoreTypeById(id, storeType, tran);
         if (!validated) {
           throw createApiError(
@@ -149,8 +149,8 @@ class StdStoreService {
             errorState.INVALID_DATA
           );
         }
-      }),
-    ]);
+      })
+    );
 
     return true;
   }

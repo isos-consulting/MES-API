@@ -177,6 +177,12 @@ class StdStoreRepo {
     return convertReadResult(result);
   };
 
+  // 📒 Fn[readRawByUniques]: Unique Key를 통하여 Raw Datas Read Function
+  public readRawByUniques = async(storeCds: string[]) => {
+    const result = await this.repo.findAll({ where: { store_cd: { [Op.in]: storeCds } } });
+    return convertReadResult(result);
+  };
+
   // 📒 Fn[readRawAll]: Raw Data 전체 Read Function
   public readRawAll = async(tran?: Transaction) => {
     const result = await this.repo.findAll({ transaction: tran });

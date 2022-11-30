@@ -16,6 +16,9 @@ import AdmPatternOptService from '../../services/adm/pattern-opt.service';
 import MatIncomeService from '../../services/mat/income.service';
 import StdStoreService from '../../services/std/store.service';
 import InvStoreService from '../../services/inv/store.service';
+import getFkUuidByCd from '../../utils/getFkUuidByCd';
+import fkInfos from '../../types/fk-info.type';
+import InvEcerpService from '../../services/inv/ecerp.service';
 
 class MatReceiveCtl {
   stateTag: string
@@ -123,6 +126,168 @@ class MatReceiveCtl {
         result.count = headerResult.count + detailResult.count + incomeResult.count + storeResult.count;
       });
 
+      return createApiResult(res, result, 201, '데이터 생성 성공', this.stateTag, successState.CREATE);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
+    }
+  };
+
+  // 📒 Fn[createEcount] (✅ Inheritance): createEcount Function
+  public createEcount = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      let result: ApiResult<any> = { count:0, raws: [] };
+      const service = new MatReceiveService(req.tenant.uuid);
+      const detailService = new MatReceiveDetailService(req.tenant.uuid);
+      const incomeService = new MatIncomeService(req.tenant.uuid);
+      const storeService = new StdStoreService(req.tenant.uuid);
+      const inventoryService = new InvStoreService(req.tenant.uuid);
+      const patternOptService = new AdmPatternOptService(req.tenant.uuid);
+      const patternService = new AdmPatternHistoryService(req.tenant.uuid);
+      const ecerpService = new InvEcerpService(req.tenant.uuid);
+
+      // const matched = matchedData(req, { locations: [ 'body' ] });
+      const matched = req.body.map((data: any) => {
+        data['error'] = [];
+        return data;
+      });
+
+      const fkInfoList = [ fkInfos.to_store, fkInfos.partner, fkInfos.prod, fkInfos.unit, fkInfos.money_unit ];
+
+      // Cd로 UUID 가져옴
+      const matchedDatas = await getFkUuidByCd(req.tenant.uuid, matched, fkInfoList);
+      
+      /**
+       * matched 형식은 [ {}, {} ] 이므로 
+       * 
+       * {
+       *   [reg_date] + [partner_cd]: {
+       *      header: {},
+       *      details: []
+       *   }, 
+       * }
+       */
+      const datas: any = {};
+
+      matchedDatas.forEach((data: any) => {
+        // 초기 데이터 형태 생성
+        if (datas[data['reg_date'] + data['partner_cd']] === undefined) {
+          datas[data['reg_date'] + data['partner_cd']] = {
+            header: {
+              factory_uuid: data['factory_uuid'],
+              partner_uuid: data['partner_uuid'],
+              reg_date: data['reg_date'],
+            },
+            details: []
+          };
+        }
+
+        // todo 수입검사여부, 이월여부 삭제 필요 (insp_fg, carry_fg)
+        // 데이터 추가
+        datas[data['reg_date'] + data['partner_cd']].details.push({ ...data, insp_fg: false, carry_fg: false })
+      });
+
+      await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
+        for (let dataObject of Object.values(datas) as any[]) {
+          let receiveUuid: string;
+          let receiveId: number;
+          let regDate: string;
+          let maxSeq: number;
+          let headerResult: ApiResult<any> = { count: 0, raws: [] };
+          const data = {
+            header: (await service.convertFk(dataObject.header))[0],
+            details: await detailService.convertFk(dataObject.details),
+          }
+          // 📌 자재입하의 UUID가 입력되지 않은 경우 자재입하 신규 발행
+          if (!data.header.uuid) {
+            // 📌 전표자동발행 옵션 여부 확인
+            const hasAutoOption = await patternOptService.hasAutoOption({ table_nm: 'MAT_RECEIVE_TB', col_nm: 'stmt_no', tran });
+  
+            // 📌 전표의 자동발행옵션이 On인 경우
+            if (hasAutoOption) {
+              data.header.stmt_no = await patternService.getPattern({
+                factory_id: data.header.factory_id,
+                table_nm: 'MAT_RECEIVE_TB',
+                col_nm: 'stmt_no',
+                reg_date: data.header.reg_date,
+                uid: req.user?.uid as number,
+                tran: tran
+              });
+            }
+  
+            // 📌 전표 생성
+            headerResult = await service.create([data.header], req.user?.uid as number, tran);
+            receiveUuid = headerResult.raws[0].uuid;
+            receiveId = headerResult.raws[0].receive_id;
+            regDate = headerResult.raws[0].reg_date;
+            maxSeq = 0;
+          } else {
+            receiveUuid = data.header.uuid;
+            receiveId = data.header.receive_id;
+            regDate = data.header.reg_date;
+  
+            // 📌 Max Seq 계산
+            maxSeq = await detailService.getMaxSeq(receiveId, tran) as number;
+          }
+  
+          // 📌 생성된 입하ID 입력 및 Max Seq 기준 Seq 발행
+          data.details = data.details.map((detail: any) => {
+            detail.receive_id = receiveId;
+            detail.seq = ++maxSeq;
+            return detail;
+          });
+  
+          // 📌 자재입하상세 등록 및 합계금액 계산
+          let detailResult = await detailService.create(data.details, req.user?.uid as number, tran);
+          detailResult = await detailService.updateTotalPrice(detailResult.raws, req.user?.uid as number, tran);
+  
+          // 📌 자재입하의 합계수량 및 합계금액 계산
+          headerResult = await service.updateTotal(receiveId, receiveUuid, req.user?.uid as number, tran);
+  
+          // 📌 수입검사 미진행 항목(무검사 항목) 수불데이터 생성
+          const datasForInventory = detailResult.raws.filter(raw => !raw.insp_fg);
+  
+          // 📌 자재입고 및 수불 데이터 생성
+          const incomeBody = await incomeService.getIncomeBody(datasForInventory, regDate);
+          await storeService.validateStoreTypeByIds(incomeBody.map(body => body.to_store_id), 'AVAILABLE', tran);
+          const incomeResult = await incomeService.create(incomeBody, req.user?.uid as number, tran);
+          const storeResult = await inventoryService.transactInventory(
+            incomeResult.raws, 'CREATE', 
+            { inout: 'TO', tran_type: 'MAT_INCOME', reg_date: regDate, tran_id_alias: 'income_id' },
+            req.user?.uid as number, tran
+          );
+  
+          const ecerpCreateBody = detailResult.raws.map((result: any) => {
+            return {
+              type: '입고',
+              header_id: receiveId,
+              detail_id: result.receive_detail_id,
+              qty: result.qty
+            }
+          });
+
+          await ecerpService.create(ecerpCreateBody, req.user?.uid as number, tran);
+
+          // 결과 세팅
+          result.raws.push({
+            header: headerResult.raws[0],
+            details: detailResult.raws,
+            income: incomeResult.raws,
+            store: storeResult.raws
+          });    
+        }
+      });
+
+      let count = 0;
+      result.raws.forEach((value: any) => {
+        count += value.details.length;
+      });
+
+      result.count = count;
       return createApiResult(res, result, 201, '데이터 생성 성공', this.stateTag, successState.CREATE);
     } catch (error) {
       if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
