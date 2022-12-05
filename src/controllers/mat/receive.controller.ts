@@ -19,6 +19,10 @@ import InvStoreService from '../../services/inv/store.service';
 import getFkUuidByCd from '../../utils/getFkUuidByCd';
 import fkInfos from '../../types/fk-info.type';
 import InvEcerpService from '../../services/inv/ecerp.service';
+import { setExcelValidationEmptyError } from '../../utils/setExcelValidationEmptyError';
+import StdVendorPriceService from '../../services/std/vendor-price.service';
+import StdProdService from '../../services/std/prod.service';
+import moment from 'moment';
 
 class MatReceiveCtl {
   stateTag: string
@@ -150,30 +154,11 @@ class MatReceiveCtl {
       const patternService = new AdmPatternHistoryService(req.tenant.uuid);
       const ecerpService = new InvEcerpService(req.tenant.uuid);
 
-      // const matched = matchedData(req, { locations: [ 'body' ] });
-      const matched = req.body.map((data: any) => {
-        data['error'] = [];
-        return data;
-      });
+      const matched = Object.values(matchedData(req, { locations: [ 'body' ] }));
 
-      const fkInfoList = [ fkInfos.to_store, fkInfos.partner, fkInfos.prod, fkInfos.unit, fkInfos.money_unit ];
-
-      // Cd로 UUID 가져옴
-      const matchedDatas = await getFkUuidByCd(req.tenant.uuid, matched, fkInfoList);
-      
-      /**
-       * matched 형식은 [ {}, {} ] 이므로 
-       * 
-       * {
-       *   [reg_date] + [partner_cd]: {
-       *      header: {},
-       *      details: []
-       *   }, 
-       * }
-       */
       const datas: any = {};
 
-      matchedDatas.forEach((data: any) => {
+      matched.forEach((data: any) => {
         // 초기 데이터 형태 생성
         if (datas[data['reg_date'] + data['partner_cd']] === undefined) {
           datas[data['reg_date'] + data['partner_cd']] = {
@@ -186,9 +171,8 @@ class MatReceiveCtl {
           };
         }
 
-        // todo 수입검사여부, 이월여부 삭제 필요 (insp_fg, carry_fg)
         // 데이터 추가
-        datas[data['reg_date'] + data['partner_cd']].details.push({ ...data, insp_fg: false, carry_fg: false })
+        datas[data['reg_date'] + data['partner_cd']].details.push({ ...data });
       });
 
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
@@ -300,6 +284,107 @@ class MatReceiveCtl {
   };
 
   //#endregion
+
+  // 📒 Fn[ecountValidation] (✅ Inheritance): ecountValidation Function
+  public ecountValidation = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      let result: ApiResult<any> = { count:0, raws: [] };
+      const prodService = new StdProdService(req.tenant.uuid);
+      const vendorPriceService = new StdVendorPriceService(req.tenant.uuid);
+
+      const matched = setExcelValidationEmptyError(req.body);
+
+      const fkInfoList = [ fkInfos.to_store, fkInfos.partner ];
+
+      // Cd로 UUID 가져옴
+      const datas = await getFkUuidByCd(req.tenant.uuid, matched, fkInfoList);
+
+      const notNullColumns = [ 
+        {
+          columnCd: 'partner_cd',
+          columnNm: '거래처'
+        },
+        {
+          columnCd: 'lot_no',
+          columnNm: 'Lot No'
+        },
+        {
+          columnCd: 'qty',
+          columnNm: '수량'
+        },
+        {
+          columnCd: 'price',
+          columnNm: '단가'
+        },
+        {
+          columnCd: 'to_store_cd',
+          columnNm: '입고창고'
+        }
+      ];
+
+      for (let data of datas) {
+        notNullColumns.forEach((column: any) => {
+          if (data[column.columnCd] === undefined || data[column.columnCd] === null || data[column.columnCd].toString().length === 0) {
+            data.error.push(`${column.columnNm} 빈 값 입니다.`);
+          }
+        })
+
+        if (data['reg_date'] === undefined || data['reg_date'] === null) {
+          data.error.push(`날짜 빈 값 입니다.`);
+          continue;
+        }
+
+        if (data['prod_no'] === undefined || data['prod_no'] === null) {
+          data.error.push(`품목 빈 값 입니다.`);
+          continue;
+        }
+
+        const prodInfo = (await prodService.readByUnique({ prod_no: data['prod_no'] }));
+        if (prodInfo.count == 0) {
+          data.error.push(`품목 데이터가 없습니다.`);
+          continue;
+        }
+        
+        data['prod_uuid'] = prodInfo.raws[0].uuid;
+        
+        if (!prodInfo.raws[0].unit_uuid) {
+          data.error.push(`품목에 단위정보가 없습니다`);
+        } else {
+          data['unit_uuid'] = prodInfo.raws[0].unit_uuid;
+        }
+
+        if (data['partner_uuid']) {
+          const date = moment(data['reg_date'], 'YYYYMMDD').format('YYYY-MM-DD'); 
+          const vendorPriceInfo = await vendorPriceService.read({ 
+            partner_uuid: data['partner_uuid'], 
+            prod_uuid: data['prod_uuid'],
+            date: date
+          });
+          
+          if (vendorPriceInfo.count == 0) {
+            data.error.push(`구매단가 데이터가 없습니다.`);
+            continue;
+          }
+
+          data['money_unit_uuid'] = vendorPriceInfo.raws[0].money_unit_uuid;
+
+          data['exchange'] = 1;
+          data['insp_fg'] = false;
+          data['carry_fg'] = false;
+        }
+      }
+
+      result = { count: datas.length, raws: datas };
+      return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
+    }
+  };
 
   //#region 🔵 Read Functions
 

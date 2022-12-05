@@ -295,13 +295,89 @@ class StdProdRepo {
 
   // 📒 Fn[readRawByUnique]: Unique Key를 통하여 Raw Data Read Function
   public readRawByUnique = async(
-    params: { prod_no: string, rev: string }
+    params: { prod_no: string, rev?: string }
   ) => {
     const result = await this.repo.findOne({ 
+      include: [
+        { model: this.sequelize.models.StdItemType, attributes: [], required: false },
+        { model: this.sequelize.models.StdProdType, attributes: [], required: false },
+        { model: this.sequelize.models.StdModel, attributes: [], required: false },
+        { model: this.sequelize.models.StdUnit, as: 'stdUnit', attributes: [], required: false },
+        { model: this.sequelize.models.StdUnit, as: 'matUnit', attributes: [], required: false },
+        { model: this.sequelize.models.StdStore, attributes: [], required: false },
+        { model: this.sequelize.models.StdLocation, attributes: [], required: false },
+        { model: this.sequelize.models.AdmBomType, attributes: [], required: false },
+        { model: this.sequelize.models.AdmPrdPlanType, attributes: [], required: false },
+        { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+        { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+      ],
+      attributes: [
+        'uuid',
+        'prod_no',
+        'prod_no_pre',
+        'prod_nm',
+        [ Sequelize.col('stdItemType.uuid'), 'item_type_uuid' ],
+        [ Sequelize.col('stdItemType.item_type_cd'), 'item_type_cd' ],
+        [ Sequelize.col('stdItemType.item_type_nm'), 'item_type_nm' ],
+        [ Sequelize.col('stdProdType.uuid'), 'prod_type_uuid' ],
+        [ Sequelize.col('stdProdType.prod_type_cd'), 'prod_type_cd' ],
+        [ Sequelize.col('stdProdType.prod_type_nm'), 'prod_type_nm' ],
+        [ Sequelize.col('stdModel.uuid'), 'model_uuid' ],
+        [ Sequelize.col('stdModel.model_cd'), 'model_cd' ],
+        [ Sequelize.col('stdModel.model_nm'), 'model_nm' ],
+        'rev',
+        'prod_std',
+        [ Sequelize.col('stdUnit.uuid'), 'unit_uuid' ],
+        [ Sequelize.col('stdUnit.unit_cd'), 'unit_cd' ],
+        [ Sequelize.col('stdUnit.unit_nm'), 'unit_nm' ],
+        'lot_fg',
+        'use_fg',
+        'active_fg',
+        [ Sequelize.col('admBomType.uuid'), 'bom_type_uuid' ],
+        [ Sequelize.col('admBomType.bom_type_cd'), 'bom_type_cd' ],
+        [ Sequelize.col('admBomType.bom_type_nm'), 'bom_type_nm' ],
+        'width',
+        'length',
+        'height',
+        'material',
+        'color',
+        'weight',
+        'thickness',
+        'mat_order_fg',
+        [ Sequelize.col('matUnit.uuid'), 'mat_unit_uuid' ],
+        [ Sequelize.col('matUnit.unit_cd'), 'mat_unit_cd' ],
+        [ Sequelize.col('matUnit.unit_nm'), 'mat_unit_nm' ],
+        'mat_order_min_qty',
+        'mat_supply_days',
+        'sal_order_fg',
+        'inv_use_fg',
+        'inv_unit_qty',
+        'inv_safe_qty',
+        [ Sequelize.col('stdStore.uuid'), 'inv_to_store_uuid' ],
+        [ Sequelize.col('stdStore.store_cd'), 'inv_to_store_cd' ],
+        [ Sequelize.col('stdStore.store_nm'), 'inv_to_store_nm' ],
+        [ Sequelize.col('stdLocation.uuid'), 'inv_to_location_uuid' ],
+        [ Sequelize.col('stdLocation.location_cd'), 'inv_to_location_cd' ],
+        [ Sequelize.col('stdLocation.location_nm'), 'inv_to_location_nm' ],
+        'qms_receive_insp_fg',
+        'qms_proc_insp_fg',
+        'qms_final_insp_fg',
+        'prd_active_fg',
+        [ Sequelize.col('AdmPrdPlanType.uuid'), 'prd_plan_type_uuid' ],
+        [ Sequelize.col('AdmPrdPlanType.prd_plan_type_cd'), 'prd_plan_type_cd' ],
+        [ Sequelize.col('AdmPrdPlanType.prd_plan_type_nm'), 'prd_plan_type_nm' ],
+        'prd_min',
+        'prd_max',
+        'created_at',
+        [ Sequelize.col('createUser.user_nm'), 'created_nm' ],
+        'updated_at',
+        [ Sequelize.col('updateUser.user_nm'), 'updated_nm' ]
+      ],
+      order: [ 'prod_id' ],
       where: {
         [Op.and]: [
           { prod_no: params.prod_no },
-          { rev: params.rev }
+          params.rev ? { rev: params.rev } : {}
         ]
       }
     });

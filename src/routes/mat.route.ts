@@ -70,7 +70,8 @@ router.route('/order-details').get(matOrderDetailValidation.read, validationCall
 
 //#region ✅ Receive (자재입하)
 const receive = new MatReceiveCtl();
-router.route('/receives/e-count').post(receive.createEcount);
+router.route('/receives/e-count/validation').post(receive.ecountValidation);
+router.route('/receives/e-count').post(matReceiveValidation.createEcount, validationCallback, receive.createEcount);
 router.route('/receives/lot-tracking').get(matReceiveValidation.readLotTracking, validationCallback, receive.readLotTracking);
 router.route('/receives/report').get(matReceiveValidation.readReport, validationCallback, receive.readReport);
 router.route('/receive/:uuid').get(matReceiveValidation.readByUuid, validationCallback, receive.readByUuid);

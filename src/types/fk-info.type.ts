@@ -40,7 +40,7 @@ const fkInfos = {
     key: 'partner',
     TRepo: StdPartnerRepo,
     cdName: 'partner_cd',
-    cdColumnName: '창고',
+    cdColumnName: '거래처',
     uuidName: 'partner_uuid'
   },
   prod: {

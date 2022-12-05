@@ -82,6 +82,11 @@ class StdProdService {
     try { return await this.repo.read(params); } 
 		catch (error) { throw error; }
   };
+
+  public readByUnique = async (params: any) => {
+    try { return await this.repo.readRawByUnique(params); }
+    catch (error) { throw error; }
+  }
   
   public readByUuid = async (uuid: string) => {
     try { return await this.repo.readByUuid(uuid); } 
