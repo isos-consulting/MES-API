@@ -102,7 +102,8 @@ class StdCustomerPriceRepo {
               { model: this.sequelize.models.StdProdType, attributes: [], required: false },
               { model: this.sequelize.models.StdModel, attributes: [], required: false },
               { model: this.sequelize.models.StdUnit, as: 'stdUnit', attributes: [], required: false },
-            ]
+            ],
+            where: { uuid: params.prod_uuid ? params.prod_uuid : { [Op.ne]: null } },
           },
           { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
           { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },

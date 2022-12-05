@@ -37,6 +37,8 @@ const stdCustomerPriceValidation = {
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'remark', '비고')),
 	],
 	read: [
+    query('prod_uuid', '품목UUID').optional({ nullable: true })
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'prod_uuid', '품목UUID')),
 		query('partner_uuid', '거래처UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'partner_uuid', '거래처UUID')),
 		query('date', '기준일').optional({ nullable: true })
