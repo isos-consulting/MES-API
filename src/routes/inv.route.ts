@@ -52,6 +52,8 @@ router.route('/moves').delete(invMoveValidation.delete, validationCallback, move
 const ecerp = new InvEcerpCtl();
 router.route('/ecerp/:uuid').get(invEcerpValidation.readByUuid, validationCallback, ecerp.readByUuid);
 router.route('/ecerps').get(invEcerpValidation.read, validationCallback, ecerp.read);
+router.route('/ecerps/mat-receive').get(invEcerpValidation.readMatReceive, validationCallback, ecerp.readMatReceive);
+router.route('/ecerps/sal-outgo').get(invEcerpValidation.readSalOutgo, validationCallback, ecerp.readSalOutgo);
 router.route('/ecerps').post(invEcerpValidation.create, validationCallback, ecerp.create);
 router.route('/ecerps').put(invEcerpValidation.update, validationCallback, ecerp.update);
 router.route('/ecerps').patch(invEcerpValidation.patch, validationCallback, ecerp.patch);

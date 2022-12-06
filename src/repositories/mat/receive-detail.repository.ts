@@ -78,7 +78,7 @@ class MatReceiveDetailRepo {
   public read = async(params?: any) => {
     try {
       const result = await this.sequelize.query(
-        readReceiveDetails(undefined, params.receive_uuid, params.factory_uuid, params.partner_uuid, params.complete_state, params.start_date, params.end_date)
+        readReceiveDetails(undefined, params.receive_uuid, params.factory_uuid, params.partner_uuid, params.complete_state, params.start_date, params.end_date, params.detailIds)
       );
 
       return convertReadResult(result[0]);

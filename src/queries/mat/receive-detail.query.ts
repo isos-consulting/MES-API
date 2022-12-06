@@ -1,4 +1,4 @@
-const readReceiveDetails = (receiveDetailUuid?: string, receiveUuid?: string, factoryUuid?: string, partnerUuid?: string, completeState?: 'all' | 'complete' | 'incomplete', startDate?: string, endDate?: string) => {
+const readReceiveDetails = (receiveDetailUuid?: string, receiveUuid?: string, factoryUuid?: string, partnerUuid?: string, completeState?: 'all' | 'complete' | 'incomplete', startDate?: string, endDate?: string, detailIds?: any[]) => {
   let searchQuery: string = '';
 
   if (receiveUuid) { searchQuery += ` AND m_r.uuid = '${receiveUuid}'`; }
@@ -6,6 +6,7 @@ const readReceiveDetails = (receiveDetailUuid?: string, receiveUuid?: string, fa
   if (factoryUuid) { searchQuery += ` AND s_f.uuid = '${factoryUuid}'`; }
   if (partnerUuid) { searchQuery += ` AND s_pa.uuid = '${partnerUuid}'`; }
   if (startDate && endDate) { searchQuery += ` AND date(m_r.reg_date) BETWEEN '${startDate}' AND '${endDate}'`; }
+  if (detailIds) { searchQuery += ` AND m_rd.receive_detail_id IN (${[...detailIds]})`}
 
   switch (completeState) {
     case 'all': break;

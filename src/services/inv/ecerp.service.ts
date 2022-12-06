@@ -33,6 +33,16 @@ class InvEcerpService {
 		catch (error) { throw error; }
   };
 
+  public readMatReceive = async (params: any) => {
+    try { return await this.repo.readMatReceive(params); }
+		catch (error) { throw error; }
+  };
+
+  public readSalOutgo = async (params: any) => {
+    try { return await this.repo.readSalOutgo(params); }
+		catch (error) { throw error; }
+  };
+
   public readByUuid = async (uuid: string) => {
     try { return await this.repo.readByUuid(uuid); }
     catch (error) { throw error; }

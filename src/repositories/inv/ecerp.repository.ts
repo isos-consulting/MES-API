@@ -108,6 +108,74 @@ class InvEcerpRepo {
     }
   };
 
+  // 📒 Fn[read]: Default Read Function
+  public readMatReceive = async(params?: any) => {
+    try {
+      const result = await this.repo.findAll({ 
+        include: [
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+        ],
+        attributes: [
+          [ Sequelize.col('invEcerp.uuid'), 'ecerp_uuid' ],
+          'type',
+          'header_id',
+          'detail_id',
+          'remark',
+          'created_at',
+          [ Sequelize.col('createUser.user_nm'), 'created_nm' ],
+          'updated_at',
+          [ Sequelize.col('updateUser.user_nm'), 'updated_nm' ]
+        ],
+        where: {
+          [Op.and]: [
+            Sequelize.where(Sequelize.fn('date', Sequelize.col('invEcerp.created_at')), '>=', params.start_date),
+            Sequelize.where(Sequelize.fn('date', Sequelize.col('invEcerp.created_at')), '<=', params.end_date),
+            { type: '입고' }
+          ] 
+        }
+      });
+
+      return convertReadResult(result);
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  // 📒 Fn[read]: Default Read Function
+  public readSalOutgo = async(params?: any) => {
+    try {
+      const result = await this.repo.findAll({ 
+        include: [
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+        ],
+        attributes: [
+          [ Sequelize.col('invEcerp.uuid'), 'ecerp_uuid' ],
+          'type',
+          'header_id',
+          'detail_id',
+          'remark',
+          'created_at',
+          [ Sequelize.col('createUser.user_nm'), 'created_nm' ],
+          'updated_at',
+          [ Sequelize.col('updateUser.user_nm'), 'updated_nm' ]
+        ],
+        where: {
+          [Op.and]: [
+            Sequelize.where(Sequelize.fn('date', Sequelize.col('invEcerp.created_at')), '>=', params.start_date),
+            Sequelize.where(Sequelize.fn('date', Sequelize.col('invEcerp.created_at')), '<=', params.end_date),
+            { type: '출고' }
+          ] 
+        }
+      });
+
+      return convertReadResult(result);
+    } catch (error) {
+      throw error;
+    }
+  };
+
   // 📒 Fn[readRawsByUuids]: Id 를 포함한 Raw Datas Read Function
   public readRawsByUuids = async(uuids: string[]) => {
     const result = await this.repo.findAll({ where: { uuid: { [Op.in]: uuids } } });

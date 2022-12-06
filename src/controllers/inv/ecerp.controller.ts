@@ -3,6 +3,8 @@ import { matchedData } from "express-validator";
 import config from "../../configs/config";
 import ApiResult from "../../interfaces/common/api-result.interface";
 import InvEcerpService from "../../services/inv/ecerp.service";
+import MatReceiveDetailService from "../../services/mat/receive-detail.service";
+import SalOutgoDetailService from "../../services/sal/outgo-detail.service";
 import { successState } from "../../states/common.state";
 import createApiResult from "../../utils/createApiResult_new";
 import createDatabaseError from "../../utils/createDatabaseError";
@@ -59,6 +61,56 @@ class InvEcerpCtl {
       const params = matchedData(req, { locations: [ 'query', 'params' ] });
       
       result = await service.read(params);
+
+      return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
+    }
+  };
+
+  // 📒 Fn[readMatReceive] (✅ Inheritance): Read MatReceiveDetails Function
+  public readMatReceive = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      let result: ApiResult<any> = { count: 0, raws: [] };
+      const service = new InvEcerpService(req.tenant.uuid);
+      const matReceiveDetailService = new MatReceiveDetailService(req.tenant.uuid);
+      const params = matchedData(req, { locations: [ 'query', 'params' ] });
+      
+      const detailIds = (await service.readMatReceive(params)).raws.map((data: any) => {
+        return data.detail_id;
+      });
+
+      result = await matReceiveDetailService.read({detailIds: detailIds});
+
+      return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
+    }
+  };
+
+  // 📒 Fn[readSalOutgo] (✅ Inheritance): Read SalOutgoDetails Function
+  public readSalOutgo = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      let result: ApiResult<any> = { count: 0, raws: [] };
+      const service = new InvEcerpService(req.tenant.uuid);
+      const salOutgoDetailService = new SalOutgoDetailService(req.tenant.uuid);
+      const params = matchedData(req, { locations: [ 'query', 'params' ] });
+      
+      const detailIds = (await service.readSalOutgo(params)).raws.map((data: any) => {
+        return data.detail_id;
+      });
+
+      result = await salOutgoDetailService.read({ detailIds: detailIds });
 
       return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
     } catch (error) {

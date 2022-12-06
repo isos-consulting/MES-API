@@ -185,6 +185,9 @@ class SalOutgoDetailRepo {
           [ Sequelize.col('updateUser.user_nm'), 'updated_nm' ]
         ],
         order: [ 'factory_id', Sequelize.col('salOutgo.reg_date'), 'outgo_id', 'seq', 'outgo_detail_id' ],
+        where: params.detailIds ? {
+          outgo_detail_id: { [Op.in]: params.detailIds }
+        } : {}
       });
 
       return convertReadResult(result);
