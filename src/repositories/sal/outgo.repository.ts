@@ -125,6 +125,63 @@ class SalOutgoRepo {
     }
   };
 
+  // 📒 Fn[readByIds]: ReadByIds Function
+  public readByIds = async(params?: any) => {
+    try {
+      const result = await this.repo.findAll({ 
+        include: [
+          { 
+            model: this.sequelize.models.StdFactory, 
+            attributes: [], 
+            required: true
+          },
+          { model: this.sequelize.models.StdPartner, attributes: [], required: true },
+          { model: this.sequelize.models.StdDelivery, attributes: [], required: false },
+          { model: this.sequelize.models.SalOrder, attributes: [], required: false },
+          { model: this.sequelize.models.SalOutgoOrder, attributes: [], required: false },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+        ],
+        attributes: [
+          'outgo_id',
+          [ Sequelize.col('salOutgo.uuid'), 'outgo_uuid' ],
+          [ Sequelize.col('stdFactory.uuid'), 'factory_uuid' ],
+          [ Sequelize.col('stdFactory.factory_cd'), 'factory_cd' ],
+          [ Sequelize.col('stdFactory.factory_nm'), 'factory_nm' ],
+          [ Sequelize.col('stdPartner.uuid'), 'partner_uuid' ],
+          [ Sequelize.col('stdPartner.partner_cd'), 'partner_cd' ],
+          [ Sequelize.col('stdPartner.partner_nm'), 'partner_nm' ],
+          [ Sequelize.col('stdDelivery.uuid'), 'delivery_uuid' ],
+          [ Sequelize.col('stdDelivery.delivery_cd'), 'delivery_cd' ],
+          [ Sequelize.col('stdDelivery.delivery_nm'), 'delivery_nm' ],
+          'stmt_no',
+          [ Sequelize.fn('date', Sequelize.col('salOutgo.reg_date')), 'reg_date' ],
+          'total_price',
+          'total_qty',
+          [ Sequelize.col('salOrder.uuid'), 'order_uuid' ],
+          [ Sequelize.col('salOrder.stmt_no'), 'order_stmt_no' ],
+          [ Sequelize.col('salOrder.reg_date'), 'order_date' ],
+          [ Sequelize.col('salOrder.total_price'), 'order_total_price' ],
+          [ Sequelize.col('salOrder.total_qty'), 'order_total_qty' ],
+          [ Sequelize.col('salOutgoOrder.uuid'), 'outgo_order_uuid' ],
+          [ Sequelize.col('salOutgoOrder.reg_date'), 'outgo_order_date' ],
+          [ Sequelize.col('salOutgoOrder.total_qty'), 'outgo_order_total_qty' ],
+          'remark',
+          'created_at',
+          [ Sequelize.col('createUser.user_nm'), 'created_nm' ],
+          'updated_at',
+          [ Sequelize.col('updateUser.user_nm'), 'updated_nm' ]
+        ],
+        where: { outgo_id: { [Op.in]: params.Ids } },
+        order: [ 'factory_id', 'reg_date', 'stmt_no', 'partner_id', 'order_id' ],
+      });
+
+      return convertReadResult(result);
+    } catch (error) {
+      throw error;
+    }
+  };
+
   // 📒 Fn[readByUuid]: Default Read With Uuid Function
   public readByUuid = async(uuid: string, params?: any) => {
     try {

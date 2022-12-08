@@ -81,6 +81,11 @@ class SalOutgoService {
     try { return await this.repo.read(params); } 
     catch (error) { throw error; }
   };
+
+  public readByIds = async (params: any) => {
+    try { return await this.repo.readByIds(params); } 
+    catch (error) { throw error; }
+  };
   
   public readByUuid = async (uuid: string) => {
     try { return await this.repo.readByUuid(uuid); } 

@@ -4,7 +4,9 @@ import config from "../../configs/config";
 import ApiResult from "../../interfaces/common/api-result.interface";
 import InvEcerpService from "../../services/inv/ecerp.service";
 import MatReceiveDetailService from "../../services/mat/receive-detail.service";
+import MatReceiveService from "../../services/mat/receive.service";
 import SalOutgoDetailService from "../../services/sal/outgo-detail.service";
+import SalOutgoService from "../../services/sal/outgo.service";
 import { successState } from "../../states/common.state";
 import createApiResult from "../../utils/createApiResult_new";
 import createDatabaseError from "../../utils/createDatabaseError";
@@ -78,14 +80,40 @@ class InvEcerpCtl {
     try {
       let result: ApiResult<any> = { count: 0, raws: [] };
       const service = new InvEcerpService(req.tenant.uuid);
+      const matReceiveService = new MatReceiveService(req.tenant.uuid);
       const matReceiveDetailService = new MatReceiveDetailService(req.tenant.uuid);
       const params = matchedData(req, { locations: [ 'query', 'params' ] });
       
-      const detailIds = (await service.readMatReceive(params)).raws.map((data: any) => {
-        return data.detail_id;
+      const headerDetailObject: any = {};
+
+      (await service.readMatReceive(params)).raws.forEach((data: any) => {
+        if (headerDetailObject[data.header_id] === undefined) {
+          headerDetailObject[data.header_id] = [];
+        }
+        headerDetailObject[data.header_id].push(data.detail_id);
+      });
+      
+      const headerDataObject: any = {};
+      (await matReceiveService.readByIds({Ids: Object.keys(headerDetailObject)})).raws.forEach((header: any) => {
+        const { reg_date, partner_uuid, partner_cd, partner_nm } = header; 
+        headerDataObject[header.receive_id] = { reg_date, partner_uuid, partner_cd, partner_nm };
       });
 
-      result = await matReceiveDetailService.read({detailIds: detailIds});
+      for (let headerId of Object.keys(headerDetailObject)) {
+        const header = headerDataObject[headerId];
+        const detailIds = headerDetailObject[headerId];
+        let details = await matReceiveDetailService.read({detailIds: detailIds});
+        
+        if (header) {
+          details.raws = details.raws.map((detail: any) => {
+            return { ...detail, ...header }
+          });
+        }
+
+        result.raws.push(...details.raws);
+      }
+
+      result.count = result.raws.length;
 
       return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
     } catch (error) {
@@ -103,14 +131,40 @@ class InvEcerpCtl {
     try {
       let result: ApiResult<any> = { count: 0, raws: [] };
       const service = new InvEcerpService(req.tenant.uuid);
+      const salOutgoService = new SalOutgoService(req.tenant.uuid);
       const salOutgoDetailService = new SalOutgoDetailService(req.tenant.uuid);
       const params = matchedData(req, { locations: [ 'query', 'params' ] });
       
-      const detailIds = (await service.readSalOutgo(params)).raws.map((data: any) => {
-        return data.detail_id;
+      const headerDetailObject: any = {};
+      
+      (await service.readSalOutgo(params)).raws.forEach((data: any) => {
+        if (headerDetailObject[data.header_id] === undefined) {
+          headerDetailObject[data.header_id] = [];
+        }
+        headerDetailObject[data.header_id].push(data.detail_id);
       });
 
-      result = await salOutgoDetailService.read({ detailIds: detailIds });
+      const headerDataObject: any = {};
+      (await salOutgoService.readByIds({Ids: Object.keys(headerDetailObject)})).raws.forEach((header: any) => {
+        const { reg_date, partner_uuid, partner_cd, partner_nm } = header; 
+        headerDataObject[header.outgo_id] = { reg_date, partner_uuid, partner_cd, partner_nm };
+      });
+
+      for (let headerId of Object.keys(headerDetailObject)) {
+        const header = headerDataObject[headerId];
+        const detailIds = headerDetailObject[headerId];
+        let details = await salOutgoDetailService.read({detailIds: detailIds});
+        
+        if (header) {
+          details.raws = details.raws.map((detail: any) => {
+            return { ...detail, ...header }
+          });
+        }
+
+        result.raws.push(...details.raws);
+      }
+
+      result.count = result.raws.length;
 
       return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
     } catch (error) {

@@ -119,6 +119,58 @@ class MatReceiveRepo {
     }
   };
 
+  // 📒 Fn[readByIds]: readByIds Function
+  public readByIds = async(params?: any) => {
+    try {
+      const result = await this.repo.findAll({ 
+        include: [
+          { 
+            model: this.sequelize.models.StdFactory, 
+            attributes: [], 
+            required: true, 
+          },
+          { model: this.sequelize.models.StdPartner, attributes: [], required: true },
+          { model: this.sequelize.models.StdSupplier, attributes: [], required: false },
+          { model: this.sequelize.models.MatOrder, attributes: [], required: false },
+          { model: this.sequelize.models.AutUser, as: 'createUser', attributes: [], required: true },
+          { model: this.sequelize.models.AutUser, as: 'updateUser', attributes: [], required: true },
+        ],
+        attributes: [
+          'receive_id',
+          [ Sequelize.col('matReceive.uuid'), 'receive_uuid' ],
+          [ Sequelize.col('stdFactory.uuid'), 'factory_uuid' ],
+          [ Sequelize.col('stdFactory.factory_cd'), 'factory_cd' ],
+          [ Sequelize.col('stdFactory.factory_nm'), 'factory_nm' ],
+          [ Sequelize.col('stdPartner.uuid'), 'partner_uuid' ],
+          [ Sequelize.col('stdPartner.partner_cd'), 'partner_cd' ],
+          [ Sequelize.col('stdPartner.partner_nm'), 'partner_nm' ],
+          [ Sequelize.col('stdSupplier.uuid'), 'supplier_uuid' ],
+          [ Sequelize.col('stdSupplier.supplier_cd'), 'supplier_cd' ],
+          [ Sequelize.col('stdSupplier.supplier_nm'), 'supplier_nm' ],
+          'stmt_no',
+          [ Sequelize.fn('date', Sequelize.col('matReceive.reg_date')), 'reg_date' ],
+          'total_price',
+          'total_qty',
+          [ Sequelize.col('matOrder.stmt_no'), 'order_stmt_no' ],
+          [ Sequelize.col('matOrder.reg_date'), 'order_date' ],
+          [ Sequelize.col('matOrder.total_price'), 'order_total_price' ],
+          [ Sequelize.col('matOrder.total_qty'), 'order_total_qty' ],
+          'remark',
+          'created_at',
+          [ Sequelize.col('createUser.user_nm'), 'created_nm' ],
+          'updated_at',
+          [ Sequelize.col('updateUser.user_nm'), 'updated_nm' ]
+        ],
+        where: { receive_id: { [Op.in]: params.Ids } },
+        order: [ 'factory_id', 'reg_date', 'stmt_no', 'partner_id', 'order_id' ],
+      });
+
+      return convertReadResult(result);
+    } catch (error) {
+      throw error;
+    }
+  };
+
   // 📒 Fn[readByUuid]: Default Read With Uuid Function
   public readByUuid = async(uuid: string, params?: any) => {
     try {
