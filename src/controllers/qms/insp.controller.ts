@@ -67,7 +67,7 @@ class QmsInspCtl {
         if (!data.header.uuid) {
           // 📌 공정검사 기준서 등록시 해당 품목의 생산이 진행중일 경우 기준서 생성 후 즉시 적용 불가
           if(data.header.apply_fg) {
-            await service.validateWorkingByProd(data.header);
+            // await service.validateWorkingByProd(data.header);
             data.header.apply_date = data.header.apply_date ? data.header.apply_date : moment(moment.now()).format().toString();
             // 📌 해당 품목의 모든 기준서를 비 활성화 상태로 만들기 위한 Body 생성
             const read = await service.read({ 
@@ -425,12 +425,10 @@ class QmsInspCtl {
       const params = matchedData(req, { locations: [ 'query', 'params' ] });
       const service = new QmsInspService(req.tenant.uuid);
       const detailService = new QmsInspDetailService(req.tenant.uuid);
-      const resultService = new QmsInspResultService(req.tenant.uuid);
+      // const resultService = new QmsInspResultService(req.tenant.uuid);
       const workService = new PrdWorkService(req.tenant.uuid);
       const inspDetailTypeService = new AdmInspDetailTypeService(req.tenant.uuid);
-
-      let inspResultRead: ApiResult<any> = { raws: [], count: 0 };
-      let inspUuid: string | undefined = undefined;
+			
       let prodUuid: string | undefined = undefined;
       let factoryUuid: string | undefined = undefined;
       let inspTypeUuid: string | undefined = undefined;
@@ -438,16 +436,9 @@ class QmsInspCtl {
       const inspDetailTypeRead = await inspDetailTypeService.readByUuid(params.insp_detail_type_uuid);
       inspTypeUuid = inspDetailTypeRead.raws[0].insp_type_uuid;
 
-      // 📌 생산실적내역에 등록된 성적서 검색
-      inspResultRead = await resultService.readProc(params);
-
       let headerResult: ApiResult<any> = { raws: [], count: 0 };
-      if (inspResultRead.raws[0]) { 
-        // 📌 등록된 성적서가 있을 경우 기준서의 UUID를 통하여 기준서 조회
-        inspUuid = inspResultRead.raws[0].insp_uuid as string; 
-        headerResult = await service.readByUuid(inspUuid);
-      } else { 
-        // 📌 등록된 성적서가 없을 경우 품목 UUID 저장
+
+			  // 📌 등록된 성적서가 없을 경우 품목 UUID 저장
         const workRead = await workService.readByUuid(params.work_uuid);
         prodUuid = workRead.raws[0].prod_uuid; 
         factoryUuid = workRead.raws[0].factory_uuid;
@@ -459,7 +450,6 @@ class QmsInspCtl {
           insp_type_uuid: inspTypeUuid,
           apply_fg: true
         });
-      }
 
       // ❗ 등록되어있는 기준서가 없을 경우 Error Throw
       if (!headerResult.raws[0]) { 
