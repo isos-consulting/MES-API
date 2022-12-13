@@ -1,13 +1,5 @@
-const readToProdOfDownTrees = (factoryUuid?: string, prodUuid?: string[]) => {
-	let prod: string = ``;
+const readToProdOfDownTrees = (factoryUuid?: string, prodUuid?: string) => {
 
-	prodUuid?.forEach((data,index) => {
-		if (prodUuid.length - 1 === index) {
-			prod += `'${data}'`
-		} else {
-			prod += `'${data}',`
-		}
-	})
   const createTempTable = `
     -- ✅ 품목을 선택하여 BOM Tree를 조회할 경우를 위하여 임시테이블 생성
     CREATE TEMP TABLE temp_bom_tree_vw (
@@ -36,7 +28,7 @@ const readToProdOfDownTrees = (factoryUuid?: string, prodUuid?: string[]) => {
 				a.prod_id::text AS p_prod_id
 			FROM std_bom_tree_vw a
 			JOIN std_prod_tb s_p ON s_p.prod_id = a.prod_id
-			WHERE s_p.uuid in (${prod})
+			WHERE s_p.uuid = '${prodUuid}'
 			UNION
 				SELECT c.lv + 1,
 				a.factory_id,
