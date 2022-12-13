@@ -66,6 +66,12 @@ class StdRoutingService {
 		catch (error) { throw error; }
   };
 
+	// 📒 Fn[readBulkActivedProd]: 다중 생산가능 품목 조회
+  public readBulkPrdActive = async (params: any) => {
+    try { return await this.repo.readBulkPrdActive(params); }
+		catch (error) { throw error; }
+  };
+
   public readOptionallyMove = async (params: any) => {
     try { return await this.repo.readOptionallyMove(params); }
 		catch (error) { throw error; }

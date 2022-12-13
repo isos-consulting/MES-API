@@ -122,13 +122,13 @@ class StdRoutingCtl {
 
 			const bomRead = await bomService.readToProdOfDownTrees(params);
 
-			bomRead.raws.forEach(async (raw) => {
-				const bomActive = await service.readOptionallyPrdActive({factory_uuid: params.factory_uuid ,prod_uuid: raw.prod_uuid});
-				result.raws.push(bomActive)
-				// result.raws.push()	
-			})	
+			let bomReadProdUuid: any[] = [];
+
+			for await (const raw of bomRead.raws) {	
+				bomReadProdUuid.push(raw.prod_uuid)
+			}
 			
-      // result = await service.readOptionallyPrdActive(params);
+			result = await service.readBulkPrdActive({factory_uuid: params.factory_uuid ,prod_uuid: bomReadProdUuid});
 
       return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
     } catch (error) {
