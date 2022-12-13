@@ -308,6 +308,7 @@ router.route('/unit-converts').delete(stdUnitConvertValidation.delete, validatio
 
 //#region ✅ Routing (라우팅)
 const routing = new StdRoutingCtl();
+router.route('/routings/integrated-actived-prod').get(stdRoutingValidation.readIntegratedActivedProd, validationCallback, routing.readIntegratedActivedProd);
 router.route('/routings/actived-prod').get(stdRoutingValidation.readActivedProd, validationCallback, routing.readActivedProd);
 router.route('/routing/:uuid').get(stdRoutingValidation.readByUuid, validationCallback, routing.readByUuid);
 router.route('/routings').get(stdRoutingValidation.read, validationCallback, routing.read);

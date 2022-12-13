@@ -12,6 +12,7 @@ import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
 import ApiResult from '../../interfaces/common/api-result.interface';
 import { readBomTrees } from '../../queries/std/bom.tree.query';
+import { readToProdOfDownTrees } from '../../queries/std/bom.down-tree.query';
   
 class StdBomRepo {
   repo: Repository<StdBom>;
@@ -305,6 +306,15 @@ class StdBomRepo {
   public readToTrees = async(params?: any) => {
     try {
       const result = await this.sequelize.query(readBomTrees(params.factory_uuid, params.prod_uuid));
+      return convertReadResult(result[0]);
+    } catch (error) {
+      throw error;
+    }
+  };
+
+	public readToProdOfDownTrees = async(params?: any) => {
+    try {
+      const result = await this.sequelize.query(readToProdOfDownTrees(params.factory_uuid, params.prod_uuid));
       return convertReadResult(result[0]);
     } catch (error) {
       throw error;

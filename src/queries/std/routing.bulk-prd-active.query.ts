@@ -1,11 +1,24 @@
-const readRoutingPrdActive = (
+const readRoutingBulkPrdActive = (
   params: {
     factory_uuid : string,
-    prod_uuid : string,
+    prod_uuid : string[],
   }) => {
     let searchQuery: string = '';
     if (params.factory_uuid) { searchQuery += ` AND s_f.uuid = '${params.factory_uuid}'`; }
-    if (params.prod_uuid) { searchQuery += ` AND s_p.uuid = '${params.prod_uuid}'`; }
+
+    if (params.prod_uuid) { 
+
+			let prod_uuid: string = ``;
+
+			params.prod_uuid.forEach( (data,index) => {
+				if (params.prod_uuid.length-1 === index){
+					prod_uuid += `'${data}'`	
+				} else {
+					prod_uuid += `'${data}',`
+				}
+			})
+			searchQuery += ` AND s_p.uuid in (${prod_uuid})`; 
+		}
 
     /** 임시테이블 저장 쿼리 셋팅 */
     const querysToInsertingTempTable = `
@@ -78,4 +91,4 @@ const readRoutingPrdActive = (
     return query;
   }
 
-export { readRoutingPrdActive }
+export { readRoutingBulkPrdActive }

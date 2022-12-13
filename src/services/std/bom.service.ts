@@ -100,6 +100,11 @@ class StdBomService {
     catch (error) { throw error; }
   };
 
+	public readToProdOfDownTrees = async (params: any) => {
+    try { return await this.repo.readToProdOfDownTrees(params); }
+    catch (error) { throw error; }
+  };
+
   public readByParent = async (factoryId: number, parentId: number) => {
     try { return await this.repo.readByParent(factoryId, parentId); }
     catch (error) { throw error; }
