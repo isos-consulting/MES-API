@@ -58,7 +58,7 @@ const readRoutingPrdActive = (
         s_u.uuid as unit_uuid,
         s_u.unit_cd,
         s_u.unit_nm,
-        t_r.auto_work_fg
+        t_r.auto_work_fg 
       FROM temp_routing t_r 
       JOIN std_routing_tb s_r ON s_r.routing_id = t_r.routing_id
       JOIN std_factory_tb s_f ON s_f.factory_id = t_r.factory_id
