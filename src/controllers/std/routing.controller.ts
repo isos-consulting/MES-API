@@ -2,7 +2,6 @@ import express = require('express');
 import { matchedData } from 'express-validator';
 import config from '../../configs/config';
 import StdRoutingService from '../../services/std/routing.service';
-import StdBomService from "../../services/std/bom.service";
 import ApiResult from '../../interfaces/common/api-result.interface';
 import response from '../../utils/response';
 import { sequelizes } from '../../utils/getSequelize';
@@ -115,20 +114,10 @@ class StdRoutingCtl {
     try {
       let result: ApiResult<any> = { count:0, raws: [] };
       const service = new StdRoutingService(req.tenant.uuid);
-			const bomService = new StdBomService(req.tenant.uuid);
-      let params = matchedData(req, { locations: [ 'query', 'params' ] });
+      const params = matchedData(req, { locations: [ 'query', 'params' ] });
 			
-			params.prod_uuid = String(params.prod_uuid).split(',')
-
-			const bomRead = await bomService.readToProdOfDownTrees(params);
-
-			let bomReadProdUuid: any[] = [];
-
-			for await (const raw of bomRead.raws) {	
-				bomReadProdUuid.push(raw.prod_uuid)
-			}
-			
-			result = await service.readBulkPrdActive({factory_uuid: params.factory_uuid ,prod_uuid: bomReadProdUuid});
+			const bomReadRaws =  await service.readToProdsOfDownTrees(params)
+			result = await service.readProdsActive(bomReadRaws)
 
       return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
     } catch (error) {

@@ -12,7 +12,6 @@ import { getSequelize } from '../../utils/getSequelize';
 import ApiResult from '../../interfaces/common/api-result.interface';
 import { readRoutingPrdActive } from '../../queries/std/routing.prd-active.query';
 import { readRoutingMove } from '../../queries/std/routing.move.query';
-import { readRoutingBulkPrdActive } from '../../queries/std/routing.bulk-prd-active.query';
 
 class StdRoutingRepo {
   repo: Repository<StdRouting>;
@@ -233,16 +232,6 @@ class StdRoutingRepo {
   public readOptionallyPrdActive = async(params?: any) => {
     try {
       const result = await this.sequelize.query(readRoutingPrdActive(params))
-      return convertReadResult(result[0]);
-    } catch (error) {
-      throw error;
-    }
-  };
-
-	// 📒 Fn[readByOptionallyPrdActive]: 다중 품목기준 생산 가능한 마지막 공정의 라우팅 Raw Data Read Function
-  public readBulkPrdActive = async(params?: any) => {
-    try {
-      const result = await this.sequelize.query(readRoutingBulkPrdActive(params))
       return convertReadResult(result[0]);
     } catch (error) {
       throw error;

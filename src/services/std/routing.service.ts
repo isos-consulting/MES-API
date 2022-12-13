@@ -5,6 +5,7 @@ import StdProcRepo from '../../repositories/std/proc.repository';
 import StdRoutingRepo from '../../repositories/std/routing.repository';
 import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
 import IStdRouting from "../../interfaces/std/routing.interface";
+import StdBomService from "../std/bom.service";
 
 class StdRoutingService {
   tenant: string;
@@ -65,17 +66,53 @@ class StdRoutingService {
     try { return await this.repo.readOptionallyPrdActive(params); }
 		catch (error) { throw error; }
   };
-
-	// 📒 Fn[readBulkActivedProd]: 다중 생산가능 품목 조회
-  public readBulkPrdActive = async (params: any) => {
-    try { return await this.repo.readBulkPrdActive(params); }
-		catch (error) { throw error; }
-  };
-
   public readOptionallyMove = async (params: any) => {
     try { return await this.repo.readOptionallyMove(params); }
 		catch (error) { throw error; }
   };
+
+	// 📒 Fn[readToProdsOfDownTrees]: 하위 bom 조회
+	public readToProdsOfDownTrees = async (params: any) => {
+    try { 
+			const bomService = new StdBomService(this.tenant);
+			let bomReadRaws: any[] = [];
+
+			params.prod_uuid = String(params.prod_uuid).split(',')
+			for await (const raw of params.prod_uuid) {	
+				const convertParams = {
+					factory_uuid: params.factory_uuid,
+					prod_uuid: raw
+				}
+				const bomRead = await bomService.readToProdOfDownTrees(convertParams);	
+				bomRead.raws.forEach((data) => {
+					bomReadRaws.push(data)
+				})
+			};
+			return bomReadRaws;
+		}
+		catch (error) { throw error; }
+  };
+
+	// 📒 Fn[readToProdsOfDownTrees]: 생산가능 품번들 조회 
+	public readProdsActive = async (params: any) => {
+		try { 
+			let result: any = { count:0, raws: [] };
+			for await (const raw of params) {	
+				const convertParams = {
+					factory_uuid: raw.factory_uuid,
+					prod_uuid: raw.prod_uuid
+				}
+
+				const activeRead= await this.readOptionallyPrdActive(convertParams);
+				activeRead.raws.forEach((data) => {
+					result.raws.push(data)
+				})
+			};
+			result.count = result.raws.length
+			return result;
+		}
+		catch (error) { throw error; }
+	};
 
   public update = async (datas: IStdRouting[], uid: number, tran: Transaction) => {
     try { return await this.repo.update(datas, uid, tran); } 
