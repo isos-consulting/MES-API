@@ -6,6 +6,7 @@ import StdRoutingRepo from '../../repositories/std/routing.repository';
 import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
 import IStdRouting from "../../interfaces/std/routing.interface";
 import StdBomService from "../std/bom.service";
+import PrdPlanDailyService from "../prd/plan-daily.service";
 
 class StdRoutingService {
   tenant: string;
@@ -71,21 +72,45 @@ class StdRoutingService {
 		catch (error) { throw error; }
   };
 
+	// 📒 Fn[readPlanDailyRaws]: 일생산 계획 조회
+	public readPlanDailyRaws = async (params: any) => {
+    try { 
+			const planDailyService = new PrdPlanDailyService(this.tenant);
+			let planDailyReadRaws: any[] = [];
+
+			params.plan_daily_uuid = String(params.plan_daily_uuid).split(',')
+			for await (const raw of params.plan_daily_uuid) {	
+				const convertParams = {
+					factory_uuid: params.factory_uuid,
+					plan_daily_uuid: raw
+				}
+				const planDailyRead = await planDailyService.read(convertParams);	
+				planDailyRead.raws.forEach((data) => {
+					planDailyReadRaws.push(data)
+				})
+			};
+			return planDailyReadRaws;
+		}
+		catch (error) { throw error; }
+  };
+
 	// 📒 Fn[readToProdsOfDownTrees]: 하위 bom 조회
 	public readToProdsOfDownTrees = async (params: any) => {
     try { 
 			const bomService = new StdBomService(this.tenant);
 			let bomReadRaws: any[] = [];
 
-			params.prod_uuid = String(params.prod_uuid).split(',')
-			for await (const raw of params.prod_uuid) {	
+			for await (const raw of params) {	
 				const convertParams = {
-					factory_uuid: params.factory_uuid,
-					prod_uuid: raw
+					factory_uuid: raw.factory_uuid,
+					prod_uuid: raw.prod_uuid
 				}
 				const bomRead = await bomService.readToProdOfDownTrees(convertParams);	
 				bomRead.raws.forEach((data) => {
-					bomReadRaws.push(data)
+					data.plan_daily_uuid = raw.plan_daily_uuid;
+					data.plan_daily_qty = raw.plan_daily_qty;
+					data.balance = raw.balance;
+					bomReadRaws.push(data);
 				})
 			};
 			return bomReadRaws;
@@ -102,9 +127,13 @@ class StdRoutingService {
 					factory_uuid: raw.factory_uuid,
 					prod_uuid: raw.prod_uuid
 				}
-
 				const activeRead= await this.readOptionallyPrdActive(convertParams);
 				activeRead.raws.forEach((data) => {
+					data.c_usage = raw.c_usage === null ? 1 : raw.c_usage ;
+					data.plan_daily_uuid = raw.plan_daily_uuid;
+					data.plan_daily_qty = raw.plan_daily_qty;
+					data.balance = raw.balance;
+					data.qty = data.c_usage * data.balance;
 					result.raws.push(data)
 				})
 			};

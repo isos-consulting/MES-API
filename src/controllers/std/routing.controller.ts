@@ -116,8 +116,9 @@ class StdRoutingCtl {
       const service = new StdRoutingService(req.tenant.uuid);
       const params = matchedData(req, { locations: [ 'query', 'params' ] });
 			
-			const bomReadRaws =  await service.readToProdsOfDownTrees(params)
-			result = await service.readProdsActive(bomReadRaws)
+			const planDaliyRaws = await service.readPlanDailyRaws(params);
+			const bomReadRaws =  await service.readToProdsOfDownTrees(planDaliyRaws);
+			result = await service.readProdsActive(bomReadRaws);
 
       return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
     } catch (error) {

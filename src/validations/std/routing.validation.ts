@@ -8,8 +8,8 @@ const stdRoutingValidation = {
 	readIntegratedActivedProd: [
 		query('factory_uuid', '공장UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'factory_uuid', '공장UUID')),
-		query('prod_uuid', '품목UUID').optional({ nullable: true })
-      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'prod_uuid', '품목UUID')),
+		query('plan_daily_uuid', '일생산계획UUID').optional({ nullable: true })
+      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'prod_uuid', '일생산계획UUID')),
 	],
 	readActivedProd: [
 		query('factory_uuid', '공장UUID').optional({ nullable: true })

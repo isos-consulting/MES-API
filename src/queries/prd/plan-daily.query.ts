@@ -5,8 +5,9 @@ const readPlanDaily = (
 		start_date?: string,
 		end_date?: string,
     plan_month?: string,
-    wait_task_fg: boolean,
+    wait_task_fg?: boolean,
     factory_uuid?: string,
+		plan_daily_uuid?: string,
   }) => {
   let searchQuery: string = '';
 	
@@ -14,6 +15,7 @@ const readPlanDaily = (
 	if (params.plan_month) { searchQuery += ` AND to_char(p_pdt.plan_day, 'YYYY-MM') = '${moment(params.plan_month).format('YYYY-MM')}'`; }  
   if (params.factory_uuid) { searchQuery += ` AND s_f.uuid = '${params.factory_uuid}'`; }
   if (params.wait_task_fg) { searchQuery += ` AND ((p_pdt.plan_daily_qty > COALESCE(p_ot.qty, 0))) `; }
+	if (params.plan_daily_uuid) { searchQuery += ` AND p_pdt.uuid = '${params.plan_daily_uuid}'`; }
 	
   if (searchQuery.length > 0) {
     searchQuery = searchQuery.substring(4, searchQuery.length);
