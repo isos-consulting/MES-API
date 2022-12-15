@@ -273,6 +273,12 @@ class StdEmpRepo {
     return convertReadResult(result);
   };
 
+	  // 📒 Fn[readRawById]: ID를 통하여 Raw Data Read Function
+		public readRawById = async(id: number ) => {
+			const result = await this.repo.findOne({ where: { emp_id: id } });
+			return convertReadResult(result);
+		};
+
   //#endregion
 
   //#region 🟡 Update Functions

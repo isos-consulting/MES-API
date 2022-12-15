@@ -104,18 +104,34 @@ class PrdOrderWorkerService {
 	public totalRead = async (params: any) => {
     try { 
 			let totalOrderWorker:ApiResult<any> = { count:0, raws: [] };
+			let orderWorker:any[] = [];
 			const orderService =  new PrdOrderService(this.tenant);
+			const empService =  new StdEmpService(this.tenant);
 			params.order_uuid = String(params.order_uuid).split(',')
 
 			const orderId = await orderService.readRawsByUuids(params.order_uuid);
 
 			for await (const order of orderId.raws) {
-				const orderWorkers = await this.repo.readRawsByOrderId(order.order_id);
-				orderWorkers.raws.forEach((data) => {
+				const Workers = await this.repo.readRawsByOrderId(order.order_id);
+				Workers.raws.forEach((data) => {
 					data.order_uuid = order.uuid
-					totalOrderWorker.raws.push(data)
+					orderWorker.push(data)
 				})
 			};
+
+			for await (const emp of orderWorker) {
+				const employee = await empService.readRawById(emp.emp_id);
+				employee.raws.forEach((data) => {
+					const pushParams = {
+						emp_cd: data.emp_cd,
+						emp_nm: data.emp_nm,
+						order_uuid : emp.order_uuid
+					}
+					
+					totalOrderWorker.raws.push(pushParams)
+				})
+			};
+			
 			totalOrderWorker.count = totalOrderWorker.raws.length;
 			return totalOrderWorker
 		}
