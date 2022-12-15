@@ -106,8 +106,8 @@ class PrdOrderRoutingService {
 				throw createApiError(
 					400,
 					{
-						admin_message: `품번 [${routingRead.raws[0].proc_no}]의 공정이 두개 이상 입니다.`,
-						user_message: `품번 [${routingRead.raws[0].proc_no}]의 공정이 두개 이상 입니다`
+						admin_message: `품번 [${routingRead.raws[0].prod_no}]의 공정이 두개 이상 입니다.`,
+						user_message: `품번 [${routingRead.raws[0].prod_no}]의 공정이 두개 이상 입니다`
 					}, 
 					this.stateTag, 
 					errorState.FAILED_SAVE_TO_RELATED_DATA
