@@ -194,6 +194,7 @@ router.route('/order-inputs').delete(prdOrderInputValidation.delete, validationC
 const orderWorker = new PrdOrderWorkerCtl();
 router.route('/order-worker/:uuid').get(prdOrderWorkerValidation.readByUuid, validationCallback, orderWorker.readByUuid);
 router.route('/order-workers').get(prdOrderWorkerValidation.read, validationCallback, orderWorker.read);
+router.route('/order-workers/total').get(prdOrderWorkerValidation.totalRead, validationCallback, orderWorker.totalRead);
 router.route('/order-workers').post(prdOrderWorkerValidation.create, validationCallback, orderWorker.create);
 router.route('/order-workers').put(prdOrderWorkerValidation.update, validationCallback, orderWorker.update);
 router.route('/order-workers').patch(prdOrderWorkerValidation.patch, validationCallback, orderWorker.patch);

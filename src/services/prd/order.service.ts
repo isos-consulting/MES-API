@@ -112,6 +112,11 @@ class PrdOrderService {
 		catch (error) { throw error; }
   };
 
+	public readRawsByUuids = async (uuid: string[]) => {
+    try { return await this.repo.readRawsByUuids(uuid); } 
+		catch (error) { throw error; }
+  };
+
   // 📒 Fn[readWorkComparedOrder]: 지시대비실적 Read Fuction
   public readWorkComparedOrder = async (params: any) => {
     try { return await this.repo.readWorkComparedOrder(params); }

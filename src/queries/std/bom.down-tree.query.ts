@@ -39,7 +39,7 @@ const readToProdOfDownTrees = (factoryUuid?: string, prodUuid?: string) => {
 				(c.t_usage * a.c_usage)::numeric(19,6) AS "numeric",
 				concat(c.sortby, ' > ', a.prod_id::text) AS concat
 			FROM std_bom_tree_vw a
-			JOIN bom_cte c ON c.prod_id = a.p_prod_id 
+			JOIN bom_cte c ON c.prod_id = a.p_prod_id AND a.prod_id <> c.p_prod_id 
 		)
 
 		INSERT INTO temp_bom_tree_vw

@@ -76,6 +76,26 @@ class PrdOrderWorkerCtl {
     }
   }
 
+	  // 📒 Fn[totalRead] (✅ Inheritance): Total Read Function
+		public totalRead = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+			try {
+				let result: ApiResult<any> = { count:0, raws: [] };
+				const service = new prdOrderWorkerService(req.tenant.uuid);
+				const params = matchedData(req, { locations: [ 'query', 'params' ] });
+				
+				result = await service.totalRead(params);
+	
+				return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
+			} catch (error) {
+				if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+				
+				const dbError = createDatabaseError(error, this.stateTag);
+				if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+	
+				return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
+			}
+		}
+
   // 📒 Fn[readByUuid] (✅ Inheritance): Default ReadByUuid Function
   public readByUuid = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
     try {

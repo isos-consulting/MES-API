@@ -8,6 +8,8 @@ import StdEmpRepo from '../../repositories/std/emp.repository';
 import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
 import StdWorkerGroupEmpService from "../std/worker-group-emp.service";
 import StdEmpService from '../std/emp.service';
+import PrdOrderService from '../prd/order.service';
+import ApiResult from '../../interfaces/common/api-result.interface';
 
 class PrdOrderWorkerService {
   tenant: string;
@@ -92,10 +94,31 @@ class PrdOrderWorkerService {
     } catch (error) {
       throw error;
     }
-  }
+  };
 
   public read = async (params: any) => {
     try { return await this.repo.read(params); }
+		catch (error) { throw error; }
+  };
+
+	public totalRead = async (params: any) => {
+    try { 
+			let totalOrderWorker:ApiResult<any> = { count:0, raws: [] };
+			const orderService =  new PrdOrderService(this.tenant);
+			params.order_uuid = String(params.order_uuid).split(',')
+
+			const orderId = await orderService.readRawsByUuids(params.order_uuid);
+
+			for await (const order of orderId.raws) {
+				const orderWorkers = await this.repo.readRawsByOrderId(order.order_id);
+				orderWorkers.raws.forEach((data) => {
+					data.order_uuid = order.uuid
+					totalOrderWorker.raws.push(data)
+				})
+			};
+			totalOrderWorker.count = totalOrderWorker.raws.length;
+			return totalOrderWorker
+		}
 		catch (error) { throw error; }
   };
   

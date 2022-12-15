@@ -11,6 +11,13 @@ const prdOrderWorkerValidation = {
     query('order_uuid', '지시UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'order_uuid', '지시UUID')),
   ],
+	totalRead: [
+    query('factory_uuid', '공장UUID').optional({ nullable: true })
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'factory_uuid', '공장UUID')),
+    query('order_uuid', '지시UUID')
+			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'order_uuid', '지시UUID'))
+      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'order_uuid', '지시UUID')),
+  ],
   readByUuid: [
     param('uuid', '작업자투입UUID')
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'uuid', '작업자투입UUID'))
