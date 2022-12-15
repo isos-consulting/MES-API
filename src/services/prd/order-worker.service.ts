@@ -7,6 +7,7 @@ import StdFactoryRepo from '../../repositories/std/factory.repository';
 import StdEmpRepo from '../../repositories/std/emp.repository';
 import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
 import StdWorkerGroupEmpService from "../std/worker-group-emp.service";
+import StdEmpService from '../std/emp.service';
 
 class PrdOrderWorkerService {
   tenant: string;
@@ -63,6 +64,30 @@ class PrdOrderWorkerService {
         }
       });
 
+      return await this.repo.create(workerBody, uid, tran);
+    } catch (error) {
+      throw error;
+    }
+  }
+
+	public totalCreateByOrder = async (emp: any[] ,order: IPrdOrder, uid: number, tran: Transaction) => {
+    try {
+			let empReadRaws: any[] = [];
+			const empService = new StdEmpService(this.tenant)
+
+			for await (const empUuid of emp) {
+				const workerRead = await empService.readRawByUuid(empUuid)
+				workerRead.raws.forEach((data) => {
+					empReadRaws.push(data)
+				});
+			}
+      const workerBody: IPrdOrderWorker[] = empReadRaws.map((raw: any) => {
+        return {
+          factory_id: order.factory_id,
+          order_id: order.order_id,
+          emp_id: raw.emp_id
+        }
+      });
       return await this.repo.create(workerBody, uid, tran);
     } catch (error) {
       throw error;

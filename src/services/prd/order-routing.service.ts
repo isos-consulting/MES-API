@@ -10,7 +10,8 @@ import getFkIdByUuid, { getFkIdInfo } from "../../utils/getFkIdByUuid";
 import StdRoutingService from "../std/routing.service";
 import IPrdOrder from "../../interfaces/prd/order.interface";
 import MldMoldRepo from "../../repositories/mld/mold.repository";
-
+import { errorState } from "../../states/common.state";
+import createApiError from "../../utils/createApiError";
 class PrdOrderRoutingService {
   tenant: string;
   stateTag: string;
@@ -85,6 +86,42 @@ class PrdOrderRoutingService {
           proc_no: raw.proc_no,
           workings_id: data.workings_id,
           equip_id: raw.equip_id,
+          prd_signal_cnt: raw.prd_signal_cnt
+        }
+      });
+      return await this.repo.create(routingBody, uid, tran); 
+    }
+		catch (error) { 
+      throw error; 
+    }
+  };
+	
+  public totalCreateByOrder = async (equipId: number, data: IPrdOrder, uid: number, tran: Transaction) => {
+    try { 
+      const routingService = new StdRoutingService(this.tenant);
+      const routingParams = { factory_id : data.factory_id, prod_id: data.prod_id };
+      const routingRead = await routingService.readOptionallyMove(routingParams);
+		
+			if (routingRead.raws.length > 1) { 
+				throw createApiError(
+					400,
+					{
+						admin_message: `품번 [${routingRead.raws[0].proc_no}]의 공정이 두개 이상 입니다.`,
+						user_message: `품번 [${routingRead.raws[0].proc_no}]의 공정이 두개 이상 입니다`
+					}, 
+					this.stateTag, 
+					errorState.FAILED_SAVE_TO_RELATED_DATA
+				);
+			}
+
+      const routingBody: IPrdOrderRouting[] = routingRead.raws.map((raw: any) => {
+        return {
+          factory_id: raw.factory_id,
+          order_id: data.order_id,
+          proc_id: raw.proc_id,
+          proc_no: raw.proc_no,
+          workings_id: data.workings_id,
+          equip_id: equipId,
           prd_signal_cnt: raw.prd_signal_cnt
         }
       });

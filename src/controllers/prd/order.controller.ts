@@ -104,6 +104,83 @@ class PrdOrderCtl {
     }
   };
 
+	  // 📒 Fn[totalCreate] (✅ Inheritance): total Create Function
+		public totalCreate = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+			try {
+				let result: ApiResult<any> = { count: 0, raws: [] };
+				const service = new PrdOrderService(req.tenant.uuid);
+				const orderInputService = new PrdOrderInputService(req.tenant.uuid);
+				const orderWorkerService = new PrdOrderWorkerService(req.tenant.uuid);
+				const orderRoutingService = new PrdOrderRoutingService(req.tenant.uuid);
+				const patternOptService = new AdmPatternOptService(req.tenant.uuid);
+				const patternService = new AdmPatternHistoryService(req.tenant.uuid);
+				const matched = matchedData(req, { locations: ['body'] });
+	
+				let datas = await service.convertFk(Object.values(matched));
+	
+				await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
+					for await (const data of datas) {
+						// 📌 전표번호가 수기 입력되지 않고 자동발행 Option일 경우 번호 자동발행
+						if (!data.order_no) { 
+							// 📌 전표자동발행 옵션 여부 확인
+							const hasAutoOption = await patternOptService.hasAutoOption({ table_nm: 'PRD_ORDER_TB', col_nm: 'order_no', tran });
+	
+							// 📌 전표의 자동발행옵션이 on인 경우
+							if (hasAutoOption) {
+								data.order_no = await patternService.getPattern({
+									factory_id: data.factory_id,
+									table_nm: 'PRD_ORDER_TB',
+									col_nm: 'order_no',
+									reg_date: data.reg_date,
+									shift_uuid: data.shift_uuid,
+									proc_uuid: data.proc_uuid,
+									equip_uuid: data.equip_uuid,
+									uid: req.user?.uid as number,
+									tran: tran
+								});
+							}
+						}
+	
+						// 📌 작업지시 데이터 생성
+						const orderResult = await service.create([data], req.user?.uid as number, tran);
+						const order = orderResult.raws[0];
+	
+						// 📌 지시별 품목 투입정보 초기 데이터 생성 (BOM 하위품목 조회 후 생성)
+						const inputResult = await orderInputService.createByOrder(order, req.user?.uid as number, tran);
+						result.count += inputResult.count;
+						
+						// 📌 지시별 작업조 입력 시 작업조 하위 작업자 초기 데이터 생성
+						let workerResult: ApiResult<any> = { raws: [], count: 0 };
+						
+						if (data.emp_uuid.length !== 0) {
+							workerResult = await orderWorkerService.totalCreateByOrder(data.emp_uuid ,order, req.user?.uid as number, tran);
+							result.count += workerResult.count;
+						};
+
+						// 📌 지시별 하위 공정순서 정보 초기 데이터 생성
+						const routingResult = await orderRoutingService.totalCreateByOrder(data.equip_id, order, req.user?.uid as number, tran);
+						result.count += routingResult.count;
+	
+						result.raws.push({
+							order: order,
+							input: inputResult.raws,
+							worker: workerResult.raws,
+							routing: routingResult.raws
+						});
+					}
+				});
+	
+				return createApiResult(res, result, 201, '데이터 생성 성공', this.stateTag , successState.CREATE);
+			} catch (error) {
+				if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+	
+				const dbError = createDatabaseError(error, this.stateTag);
+				if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+	
+				return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
+			}
+		};
+
   //#endregion
 
   //#region 🔵 Read Functions

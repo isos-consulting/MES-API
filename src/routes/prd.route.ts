@@ -161,6 +161,7 @@ const order = new PrdOrderCtl();
 router.route('/multi-proc-by-orders').get(prdOrderValidation.readMultiProcByOrder, validationCallback, order.readMultiProcByOrder);
 router.route('/orders/complete').put(prdOrderValidation.updateComplete, validationCallback, order.updateComplete);
 router.route('/orders/worker-group').put(prdOrderValidation.updateWorkerGroup, validationCallback, order.updateWorkerGroup);
+router.route('/orders/total').post(prdOrderValidation.totalCreate, validationCallback, order.totalCreate);
 router.route('/order/:uuid').get(prdOrderValidation.readByUuid, validationCallback, order.readByUuid);
 router.route('/orders').get(prdOrderValidation.read, validationCallback, order.read);
 router.route('/orders').post(prdOrderValidation.create, validationCallback, order.create);
