@@ -29,7 +29,7 @@ public create = async(body: IAdmLoginLog[], transaction?: Transaction) => {
         return this.repo.create(
           {
             company_cd: loginLog.company_cd,
-            user_id: loginLog.user_id,
+            id: loginLog.user_id,
             user_nm: loginLog.user_nm,
 						state_cd: loginLog.state_cd,
 						ip_address: loginLog.ip_address,
@@ -56,22 +56,22 @@ public create = async(body: IAdmLoginLog[], transaction?: Transaction) => {
       const result = await this.repo.findAll({ 
         attributes: [
           'company_cd',
-          'user_id',
+          'id',
           'user_nm',
           'state_cd',
           'ip_address',
           'browser',
-          'logged_at',
+          'created_at',
 					[ Sequelize.col('admLoginLog.uuid'), 'login_log_uuid' ]
         ],
         where: {
           [Op.and] : [
             { logged_at: { [Op.between]: [ params.start_date as any, params.end_date as any ] } },
-            { user_id: params.user_id ? { [Op.like]: `%${params.user_id}%` } : { [Op.ne]: null } },
+            { id: params.user_id ? { [Op.like]: `%${params.user_id}%` } : { [Op.ne]: null } },
             { user_nm: params.user_nm ? { [Op.like]: `%${params.user_nm}%` } : { [Op.ne]: null } }
           ]
         },
-        order: [ 'logged_at' ],
+        order: [ 'created_at' ],
       });
 
       return convertReadResult(result);
@@ -88,12 +88,12 @@ public create = async(body: IAdmLoginLog[], transaction?: Transaction) => {
 			const result = await this.repo.findOne({ 
 				attributes: [
 					'company_cd',
-          'user_id',
+          'id',
           'user_nm',
           'state_cd',
           'ip_address',
           'browser',
-          'logged_at',
+          'created_at',
 					[ Sequelize.col('admLoginLog.uuid'), 'login_log_uuid' ]
 				],
 				where: { uuid },

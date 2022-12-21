@@ -30,7 +30,7 @@ export default class AdmLoginLog extends Model<IAdmLoginLog> {
     comment: '사용자 아이디',
     type: DataType.STRING(100),
   })
-  user_id: string;
+  id: string;
 
 	@Column({
     comment: '사용자 명',
@@ -56,13 +56,19 @@ export default class AdmLoginLog extends Model<IAdmLoginLog> {
   })
   browser: string;
 
+	@Column({
+    comment: 'os',
+    type: DataType.STRING(50),
+  })
+  os: string;
+
   @Column({
     comment: '로그 생성 일시',
     type: 'timestamp',
     allowNull: false,
     defaultValue: Sequelize.fn('now')
   })
-  logged_at: string;
+  created_at: string;
   
 	@Unique('adm_login_log_tb_uuid_un')
   @Column({
