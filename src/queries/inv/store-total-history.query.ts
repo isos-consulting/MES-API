@@ -174,7 +174,7 @@ const readStoreTotalInventory = (
         i_s.factory_id, i_s.prod_id, i_s.reject_id, i_s.lot_no, i_s.store_id, i_s.location_id,
         SUM(CASE WHEN i_s.inout_fg = FALSE THEN COALESCE(i_s.qty,0) * -1 ELSE COALESCE(i_s.qty,0) END) AS qty
       FROM inv_store_tb i_s
-      WHERE CAST(i_s.reg_date AS DATE) <= '${params.start_date}'
+      WHERE CAST(i_s.reg_date AS DATE) < '${params.start_date}'
       GROUP BY i_s.factory_id, i_s.prod_id, i_s.reject_id, i_s.lot_no, i_s.store_id, i_s.location_id
     ) b_s 	ON b_s.factory_id = t_s.factory_id 
         AND COALESCE(b_s.store_id,0) = COALESCE(t_s.store_id,0) 
