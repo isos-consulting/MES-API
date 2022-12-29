@@ -110,6 +110,7 @@ class StdRoutingService {
 					data.plan_daily_uuid = raw.plan_daily_uuid;
 					data.plan_daily_qty = raw.plan_daily_qty;
 					data.balance = raw.balance;
+					data.monthly_balance = raw.monthly_balance;
 					bomReadRaws.push(data);
 				})
 			};
@@ -133,6 +134,7 @@ class StdRoutingService {
 					data.plan_daily_uuid = raw.plan_daily_uuid;
 					data.plan_daily_qty = raw.plan_daily_qty;
 					data.balance = raw.balance;
+					data.monthly_balance = raw.monthly_balance;
 					data.qty = data.c_usage * data.balance;
 					result.raws.push(data)
 				})
