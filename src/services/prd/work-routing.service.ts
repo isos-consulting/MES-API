@@ -107,8 +107,6 @@ class PrdWorkRoutingService {
         };
       });
 
-			console.log(routingBody);
-
       return await this.repo.create(routingBody, uid, tran); 
     }
 		catch (error) { 

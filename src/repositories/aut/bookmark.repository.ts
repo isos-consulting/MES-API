@@ -57,7 +57,6 @@ class AutBookmarkRepo {
   // 📒 Fn[read]: Default Read Function
   public read = async (params?: any) => {
     try {
-      console.log(params);
       const result = await this.repo.findAll({
         include: [
           {
