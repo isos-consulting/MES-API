@@ -50,6 +50,7 @@ const readPlanDaily = (
       p_pdt.plan_daily_qty,
       p_pdt.plan_day,
       CASE WHEN (p_pdt.plan_daily_qty - COALESCE(p_ot.qty,0)) < 0 THEN 0 ELSE p_pdt.plan_daily_qty - COALESCE(p_ot.qty,0) END AS balance,  
+			sub_p_pm.balance AS monthly_balance, 
       s_w.uuid as workings_uuid,
       s_w.workings_cd,
       s_w.workings_nm,
@@ -74,6 +75,16 @@ const readPlanDaily = (
       WHERE p_ot.plan_daily_id IS NOT NULL
       GROUP BY p_ot.plan_daily_id
     ) p_ot ON p_pdt.plan_daily_id = p_ot.plan_daily_id
+		LEFT JOIN (
+			SELECT 
+				sub_p_pm.plan_monthly_id, 
+				CASE WHEN (sub_p_pm.plan_monthly_qty  - COALESCE(sub_p_pdt.plan_daily_qty,0)) < 0 THEN 0 ELSE sub_p_pm.plan_monthly_qty  - COALESCE(sub_p_pdt.plan_daily_qty,0) END AS balance
+			FROM prd_plan_monthly_tb sub_p_pm
+			LEFT JOIN (
+				SELECT sum(plan_daily_qty) AS plan_daily_qty,plan_monthly_id 
+				FROM prd_plan_daily_tb
+				GROUP BY plan_monthly_id ) sub_p_pdt ON sub_p_pm.plan_monthly_id = sub_p_pdt.plan_monthly_id 
+		)sub_p_pm ON sub_p_pm.plan_monthly_id = p_pdt.plan_monthly_id
 		${searchQuery}
     ORDER BY s_p.prod_nm, p_pdt.plan_daily_qty;
   `;
