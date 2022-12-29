@@ -127,6 +127,7 @@ const readOrders = (
       t_sl.location_cd as to_location_cd,
       t_sl.location_nm as to_location_nm,
       p_o.plan_qty,
+			p_pm.balance AS monthly_balance,
       p_o.qty,
       p_w.qty as accumulated_qty,
       p_w.reject_qty as accumulated_reject_qty,
@@ -176,9 +177,21 @@ const readOrders = (
     LEFT JOIN (	SELECT p_w.order_id, sum(COALESCE(p_w.qty, 0)) AS qty, sum(COALESCE(p_w.reject_qty, 0)) AS reject_qty
                 FROM prd_work_tb p_w
                 GROUP BY p_w.order_id ) p_w ON p_w.order_id = p_o.order_id
+		LEFT JOIN prd_plan_daily_tb p_pdt ON p_pdt.plan_daily_id = p_o.plan_daily_id
     LEFT JOIN (	SELECT p_ow.order_id, count(p_ow.*) AS cnt 
                 FROM prd_order_worker_tb p_ow
                 GROUP BY p_ow.order_id ) p_ow ON p_ow.order_id = p_o.order_id
+								LEFT JOIN (
+									SELECT 
+										sub_p_pm.plan_monthly_id, 
+										CASE WHEN (sub_p_pm.plan_monthly_qty  - COALESCE(sub_p_pdt.plan_daily_qty,0)) < 0 THEN 0 ELSE sub_p_pm.plan_monthly_qty  - COALESCE(sub_p_pdt.plan_daily_qty,0) END AS balance
+									FROM prd_plan_monthly_tb sub_p_pm
+									LEFT JOIN (
+										SELECT sum(plan_daily_qty) AS plan_daily_qty,plan_monthly_id 
+										FROM prd_plan_daily_tb
+										GROUP BY plan_monthly_id 
+									) sub_p_pdt ON sub_p_pm.plan_monthly_id = sub_p_pdt.plan_monthly_id 
+		)p_pm ON p_pdt.plan_monthly_id = p_pm.plan_monthly_id
     LEFT JOIN aut_user_tb a_uc ON a_uc.uid = p_o.created_uid
     LEFT JOIN aut_user_tb a_uu ON a_uu.uid = p_o.updated_uid
     ${searchQuery};
