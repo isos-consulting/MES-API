@@ -112,6 +112,11 @@ const stdProdValidation = {
 		query('prd_active_fg', '생산품여부').optional({ nullable: true })
 			.isIn([ 'true', 'false' ]).withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'prd_active_fg', '생산품여부')),
 	],	
+	readWithWorkings: [
+		body('*.factory_uuid', '공장UUID')
+			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'factory_uuid', '공장UUID'))
+			.isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'factory_uuid', '공장UUID')),
+	],	
   readByUuid: [ 
 		param('uuid', '품목 유형UUID')
 			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'uuid', '품목 유형UUID'))

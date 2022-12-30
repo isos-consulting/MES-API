@@ -551,6 +551,7 @@ const prod = new StdProdCtl();
 // router.route('/prods/excel-upload').post(prod.upsertBulkDatasFromExcel);
 router.route('/prod/:uuid').get(stdProdValidation.readByUuid, validationCallback, prod.readByUuid);
 router.route('/prods').get(stdProdValidation.read, validationCallback, prod.read);
+router.route('/prods/workings').get(stdProdValidation.readWithWorkings, validationCallback, prod.readWithWorkings);
 router.route('/prods').post(stdProdValidation.create, validationCallback, prod.create);
 router.route('/prods').put(stdProdValidation.update, validationCallback, prod.update);
 router.route('/prods').patch(stdProdValidation.patch, validationCallback, prod.patch);

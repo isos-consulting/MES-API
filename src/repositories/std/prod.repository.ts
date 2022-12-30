@@ -10,6 +10,7 @@ import AdmLogRepo from '../adm/log.repository';
 import convertReadResult from '../../utils/convertReadResult';
 import { getSequelize } from '../../utils/getSequelize';
 import ApiResult from '../../interfaces/common/api-result.interface';
+import { readWithWorkings } from '../../queries/std/prod.prod-routingworkings.query';
 
 class StdProdRepo {
   repo: Repository<StdProd>;
@@ -273,6 +274,12 @@ class StdProdRepo {
     } catch (error) {
       throw error;
     }
+  };
+
+  // 📒 Fn[readWithWorkings]: 작업장이 포함된 품목
+  public readWithWorkings = async(params: any) => {
+    const result = await this.sequelize.query(readWithWorkings(params))
+    return convertReadResult(result[0]);
   };
 
   // 📒 Fn[readRawsByUuids]: Id 를 포함한 Raw Datas Read Function

@@ -93,6 +93,11 @@ class StdProdService {
 		catch (error) { throw error; }
   };
 
+	public readWithWorkings = async (params: any) => {
+    try { return await this.repo.readWithWorkings(params); } 
+		catch (error) { throw error; }
+  };
+
   public update = async (datas: any[], uid: number, tran: Transaction) => {
     try { return await this.repo.update(datas, uid, tran); }
 		catch (error) { throw error; }
