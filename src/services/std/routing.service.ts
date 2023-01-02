@@ -106,6 +106,7 @@ class StdRoutingService {
 					prod_uuid: raw.prod_uuid
 				}
 				const bomRead = await bomService.readToProdOfDownTrees(convertParams);	
+				
 				bomRead.raws.forEach((data) => {
 					data.plan_daily_uuid = raw.plan_daily_uuid;
 					data.plan_daily_qty = raw.plan_daily_qty;
@@ -130,6 +131,7 @@ class StdRoutingService {
 				}
 				const activeRead= await this.readOptionallyPrdActive(convertParams);
 				activeRead.raws.forEach((data) => {
+					data.lv = raw.lv ;
 					data.c_usage = raw.c_usage === null ? 1 : raw.c_usage ;
 					data.plan_daily_uuid = raw.plan_daily_uuid;
 					data.plan_daily_qty = raw.plan_daily_qty;
