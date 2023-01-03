@@ -307,19 +307,20 @@ class EqmInspCtl {
       let result: ApiResult<any> = { count:0, raws: [] };
       const service = new EqmInspService(req.tenant.uuid);
       const matched = matchedData(req, { locations: [ 'body' ] });
-      
-      const data = await service.read(matched.uuid);
-      const equipUuid = data.raws[0].equip_uuid;
+      const data = Object.values(matched)
+
+      const readData = await service.read(data);
+      const equipUuid = readData.raws[0].equip_uuid;
       
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
         // 📌 기준서의 설비에 해당하는 모든 기준서를 적용해제
         const canceledResult = await service.cancelApplyByEquip(equipUuid, req.user?.uid as number, tran);
-
+				
         // 📌 기준서 적용
         const appliedResult = await service.updateApply({
-          uuid: matched.uuid,
+          uuid: data[0].uuid,
           apply_fg: true,
-          apply_date: moment(moment.now()).toString()
+          apply_date: moment().format('YYYY-MM-DD').toString()
         }, req.user?.uid as number, tran);
 
         result.raws = [{
