@@ -37,6 +37,7 @@ export default interface IStdProd {
   prd_plan_type_id?: number | null,
   prd_min?: number | null,
   prd_max?: number | null,
+  work_price?: number | null,
   created_at?: Date,
   created_uid?: number,
   updated_at?: Date,

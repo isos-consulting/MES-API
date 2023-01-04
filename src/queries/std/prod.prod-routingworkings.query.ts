@@ -26,6 +26,7 @@ const readWithWorkings = (
 				s_mt.model_nm AS model_nm,
 				s_pt.rev AS rev,
 				s_pt.prod_std AS prod_std,
+				s_pt.work_price AS work_price,
 				STRING_AGG(s_wt.workings_nm, ', ') AS workings_nm,
 				s_pt.created_at,
 				a_c.user_nm,

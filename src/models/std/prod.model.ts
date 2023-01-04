@@ -285,6 +285,13 @@ export default class StdProd extends Model<IStdProd> {
   })
   prd_max: number;
 
+  @Column({
+    comment: '생산단가',
+    type: DataType.DECIMAL(19, 6),
+    allowNull: true
+  })
+  work_price: number;
+
   @CreatedAt
   @Column({
     comment: '데이터 생성 일시',
