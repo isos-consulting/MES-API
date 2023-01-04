@@ -346,15 +346,20 @@ class EqmInspCtl {
     try {
       let result: ApiResult<any> = { count:0, raws: [] };
       const service = new EqmInspService(req.tenant.uuid);
-      const matched = matchedData(req, { locations: [ 'body' ] });
-      
+      const matched = Object.values(matchedData(req, { locations: [ 'body' ] }));
+
       await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
-        // 📌 기준서 적용해제
-        result = await service.updateApply({
-          uuid: matched.uuid,
-          apply_fg: false,
-          apply_date: null
-        }, req.user?.uid as number, tran);
+        for await (const data of matched) {
+          // 📌 기준서 적용해제
+          const { count, raws } = await service.updateApply({
+            uuid: data.uuid,
+            apply_fg: false,
+            apply_date: null
+          }, req.user?.uid as number, tran);
+
+          result.count += count;
+          result.raws = [ ...result.raws, ...raws ];
+        }
       });
       
       return createApiResult(res, result, 200, '기준서 적용 해제 성공', this.stateTag, successState.UPDATE);
