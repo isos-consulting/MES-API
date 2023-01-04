@@ -211,6 +211,8 @@ const stdProdValidation = {
 			.isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'prd_min', '최소값')),
 		body('*.prd_max', '최대값').optional({ nullable: true })
 			.isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'prd_max', '최대값')),
+		body('*.work_price', '생산단가').optional({ nullable: true })
+			.isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'work_price', '생산단가')),
 		check('*.files').bail(),
 		body('*.files', '파일정보').optional({ nullable: true })
 			.isArray().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'files', 'files UUID 배열')),
@@ -324,6 +326,8 @@ const stdProdValidation = {
 			.isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'prd_min', '최소값')),
 		body('*.prd_max', '최대값').optional({ nullable: true })
 			.isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'prd_max', '최대값')),
+		body('*.work_price', '생산단가').optional({ nullable: true })
+			.isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'work_price', '생산단가')),
   ],
 	patch: [
 		body('*.uuid', '품목UUID')
@@ -403,6 +407,8 @@ const stdProdValidation = {
 			.isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'prd_min', '최소값')),
 		body('*.prd_max', '최대값').optional({ nullable: true })
 			.isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'prd_max', '최대값')),
+		body('*.work_price', '생산단가').optional({ nullable: true })
+			.isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'work_price', '생산단가')),
   ],
   delete: [
 		body('*.uuid', '품목UUID')
