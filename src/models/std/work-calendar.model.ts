@@ -29,6 +29,13 @@ export default class StdWorkCalendar extends Model<IStdWorkCalendar> {
   })
   work_type_id: number;
 
+  @Column({
+    comment: '주차',
+    type: DataType.INTEGER,
+    allowNull: true,
+  })
+  week_no: number;
+
   @Unique('std_workcalendar_tb_day_no_un')
   @Column({
     comment: '날짜',
