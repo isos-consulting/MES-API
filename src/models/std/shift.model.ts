@@ -57,6 +57,14 @@ export default class StdShift extends Model<IStdShift> {
     allowNull: false,
   })
   end_time: string;
+
+  @Column({
+    comment: '기본 적용 여부',
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  default_fg: boolean;
   
   @CreatedAt
   @Column({

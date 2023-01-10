@@ -49,6 +49,11 @@ class StdShiftService {
 		catch (error) { throw error; }
   }
 
+  public updateDefault = async (datas: any[], uid: number, tran: Transaction) => {
+    try { return await this.repo.updateDefault(datas, uid, tran); }
+		catch (error) { throw error; }
+  }
+
   public patch = async (datas: any[], uid: number, tran: Transaction) => {
     try { return await this.repo.patch(datas, uid, tran); }
 		catch (error) { throw error; }

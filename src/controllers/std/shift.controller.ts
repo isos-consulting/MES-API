@@ -117,6 +117,73 @@ class StdShiftCtl {
     }
   };
 
+  // 📒 Fn[updateDefault] (✅ Inheritance): Update Default Flag Function
+  public updateDefault = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      let result: ApiResult<any> = { count:0, raws: [] };
+      const service = new StdShiftService(req.tenant.uuid);
+      const matched = matchedData(req, { locations: [ 'body' ] });
+      const datas = await service.convertFk(Object.values(matched));
+
+      const shiftBody = datas.map((data: any) => {
+        return {
+          default_fg: true,
+          uuid: data.uuid
+        }
+      });
+
+      const originalShiftDatas = (await service.read({ factory_uuid: datas[0]['factory_uuid'] })).raws.map((data: any) => {
+        return {
+          default_fg: false,
+          uuid: data.shift_uuid
+        }
+      });
+
+      await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
+        result = await service.updateDefault([...originalShiftDatas, ...shiftBody], req.user?.uid as number, tran)
+      });
+
+      return createApiResult(res, result, 200, '데이터 수정 성공', this.stateTag, successState.UPDATE);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
+    }
+  };
+
+  // 📒 Fn[updateCancelDefault] (✅ Inheritance): Update Default Flag Function
+  public updateCancelDefault = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    try {
+      let result: ApiResult<any> = { count:0, raws: [] };
+      const service = new StdShiftService(req.tenant.uuid);
+      const matched = matchedData(req, { locations: [ 'body' ] });
+      const datas = await service.convertFk(Object.values(matched));
+
+      const shiftBody = datas.map((data: any) => {
+        return {
+          default_fg: false,
+          uuid: data.uuid
+        }
+      });
+
+      await sequelizes[req.tenant.uuid].transaction(async(tran: any) => { 
+        result = await service.updateDefault(shiftBody, req.user?.uid as number, tran)
+      });
+
+      return createApiResult(res, result, 200, '데이터 수정 성공', this.stateTag, successState.UPDATE);
+    } catch (error) {
+      if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+
+      const dbError = createDatabaseError(error, this.stateTag);
+      if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+      return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
+    }
+  };
+
   //#endregion
 
   //#region 🟠 Patch Functions

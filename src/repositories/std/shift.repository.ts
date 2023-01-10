@@ -40,6 +40,7 @@ class StdShiftRepo {
             shift_nm: shift.shift_nm,
             start_time: shift.start_time,
             end_time: shift.end_time,
+            default_fg: shift.default_fg,
             created_uid: uid,
             updated_uid: uid,
           },
@@ -82,6 +83,7 @@ class StdShiftRepo {
           'shift_nm',
           'start_time',
           'end_time',
+          'default_fg',
           'created_at',
           [ Sequelize.col('createUser.user_nm'), 'created_nm' ],
           'updated_at',
@@ -114,6 +116,7 @@ class StdShiftRepo {
           'shift_nm',
           'start_time',
           'end_time',
+          'default_fg',
           'created_at',
           [ Sequelize.col('createUser.user_nm'), 'created_nm' ],
           'updated_at',
@@ -171,6 +174,36 @@ class StdShiftRepo {
             shift_nm: shift.shift_nm ?? null,
             start_time: shift.start_time ?? null,
             end_time: shift.end_time ?? null,
+            default_fg: shift.default_fg ?? false,
+            updated_uid: uid,
+          } as any,
+          { 
+            where: { uuid: shift.uuid },
+            returning: true,
+            individualHooks: true,
+            transaction
+          }
+        );
+      });
+      const raws = await Promise.all(promises);
+
+      await new AdmLogRepo(this.tenant).create('update', this.sequelize.models.StdShift.getTableName() as string, previousRaws, uid, transaction);
+      return convertResult(raws);
+    } catch (error) {
+      if (error instanceof UniqueConstraintError) { throw new Error((error.parent as any).detail); }
+      throw error;
+    }
+  };
+
+  // 📒 Fn[updateDefault]: UpdateDefault Function
+  public updateDefault = async(body: IStdShift[], uid: number, transaction?: Transaction) => {
+    try {
+      const previousRaws = await getPreviousRaws(body, this.repo);
+
+      const promises = body.map((shift: any) => {
+        return this.repo.update(
+          {
+            default_fg: shift.default_fg ?? false,
             updated_uid: uid,
           } as any,
           { 
@@ -207,6 +240,7 @@ class StdShiftRepo {
             shift_nm: shift.shift_nm,
             start_time: shift.start_time,
             end_time: shift.end_time,
+            default_fg: shift.default_fg,
             updated_uid: uid,
           },
           { 

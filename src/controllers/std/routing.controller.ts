@@ -10,6 +10,7 @@ import createUnknownError from '../../utils/createUnknownError';
 import isServiceResult from '../../utils/isServiceResult';
 import createApiResult from '../../utils/createApiResult_new';
 import { successState } from '../../states/common.state';
+import StdShiftService from '../../services/std/shift.service';
 
 class StdRoutingCtl {
   stateTag: string;
@@ -114,11 +115,22 @@ class StdRoutingCtl {
     try {
       let result: ApiResult<any> = { count:0, raws: [] };
       const service = new StdRoutingService(req.tenant.uuid);
+      const shiftService = new StdShiftService(req.tenant.uuid);
       const params = matchedData(req, { locations: [ 'query', 'params' ] });
 			
 			const planDaliyRaws = await service.readPlanDailyRaws(params);
 			const bomReadRaws =  await service.readToProdsOfDownTrees(planDaliyRaws);
 			result = await service.readProdsActive(bomReadRaws);
+
+      const shifts = (await shiftService.read(params)).raws.filter((shift: any) => shift.default_fg);
+
+      if (shifts.length == 1) {
+        const { shift_uuid, shift_nm } = shifts[0];
+        result.raws.forEach((data: any) => {
+          data['shift_uuid'] = shift_uuid;
+          data['shift_nm'] = shift_nm;
+        });
+      }
 
       return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
     } catch (error) {

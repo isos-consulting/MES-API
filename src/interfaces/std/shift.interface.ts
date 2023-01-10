@@ -5,6 +5,7 @@ export default interface IStdShift {
   shift_nm?: string,
   start_time?: string,
   end_time?: string,
+  default_fg?: boolean,
   created_at?: Date,
   created_uid?: number,
   updated_at?: Date,

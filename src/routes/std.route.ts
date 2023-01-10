@@ -452,6 +452,8 @@ router.route('/locations').delete(stdLocationValidation.delete, validationCallba
 const shift = new StdShiftCtl();
 // router.route('/shifts/excel-upload').post(shift.upsertBulkDatasFromExcel);
 router.route('/shift/:uuid').get(stdShiftValidation.readByUuid, validationCallback, shift.readByUuid);
+router.route('/shifts/default').put(stdShiftValidation.updateDefault, validationCallback, shift.updateDefault);
+router.route('/shifts/cancel-default').put(stdShiftValidation.updateCancelDefault, validationCallback, shift.updateCancelDefault);
 router.route('/shifts').get(stdShiftValidation.read, validationCallback, shift.read);
 router.route('/shifts').post(stdShiftValidation.create, validationCallback, shift.create);
 router.route('/shifts').put(stdShiftValidation.update, validationCallback, shift.update);
