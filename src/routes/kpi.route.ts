@@ -13,6 +13,8 @@ router.route('/production/downtime').get(kpiProductionValidation.readDowntime, v
 router.route('/production/work-plan-achievement-rate').get(kpiProductionValidation.readWorkPlanAchievementRate, validationCallback, production.readWorkPlanAchievementRate);
 router.route('/production/worker-productivity').get(kpiProductionValidation.readWorkerProductivity, validationCallback, production.readWorkerProductivity);
 router.route('/production/work-rejects-rate').get(kpiProductionValidation.readWorkRejectsRate, validationCallback, production.readWorkRejectsRate);
+router.route('/production/order-work-rate').get(kpiProductionValidation.readOrderWorkRate, validationCallback, production.readOrderWork);
+router.route('/production/order-work-month-rate').get(kpiProductionValidation.readOrderWorkMonthRate, validationCallback, production.readOrderWorkMonth);
 //#endregion
 
 

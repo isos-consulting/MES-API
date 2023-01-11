@@ -6,6 +6,7 @@ import { readDowntime } from '../../queries/kpi/production-downtime.query';
 import { readWorkPlanAchievementRate } from '../../queries/kpi/production-work-plan-achievement-rate.query';
 import { readWorkerProductivity } from '../../queries/kpi/production-worker-productivity.query';
 import { readWorkRejectsRate } from '../../queries/kpi/production-work-rejects-rate.query';
+import { readOrderWork, readOrderWorkMonth } from '../../queries/kpi/production-order-work-rate.query';
 
 class KpiProductionRepo {
   sequelize: Sequelize;
@@ -69,6 +70,27 @@ class KpiProductionRepo {
     try {
       const result = await this.sequelize.query(readWorkRejectsRate(params));
 
+      return convertReadResult(result[0]);
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  // 📒 Fn[readOrderWork]: 생산실적달성율 일별/주별
+  public readOrderWork = async(params?: any) => {
+    try {
+      const result = await this.sequelize.query(readOrderWork(params));
+
+      return convertReadResult(result[0]);
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  // 📒 Fn[readOrderWorkMonth]: 생산실적달성율 월별
+  public readOrderWorkMonth = async(params?: any) => {
+    try {
+      const result = await this.sequelize.query(readOrderWorkMonth(params));
       return convertReadResult(result[0]);
     } catch (error) {
       throw error;

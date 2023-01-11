@@ -6,9 +6,11 @@ import KpiProductionService from '../../services/kpi/production.service';
 import { matchedData } from 'express-validator';
 import createApiResult from '../../utils/createApiResult_new';
 import isServiceResult from '../../utils/isServiceResult';
-import { successState } from '../../states/common.state';
+import { errorState, successState } from '../../states/common.state';
 import createDatabaseError from '../../utils/createDatabaseError';
 import createUnknownError from '../../utils/createUnknownError';
+import moment from 'moment';
+import createApiError from '../../utils/createApiError';
 
 class KpiProductionCtl {
   stateTag: string;
@@ -132,6 +134,102 @@ class KpiProductionCtl {
 			return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
 		}
 	};
+
+	// 📒 Fn[readOrderWork] (✅ Inheritance): Default Read Function
+	public readOrderWork = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+		try {
+			let result: ApiResult<any> = { count:0, raws: [] };
+			const service = new KpiProductionService(req.tenant.uuid);
+			const params = matchedData(req, { locations: [ 'query', 'params' ] });
+			params.week_fg = JSON.parse(params.week_fg);
+			
+			const startDate = `${params.reg_date}-01`;
+
+			const date = moment(startDate);
+			
+			if (!date.isValid()) {
+				throw createApiError(
+          400, 
+          { 
+            admin_message: '잘못된 일자가 입력되었습니다',
+            user_message: '잘못된 일자가 입력되었습니다'
+          }, 
+          this.stateTag, 
+          errorState.INVALID_DATA
+        );
+			}
+
+			const endDate = date.endOf('month').format('YYYY-MM-DD');
+
+			params['start_date'] = startDate;
+			params['end_date'] = endDate;
+
+			const datas = await service.readOrderWork(params); 
+
+			let convertData = [];
+			if (params.week_fg) {
+				convertData = await service.convertToPivotOfOrderWorkWeek(datas.raws);
+			} else {
+				convertData = await service.convertToPivotOfOrderWorkDay(datas.raws); 
+			}
+
+      result.raws.push(...convertData);
+			result.count = result.raws.length;
+
+			return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
+		} catch (error) {
+			if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+			
+			const dbError = createDatabaseError(error, this.stateTag);
+			if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+			return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
+		}
+	};
+
+	// 📒 Fn[readOrderWorkMonth] (✅ Inheritance): Default Read Function
+	public readOrderWorkMonth = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+		try {
+			let result: ApiResult<any> = { count:0, raws: [] };
+			const service = new KpiProductionService(req.tenant.uuid);
+			const params = matchedData(req, { locations: [ 'query', 'params' ] });
+
+			const date = moment(`${params.reg_date}-01`);
+			
+			if (!date.isValid()) {
+				throw createApiError(
+          400, 
+          { 
+            admin_message: '잘못된 일자가 입력되었습니다',
+            user_message: '잘못된 일자가 입력되었습니다'
+          }, 
+          this.stateTag, 
+          errorState.INVALID_DATA
+        );
+			}
+
+			const year = date.format('YYYY');
+
+			params['year'] = year
+
+			const datas = await service.readOrderWorkMonth(params); 
+
+			const convertData = await service.convertToPivotOfOrderWorkMonth(datas.raws);
+
+      result.raws.push(...convertData);
+			result.count = result.raws.length;
+
+			return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
+		} catch (error) {
+			if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+			
+			const dbError = createDatabaseError(error, this.stateTag);
+			if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+			return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
+		}
+	};
+
 
 	//#endregion
 }
