@@ -160,9 +160,11 @@ class KpiProductionCtl {
 			}
 
 			const endDate = date.endOf('month').format('YYYY-MM-DD');
+			const startDateYear = date.startOf('year').format('YYYY-MM-DD');
 
 			params['start_date'] = startDate;
 			params['end_date'] = endDate;
+			params['start_date_year'] = startDateYear;
 
 			const datas = await service.readOrderWork(params); 
 

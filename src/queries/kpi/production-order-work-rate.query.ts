@@ -3,7 +3,8 @@ const readOrderWork = (
     reg_date: string,
     start_date: string,
     end_date: string,
-    week_fg: boolean
+    week_fg: boolean,
+    start_date_year: string,
   }) => {
 	
   let searchQuery = '';
@@ -11,7 +12,7 @@ const readOrderWork = (
   
   if (params.week_fg) {
     searchQuery = `
-      to_char(to_date(d_s.date, 'YYYY-MM-DD'), 'WW') AS week,
+      CEIL((EXTRACT(doy FROM to_date(d_s.date, 'YYYY-MM-DD')) + EXTRACT(DOW FROM to_date('${params.start_date_year}', 'YYYY-MM-DD'))) / 7) AS week,
       COALESCE(sum(t_t.order_total_price), 0) AS order_total_price,
       COALESCE(sum(t_t2.work_total_price), 0) AS work_total_price,
       (COALESCE(sum(t_t2.work_total_price), 0) / COALESCE(sum(t_t.order_total_price), 1)) * 100 AS rate
