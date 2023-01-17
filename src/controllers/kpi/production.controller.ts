@@ -232,6 +232,103 @@ class KpiProductionCtl {
 		}
 	};
 
+	// 📒 Fn[readWorkerWorkPrice] (✅ Inheritance): Default Read Function
+	public readWorkerWorkPrice = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+		try {
+			let result: ApiResult<any> = { count:0, raws: [] };
+			const service = new KpiProductionService(req.tenant.uuid);
+			const params = matchedData(req, { locations: [ 'query', 'params' ] });
+			params.week_fg = JSON.parse(params.week_fg);
+			
+			const startDate = `${params.reg_date}-01`;
+
+			const date = moment(startDate);
+			
+			if (!date.isValid()) {
+				throw createApiError(
+          400, 
+          { 
+            admin_message: '잘못된 일자가 입력되었습니다',
+            user_message: '잘못된 일자가 입력되었습니다'
+          }, 
+          this.stateTag, 
+          errorState.INVALID_DATA
+        );
+			}
+
+			const endDate = date.endOf('month').format('YYYY-MM-DD');
+			const startDateYear = date.startOf('year').format('YYYY-MM-DD');
+
+			params['start_date'] = startDate;
+			params['end_date'] = endDate;
+			params['start_date_year'] = startDateYear;
+
+			const datas = await service.readWorkerWorkPrice(params); 
+
+			let convertData = [];
+			if (params.week_fg) {
+				convertData = await service.convertToPivotOfWorkerWorkPriceWeek(datas.raws);
+			} else {
+				convertData = await service.convertToPivotOfWorkerWorkPriceDay(datas.raws); 
+			}
+
+      result.raws.push(...convertData);
+			result.count = result.raws.length;
+
+			return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
+		} catch (error) {
+			if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+			
+			const dbError = createDatabaseError(error, this.stateTag);
+			if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+			return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
+		}
+	};
+
+	// 📒 Fn[readWorkerWorkPriceMonth] (✅ Inheritance): Default Read Function
+	public readWorkerWorkPriceMonth = async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+		try {
+			let result: ApiResult<any> = { count:0, raws: [] };
+			const service = new KpiProductionService(req.tenant.uuid);
+			const params = matchedData(req, { locations: [ 'query', 'params' ] });
+
+			const date = moment(`${params.reg_date}-01`);
+			
+			if (!date.isValid()) {
+				throw createApiError(
+          400, 
+          { 
+            admin_message: '잘못된 일자가 입력되었습니다',
+            user_message: '잘못된 일자가 입력되었습니다'
+          }, 
+          this.stateTag, 
+          errorState.INVALID_DATA
+        );
+			}
+
+			const year = date.format('YYYY');
+
+			params['year'] = year
+
+			const datas = await service.readWorkerWorkPriceMonth(params); 
+
+			const convertData = await service.convertToPivotOfWorkerWorkPriceMonth(datas.raws);
+
+      result.raws.push(...convertData);
+			result.count = result.raws.length;
+
+			return createApiResult(res, result, 200, '데이터 조회 성공', this.stateTag, successState.READ);
+		} catch (error) {
+			if (isServiceResult(error)) { return response(res, error.result_info, error.log_info); }
+			
+			const dbError = createDatabaseError(error, this.stateTag);
+			if (dbError) { return response(res, dbError.result_info, dbError.log_info); }
+
+			return config.node_env === 'test' ? createUnknownError(req, res, error) : next(error);
+		}
+	};
+
 
 	//#endregion
 }

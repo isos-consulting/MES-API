@@ -15,6 +15,8 @@ router.route('/production/worker-productivity').get(kpiProductionValidation.read
 router.route('/production/work-rejects-rate').get(kpiProductionValidation.readWorkRejectsRate, validationCallback, production.readWorkRejectsRate);
 router.route('/production/order-work-rate').get(kpiProductionValidation.readOrderWorkRate, validationCallback, production.readOrderWork);
 router.route('/production/order-work-month-rate').get(kpiProductionValidation.readOrderWorkMonthRate, validationCallback, production.readOrderWorkMonth);
+router.route('/production/worker-work-price').get(kpiProductionValidation.readWorkerWorkPrice, validationCallback, production.readWorkerWorkPrice);
+router.route('/production/worker-work-month-price').get(kpiProductionValidation.readWorkerWorkMonthPrice, validationCallback, production.readWorkerWorkPriceMonth);
 //#endregion
 
 

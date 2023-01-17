@@ -47,6 +47,16 @@ class KpiProductionService {
 		catch (error) { throw error; }
   };
 
+	public readWorkerWorkPrice = async (params: any) => {
+    try { return await this.repo.readWorkerWorkPrice(params); } 
+		catch (error) { throw error; }
+  };
+
+	public readWorkerWorkPriceMonth = async (params: any) => {
+    try { return await this.repo.readWorkerWorkPriceMonth(params); } 
+		catch (error) { throw error; }
+  };
+
 	public convertToPivotOfEquipProductivity = async (datas: any[]) => {
     try { 
 			
@@ -130,6 +140,48 @@ class KpiProductionService {
 				base[2][data.month_date] = data.rate;
 				return base;
 			},[{fg: '계획금액'}, {fg: '실적금액'}, {fg: '달성율'}]);
+
+			return convertPivotDatas;
+		} 
+		catch (error) { throw error; }
+  };
+
+	public convertToPivotOfWorkerWorkPriceDay = async (datas: any[]) => {
+    try { 
+			let convertPivotDatas = datas.reduce((base,data) => {
+				base[0][data.date] = data.worker;
+				base[1][data.date] = data.work_total_price;
+				base[2][data.date] = data.rate;
+				return base;
+			},[{fg: '인원수'}, {fg: '실적금액'}, {fg: '인당금액'}]);
+
+			return convertPivotDatas;
+		} 
+		catch (error) { throw error; }
+  };
+
+	public convertToPivotOfWorkerWorkPriceWeek = async (datas: any[]) => {
+    try { 
+			let convertPivotDatas = datas.reduce((base,data) => {
+				base[0][data.week] = data.worker;
+				base[1][data.week] = data.work_total_price;
+				base[2][data.week] = data.rate;
+				return base;
+			},[{fg: '인원수'}, {fg: '실적금액'}, {fg: '인당금액'}]);
+
+			return convertPivotDatas;
+		} 
+		catch (error) { throw error; }
+  };
+
+	public convertToPivotOfWorkerWorkPriceMonth = async (datas: any[]) => {
+    try { 
+			let convertPivotDatas = datas.reduce((base,data) => {
+				base[0][data.month_date] = data.worker;
+				base[1][data.month_date] = data.work_total_price;
+				base[2][data.month_date] = data.rate;
+				return base;
+			},[{fg: '인원수'}, {fg: '실적금액'}, {fg: '인당금액'}]);
 
 			return convertPivotDatas;
 		} 
