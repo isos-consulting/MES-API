@@ -57,6 +57,16 @@ class KpiProductionService {
 		catch (error) { throw error; }
   };
 
+	public readEquipDowntimeTypeWeek = async (params: any) => {
+    try { return await this.repo.readEquipDowntimeTypeWeek(params); } 
+		catch (error) { throw error; }
+  };
+
+	public readEquipDowntimeTypeMonth = async (params: any) => {
+    try { return await this.repo.readEquipDowntimeTypeMonth(params); } 
+		catch (error) { throw error; }
+  };
+
 	public convertToPivotOfEquipProductivity = async (datas: any[]) => {
     try { 
 			
@@ -184,6 +194,46 @@ class KpiProductionService {
 			},[{fg: '인원수'}, {fg: '실적금액'}, {fg: '인당금액'}]);
 
 			return convertPivotDatas;
+		} 
+		catch (error) { throw error; }
+  };
+
+	public convertToPivotOfEquipDowntimeTypeWeek = async (datas: any[]) => {
+    try { 
+			let convertPivotDatas = datas.reduce((base,data) => {
+				
+				if (!base[data.downtime_type_cd]) {
+					base[data.downtime_type_cd] = { fg: data.downtime_type_nm };
+				}
+
+				if (data.week) {
+					base[data.downtime_type_cd][data.week] = data.diff_hour;
+				}
+
+				return base;
+			}, {});
+
+			return Object.values(convertPivotDatas);
+		} 
+		catch (error) { throw error; }
+  };
+
+	public convertToPivotOfEquipDowntimeTypeMonth = async (datas: any[]) => {
+    try { 
+			let convertPivotDatas = datas.reduce((base,data) => {
+				
+				if (!base[data.downtime_type_cd]) {
+					base[data.downtime_type_cd] = { fg: data.downtime_type_nm };
+				}
+
+				if (data.month_date) {
+					base[data.downtime_type_cd][data.month_date] = data.diff_hour;
+				}
+
+				return base;
+			}, {});
+
+			return Object.values(convertPivotDatas);
 		} 
 		catch (error) { throw error; }
   };

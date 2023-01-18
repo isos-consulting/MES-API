@@ -69,6 +69,16 @@ const kpiProductionValidation = {
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'reg_date', '조회 월'))
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'reg_date', '조회 월')),
   ],
+  readEquipDowntimeType: [
+    query('reg_date', '조회 월')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'reg_date', '조회 월'))
+      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'reg_date', '조회 월')),
+  ],
+  readEquipDowntimeTypeMonth: [
+    query('reg_date', '조회 월')
+      .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'reg_date', '조회 월'))
+      .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'reg_date', '조회 월')),
+  ],
 };
 
 export default kpiProductionValidation;

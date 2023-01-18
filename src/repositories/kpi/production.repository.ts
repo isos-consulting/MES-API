@@ -8,6 +8,7 @@ import { readWorkerProductivity } from '../../queries/kpi/production-worker-prod
 import { readWorkRejectsRate } from '../../queries/kpi/production-work-rejects-rate.query';
 import { readOrderWork, readOrderWorkMonth } from '../../queries/kpi/production-order-work-rate.query';
 import { readWorkerWorkPrice, readWorkerWorkPriceMonth } from '../../queries/kpi/production-worker-work-price-rate.query';
+import { readEquipDowntimeTypeMonth, readEquipDowntimeTypeWeek } from '../../queries/kpi/production-equip-downtime-type.query';
 
 class KpiProductionRepo {
   sequelize: Sequelize;
@@ -113,6 +114,26 @@ class KpiProductionRepo {
   public readWorkerWorkPriceMonth = async(params?: any) => {
     try {
       const result = await this.sequelize.query(readWorkerWorkPriceMonth(params));
+      return convertReadResult(result[0]);
+    } catch (error) {
+      throw error;
+    }
+  };
+
+  // 📒 Fn[readEquipDowntimeTypeWeek]: 비가동유형별 비가동시간 주별
+  public readEquipDowntimeTypeWeek = async(params?: any) => {
+    try {
+      const result = await this.sequelize.query(readEquipDowntimeTypeWeek(params));
+      return convertReadResult(result[0]);
+    } catch (error) {
+      throw error;
+    }
+  };
+  
+  // 📒 Fn[readEquipDowntimeTypeMonth]: 비가동유형별 비가동시간 월별
+  public readEquipDowntimeTypeMonth = async(params?: any) => {
+    try {
+      const result = await this.sequelize.query(readEquipDowntimeTypeMonth(params));
       return convertReadResult(result[0]);
     } catch (error) {
       throw error;
