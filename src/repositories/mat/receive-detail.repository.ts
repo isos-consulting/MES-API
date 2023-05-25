@@ -144,6 +144,7 @@ class MatReceiveDetailRepo {
             total_price: receiveDetail.total_price ?? null,
             unit_qty: receiveDetail.unit_qty ?? null,
             carry_fg: receiveDetail.carry_fg ?? null,
+            to_location_id: receiveDetail.to_location_id,
             remark: receiveDetail.remark ?? null,
             updated_uid: uid,
           } as any,

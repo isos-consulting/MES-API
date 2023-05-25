@@ -121,6 +121,8 @@ const matReceiveValidation = {
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'to_store_uuid', '입고창고UUID')),
     body('details.*.to_location_uuid', '입고위치UUID').optional({ nullable: true })
       .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'to_location_uuid', '입고위치UUID')),
+    body('details.*.unit_qty', '단위수량').optional({ nullable: true })
+      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'unit_qty', '단위수량')),
     body('details.*.remark', '비고').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'remark', '비고')),
   ],
@@ -212,6 +214,10 @@ const matReceiveValidation = {
     body('details.*.carry_fg', '이월여부')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'carry_fg', '이월여부'))
       .isBoolean().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'carry_fg', '이월여부')),
+    body('details.*.to_location_uuid', '입고위치UUID').optional({ nullable: true })
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'to_location_uuid', '입고위치UUID')),
+    body('details.*.unit_qty', '단위수량').optional({ nullable: true })
+      .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'unit_qty', '단위수량')),
     body('details.*.remark', '비고').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_DATA_TYPE, 400, 'remark', '비고')),
   ],
