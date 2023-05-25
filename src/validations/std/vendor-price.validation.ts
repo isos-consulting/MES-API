@@ -103,6 +103,9 @@ const stdVendorPriceValidation = {
       .isNumeric().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'division', '배분율')),
 		body('*.remark', '비고').optional({ nullable: true })
       .isString().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'remark', '비고')),
+	  	body('*.unit_uuid', '단위UUID')
+			.notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'unit_uuid', '단위UUID'))
+      .isUUID().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'unit_uuid', '단위UUID')),
   ],
   patch: [
     body('*.uuid', '협력사 단가UUID')
