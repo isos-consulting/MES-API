@@ -43,14 +43,10 @@ const matReceiveValidation = {
     query('sort_type', '정렬유형')
       .notEmpty().withMessage(value => createValidationError(value, stateTag, errorState.NO_INPUT_REQUIRED_PARAM, 400, 'sort_type', '정렬유형'))
       .isIn([ 'partner', 'prod', 'date', 'none' ]).withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'sort_type', '정렬유형')),
-    query('start_reg_date', '기준 시작일자').optional({ nullable: true })
-      .isDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'start_reg_date', '기준 시작일자')),
-    query('end_reg_date', '기준 종료일자').optional({ nullable: true })
-      .isDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'end_reg_date', '기준 종료일자')),
-    query('start_due_date', '납기 시작일자').optional({ nullable: true })
-      .isDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'start_due_date', '납기 시작일자')),
-    query('end_due_date', '납기 종료일자').optional({ nullable: true })
-      .isDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'end_due_date', '납기 종료일자')),
+    query('start_date', '기준 시작일자').optional({ nullable: true })
+      .isDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'start_date', '기준 시작일자')),
+    query('end_date', '기준 종료일자').optional({ nullable: true })
+      .isDate().withMessage(value => createValidationError(value, stateTag, errorState.INVALID_READ_PARAM, 400, 'end_date', '기준 종료일자')),
   ],
   readLotTracking: [
     query('factory_uuid', '공장UUID')
